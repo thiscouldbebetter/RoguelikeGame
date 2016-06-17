@@ -1,0 +1,5 @@
+
+function EffectableData()
+{
+	this.effects = [];
+}

@@ -1,0 +1,5 @@
+
+function PlayerData()
+{
+	this.venueKnownLookup = [];
+}

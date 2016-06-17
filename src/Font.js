@@ -1,0 +1,139 @@
+
+function Font(charactersAvailable, characterSize, characterImages)
+{
+	this.charactersAvailable = charactersAvailable;
+	this.characterSize = characterSize;
+	this.characterImages = characterImages;
+}
+
+{
+	Font.prototype.buildEntityDefnForText = function
+	(
+		visualForIcon, text, isFloater
+	)
+	{
+		text = text.toUpperCase();
+
+		var visualsForCharacters = [];
+
+		visualsForCharacters.push(visualForIcon);
+
+		for (var i = 0; i < text.length; i++)
+		{
+			var character = text[i];
+
+			var characterIndex = this.charactersAvailable.indexOf
+			(
+				character
+			);
+
+			if (characterIndex >= 0)
+			{
+				var characterImage = this.characterImages
+				[
+					characterIndex
+				];
+
+				var visualForCharacter = new VisualOffset
+				(
+					characterImage,
+					new Coords(i * this.characterSize.x, 0)
+				);
+
+				visualsForCharacters.push
+				(
+					visualForCharacter
+				);
+			}
+		}	
+
+		var entityDefnProperties = 
+		[
+			new DrawableDefn
+			(
+				new VisualSet(text, visualsForCharacters),
+				null, // sizeInPixels
+				2 // zIndex
+			),
+		]
+
+		var ticksToLive = (isFloater == true ? 16 : null);
+
+		if (ticksToLive != null)
+		{
+			entityDefnProperties.push(new EphemeralDefn(ticksToLive));
+		}
+
+		var velocity = (isFloater == true ? new Coords(0, -.4) : null);
+
+		if (velocity != null)
+		{
+			entityDefnProperties.push
+			(
+				new DynamicDefn(velocity, Coords.Instances.Zeroes)
+			);
+		}
+
+		var entityDefn = new EntityDefn
+		(
+			"Message_" + text,
+			entityDefnProperties
+		);
+
+		return entityDefn;
+	}
+
+	Font.spawnMessage = function
+	(
+		messageIconName, 
+		messageText, 
+		loc,
+		isFloater
+	)
+	{
+		var universe = Globals.Instance.universe;
+		var entityDefns = universe.defn.entityDefns;
+
+		var messageIcon = 
+		(
+			messageIconName == null 
+			? null 
+			: entityDefns[messageIconName].Drawable.visual
+		);
+
+		var entityMessage = Entity.fromDefn
+		(
+			messageText,
+			Globals.Instance.font.buildEntityDefnForText
+			(
+				messageIcon,
+				messageText.toUpperCase(),
+				isFloater
+			),
+			loc.posInCells.clone()
+		);
+
+		//entityMessage.drawableData.isVisible = true;
+
+		universe.venueCurrent.entitiesToSpawn.push(entityMessage);
+	}
+
+	Font.spawnMessageFixed = function
+	(
+		messageText, 
+		loc
+	)
+	{
+		Font.spawnMessage(null, messageText, loc, false);
+	}
+
+	Font.spawnMessageFloater = function
+	(
+		messageIconName, 
+		messageText, 
+		loc
+	)
+	{
+		Font.spawnMessage(messageIconName, messageText, loc, true);
+	}
+}

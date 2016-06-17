@@ -1,0 +1,142 @@
+<html>
+<body>
+
+<!-- hack -->
+<!-- These classes currently have to come first. -->
+<script type="text/javascript" src="HTMLElementLibrary.js"></script>
+<script type="text/javascript" src="RandomizerLCG.js"></script>
+
+<script type="text/javascript" src="Simulation.js"></script>
+<script type="text/javascript" src="ArrayExtensions.js"></script>
+<script type="text/javascript" src="Action.js"></script>
+<script type="text/javascript" src="Activity.js"></script>
+<script type="text/javascript" src="ActivityDefn.js"></script>
+<script type="text/javascript" src="ActorData.js"></script>
+<script type="text/javascript" src="ActorDefn.js"></script>
+<script type="text/javascript" src="AnimationDefn.js"></script>
+<script type="text/javascript" src="AnimationDefnSet.js"></script>
+<script type="text/javascript" src="AnimationFrame.js"></script>
+<script type="text/javascript" src="AnimationRun.js"></script>
+<script type="text/javascript" src="ArrayHelper.js"></script>
+<script type="text/javascript" src="Attack.js"></script>
+<script type="text/javascript" src="Attribute.js"></script>
+<script type="text/javascript" src="AttributeGroup.js"></script>
+<script type="text/javascript" src="Bounds.js"></script>
+<script type="text/javascript" src="Camera.js"></script>
+<script type="text/javascript" src="CameraDefn.js"></script>
+<script type="text/javascript" src="CollidableData.js"></script>
+<script type="text/javascript" src="CollidableDefn.js"></script>
+<script type="text/javascript" src="Collision.js"></script>
+<script type="text/javascript" src="CollisionHelper.js"></script>
+<script type="text/javascript" src="Color.js"></script>
+<script type="text/javascript" src="Constants.js"></script>
+<script type="text/javascript" src="Constraint.js"></script>
+<script type="text/javascript" src="ConstraintDefn.js"></script>
+<script type="text/javascript" src="ContainerData.js"></script>
+<script type="text/javascript" src="ContainerDefn.js"></script>
+<script type="text/javascript" src="Control.js"></script>
+<script type="text/javascript" src="ControlContainer.js"></script>
+<script type="text/javascript" src="ControlLabel.js"></script>
+<script type="text/javascript" src="ControlList.js"></script>
+<script type="text/javascript" src="Coords.js"></script>
+<script type="text/javascript" src="DeviceData.js"></script>
+<script type="text/javascript" src="DeviceDefn.js"></script>
+<script type="text/javascript" src="DiceRoll.js"></script>
+<script type="text/javascript" src="DisplayHelper.js"></script>
+<script type="text/javascript" src="DrawableData.js"></script>
+<script type="text/javascript" src="DrawableDefn.js"></script>
+<script type="text/javascript" src="DynamicData.js"></script>
+<script type="text/javascript" src="DynamicDefn.js"></script>
+<script type="text/javascript" src="Effect.js"></script>
+<script type="text/javascript" src="EffectDefn.js"></script>
+<script type="text/javascript" src="EffectableData.js"></script>
+<script type="text/javascript" src="EffectableDefn.js"></script>
+<script type="text/javascript" src="EmplacementDefn.js"></script>
+<script type="text/javascript" src="EnemyDefn.js"></script>
+<script type="text/javascript" src="Entity.js"></script>
+<script type="text/javascript" src="EntityDefn.js"></script>
+<script type="text/javascript" src="EntityDefnGroup.js"></script>
+<script type="text/javascript" src="EphemeralData.js"></script>
+<script type="text/javascript" src="EphemeralDefn.js"></script>
+<script type="text/javascript" src="EquipmentSocket.js"></script>
+<script type="text/javascript" src="EquipmentSocketSet.js"></script>
+<script type="text/javascript" src="EquipmentSocketDefn.js"></script>
+<script type="text/javascript" src="EquipmentSocketDefnSet.js"></script>
+<script type="text/javascript" src="EquippableData.js"></script>
+<script type="text/javascript" src="EquippableDefn.js"></script>
+<script type="text/javascript" src="FieldOfView.js"></script>
+<script type="text/javascript" src="Font.js"></script>
+<script type="text/javascript" src="Globals.js"></script>
+<script type="text/javascript" src="Heading.js"></script>
+<script type="text/javascript" src="HTMLHelper.js"></script>
+<script type="text/javascript" src="Image.js"></script>
+<script type="text/javascript" src="ImageHelper.js"></script>
+<script type="text/javascript" src="InputBinding.js"></script>
+<script type="text/javascript" src="InputHelper.js"></script>
+<script type="text/javascript" src="InputKey.js"></script>
+<script type="text/javascript" src="ItemCategory.js"></script>
+<script type="text/javascript" src="ItemData.js"></script>
+<script type="text/javascript" src="ItemDefn.js"></script>
+<script type="text/javascript" src="KillableData.js"></script>
+<script type="text/javascript" src="KillableDefn.js"></script>
+<script type="text/javascript" src="Location.js"></script>
+<script type="text/javascript" src="Map.js"></script>
+<script type="text/javascript" src="MapCell.js"></script>
+<script type="text/javascript" src="MapTerrain.js"></script>
+<script type="text/javascript" src="MediaLoader.js"></script>
+<script type="text/javascript" src="MediaLoaderItem.js"></script>
+<script type="text/javascript" src="MediaLoaderItemType.js"></script>
+<script type="text/javascript" src="Message.js"></script>
+<script type="text/javascript" src="MoverData.js"></script>
+<script type="text/javascript" src="MoverData_Demographics.js"></script>
+<script type="text/javascript" src="MoverData_Locus.js"></script>
+<script type="text/javascript" src="MoverData_Skills.js"></script>
+<script type="text/javascript" src="MoverData_Spells.js"></script>
+<script type="text/javascript" src="MoverData_Traits.js"></script>
+<script type="text/javascript" src="MoverData_Vitals.js"></script>
+<script type="text/javascript" src="MoverDefn.js"></script>
+<script type="text/javascript" src="MoverDefn_Vitals.js"></script>
+<script type="text/javascript" src="MoverGenerator.js"></script>
+<script type="text/javascript" src="NumberHelper.js"></script>
+<script type="text/javascript" src="Path.js"></script>
+<script type="text/javascript" src="PathNode.js"></script>
+<script type="text/javascript" src="PlayerData.js"></script>
+<script type="text/javascript" src="PlayerDefn.js"></script>
+<script type="text/javascript" src="PortalData.js"></script>
+<script type="text/javascript" src="PortalDefn.js"></script>
+<script type="text/javascript" src="ProjectileDefn.js"></script>
+<script type="text/javascript" src="Range.js"></script>
+<script type="text/javascript" src="RangeSet.js"></script>
+<script type="text/javascript" src="Role.js"></script>
+<script type="text/javascript" src="Role_Rank.js"></script>
+<script type="text/javascript" src="Role_Skill.js"></script>
+<script type="text/javascript" src="RoomData.js"></script>
+<script type="text/javascript" src="SightHelper.js"></script>
+<script type="text/javascript" src="Skill.js"></script>
+<script type="text/javascript" src="SkillDefn.js"></script>
+<script type="text/javascript" src="SpellDefn.js"></script>
+<script type="text/javascript" src="StringHelper.js"></script>
+<script type="text/javascript" src="StringHelper_Static.js"></script>
+<script type="text/javascript" src="Trait.js"></script>
+<script type="text/javascript" src="TraitDefn.js"></script>
+<script type="text/javascript" src="Universe.js"></script>
+<script type="text/javascript" src="UniverseDefn.js"></script>
+<script type="text/javascript" src="UniverseDefnVenueStructure.js"></script>
+<script type="text/javascript" src="UniverseDefnVenueStructureBranch.js"></script>
+<script type="text/javascript" src="Venue.js"></script>
+<script type="text/javascript" src="VenueDefn.js"></script>
+<script type="text/javascript" src="VisualOffset.js"></script>
+<script type="text/javascript" src="VisualSet.js"></script>
+<script type="text/javascript" src="XmlElement.js"></script>
+<script type="text/javascript" src="AnimationDefnSetFake.js"></script>
+<script type="text/javascript" src="DemoData.js"></script>
+
+<script type="text/javascript">
+
+	new Simulation().main();
+
+</script>
+
+</body>
+</html>
+
