@@ -126,7 +126,13 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			(
 				venueKnown.controlUpdate()
 			);
+			Globals.Instance.displayHelper.drawEntitiesForMap
+			(
+				this.ephemerals(), // hack
+				this.map
+			);
 		}
+		
 
 		for (var i = 0; i < this.defn.propertyNamesKnown.length; i++)
 		{
@@ -175,10 +181,6 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 				var entityDefnProperty = entityDefnProperties[c];
 				var entityDefnPropertyName = entityDefnProperty.name();
 				var entitiesWithProperty = this.entitiesByPropertyName[entityDefnPropertyName];
-if (entitiesWithProperty == null)
-{
-	var one = 1;
-}
 
 				entitiesWithProperty.splice
 				(
@@ -298,5 +300,12 @@ if (entitiesWithProperty == null)
 		}		
 
 		return this.control;
+	}
+	
+	// entities
+	
+	Venue.prototype.ephemerals = function()
+	{
+		return this.entitiesByPropertyName["Ephemeral"];
 	}
 }

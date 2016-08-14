@@ -55,6 +55,7 @@ function Font(charactersAvailable, characterSize, characterImages)
 				null, // sizeInPixels
 				2 // zIndex
 			),
+			new EphemeralDefn(100)
 		]
 
 		var ticksToLive = (isFloater == true ? 16 : null);
@@ -103,7 +104,7 @@ function Font(charactersAvailable, characterSize, characterImages)
 
 		var entityMessage = Entity.fromDefn
 		(
-			messageText,
+			Globals.Instance.idHelper.idNext(),
 			Globals.Instance.font.buildEntityDefnForText
 			(
 				messageIcon,

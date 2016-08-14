@@ -1,6 +1,11 @@
 
 function DisplayHelper()
-{}
+{
+		// helper variables;
+		this.cellPos = new Coords();
+		this.drawPos = new Coords();
+		this.entitiesSortedBottomToTop = [];
+}
 {
 	DisplayHelper.prototype.clear = function()
 	{
@@ -16,6 +21,33 @@ function DisplayHelper()
 	DisplayHelper.prototype.drawControl = function(controlToDraw)
 	{
 		controlToDraw.drawToGraphics(this.graphics);	
+	}
+	
+	DisplayHelper.prototype.drawEntitiesForMap = function(entities, map)
+	{
+		for (var i = 0; i < entities.length; i++)
+		{
+			var entity = entities[i];
+			this.drawEntityForMap(entity, map);
+		}
+	}
+	
+	DisplayHelper.prototype.drawEntityForMap = function(entity, map)
+	{
+		var visual = entity.drawableData.visual;
+		var drawPos = this.drawPos.overwriteWith
+		(
+			entity.loc.posInCells
+		).multiply
+		(
+			map.cellSizeInPixels
+		);
+		
+		visual.drawToGraphicsAtPos
+		(
+			this.graphics,
+			drawPos
+		);		
 	}
 
 	DisplayHelper.prototype.drawMap = function(map)
@@ -50,15 +82,35 @@ function DisplayHelper()
 				);	
 
 				var entitiesInCell = cell.entitiesPresent;
+				var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
+				entitiesSortedBottomToTop.length = 0;
+
 				for (var i = 0; i < entitiesInCell.length; i++)
 				{
-					var entity = entitiesInCell[i];
+					var entityToSort = entitiesInCell[i];
+					var entityToSortZIndex = entityToSort.defn().Drawable.zIndex;
+					var j;
+					for (j = 0; j < entitiesSortedBottomToTop.length; j++)
+					{
+						var entitySorted = entitiesSortedBottomToTop[j];
+						var entitySortedZIndex = entitySorted.defn().Drawable.zIndex;
+						if (entityToSortZIndex <= entitySortedZIndex)
+						{
+							break;
+						}
+					}
+					entitiesSortedBottomToTop.splice(j, 0, entityToSort);
+				}
+				
+				for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
+				{
+					var entity = entitiesSortedBottomToTop[i];
 					var visual = entity.drawableData.visual;
 					visual.drawToGraphicsAtPos
 					(
 						this.graphics,
 						drawPos
-					);
+					);		
 				}
 			}
 		}

@@ -1,9 +1,7 @@
-
 function RangeSet(ranges)
 {
 	this.ranges = ranges;
 }
-
 {
 	RangeSet.prototype.overlaps = function(other)
 	{
@@ -48,54 +46,40 @@ function RangeSet(ranges)
 
 	RangeSet.prototype.subtract = function(other)
 	{
-		for (var i = 0; i < this.ranges.length; i++)
+		var rangesCurrent = this.ranges;
+
+		var doAnyRangesOverlap = true;
+
+		while (doAnyRangesOverlap == true)
 		{
-			var rangeThis = this.ranges[i];
+			doAnyRangesOverlap = false;
 
-			for (var j = 0; j < other.ranges.length; j++)
+			for (var i = 0; i < rangesCurrent.length; i++)
 			{
-				var rangeOther = other.ranges[j];
-
-				if (rangeThis.overlaps(rangeOther) == true)
+				var rangeThis = rangesCurrent[i];
+	
+				for (var j = 0; j < other.ranges.length; j++)
 				{
-					if (rangeOther.min > rangeThis.min)
+					var rangeOther = other.ranges[j];
+	
+					if (rangeThis.overlaps(rangeOther) == true)
 					{
-						if (rangeOther.max < rangeThis.max)
+						doAnyRangesOverlap = true;
+						var rangesSubtracted = rangeThis.subtract
+						(
+							rangeOther
+						);
+						rangesCurrent.splice(i, 1);
+						for (var k = rangesSubtracted.length - 1; k >= 0; k--)
 						{
-							var rangeNew = new Range
-							(
-								rangeOther.max,
-								rangeThis.max
-							);
-
-							this.ranges.splice
-							(
-								i + 1, 0, rangeNew
-							);
-							i++;
+							rangesCurrent.splice(i, 0, rangesSubtracted[k]);
 						}
-
-						if (rangeThis.min < rangeOther.min)
-						{
-							rangeThis.max = rangeOther.min;
-						}
-						else
-						{
-							this.ranges.splice(i, 1);
-							i--;
-						}
-					}		
-					else if (rangeOther.max < rangeThis.max)
-					{
-						rangeThis.min = rangeOther.max;
-					}
-					else
-					{
-						this.ranges.splice(i, 1);
-						i--;
+						break;
 					}
 				}
 			}
-		}		
+		}
+
+		this.ranges = rangesCurrent;
 	}
 }

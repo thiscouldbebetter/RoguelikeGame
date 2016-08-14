@@ -2,6 +2,7 @@
 function Globals()
 {
 	this.htmlElementLibrary = new HTMLElementLibrary();
+	this.idHelper = new IDHelper();
 	this.randomizer = new RandomizerLCG
 	(
 	        1103515245, // multiplier
@@ -10,7 +11,6 @@ function Globals()
 	        0.12345 // firstRandom
 	);
 }
-
 {
 	Globals.prototype.initialize = function
 	(
