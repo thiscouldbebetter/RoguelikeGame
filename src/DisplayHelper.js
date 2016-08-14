@@ -52,8 +52,8 @@ function DisplayHelper()
 
 	DisplayHelper.prototype.drawMap = function(map)
 	{
-		var cellPos = new Coords(0, 0);
-		var drawPos = new Coords(0, 0);
+		var cellPos = this.cellPos;
+		var drawPos = this.drawPos;
 		for (var y = 0; y < map.sizeInCells.y; y++)
 		{
 			cellPos.y = y;
@@ -62,59 +62,86 @@ function DisplayHelper()
 			{
 				cellPos.x = x;
 
-				var cell = map.cellAtPos(cellPos);
-				var cellTerrain = cell.terrain;
-				var terrainImage = cellTerrain.image;
-
-				drawPos.overwriteWith
+				this.drawMapCellAtPos
 				(
-					cellPos
-				).multiply
-				(
-					map.cellSizeInPixels
+					map,
+					cellPos,
+					false // drawMovers
 				);
-
-				this.graphics.drawImage
-				(
-					terrainImage.systemImage,
-					drawPos.x,
-					drawPos.y					
-				);	
-
-				var entitiesInCell = cell.entitiesPresent;
-				var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
-				entitiesSortedBottomToTop.length = 0;
-
-				for (var i = 0; i < entitiesInCell.length; i++)
-				{
-					var entityToSort = entitiesInCell[i];
-					var entityToSortZIndex = entityToSort.defn().Drawable.zIndex;
-					var j;
-					for (j = 0; j < entitiesSortedBottomToTop.length; j++)
-					{
-						var entitySorted = entitiesSortedBottomToTop[j];
-						var entitySortedZIndex = entitySorted.defn().Drawable.zIndex;
-						if (entityToSortZIndex <= entitySortedZIndex)
-						{
-							break;
-						}
-					}
-					entitiesSortedBottomToTop.splice(j, 0, entityToSort);
-				}
 				
-				for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
+			} // end for x
+			
+		} // end for y
+		
+		var fieldOfView = Globals.Instance.sightHelper.fieldOfView;
+		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
+		var cellPositionsVisible = fieldOfView.cellPositionsVisible; 
+		for (var i = 0; i < numberOfCellsVisible; i++)
+		{
+			var cellPos = cellPositionsVisible[i];
+			this.drawMapCellAtPos(map, cellPos, true);
+		}
+	} 
+	
+	DisplayHelper.prototype.drawMapCellAtPos = function(map, cellPos, drawMovers)
+	{
+		var cell = map.cellAtPos(cellPos);
+		var cellTerrain = cell.terrain;
+		var terrainImage = cellTerrain.image;
+		var drawPos = this.drawPos;
+
+		drawPos.overwriteWith
+		(
+			cellPos
+		).multiply
+		(
+			map.cellSizeInPixels
+		);
+
+		this.graphics.drawImage
+		(
+			terrainImage.systemImage,
+			drawPos.x,
+			drawPos.y					
+		);	
+
+		var entitiesInCell = cell.entitiesPresent;
+		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
+		entitiesSortedBottomToTop.length = 0;
+
+		for (var i = 0; i < entitiesInCell.length; i++)
+		{
+			var entityToSort = entitiesInCell[i];
+			var entityToSortZIndex = entityToSort.defn().Drawable.zIndex;
+			var j;
+			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
+			{
+				var entitySorted = entitiesSortedBottomToTop[j];
+				var entitySortedZIndex = entitySorted.defn().Drawable.zIndex;
+				if (entityToSortZIndex <= entitySortedZIndex)
 				{
-					var entity = entitiesSortedBottomToTop[i];
-					var visual = entity.drawableData.visual;
-					visual.drawToGraphicsAtPos
-					(
-						this.graphics,
-						drawPos
-					);		
+					break;
 				}
 			}
+			entitiesSortedBottomToTop.splice(j, 0, entityToSort);
 		}
-	}
+				
+		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
+		{
+			var entity = entitiesSortedBottomToTop[i];
+			if (entity.moverData == null || drawMovers == true)
+			{ 
+				var visual = entity.drawableData.visual;
+				visual.drawToGraphicsAtPos
+				(
+					this.graphics,
+					drawPos
+				);
+			}
+					
+		} // end for entitiesSortedBottomToTop
+		
+	} 
 
 	DisplayHelper.prototype.drawVenue = function(venue)
 	{
