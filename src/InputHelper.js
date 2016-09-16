@@ -4,7 +4,7 @@ function InputHelper()
 	this.mousePos = new Coords(0, 0);
 
 	this.bindings = [];
-	this.keyCodeToBindingLookup = [];
+	this.systemKeyToBindingLookup = [];
 
 	this.actionsBeingPerformed = [];
 }
@@ -21,8 +21,8 @@ function InputHelper()
 
 	InputHelper.prototype.bindingsRegister = function(bindingsToRegister)
 	{
-		this.bindings = new Array();
-		this.keyCodeToBindingLookup = new Array();
+		this.bindings = [];
+		this.systemKeyToBindingLookup = [];
 
 		var numberOfBindings = bindingsToRegister.length;
 		for (var b = 0; b < numberOfBindings; b++)
@@ -30,7 +30,7 @@ function InputHelper()
 			var binding = bindingsToRegister[b];
 
 			this.bindings.push(binding);
-			this.keyCodeToBindingLookup[binding.key.systemKeyCode] = binding;
+			this.systemKeyToBindingLookup[binding.key.systemKey] = binding;
 		}
 	}
 
@@ -53,8 +53,8 @@ function InputHelper()
 
 	InputHelper.prototype.processKeyDownEvent = function(event)
 	{
-		var keycode = "_" + event.which;
-		var binding = this.keyCodeToBindingLookup[keycode];
+		var systemKey = event.key;
+		var binding = this.systemKeyToBindingLookup[systemKey];
 		if (binding != null)
 		{
 			var action = binding.action();
@@ -71,7 +71,8 @@ function InputHelper()
 
 	InputHelper.prototype.processKeyUpEvent = function(event)
 	{
-		var binding = this.keyCodeToBindingLookup["_" + event.which];
+		var systemKey = event.key;
+		var binding = this.systemKeyToBindingLookup[systemKey];
 
 		if (binding != null)
 		{
@@ -95,8 +96,8 @@ function InputHelper()
 	{
 		this.mousePos.overwriteWithDimensions(event.x, event.y);
 
-		var keycode = "Mouse";
-		var binding = this.keyCodeToBindingLookup[keycode];
+		var systemKey = "Mouse";
+		var binding = this.systemKeyToBindingLookup[systemKey];
 		if (binding != null)
 		{
 			var action = binding.action();

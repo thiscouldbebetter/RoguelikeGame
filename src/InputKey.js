@@ -1,8 +1,8 @@
 
-function InputKey(name, systemKeyCode)
+function InputKey(name, systemKey)
 {
 	this.name = name;
-	this.systemKeyCode = systemKeyCode;
+	this.systemKey = systemKey;
 }
 
 {
@@ -14,44 +14,56 @@ function InputKey(name, systemKeyCode)
 
 		this._All = 
 		[
-			new InputKey("A", "_65"),
-			new InputKey("B", "_66"),
-			new InputKey("C", "_67"),
-			new InputKey("D", "_68"),
-			new InputKey("E", "_69"),
-			new InputKey("F", "_70"),
-			new InputKey("G", "_71"),
-			new InputKey("H", "_72"),
-			new InputKey("I", "_73"),
-			new InputKey("J", "_74"),
-			new InputKey("K", "_75"),
-			new InputKey("K", "_76"),
-			new InputKey("M", "_77"),
-			new InputKey("N", "_78"),
-			new InputKey("O", "_79"),
-			new InputKey("P", "_80"),
-			new InputKey("Q", "_81"),
-			new InputKey("R", "_82"),
-			new InputKey("S", "_83"),
-			new InputKey("T", "_84"),
-			new InputKey("U", "_85"),
-			new InputKey("V", "_86"),
-			new InputKey("W", "_87"),
-			new InputKey("X", "_88"),
-			new InputKey("Y", "_89"),
-			new InputKey("Z", "_90"),
+			new InputKey("A", "a"),
+			new InputKey("B", "b"),
+			new InputKey("C", "c"),
+			new InputKey("D", "d"),
+			new InputKey("E", "e"),
+			new InputKey("F", "f"),
+			new InputKey("G", "g"),
+			new InputKey("H", "h"),
+			new InputKey("I", "i"),
+			new InputKey("J", "j"),
+			new InputKey("K", "k"),
+			new InputKey("L", "l"),
+			new InputKey("M", "m"),
+			new InputKey("N", "n"),
+			new InputKey("O", "o"),
+			new InputKey("P", "p"),
+			new InputKey("Q", "q"),
+			new InputKey("R", "r"),
+			new InputKey("S", "s"),
+			new InputKey("T", "t"),
+			new InputKey("U", "u"),
+			new InputKey("V", "v"),
+			new InputKey("W", "w"),
+			new InputKey("X", "x"),
+			new InputKey("Y", "y"),
+			new InputKey("Z", "z"),
+			
+			new InputKey("Num0", "0"),
+			new InputKey("Num1", "1"),
+			new InputKey("Num2", "2"),
+			new InputKey("Num3", "3"),
+			new InputKey("Num4", "4"),
+			new InputKey("Num5", "5"),
+			new InputKey("Num6", "6"),
+			new InputKey("Num7", "7"),
+			new InputKey("Num8", "8"),
+			new InputKey("Num9", "9"),
 
-			new InputKey("BracketClose", "_221"),
-			new InputKey("BracketOpen", "_219"),
-			new InputKey("Period", "_190"),
+
+			new InputKey("BracketClose", "]"),
+			new InputKey("BracketOpen", "["),
+			new InputKey("Period", "."),
 		];
 
-		this.systemKeyCodeToKeyLookup = [];
+		this.systemKeyToKeyLookup = [];
 		for (var i = 0; i < this._All.length; i++)
 		{
 			var key = this._All[i];
 			this[key.name] = key;
-			this.systemKeyCodeToKeyLookup[key.systemKeyCode] = key;
+			this.systemKeyToKeyLookup[key.systemKey] = key;
 		}
 	}
 

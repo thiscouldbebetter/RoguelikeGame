@@ -13,7 +13,7 @@ function DemoData()
 			var loc = actor.loc;
 			var venue = loc.venue();
 			var posInCells = actor.loc.posInCells;
-			var usablesPresentInCell = venue.entitiesWithPropertyPresentAtCellPos
+			var usablesPresentInCell = venue.entitiesWithPropertyNamePresentAtCellPos
 			(
 				"Portal",
 				posInCells
@@ -688,13 +688,6 @@ function DemoData()
 	{
 		var animation = AnimationDefnSetFake.buildFromImage;
 
-		var emplacements = 
-		[
-			"Collidable",
-			"Drawable", 
-			"Emplacement",
-		];
-
 		var sizeInPixels = images["Floor"].sizeInPixels;
 
 		var entityDefns = 
@@ -743,6 +736,16 @@ function DemoData()
 
 			new EntityDefn
 			(
+				"StairsExit",
+				[
+					CollidableDefn.Instances.Clear,
+					new DrawableDefn(animation(images["StairsUp"]).toRun(), sizeInPixels),
+					new EmplacementDefn(),
+				]
+			),
+			
+			new EntityDefn
+			(
 				"StairsUp",
 				[
 					CollidableDefn.Instances.Clear,
@@ -751,6 +754,7 @@ function DemoData()
 					new PortalDefn(),
 				]
 			),
+
 		];
 
 		var returnValue = new EntityDefnGroup
@@ -2241,7 +2245,7 @@ function DemoData()
 				new ContainerDefn(),
 				drawableDefnPlayer,
 				new EquippableDefn(equipmentSocketDefnSetBiped),
-				new KillableDefn(16, null),
+				new KillableDefn(160, null),
 				moverDefnPlayer,
 				new PlayerDefn(),
 			]
@@ -3265,19 +3269,20 @@ function DemoData()
 	{
 		var inputBindings = 
 		[
-			new InputBinding(InputKey.Instances.A, actions["Move West"].name),
-			new InputBinding(InputKey.Instances.C, actions["Move Southeast"].name),
-			new InputBinding(InputKey.Instances.D, actions["Move East"].name),
-			new InputBinding(InputKey.Instances.E, actions["Move Northeast"].name),
 			new InputBinding(InputKey.Instances.F, actions["Use Selected Item"].name),
 			new InputBinding(InputKey.Instances.G, actions["Pick Up Item"].name),
-			new InputBinding(InputKey.Instances.Q, actions["Move Northwest"].name),
 			new InputBinding(InputKey.Instances.R, actions["Drop Selected Item"].name),
 			new InputBinding(InputKey.Instances.T, actions["Target Selected Item"].name),
 			new InputBinding(InputKey.Instances.U, actions["Use Emplacement"].name),
-			new InputBinding(InputKey.Instances.W, actions["Move North"].name),
-			new InputBinding(InputKey.Instances.X, actions["Move South"].name),
-			new InputBinding(InputKey.Instances.Z, actions["Move Southwest"].name),
+
+			new InputBinding(InputKey.Instances.Num1, actions["Move Southwest"].name),
+			new InputBinding(InputKey.Instances.Num2, actions["Move South"].name),
+			new InputBinding(InputKey.Instances.Num3, actions["Move Southeast"].name),
+			new InputBinding(InputKey.Instances.Num4, actions["Move West"].name),
+			new InputBinding(InputKey.Instances.Num6, actions["Move East"].name),
+			new InputBinding(InputKey.Instances.Num7, actions["Move Northwest"].name),
+			new InputBinding(InputKey.Instances.Num8, actions["Move North"].name),
+			new InputBinding(InputKey.Instances.Num9, actions["Move Northeast"].name),
 
 			new InputBinding(InputKey.Instances.BracketClose, actions["Select Next Item"].name),
 			new InputBinding(InputKey.Instances.BracketOpen, actions["Select Previous Item"].name),
@@ -3304,6 +3309,7 @@ function DemoData()
 			"Killable",
 			"Mover",
 			"Player",
+			"Portal",
 		];
 
 		var returnValues =
@@ -3438,7 +3444,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.venueGenerateDungeon = function(universeDefn, venueDefn, venueIndex, venueDepth)
+	DemoData.venueGenerateDungeon = function(universeDefn, venueDefn, venueIndex, numberOfVenues, venueDepth)
 	{
 		var entityDefnGroups = universeDefn.entityDefnGroups;
 		var entityDefns = universeDefn.entityDefns;
@@ -3755,10 +3761,23 @@ function DemoData()
 			mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
 		}
 
-		var entities =
-		[
-			// stairs
-			new Entity
+		var entities = [];
+		
+		if (venueIndex == 0)
+		{
+			var stairsExit = new Entity
+			(
+				"StairsExit", 
+				entityDefns["StairsExit"].name, 
+				rooms[0].bounds.center.clone().floor(),
+				[] // propertyValues 
+			);
+				
+			entities.push(stairsExit);
+		}
+		else
+		{
+			var stairsUp = new Entity
 			(
 				"StairsUp", 
 				entityDefns["StairsUp"].name, 
@@ -3771,9 +3790,24 @@ function DemoData()
 						"StairsDown"
 					),
 				]
-			),
-
-			new Entity
+			);
+				
+			entities.push(stairsUp);
+		}
+		
+		entities.push
+		(
+			Entity.fromDefn
+			(
+				"Mover Generator",
+				MoverGenerator.EntityDefn,
+				null // pos
+			)
+		);
+		
+		if (venueIndex < numberOfVenues - 1)
+		{
+			var stairsDown = new Entity
 			(
 				"StairsDown", 
 				entityDefns["StairsDown"].name, 
@@ -3786,17 +3820,10 @@ function DemoData()
 						"StairsUp"
 					),
 				]
-			),
-
-			// movers
-			// new Entity("Enemy 0", entityDefns["Giant Ant"], rooms[1].bounds.center.clone().floor()),
-			Entity.fromDefn
-			(
-				"Mover Generator",
-				MoverGenerator.EntityDefn,
-				null // pos
-			),
-		];
+			);
+			
+			entities.push(stairsDown);
+		}
 
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{

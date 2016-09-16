@@ -48,6 +48,7 @@ function UniverseDefnVenueStructureBranch
 				universeDefn, // universeDefn
 				venueDefn, 
 				venuesSoFar.length, // venueIndex
+				numberOfVenuesInBranch,
 				venueDepth 
 			);
 
