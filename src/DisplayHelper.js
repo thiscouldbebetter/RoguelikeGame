@@ -145,8 +145,13 @@ function DisplayHelper()
 
 	DisplayHelper.prototype.drawVenue = function(venue)
 	{
-		var map = venue.map;
-		this.drawMap(map);
+		var turnsSoFar = Globals.Instance.universe.turnsSoFar;
+		if (venue.turnLastDrawn != turnsSoFar)
+		{
+			venue.turnLastDrawn = turnsSoFar;
+			var map = venue.map;
+			this.drawMap(map);
+		}
 	}
 
 	DisplayHelper.prototype.initialize = function(viewSizeInPixels)
