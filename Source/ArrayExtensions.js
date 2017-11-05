@@ -12,7 +12,6 @@ function ArrayExtensions()
 		}
 	}
 
-	
 	Array.prototype.getPropertyWithNameFromEachItem = function(propertyName)
 	{
 		var returnValues = [];

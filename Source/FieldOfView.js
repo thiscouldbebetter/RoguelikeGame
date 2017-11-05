@@ -93,8 +93,8 @@ function FieldOfView()
 					{
 						var cellSpan = new Range
 						(
-							NumberHelper.atan3(vertexPositionsRelative[0]),
-							NumberHelper.atan3(vertexPositionsRelative[1])
+							this.atan3(vertexPositionsRelative[0]),
+							this.atan3(vertexPositionsRelative[1])
 						);
 
 						var cellSpanAsSet = new RangeSet( [ cellSpan ] );
@@ -148,5 +148,23 @@ function FieldOfView()
 				}
 			}
 		}
+	}
+
+	// helper methods
+
+	FieldOfView.RadiansPerTurn = Math.PI * 2;
+
+	FieldOfView.prototype.atan3 = function(coordsToFind)
+	{
+		var returnValue = Math.atan2(coordsToFind.y, coordsToFind.x);
+
+		if (returnValue < 0)
+		{
+			returnValue += FieldOfView.RadiansPerTurn;
+		}
+
+		returnValue /= FieldOfView.RadiansPerTurn;
+
+		return returnValue;
 	}
 }

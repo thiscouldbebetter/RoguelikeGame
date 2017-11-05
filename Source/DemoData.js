@@ -673,13 +673,13 @@ function DemoData()
 
 		var cameras = new EntityDefnGroup("Cameras", 0, [ Camera.EntityDefn ]);
 
-		var returnValues = ArrayHelper.concatenateArrays
-		([
+		var returnValues =
+		[
 			[ cameras ],
 			[ emplacements ],
 			items,
 			movers,
-		]);
+		].elementArraysConcatenate();
 
 		return returnValues;
 	}
@@ -2065,13 +2065,11 @@ function DemoData()
 			new EntityDefn
 			(
 				"Coins", 
-				ArrayHelper.concatenateArrays
-				([
+				[
 					itemPropertiesStandard,
 					new DrawableDefn(animation(images["Coins"]).toRun(), sizeInPixels),
-				])
+				].elementArraysConcatenate()
 			)
-
 		);
 
 		entityDefnSets["Group_Valuables"] = entityDefnSetValuables;

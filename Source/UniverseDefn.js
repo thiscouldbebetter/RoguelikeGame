@@ -20,15 +20,12 @@ function UniverseDefn
 	this.venueStructure = venueStructure;
 	this.buildVenues = buildVenues;
 
-	var entityDefnSets = this.entityDefnGroups.getPropertyWithNameFromEachItem
+	var entityDefnSets = this.entityDefnGroups.elementProperties
 	(
 		"entityDefns"	
 	);
 
-	this.entityDefns = ArrayHelper.concatenateArrays
-	(
-		entityDefnSets
-	);
+	this.entityDefns = entityDefnSets.elementArraysConcatenate();
 
 	this.actions.addLookups("name");
 	this.activityDefns.addLookups("name");
