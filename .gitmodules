@@ -1,0 +1,3 @@
+[submodule "Source/_Framework"]
+	path = Source/_Framework
+	url = https://github.com/thiscouldbebetter/GameFramework
