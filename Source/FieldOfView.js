@@ -63,9 +63,9 @@ function FieldOfView()
 			new Coords(0, 1),
 		];
 
-		var cellPos = new Coords(0, 0);
-		var cellPosRelative = new Coords(0, 0);
-		var vertexPositionsRelative = [ new Coords(0, 0), new Coords(0, 0) ];
+		var cellPos = new Coords(0, 0, 0);
+		var cellPosRelative = new Coords(0, 0, 0);
+		var vertexPositionsRelative = [ new Coords(0, 0, 0), new Coords(0, 0, 0) ];
 
 		this.cellPositionsVisible[0] = this.eyePos.clone();
 		this.numberOfCellsVisible = 1;
@@ -74,7 +74,7 @@ function FieldOfView()
 
 		for (var r = 1; r <= this.distanceFromEyeMax; r++)
 		{
-			cellPosRelative.overwriteWithDimensions(r, 0);
+			cellPosRelative.overwriteWithDimensions(r, 0, 0);
 
 			vertexPositionsRelative[0].overwriteWith(new Coords(r - .5, -.5));			
 			vertexPositionsRelative[1].overwriteWith(new Coords(r - .5, .5));
@@ -89,7 +89,7 @@ function FieldOfView()
 				{
 					cellPos.overwriteWith(this.eyePos).add(cellPosRelative);
 
-					if (cellPos.isWithinRange(map.sizeInCellsMinusOnes) == true)
+					if (cellPos.isInRangeMax(map.sizeInCellsMinusOnes) == true)
 					{
 						var cellSpan = new Range
 						(

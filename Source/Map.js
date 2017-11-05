@@ -8,12 +8,13 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	this.sizeInCells = new Coords
 	(
 		cellsAsStrings[0].length, 
-		cellsAsStrings.length
+		cellsAsStrings.length, 
+		1
 	);
 
 	this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract
 	(
-		new Coords(1, 1)
+		new Coords(1, 1, 1)
 	);
 
 	this.sizeInPixels = this.sizeInCells.clone().multiply(this.cellSizeInPixels);
@@ -22,7 +23,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	this.cells = [];
 
-	var cellPos = new Coords(0, 0);
+	var cellPos = new Coords(0, 0, 0);
 	for (var y = 0; y < this.sizeInCells.y; y++)
 	{
 		cellPos.y = y;
@@ -86,7 +87,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	{
 		var returnValue = null;
 
-		if (cellPos.isWithinRange(this.sizeInCellsMinusOnes) == true)
+		if (cellPos.isInRangeMax(this.sizeInCellsMinusOnes) == true)
 		{
 			var cellIndex = this.indexOfCellAtPos(cellPos);
 

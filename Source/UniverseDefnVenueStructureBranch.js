@@ -68,10 +68,10 @@ function UniverseDefnVenueStructureBranch
 			(
 				"StairsUp", 
 				universeDefn.entityDefns["StairsUp"].name, 
-				venueFirstInBranch.map.sizeInCells.clone().subtract
+				new Coords().randomize().multiply
 				(
-					Coords.Instances.Ones
-				).random(),
+					venueFirstInBranch.map.sizeInCells
+				).floor(),
 				// propertyValues
 				[
 					new PortalData

@@ -37,7 +37,7 @@ function MoverDefn
 	{
 		var entityLoc = entity.loc;
 
-		entityLoc.posInCells.trimToRange
+		entityLoc.posInCells.trimToRangeMax
 		(
 			venue.map.sizeInCellsMinusOnes
 		);

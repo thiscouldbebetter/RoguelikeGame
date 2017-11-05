@@ -32,7 +32,8 @@ function CollidableDefn(blocksMovement, blocksView)
 		);
 
 		var map = venue.map;
-		var mapCellOccupied = map.cellAtPos(entity.loc.posInCells);
+		var entityPosInCells = entity.loc.posInCells;
+		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
 		collidableData.mapCellOccupied = mapCellOccupied;
 

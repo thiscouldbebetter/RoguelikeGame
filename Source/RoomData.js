@@ -1,6 +1,6 @@
 
-function RoomData(pos, size)
+function RoomData(bounds)
 {
-	this.bounds = new Bounds(pos, size);
+	this.bounds = bounds;
 	this.roomsConnected = [];
 }

@@ -306,7 +306,7 @@ function DemoData()
 
 		// directions
 
-		var directions = new Coords_Instances()._DirectionsByHeading;
+		var directions = new Direction_Instances()._ByHeading;
 
 		// actions
 
@@ -479,7 +479,7 @@ function DemoData()
 						var entityDefnIndex = Math.floor(Math.random() * numberOfEntityDefns);
 						var entityDefnForAgentToSpawn = entityDefnsForAgentsOfDifficulty[entityDefnIndex];
 
-						var posToSpawnAt = venue.map.sizeInCells.clone().random();
+						var posToSpawnAt = new Coords().randomize().multiply(venue.map.sizeInCells).floor();
 
 						var entityForAgent = new Entity
 						(
@@ -1541,7 +1541,7 @@ function DemoData()
 					while (teleportPos == null)
 					{
 						var map = loc.venue().map;
-						teleportPos = map.sizeInCells.clone().random();
+						teleportPos = new Coords().randomize().multiply(map.sizeInCells).floor();
 
 						var cellToTeleportTo = map.cellAtPos(teleportPos);
 						if (cellToTeleportTo.terrain.costToTraverse > 1)
@@ -3472,8 +3472,8 @@ function DemoData()
 
 		var numberOfRooms = 12;
 
-		var roomSizeMin = new Coords(4, 4);
-		var roomSizeMax = new Coords(13, 13);
+		var roomSizeMin = new Coords(4, 4, 1);
+		var roomSizeMax = new Coords(13, 13, 1);
 		var roomSizeRange = roomSizeMax.clone().subtract(roomSizeMin);
 
 		terrainCodeChar = terrains.Floor.codeChar;
@@ -3486,7 +3486,10 @@ function DemoData()
 
 			while (doesRoomOverlapAnother == true)
 			{	
-				var roomSize = roomSizeRange.clone().random().add
+				var roomSize = new Coords().randomize().multiply
+				(
+					roomSizeRange
+				).floor().add
 				(
 					roomSizeMin
 				);
@@ -3501,10 +3504,13 @@ function DemoData()
 					roomSize
 				).subtract
 				(
-					Coords.Instances.Twos
+					Coords.Instances.TwoTwoZero
 				);
 
-				var roomPos = roomPosRange.clone().random().add
+				var roomPos = new Coords().randomize().multiply
+				(
+					roomPosRange
+				).floor().add
 				(
 					Coords.Instances.Ones
 				);
@@ -3526,7 +3532,7 @@ function DemoData()
 		for (var r = 0; r < numberOfRooms; r++)
 		{
 			var roomBounds = roomBoundsSetSoFar[r];
-			var room = new RoomData(roomBounds.pos, roomBounds.size);
+			var room = new RoomData(roomBounds);
 			rooms.push(room);
 		}
 
@@ -3605,7 +3611,7 @@ function DemoData()
 					var distance = roomToConnectCenter.clone().subtract
 					(
 						roomConnectedCenter
-					).absolute().sumOfXAndY();
+					).absolute().clearZ().sumOfDimensions();
 
 					if 
 					(
@@ -3632,24 +3638,30 @@ function DemoData()
 
 			var fromPos = roomConnectedBounds.pos.clone().add
 			(
-				roomConnectedBounds.size.clone().subtract
+				new Coords().randomize().multiply
 				(
-					Coords.Instances.Twos
-				).random()
+					roomConnectedBounds.size.clone().subtract
+					(
+						Coords.Instances.TwoTwoZero
+					)
+				).floor()
 			).add
 			(
-				Coords.Instances.Ones
+				Coords.Instances.OneOneZero
 			);
 
 			var toPos = roomToConnectBounds.pos.clone().add
 			(
-				roomToConnectBounds.size.clone().subtract
+				new Coords().randomize().multiply
 				(
-					Coords.Instances.Twos
-				).random()
+					roomToConnectBounds.size.clone().subtract
+					(
+						Coords.Instances.TwoTwoZero
+					)
+				).floor()
 			).add
 			(
-				Coords.Instances.Ones
+				Coords.Instances.OneOneZero
 			);
 
 			var displacementToRoomToConnect = toPos.clone().subtract
@@ -3670,11 +3682,12 @@ function DemoData()
 				dimensionIndexToClear = 1;
 			}
 
-			directionToRoomToConnect.dimension_Set
+			directionToRoomToConnect.dimension
 			(
 				dimensionIndexToClear,
 				0 // valueToSet
-			).directions();
+			);
+			directionToRoomToConnect.directions();
 
 			if (directionToRoomToConnect.x > 0)
 			{	
@@ -3734,11 +3747,12 @@ function DemoData()
 				directionToRoomToConnect.overwriteWith
 				(
 					displacementToRoomToConnect
-				).dimension_Set
+				).dimension
 				(
 					directionToRoomToConnect.dimensionIndexOfSmallest(0),
 					0 // valueToSet
-				).directions();
+				)
+				directionToRoomToConnect.directions();
 
 				cellPos.add(directionToRoomToConnect);
 			}
@@ -3905,15 +3919,18 @@ function DemoData()
 						entityDefnIndex
 					];
 
-					var pos = room.bounds.size.clone().subtract
+					var pos = new Coords().randomize().multiply
 					(
-						Coords.Instances.Twos
-					).random().add
+						room.bounds.size.clone().subtract
+						(
+							Coords.Instances.TwoTwoZero
+						)
+					).floor().add
 					(
 						room.bounds.pos
 					).add
 					(
-						Coords.Instances.Ones
+						Coords.Instances.OneOneZero
 					)
 
 					var entityForItem = new Entity
@@ -3932,7 +3949,7 @@ function DemoData()
 		(
 			"Venue" + venueIndex + "Map",
 			venueDefn.terrains,
-			new Coords(16, 16), // hack - cellSizeInPixels
+			new Coords(16, 16, 1), // hack - cellSizeInPixels
 			mapCellsAsStrings
 		);
 
@@ -3941,7 +3958,7 @@ function DemoData()
 			"Venue" + venueIndex,
 			venueDepth,
 			venueDefn,
-			new Coords(480, 480), // sizeInPixels
+			new Coords(480, 480, 1), // sizeInPixels
 			map,
 			entities
 		);

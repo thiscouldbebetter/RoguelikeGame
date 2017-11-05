@@ -10,7 +10,7 @@ function Location(venueName, posInCells)
 	Location.prototype.overwriteWith = function(other)
 	{
 		this.venueName = other.venueName;
-		this.posInCells = other.posInCells.clone();
+		this.posInCells.overwriteWith(other.posInCells);
 		this.heading = other.heading;
 	}
 

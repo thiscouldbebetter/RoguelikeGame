@@ -4,6 +4,8 @@ function Path(map, startPos, goalPos)
 	this.map = map;
 	this.startPos = startPos;
 	this.goalPos = goalPos;
+
+	this.tempPos = new Coords();
 }
 
 {
@@ -17,7 +19,7 @@ function Path(map, startPos, goalPos)
 		var openLookup = [];
 		var closedLookup = [];
 
-		var tempPos = Coords.Instances.Temp;
+		var tempPos = this.tempPos;
 
 		var startNode = new PathNode
 		(
@@ -29,7 +31,7 @@ function Path(map, startPos, goalPos)
 			).subtract
 			(
 				startPos
-			).absolute().sumOfXAndY(),
+			).absolute().clearZ().sumOfDimensions(),
 			null
 		);
 
@@ -116,20 +118,20 @@ function Path(map, startPos, goalPos)
 		var neighborPositions = [];
 
 		var mapSizeInCellsMinusOnes = map.sizeInCellsMinusOnes;
-		var directions = Coords.Instances._DirectionsByHeading;
+		var directions = Direction.Instances._ByHeading;
 
 		for (var i = 0; i < directions.length; i++)
 		{
 			var direction = directions[i];
 			neighborPos.overwriteWith(originalPos).add(direction);
 
-			if (neighborPos.isWithinRange(mapSizeInCellsMinusOnes) == true)
+			if (neighborPos.isInRangeMax(mapSizeInCellsMinusOnes) == true)
 			{
 				neighborPositions.push(neighborPos.clone());
 			}
 		}
 
-		var tempPos = Coords.Instances.Temp;
+		var tempPos = this.tempPos;
 
 		for (var i = 0; i < neighborPositions.length; i++)
 		{
@@ -158,7 +160,7 @@ function Path(map, startPos, goalPos)
 				).subtract
 				(
 					neighborPos
-				).absolute().sumOfXAndY(),
+				).absolute().clearZ().sumOfDimensions(),
 				node
 			);
 
