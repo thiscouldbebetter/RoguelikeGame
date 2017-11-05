@@ -3,7 +3,7 @@ function Simulation()
 {
 	Simulation.prototype.main = function()
 	{
-		var imageTilesPath = "nethack-tiles-vanilla.png";
+		var imageTilesPath = "../Media/nethack-tiles-vanilla.png";
 
 		var itemTypeImage = MediaLoaderItemType.Instances.Image;
 
