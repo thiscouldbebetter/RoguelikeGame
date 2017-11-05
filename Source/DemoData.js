@@ -595,23 +595,28 @@ function DemoData()
 			// perform 
 			function(actor, activity)
 			{
+throw "todo"
 				var inputHelper = Globals.Instance.inputHelper;
-				var actionsFromInput = inputHelper.actionsBeingPerformed;
-				var actionsFromActor = actor.actorData.actions; 
+				var inputToActionMappings = []; // todo
+				var inputsActive = inputHelper.inputsActive;
+				var actionsFromActor = actor.actorData.actions;
 
-				for (var a = 0; a < actionsFromInput.length; a++)
+				for (var i = 0; i < inputsActive.length; i++)
 				{
-					var action = actionsFromInput[a];
-					var ticksToHold = 
-					(
-						action.ticksToHold == null 
-						? action.ticksSoFar // hold forever
-						: action.ticksToHold
-					);
-
-					if (action.ticksSoFar <= ticksToHold)
+					var input = inputsActive[i];
+					var inputMapping = inputToActionMappings[i];
+					if (inputMapping != null)
 					{
-						actionsFromActor.push(action);
+						var actionName = inputMapping.actionName;
+						var ticksToHold = 
+						(
+							action.ticksToHold == null ? action.ticksSoFar : action.ticksToHold
+						);
+
+						if (action.ticksSoFar <= ticksToHold)
+						{
+							actionsFromActor.push(action);
+						}
 					}
 				}	
 			}
@@ -3265,27 +3270,26 @@ function DemoData()
 
 	DemoData.buildVenueDefns = function(images, actions)
 	{
-		var inputBindings = 
+		var inputMappings = 
 		[
-			new InputBinding(InputKey.Instances.F, actions["Use Selected Item"].name),
-			new InputBinding(InputKey.Instances.G, actions["Pick Up Item"].name),
-			new InputBinding(InputKey.Instances.R, actions["Drop Selected Item"].name),
-			new InputBinding(InputKey.Instances.T, actions["Target Selected Item"].name),
-			new InputBinding(InputKey.Instances.U, actions["Use Emplacement"].name),
+			new InputToActionMapping("f", actions["Use Selected Item"].name),
+			new InputToActionMapping("g", actions["Pick Up Item"].name),
+			new InputToActionMapping("r", actions["Drop Selected Item"].name),
+			new InputToActionMapping("t", actions["Target Selected Item"].name),
+			new InputToActionMapping("u", actions["Use Emplacement"].name),
 
-			new InputBinding(InputKey.Instances.Num1, actions["Move Southwest"].name),
-			new InputBinding(InputKey.Instances.Num2, actions["Move South"].name),
-			new InputBinding(InputKey.Instances.Num3, actions["Move Southeast"].name),
-			new InputBinding(InputKey.Instances.Num4, actions["Move West"].name),
-			new InputBinding(InputKey.Instances.Num6, actions["Move East"].name),
-			new InputBinding(InputKey.Instances.Num7, actions["Move Northwest"].name),
-			new InputBinding(InputKey.Instances.Num8, actions["Move North"].name),
-			new InputBinding(InputKey.Instances.Num9, actions["Move Northeast"].name),
+			new InputToActionMapping("_1", actions["Move Southwest"].name),
+			new InputToActionMapping("_2", actions["Move South"].name),
+			new InputToActionMapping("_3", actions["Move Southeast"].name),
+			new InputToActionMapping("_4", actions["Move West"].name),
+			new InputToActionMapping("_6", actions["Move East"].name),
+			new InputToActionMapping("_7", actions["Move Northwest"].name),
+			new InputToActionMapping("_8", actions["Move North"].name),
+			new InputToActionMapping("_9", actions["Move Northeast"].name),
 
-			new InputBinding(InputKey.Instances.BracketClose, actions["Select Next Item"].name),
-			new InputBinding(InputKey.Instances.BracketOpen, actions["Select Previous Item"].name),
-			new InputBinding(InputKey.Instances.Period, actions["Wait"].name),
-
+			new InputToActionMapping("]", actions["Select Next Item"].name),
+			new InputToActionMapping("[", actions["Select Previous Item"].name),
+			new InputToActionMapping(".", actions["Wait"].name),
 		];
 
 		var mapTerrainsDungeon = DemoData.buildMapTerrainsDungeon(images);
@@ -3317,7 +3321,7 @@ function DemoData()
 				"Dungeon",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateDungeon
 			),
 
@@ -3326,7 +3330,7 @@ function DemoData()
 				"Fortress",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateFortress
 			),
 
@@ -3335,7 +3339,7 @@ function DemoData()
 				"Hades",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsHades(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateHades
 			),
 
@@ -3344,7 +3348,7 @@ function DemoData()
 				"Mines",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsMines(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateMines
 			),
 
@@ -3353,7 +3357,7 @@ function DemoData()
 				"MinesTown",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsMines(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateMines
 			),
 
@@ -3362,7 +3366,7 @@ function DemoData()
 				"MinesBottom",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsMines(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateMines
 			),
 
@@ -3371,7 +3375,7 @@ function DemoData()
 				"Island",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateIsland
 			),
 
@@ -3380,7 +3384,7 @@ function DemoData()
 				"Labyrinth",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsLabyrinth(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateLabyrinth
 			),
 
@@ -3389,7 +3393,7 @@ function DemoData()
 				"Limbo",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateLimbo
 			),
 
@@ -3398,7 +3402,7 @@ function DemoData()
 				"Oracle",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateLimbo
 			),
 
@@ -3407,7 +3411,7 @@ function DemoData()
 				"Puzzle",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsPuzzle(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGeneratePuzzle
 			),
 
@@ -3416,7 +3420,7 @@ function DemoData()
 				"SingleChamber",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateSingleChamber
 			),
 
@@ -3425,7 +3429,7 @@ function DemoData()
 				"Throwback",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsThrowback(images),
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateThrowback
 			),
 
@@ -3434,7 +3438,7 @@ function DemoData()
 				"Tutorial",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputBindings,
+				inputMappings,
 				DemoData.venueGenerateTutorial
 			),
 		];

@@ -36,10 +36,6 @@ function Universe(name, defn, venues, entityForPlayer)
 		if (this.venueNext != null)
 		{
 			this.venueNext.initialize();
-			Globals.Instance.inputHelper.bindingsRegister
-			(
-				this.venueNext.defn.inputBindings
-			);
 
 			this.venueCurrent = this.venueNext;
 

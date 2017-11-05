@@ -13,8 +13,8 @@ function DisplayHelper()
 		this.graphics.fillRect
 		(
 			0, 0,
-			this.viewSizeInPixels.x,
-			this.viewSizeInPixels.y
+			this.sizeInPixels.x,
+			this.sizeInPixels.y
 		);
 	}
 
@@ -154,13 +154,13 @@ function DisplayHelper()
 		}
 	}
 
-	DisplayHelper.prototype.initialize = function(viewSizeInPixels)
+	DisplayHelper.prototype.initialize = function(sizeInPixels)
 	{
-		this.viewSizeInPixels = viewSizeInPixels;
+		this.sizeInPixels = sizeInPixels;
 
 		this.canvas = document.createElement("canvas");
-		this.canvas.width = this.viewSizeInPixels.x;
-		this.canvas.height = this.viewSizeInPixels.y;
+		this.canvas.width = this.sizeInPixels.x;
+		this.canvas.height = this.sizeInPixels.y;
 		this.graphics = this.canvas.getContext("2d");
 
 		document.body.appendChild(this.canvas);

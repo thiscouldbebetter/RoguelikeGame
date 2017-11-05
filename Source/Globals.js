@@ -25,13 +25,16 @@ function Globals()
 		this.collisionHelper = new CollisionHelper();
 		this.font = font;
 
+		this.displayHelper = new DisplayHelper();
+		this.displayHelper.initialize(viewSizeInPixels);
+
+		this.platformHelper = new PlatformHelper();
+		this.platformHelper.initialize(this.displayHelper);
+
 		this.inputHelper = new InputHelper();
 		this.inputHelper.initialize();
 
 		this.realWorldMillisecondsPerTick = realWorldMillisecondsPerTick;
-
-		this.displayHelper = new DisplayHelper();
-		this.displayHelper.initialize(viewSizeInPixels);
 
 		this.universe = universe;
 
@@ -44,7 +47,6 @@ function Globals()
 
 	Globals.prototype.processTick = function()
 	{
-		this.inputHelper.updateForTick();
 		this.universe.update();
 	}
 }
