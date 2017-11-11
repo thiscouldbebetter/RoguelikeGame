@@ -590,24 +590,48 @@ function DemoData()
 
 			// initialize 
 			function(actor, activity) 
-			{},
+			{
+				activity.target = 
+				[
+					new InputToActionMapping("f", "Use Selected Item"),
+					new InputToActionMapping("g", "Pick Up Item"),
+					new InputToActionMapping("r", "Drop Selected Item"),
+					new InputToActionMapping("t", "Target Selected Item"),
+					new InputToActionMapping("u", "Use Emplacement"),
+
+					new InputToActionMapping("_1", "Move Southwest"),
+					new InputToActionMapping("_2", "Move South"),
+					new InputToActionMapping("_3", "Move Southeast"),
+					new InputToActionMapping("_4", "Move West"),
+					new InputToActionMapping("_6", "Move East"),
+					new InputToActionMapping("_7", "Move Northwest"),
+					new InputToActionMapping("_8", "Move North"),
+					new InputToActionMapping("_9", "Move Northeast"),
+
+					new InputToActionMapping("]", "Select Next Item"),
+					new InputToActionMapping("[", "Select Previous Item"),
+					new InputToActionMapping(".", "Wait"),
+				].addLookups("inputName");
+			},
 
 			// perform 
 			function(actor, activity)
 			{
-throw "todo"
 				var inputHelper = Globals.Instance.inputHelper;
-				var inputToActionMappings = []; // todo
+				var inputToActionMappings = activity.target;
 				var inputsActive = inputHelper.inputsActive;
 				var actionsFromActor = actor.actorData.actions;
 
 				for (var i = 0; i < inputsActive.length; i++)
 				{
 					var input = inputsActive[i];
-					var inputMapping = inputToActionMappings[i];
+					var inputMapping = inputToActionMappings[input];
 					if (inputMapping != null)
 					{
 						var actionName = inputMapping.actionName;
+						var action = Globals.Instance.universe.defn.actions[actionName];
+
+						/*
 						var ticksToHold = 
 						(
 							action.ticksToHold == null ? action.ticksSoFar : action.ticksToHold
@@ -617,6 +641,8 @@ throw "todo"
 						{
 							actionsFromActor.push(action);
 						}
+						*/
+						actionsFromActor.push(action);
 					}
 				}	
 			}
@@ -3270,28 +3296,6 @@ throw "todo"
 
 	DemoData.buildVenueDefns = function(images, actions)
 	{
-		var inputMappings = 
-		[
-			new InputToActionMapping("f", actions["Use Selected Item"].name),
-			new InputToActionMapping("g", actions["Pick Up Item"].name),
-			new InputToActionMapping("r", actions["Drop Selected Item"].name),
-			new InputToActionMapping("t", actions["Target Selected Item"].name),
-			new InputToActionMapping("u", actions["Use Emplacement"].name),
-
-			new InputToActionMapping("_1", actions["Move Southwest"].name),
-			new InputToActionMapping("_2", actions["Move South"].name),
-			new InputToActionMapping("_3", actions["Move Southeast"].name),
-			new InputToActionMapping("_4", actions["Move West"].name),
-			new InputToActionMapping("_6", actions["Move East"].name),
-			new InputToActionMapping("_7", actions["Move Northwest"].name),
-			new InputToActionMapping("_8", actions["Move North"].name),
-			new InputToActionMapping("_9", actions["Move Northeast"].name),
-
-			new InputToActionMapping("]", actions["Select Next Item"].name),
-			new InputToActionMapping("[", actions["Select Previous Item"].name),
-			new InputToActionMapping(".", actions["Wait"].name),
-		];
-
 		var mapTerrainsDungeon = DemoData.buildMapTerrainsDungeon(images);
 
 		// hack - Build this on the fly?
@@ -3321,7 +3325,6 @@ throw "todo"
 				"Dungeon",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateDungeon
 			),
 
@@ -3330,7 +3333,6 @@ throw "todo"
 				"Fortress",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateFortress
 			),
 
@@ -3339,7 +3341,6 @@ throw "todo"
 				"Hades",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsHades(images),
-				inputMappings,
 				DemoData.venueGenerateHades
 			),
 
@@ -3348,7 +3349,6 @@ throw "todo"
 				"Mines",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsMines(images),
-				inputMappings,
 				DemoData.venueGenerateMines
 			),
 
@@ -3357,7 +3357,6 @@ throw "todo"
 				"MinesTown",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsMines(images),
-				inputMappings,
 				DemoData.venueGenerateMines
 			),
 
@@ -3366,7 +3365,6 @@ throw "todo"
 				"MinesBottom",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsMines(images),
-				inputMappings,
 				DemoData.venueGenerateMines
 			),
 
@@ -3375,7 +3373,6 @@ throw "todo"
 				"Island",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateIsland
 			),
 
@@ -3384,7 +3381,6 @@ throw "todo"
 				"Labyrinth",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsLabyrinth(images),
-				inputMappings,
 				DemoData.venueGenerateLabyrinth
 			),
 
@@ -3393,7 +3389,6 @@ throw "todo"
 				"Limbo",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateLimbo
 			),
 
@@ -3402,7 +3397,6 @@ throw "todo"
 				"Oracle",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateLimbo
 			),
 
@@ -3411,7 +3405,6 @@ throw "todo"
 				"Puzzle",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsPuzzle(images),
-				inputMappings,
 				DemoData.venueGeneratePuzzle
 			),
 
@@ -3420,7 +3413,6 @@ throw "todo"
 				"SingleChamber",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateSingleChamber
 			),
 
@@ -3429,7 +3421,6 @@ throw "todo"
 				"Throwback",
 				propertyNamesKnown,
 				DemoData.buildMapTerrainsThrowback(images),
-				inputMappings,
 				DemoData.venueGenerateThrowback
 			),
 
@@ -3438,7 +3429,6 @@ throw "todo"
 				"Tutorial",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				inputMappings,
 				DemoData.venueGenerateTutorial
 			),
 		];
