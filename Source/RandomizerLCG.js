@@ -12,15 +12,15 @@ function RandomizerLCG(multiplier, addend, modulus, firstRandom)
 {
 	RandomizerLCG.prototype.getNextRandom = function()
 	{
-		this.currentRandom = 
+		this.currentRandom =
 		(
 			(
-				this.multiplier 
+				this.multiplier
 				* (this.currentRandom * this.modulus)
 				+ this.addend
-			) 
+			)
 			% this.modulus
-		) 
+		)
 		/ this.modulus;
 
 		return this.currentRandom;

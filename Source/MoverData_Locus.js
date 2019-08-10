@@ -18,16 +18,15 @@ function MoverData_Locus()
 				[
 					new ControlLabel
 					(
-						"labelLocus", 
-						new Coords(10, 10), 
+						"labelLocus",
+						new Coords(10, 10),
 						"Floor: ^ Turn: ^",
 						[
 							entity.loc.venue().depth,
-							Globals.Instance.universe					
+							Globals.Instance.universe
 						],
 						[
-						
-							null, 
+							null,
 							"turnsSoFar"
 						]
 					),
@@ -35,6 +34,6 @@ function MoverData_Locus()
 			);
 		}
 
-		return this.control;				
+		return this.control;
 	}
 }

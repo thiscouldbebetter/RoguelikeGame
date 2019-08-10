@@ -13,5 +13,5 @@ function EquipmentSocketSet(equipmentSocketDefnSet)
 		var socket = new EquipmentSocket(socketDefn, null);
 
 		this.sockets.push(socket);
-	}	
+	};
 }

@@ -21,7 +21,7 @@ function MoverData_Vitals(defn)
 		}
 
 		this.controlUpdate(moverEntity);
-	}
+	};
 
 	// controls
 
@@ -37,29 +37,29 @@ function MoverData_Vitals(defn)
 				[
 					new ControlLabel
 					(
-						"labelHealth", 
-						new Coords(10, 10), 
+						"labelHealth",
+						new Coords(10, 10),
 						"Life:^/^",
 						[ entity.killableData, entity.killableData.defn ],
-						[ "integrity", "integrityMax" ]			
+						[ "integrity", "integrityMax" ]
 					),
 
 					new ControlLabel
 					(
-						"labelEnergy", 
-						new Coords(60, 10), 
-						" Power:" + this.energy + "/" + this.defn.energyMax			
+						"labelEnergy",
+						new Coords(60, 10),
+						" Power:" + this.energy + "/" + this.defn.energyMax
 					),
 					new ControlLabel
 					(
-						"labelSatiety", 
-						new Coords(120, 10), 
+						"labelSatiety",
+						new Coords(120, 10),
 						" Sat: " + this.satiety + "/" + this.defn.satietyMax
 					),
 				]
 			);
 		}
 
-		return this.control;				
-	}
+		return this.control;
+	};
 }

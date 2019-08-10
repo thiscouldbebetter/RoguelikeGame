@@ -19,7 +19,7 @@ function DeviceData(numberOfCharges)
 
 		if (this.numberOfCharges <= 0)
 		{
-			var deviceDefn = deviceEntity.defn().Device;	
+			var deviceDefn = deviceEntity.defn().Device;
 			if (deviceDefn.consumedWhenAllChargesUsed == true)
 			{
 				userEntity.containerData.removeItem
@@ -31,11 +31,11 @@ function DeviceData(numberOfCharges)
 			{
 				Font.spawnMessageFloater
 				(
-					deviceEntity.defn().name, 
-					Message.getTextForName("NothingHappens"), 
+					deviceEntity.defn().name,
+					Message.getTextForName("NothingHappens"),
 					userEntity.loc
 				);
-			} 
+			}
 		}
 	}
 }

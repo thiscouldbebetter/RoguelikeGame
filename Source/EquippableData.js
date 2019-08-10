@@ -4,7 +4,7 @@ function EquippableData(equippableDefn)
 	this.equipmentSocketSet = new EquipmentSocketSet
 	(
 		equippableDefn.equipmentSocketDefnSet
-	);	
+	);
 }
 
 {
@@ -25,6 +25,6 @@ function EquippableData(equippableDefn)
 			);
 		}
 
-		return this.control;				
-	}
+		return this.control;
+	};
 }

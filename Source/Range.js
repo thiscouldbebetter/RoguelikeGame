@@ -26,9 +26,9 @@ function Range(min, max)
 	{
 		return this.min + (this.max - this.min) * Globals.Instance.randomizer.getNextRandom();
 	}
-	
+
 	Range.prototype.subtract = function(other)
-	{		
+	{
 		var returnValues = [];
 
 		if (this.overlaps(other) == true)
@@ -38,7 +38,7 @@ function Range(min, max)
 				var segment = new Range(this.min, other.min);
 				returnValues.push(segment);
 			}
-			
+
 			if (this.max >= other.max)
 			{
 				var segment = new Range(other.max, this.max);

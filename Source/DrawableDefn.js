@@ -7,7 +7,7 @@ function DrawableDefn(visual, sizeInPixels, zIndex)
 
 	if (this.sizeInPixels == null)
 	{
-		this.sizeInPixels = Coords.Instances.Zeroes;
+		this.sizeInPixels = Coords.Instances().Zeroes;
 	}
 
 	if (this.zIndex == null)
@@ -19,25 +19,25 @@ function DrawableDefn(visual, sizeInPixels, zIndex)
 }
 
 {
-	DrawableDefn.prototype.name = function() { return "Drawable"; }
+	DrawableDefn.prototype.name = function() { return "Drawable"; };
 
 	DrawableDefn.prototype.initializeEntityForVenue = function(entity, venue)
-	{			
+	{
 		entity.drawableData = new DrawableData
 		(
 			true // isVisible
-		); 
+		);
 
-		var drawableData = entity.drawableData;	
+		var drawableData = entity.drawableData;
 		var drawableDefn = entity.defn().Drawable;
 		drawableData.visual = drawableDefn.visual.cloneAsVisual();
-	}
-	
+	};
+
 	DrawableDefn.prototype.updateEntityForVenue = function(entity, venue)
 	{
 		entity.drawableData.visual.updateForVenue
 		(
 			entity, venue
 		);
-	}
+	};
 }

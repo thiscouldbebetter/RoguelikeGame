@@ -22,7 +22,7 @@ function RangeSet(ranges)
 					break;
 				}
 			}
-		}		
+		}
 
 		return returnValue;
 	}
@@ -38,7 +38,7 @@ function RangeSet(ranges)
 				var rangePart0 = new Range(0, range.max);
 				var rangePart1 = new Range(range.min, period);
 
-				this.ranges.splice(i, 1, rangePart0, rangePart1);	
+				this.ranges.splice(i, 1, rangePart0, rangePart1);
 				i++;
 			}
 		}
@@ -57,11 +57,11 @@ function RangeSet(ranges)
 			for (var i = 0; i < rangesCurrent.length; i++)
 			{
 				var rangeThis = rangesCurrent[i];
-	
+
 				for (var j = 0; j < other.ranges.length; j++)
 				{
 					var rangeOther = other.ranges[j];
-	
+
 					if (rangeThis.overlaps(rangeOther) == true)
 					{
 						doAnyRangesOverlap = true;

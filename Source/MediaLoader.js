@@ -7,15 +7,15 @@ function MediaLoader
 )
 {
 	this.objectContainingCallback = objectContainingCallback;
-	this.callbackToRunWhenLoadingComplete = callbackToRunWhenLoadingComplete; 
+	this.callbackToRunWhenLoadingComplete = callbackToRunWhenLoadingComplete;
 	this.items = items;
-	this.items.addLookups("name");
+	this.items.addLookupsByName();
 }
 
 {
 	MediaLoader.prototype.itemLoaded = function(event)
 	{
-		this.numberOfItemsLoadedSoFar++;	
+		this.numberOfItemsLoadedSoFar++;
 		if (this.numberOfItemsLoadedSoFar >= this.items.length)
 		{
 			this.callbackToRunWhenLoadingComplete.call

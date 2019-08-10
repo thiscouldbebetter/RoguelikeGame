@@ -15,24 +15,35 @@ function Globals()
 	Globals.prototype.initialize = function
 	(
 		font,
-		realWorldMillisecondsPerTick, 
-		viewSizeInPixels, 
+		realWorldMillisecondsPerTick,
+		viewSizeInPixels,
 		universe
-	)	
+	)
 	{
 		this.sightHelper = new SightHelper();
 
 		this.collisionHelper = new CollisionHelper();
 		this.font = font;
 
-		this.displayHelper = new DisplayHelper();
-		this.displayHelper.initialize(viewSizeInPixels);
+		var displayInner = new Display
+		(
+			[viewSizeInPixels],
+			"todo", // fontName
+			10, // fontHeightInPixels
+			"White", // colorFore
+			"Black" // colorBack
+		);
+		universe.display = displayInner;
 
-		this.platformHelper = new PlatformHelper();
-		this.platformHelper.initialize(this.displayHelper);
+		universe.platformHelper = new PlatformHelper();
+		universe.platformHelper.initialize(universe);
+
+		displayInner.initialize(universe);
+
+		this.display = new DisplayExtended(displayInner);
 
 		this.inputHelper = new InputHelper();
-		this.inputHelper.initialize();
+		this.inputHelper.initialize(universe);
 
 		this.realWorldMillisecondsPerTick = realWorldMillisecondsPerTick;
 
@@ -40,7 +51,7 @@ function Globals()
 
 		this.timer = setInterval
 		(
-			Globals.Instance.processTick.bind(this), 
+			Globals.Instance.processTick.bind(this),
 			this.realWorldMillisecondsPerTick
 		);
 	}

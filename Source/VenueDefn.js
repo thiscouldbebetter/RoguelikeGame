@@ -16,7 +16,7 @@ function VenueDefn(name, propertyNamesKnown, terrains, venueGenerate)
 		(
 			this.constructor.name,
 			// attributeNameValuePairs
-			[	
+			[
 				[ "name", this.name ],
 			],
 			// children

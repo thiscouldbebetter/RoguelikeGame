@@ -76,7 +76,7 @@ function Simulation()
 		(
 			DemoData.buildFont(),
 			100, //realWorldMillisecondsPerTick,
-			new Coords(1000, 800), //viewSizeInPixels, 
+			new Coords(1000, 800), //viewSizeInPixels,
 			universe0
 		);
 	}

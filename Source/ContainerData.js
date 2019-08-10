@@ -61,16 +61,16 @@ function ContainerData()
 					new ControlLabel("labelItems", new Coords(10, 10), "Items"),
 					new ControlList
 					(
-						"listItems", 
+						"listItems",
 						new Coords(10, 20), // pos
-						new Coords(180, 70), // size 
-						"defn().Item.appearance", // bindingPath 
+						new Coords(180, 70), // size
+						"defn().Item.appearance", // bindingPath
 						this.items
 					)
 				]
 			);
 		}
 
-		return this.control;				
+		return this.control;
 	}
 }

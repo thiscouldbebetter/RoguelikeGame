@@ -34,10 +34,10 @@ function DiceRoll(expression)
 
 		var totalSoFar = 0;
 
-		var terms = 
+		var terms =
 		(
-			expression.indexOf("+") < 0 
-			? [expression] 
+			expression.indexOf("+") < 0
+			? [expression]
 			: expression.split("+")
 		);
 
@@ -52,17 +52,17 @@ function DiceRoll(expression)
 			}
 			else
 			{
-				var tokens = term.split("d");	
+				var tokens = term.split("d");
 				var numberOfDice = parseInt(tokens[0]);
 				var sidesPerDie = parseInt(tokens[1]);
 
 				for (var i = 0; i < numberOfDice; i++)
 				{
-					var valueRolledOnDie = 
-						1 
+					var valueRolledOnDie =
+						1
 						+ Math.floor
 						(
-							Globals.Instance.randomizer.getNextRandom() 
+							Globals.Instance.randomizer.getNextRandom()
 							* sidesPerDie
 						);
 

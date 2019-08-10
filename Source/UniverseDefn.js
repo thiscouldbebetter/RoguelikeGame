@@ -1,13 +1,13 @@
 
 function UniverseDefn
 (
-	name, 
+	name,
 	actions,
 	activityDefns,
-	itemCategories, 
-	entityDefnGroups, 
+	itemCategories,
+	entityDefnGroups,
 	venueDefns,
-	venueStructure, 
+	venueStructure,
 	buildVenues
 )
 {
@@ -20,18 +20,18 @@ function UniverseDefn
 	this.venueStructure = venueStructure;
 	this.buildVenues = buildVenues;
 
-	var entityDefnSets = this.entityDefnGroups.elementProperties
+	var entityDefnSets = this.entityDefnGroups.select
 	(
-		"entityDefns"	
+		function(element) { return element["entityDefns"]; }
 	);
 
-	this.entityDefns = entityDefnSets.elementArraysConcatenate();
+	this.entityDefns = entityDefnSets.concatenateAll();
 
-	this.actions.addLookups("name");
-	this.activityDefns.addLookups("name");
-	this.venueDefns.addLookups("name");
-	this.entityDefnGroups.addLookups("name");
-	this.entityDefns.addLookups("name");
+	this.actions.addLookupsByName();
+	this.activityDefns.addLookupsByName();
+	this.venueDefns.addLookupsByName();
+	this.entityDefnGroups.addLookupsByName();
+	this.entityDefns.addLookupsByName();
 }
 
 {
@@ -43,7 +43,7 @@ function UniverseDefn
 		(
 			this.constructor.name,
 			// attributeNameValuePairs
-			[	
+			[
 				[ "name", this.name ],
 			],
 			// children

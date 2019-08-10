@@ -7,10 +7,10 @@ function HTMLHelper()
 	HTMLHelper.HandleHideOrShowControlEvent = function(event)
 	{
 		HTMLHelper.HideOrShowControl(event.target);
-	}
+	};
 
 	HTMLHelper.HideOrShowControl = function(controlToHideOrShow)
-	{	
+	{
 		var htmlElementToHideOrShow = controlToHideOrShow.elementToHideOrShow;
 
 		if (controlToHideOrShow.isExpanded == false)
@@ -25,5 +25,5 @@ function HTMLHelper()
 			htmlElementToHideOrShow.style.display = "none";
 			controlToHideOrShow.innerHTML = "+";
 		}
-	}
+	};
 }

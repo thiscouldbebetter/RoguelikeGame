@@ -4,6 +4,8 @@ function DemoData()
 	// do nothing
 }
 {
+	var collidableDefns = CollidableDefn.Instances();
+
 	DemoData.buildActions = function()
 	{
 		// Action.perform() declarations
@@ -45,7 +47,7 @@ function DemoData()
 			if (destinationVenue != null)
 			{
 				destinationVenue.initialize();
-				destinationVenue.update();				
+				destinationVenue.update();
 
 				var entities = destinationVenue.entities;
 				var destinationEntity = entities[destinationEntityName];
@@ -130,7 +132,7 @@ function DemoData()
 			if (itemSelected == null)
 			{
 				indexOfItemSelected = 0;
-			}			
+			}
 			else
 			{
 				var indexOfItemSelected = itemsHeld.indexOf
@@ -144,12 +146,12 @@ function DemoData()
 
 				indexOfItemSelected = NumberHelper.wrapValueToRangeMax
 				(
-					indexOfItemSelected,	
-					itemsHeld.length		
+					indexOfItemSelected,
+					itemsHeld.length
 				);
 			}
 
-			containerData.itemSelected = itemsHeld[indexOfItemSelected];		
+			containerData.itemSelected = itemsHeld[indexOfItemSelected];
 
 			actor.moverData.controlUpdate(actor);
 		}
@@ -179,7 +181,7 @@ function DemoData()
 		}
 
 		var actionMove_Perform = function(actor, action)
-		{		
+		{
 			var directionToMove = action.argumentForPerform;
 
 			if (directionToMove.magnitude() == 0)
@@ -211,35 +213,35 @@ function DemoData()
 				}
 
 				if (entityInCell.defn().properties["Mover"] != null)
-				{	
+				{
 					isDestinationAccessible = false;
-		
+
 					var costToAttack = 1; // todo
 					actor.moverData.movesThisTurn -= costToAttack;
-	
+
 					// todo - Calculate damage.
 					var damageInflicted = DiceRoll.roll("1d6");
-	
+
 					var entityDefns = Globals.Instance.universe.defn.entityDefns;
 					var defnsOfEntitiesToSpawn = [];
-	
+
 					Font.spawnMessageFloater
 					(
-						"Dagger", 
-						"-" + damageInflicted, 
+						"Dagger",
+						"-" + damageInflicted,
 						actorLoc
 					);
-	
+
 					if (damageInflicted > 0)
-					{	
+					{
 						entityInCell.killableData.integrityAdd
 						(
 							0 - damageInflicted
 						);
-	
+
 						if (entityInCell.killableData.integrity <= 0)
 						{
-							defnsOfEntitiesToSpawn.push 
+							defnsOfEntitiesToSpawn.push
 							(
 								entityInCell.defn().Mover.entityDefnCorpse
 							);
@@ -252,18 +254,18 @@ function DemoData()
 							);
 						}
 					}
-	
+
 					for (var i = 0; i < defnsOfEntitiesToSpawn.length; i++)
 					{
 						var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
-	
+
 						var entityToSpawn = new Entity
 						(
 							defnOfEntityToSpawn.name + "_Spawned",
 							defnOfEntityToSpawn.name,
 							posInCellsDestination
 						);
-	
+
 						venue.entitiesToSpawn.push
 						(
 							entityToSpawn
@@ -333,7 +335,7 @@ function DemoData()
 		var actionItem_SelectPrev = new Action
 		(
 			"Select Previous Item", null, actionItem_SelectAtOffset_Perform, -1
-		); 
+		);
 
 		var actionItem_TargetSelected= new Action
 		(
@@ -387,7 +389,7 @@ function DemoData()
 
 		var actionWait = new Action("Wait", null, actionWait_Perform);
 
-		var returnValues = 
+		var returnValues =
 		[
 			actionEmplacement_Use,
 			actionItem_DropSelected,
@@ -408,19 +410,19 @@ function DemoData()
 		];
 
 		// hack
-		returnValues._MovesByHeading = 
+		returnValues._MovesByHeading =
 		[
-			actionMoveE, 
+			actionMoveE,
 			actionMoveSE,
-			actionMoveS, 
+			actionMoveS,
 			actionMoveSW,
 			actionMoveW,
-			actionMoveNW, 
-			actionMoveN,		
+			actionMoveNW,
+			actionMoveN,
 			actionMoveNE,
 		];
 
-		returnValues.addLookups("name");
+		returnValues.addLookupsByName();
 
 		return returnValues;
 	}
@@ -432,7 +434,7 @@ function DemoData()
 			"Do Nothing",
 
 			// initialize
-			function(actor, activity) 
+			function(actor, activity)
 			{
 				// do nothing
 			},
@@ -448,8 +450,8 @@ function DemoData()
 		(
 			"Generate Movers",
 
-			// initialize 
-			function(actor, activity) 
+			// initialize
+			function(actor, activity)
 			{
 				// do nothing
 			},
@@ -459,19 +461,19 @@ function DemoData()
 			{
 				var actorLoc = actor.loc;
 				var venue = actorLoc.venue();
-	
+
 				var agentsInVenue = venue.entitiesByPropertyName["Mover"];
-	
+
 				var numberOfAgentsDesired = 5;
-	
+
 				if (agentsInVenue.length < numberOfAgentsDesired)
 				{
 					var chanceOfSpawnPerTurn = 1; // hack - actually per tick
-	
+
 					if (Math.random() < chanceOfSpawnPerTurn)
-					{		
+					{
 						var difficulty = 1; // hack
-	
+
 						var universe = Globals.Instance.universe;
 						var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
 						var entityDefnsForAgentsOfDifficulty = universe.defn.entityDefnGroups[entityDefnGroupName].entityDefns;
@@ -486,9 +488,9 @@ function DemoData()
 							entityDefnForAgentToSpawn.name + "0",
 							entityDefnForAgentToSpawn.name,
 							posToSpawnAt
-						);				
-			
-						venue.entitiesToSpawn.push(entityForAgent);	
+						);
+
+						venue.entitiesToSpawn.push(entityForAgent);
 					}
 				}
 			}
@@ -498,13 +500,13 @@ function DemoData()
 		(
 			"Move Randomly",
 
-			// initialize 
-			function(actor, activity) 
+			// initialize
+			function(actor, activity)
 			{
 				// do nothing
 			},
 
-			// perform 
+			// perform
 			function(actor, activity)
 			{
 				// hack
@@ -527,13 +529,13 @@ function DemoData()
 		(
 			"Move Toward Player",
 
-			// initialize 
-			function(actor, activity) 
+			// initialize
+			function(actor, activity)
 			{
 				// do nothing
 			},
 
-			// perform 
+			// perform
 			function(actor, activity)
 			{
 				if (actor.moverData.movesThisTurn <= 0)
@@ -551,8 +553,8 @@ function DemoData()
 
 					var path = new Path
 					(
-						venue.map, 
-						actorLoc.posInCells, 
+						venue.map,
+						actorLoc.posInCells,
 						player.loc.posInCells
 					);
 
@@ -574,7 +576,7 @@ function DemoData()
 
 					// hack
 					var actionsMoves = Globals.Instance.universe.defn.actions._MovesByHeading;
-					var actionMoveInDirection = actionsMoves[heading];	
+					var actionMoveInDirection = actionsMoves[heading];
 
 					actor.actorData.actions.push
 					(
@@ -588,10 +590,10 @@ function DemoData()
 		(
 			"Accept User Input",
 
-			// initialize 
-			function(actor, activity) 
+			// initialize
+			function(actor, activity)
 			{
-				activity.target = 
+				activity.target =
 				[
 					new InputToActionMapping("f", "Use Selected Item"),
 					new InputToActionMapping("g", "Pick Up Item"),
@@ -611,28 +613,28 @@ function DemoData()
 					new InputToActionMapping("]", "Select Next Item"),
 					new InputToActionMapping("[", "Select Previous Item"),
 					new InputToActionMapping(".", "Wait"),
-				].addLookups("inputName");
+				].addLookups( function(element) { return element["inputName"]; } );
 			},
 
-			// perform 
+			// perform
 			function(actor, activity)
 			{
 				var inputHelper = Globals.Instance.inputHelper;
 				var inputToActionMappings = activity.target;
-				var inputsActive = inputHelper.inputsActive;
+				var inputsActive = inputHelper.inputsPressed;
 				var actionsFromActor = actor.actorData.actions;
 
 				for (var i = 0; i < inputsActive.length; i++)
 				{
 					var input = inputsActive[i];
-					var inputMapping = inputToActionMappings[input];
+					var inputMapping = inputToActionMappings[input.name];
 					if (inputMapping != null)
 					{
 						var actionName = inputMapping.actionName;
 						var action = Globals.Instance.universe.defn.actions[actionName];
 
 						/*
-						var ticksToHold = 
+						var ticksToHold =
 						(
 							action.ticksToHold == null ? action.ticksSoFar : action.ticksToHold
 						);
@@ -644,11 +646,11 @@ function DemoData()
 						*/
 						actionsFromActor.push(action);
 					}
-				}	
+				}
 			}
 		);
 
-		var returnValues = 
+		var returnValues =
 		[
 			activityDefnDoNothing,
 			activityDefnGenerateMovers,
@@ -657,14 +659,14 @@ function DemoData()
 			activityDefnUserInputAccept,
 		];
 
-		returnValues.addLookups("name");
+		returnValues.addLookupsByName();
 
 		return returnValues;
 	}
 
 	DemoData.buildItemCategories = function()
 	{
-		var returnValues = 
+		var returnValues =
 		[
 			new ItemCategory("Headwear"),
 			new ItemCategory("Neckwear"),
@@ -687,7 +689,7 @@ function DemoData()
 			new ItemCategory("Ammunition"),
 		];
 
-		returnValues.addLookups("name");
+		returnValues.addLookupsByName();
 
 		return returnValues;
 	}
@@ -710,7 +712,7 @@ function DemoData()
 			[ emplacements ],
 			items,
 			movers,
-		].elementArraysConcatenate();
+		].concatenateAll();
 
 		return returnValues;
 	}
@@ -721,24 +723,24 @@ function DemoData()
 
 		var sizeInPixels = images["Floor"].sizeInPixels;
 
-		var entityDefns = 
+		var entityDefns =
 		[
 			new EntityDefn
 			(
-				"Blood", 
-				[ 
-					CollidableDefn.Instances.Clear, 
+				"Blood",
+				[
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images["Blood"]).toRun(), sizeInPixels),
 					new EmplacementDefn(),
 					new EphemeralDefn(30),
-				] 
+				]
 			),
 
 			new EntityDefn
 			(
-				"Door", 
-				[ 
-					CollidableDefn.Instances.Concealing,
+				"Door",
+				[
+					collidableDefns.Concealing,
 					new DrawableDefn(animation(images["Door"]).toRun(), sizeInPixels) ,
 					new EmplacementDefn(),
 				]
@@ -746,9 +748,9 @@ function DemoData()
 
 			new EntityDefn
 			(
-				"Gravestone", 
-				[ 
-					CollidableDefn.Instances.Clear,
+				"Gravestone",
+				[
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images["Gravestone"]).toRun(), sizeInPixels),
 					new EmplacementDefn(),
 				]
@@ -758,7 +760,7 @@ function DemoData()
 			(
 				"StairsDown",
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images["StairsDown"]).toRun(), sizeInPixels),
 					new EmplacementDefn(),
 					new PortalDefn(),
@@ -769,17 +771,17 @@ function DemoData()
 			(
 				"StairsExit",
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images["StairsUp"]).toRun(), sizeInPixels),
 					new EmplacementDefn(),
 				]
 			),
-			
+
 			new EntityDefn
 			(
 				"StairsUp",
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images["StairsUp"]).toRun(), sizeInPixels),
 					new EmplacementDefn(),
 					new PortalDefn(),
@@ -804,7 +806,7 @@ function DemoData()
 
 		var animation = AnimationDefnSetFake.buildFromImage;
 
-		var categoriesCommon = 
+		var categoriesCommon =
 		[
 			"Collidable",
 			"Drawable",
@@ -837,19 +839,19 @@ function DemoData()
 
 		var effectDefnDoNothing = new EffectDefn
 		(
-			"Do Nothing", 
-			function(targetEntity) 
-			{ 
+			"Do Nothing",
+			function(targetEntity)
+			{
 				// do nothing
-			} 
+			}
 		);
 
 		var effectDoNothing = new Effect(effectDefnDoNothing);
 
 		var entityDefnSets = [];
 
-		var methodsToRun = 
-		[ 
+		var methodsToRun =
+		[
 			DemoData.buildEntityDefns_Items_Containers,
 			DemoData.buildEntityDefns_Items_Food,
 			DemoData.buildEntityDefns_Items_Potions,
@@ -869,7 +871,7 @@ function DemoData()
 		{
 			var itemDefnGroup = methodsToRun[i]
 			(
-				images, 
+				images,
 				animation,
 				itemCategories,
 				categoriesCommon,
@@ -890,7 +892,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Containers = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -902,7 +904,7 @@ function DemoData()
 	)
 	{
 		entityDefnSets.push
-		([	
+		([
 			new EntityDefn
 			(
 				"Chest",
@@ -920,7 +922,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Food = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -933,9 +935,9 @@ function DemoData()
 	{
 		// items - foods
 
-		var namesOfFoods = 
+		var namesOfFoods =
 		[
-			"Eucalyptus Leaf",			
+			"Eucalyptus Leaf",
 			"Apple",
 			"Orange",
 			"Pear",
@@ -962,12 +964,12 @@ function DemoData()
 		(
 			new EffectDefn
 			(
-				"Nourish", 
-				function(targetEntity) 
-				{ 
+				"Nourish",
+				function(targetEntity)
+				{
 					targetEntity.moverData.vitals.addSatietyToMover(1000, targetEntity);
 					targetEntity.moverData.controlUpdate(targetEntity);
-				} 
+				}
 			)
 		);
 
@@ -981,20 +983,20 @@ function DemoData()
 			(
 				name,
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DeviceDefn
 					(
-						1, // chargesMax	
+						1, // chargesMax
 						true, // consumedWhenAllChargesUsed
 						// effectsToApply
 						[
 							effectNourish
-						] 
+						]
 					),
 					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
 					new ItemDefn
 					(
-						name, 
+						name,
 						1, // mass
 						1, // stackSizeMax,
 						1, // relativeFrequency
@@ -1002,7 +1004,7 @@ function DemoData()
 						ItemDefn.InitializeDevice,
 						ItemDefn.UseDevice
 					)
-				]				
+				]
 			);
 
 			entityDefnSetFoods.push(entityDefn);
@@ -1015,7 +1017,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Potions = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1032,21 +1034,21 @@ function DemoData()
 
 		var effectMessageNotImplemented = new EffectDefn
 		(
-			"Display Not Implemented Message", 
-			function(actingEntity, targetEntity) 
+			"Display Not Implemented Message",
+			function(actingEntity, targetEntity)
 			{
 				Font.spawnMessageFloater
 				(
-					actingEntity.defn().name, 
-					"NOT IMPLEMENTED - " + actingEntity.defn().name, 
+					actingEntity.defn().name,
+					"NOT IMPLEMENTED - " + actingEntity.defn().name,
 					targetEntity.loc
 				);
 
 				targetEntity.controlUpdate();
 			}
-		);	 
+		);	
 
-		var namesAndEffectDefnsOfPotions = 
+		var namesAndEffectDefnsOfPotions =
 		[
 			[ "Acid" 		, new ED( null, function(ab, tb) { tb.moverData.integrityAdd(-30); tb.moverData.controlUpdate(tb); } ) ],
 			[ "Blindness" 		, effectMessageNotImplemented ],
@@ -1075,7 +1077,7 @@ function DemoData()
 			[ "Water" 		, effectMessageNotImplemented ],
 		];
 
-		var appearances = 
+		var appearances =
 		[
 			"Ruby","Pink","Orange","Yellow",
 			"Emerald","Dark Green","Sky Blue","Cyan",
@@ -1105,17 +1107,17 @@ function DemoData()
 
 			var entityDefn = new EntityDefn
 			(
-				"Potion of " + name, 
+				"Potion of " + name,
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DeviceDefn
 					(
-						1, // chargesMax	
+						1, // chargesMax
 						true, // consumedWhenAllChargesUsed
 						// effectsToApply
 						[
 							new Effect(effectDefn)
-						] 
+						]
 					),
 					//new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels)
 					new DrawableDefn(images[appearance], sizeInPixels),
@@ -1129,7 +1131,7 @@ function DemoData()
 						ItemDefn.InitializeDevice,
 						ItemDefn.UseDevice
 					)
-				]				
+				]
 			);
 
 			entityDefnSetPotions.push(entityDefn);
@@ -1142,7 +1144,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Rings = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1155,7 +1157,7 @@ function DemoData()
 	{
 		// items - magic - rings
 
-		var namesOfRings = 
+		var namesOfRings =
 		[
 			"Adornment",		// 0
 			"Aggravate Monster",
@@ -1187,7 +1189,7 @@ function DemoData()
 			"Warning",		// 27
 		];
 
-		appearances = 
+		appearances =
 		[
 			"Pearl","Iron","Twisted","Steel",
 			"Wire","Engagement","Shiny","Bronze",
@@ -1214,9 +1216,9 @@ function DemoData()
 			(
 				new EntityDefn
 				(
-					"Ring of " + namesOfRings[i], 
+					"Ring of " + namesOfRings[i],
 					[
-						CollidableDefn.Instances.Clear,
+						collidableDefns.Clear,
 						new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
 						new ItemDefn
 						(
@@ -1228,7 +1230,7 @@ function DemoData()
 							ItemDefn.InitializeDoNothing,
 							ItemDefn.UseEquip
 						),
-					]				
+					]
 				)
 			);
 		}
@@ -1240,7 +1242,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Scrolls = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1253,41 +1255,41 @@ function DemoData()
 	{
 		// items - magic - scrolls
 
-		var namesOfScrolls = 
+		var namesOfScrolls =
 		[
 			"Amnesia", // 0
-			"Blank", 
-			"Charging", 
-			"Confuse Monster", 
-			"Create Monster", 
+			"Blank",
+			"Charging",
+			"Confuse Monster",
+			"Create Monster",
 			"Destroy Armor",  // 5
-			"Detect Food", 
-			"Detect Gold", 
-			"Earth", 
-			"Enchant Armor", 
+			"Detect Food",
+			"Detect Gold",
+			"Earth",
+			"Enchant Armor",
 			"Enchant Weapon", // 10
-			"Fire", 
-			"Genocide", 
-			"Identify", 
-			"Light", 
+			"Fire",
+			"Genocide",
+			"Identify",
+			"Light",
 			"Mapping", // 15
-			"Punishment", 
-			"Remove Curse", 
-			"Scare Monster", 
-			"Stinking Cloud", 
+			"Punishment",
+			"Remove Curse",
+			"Scare Monster",
+			"Stinking Cloud",
 			"Taming", // 20
 			"Teleport", // 21
 		];
 
-		appearances = 
+		appearances =
 		[
-			"Andova Begarin", "Daiyen Fooels", "Duam Xnaht", "Eblib Yloh", 
-			"Elam Ebow", "Foobie Bletch", "Garven Deh", "Hackem Muche", 
-			"Juyed Awk Yacc", "Kernod Wel", "Kirje", "Lep Gex Ven Zea", 
-			"NR 9", "Pratyavayah", "Prirutsenie", "Read Me", 
-			"Temov", "Tharr", "Ve Forbryderne", "Velox Neb", 
-			"Venzar Borgavve", "Verr Yed Horre", "Xixaxa Xoxaxa Xuxaxa", "Yum Yum", 
-			"Zelgo Mer", 
+			"Andova Begarin", "Daiyen Fooels", "Duam Xnaht", "Eblib Yloh",
+			"Elam Ebow", "Foobie Bletch", "Garven Deh", "Hackem Muche",
+			"Juyed Awk Yacc", "Kernod Wel", "Kirje", "Lep Gex Ven Zea",
+			"NR 9", "Pratyavayah", "Prirutsenie", "Read Me",
+			"Temov", "Tharr", "Ve Forbryderne", "Velox Neb",
+			"Venzar Borgavve", "Verr Yed Horre", "Xixaxa Xoxaxa Xuxaxa", "Yum Yum",
+			"Zelgo Mer",
 		];
 
 		var entityDefnSetScrolls = [];
@@ -1299,22 +1301,22 @@ function DemoData()
 				Globals.Instance.randomizer.getNextRandom()
 				* appearances.length
 			);
-			var appearance = "Scroll Titled '" + appearances[appearanceIndex] + "'";			
+			var appearance = "Scroll Titled '" + appearances[appearanceIndex] + "'";
 			appearances.splice(appearanceIndex, 1);
 
 			var entityDefn = new EntityDefn
 			(
-				"Scroll of " + namesOfScrolls[i], 
+				"Scroll of " + namesOfScrolls[i],
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DeviceDefn
 					(
-						1, // chargesMax	
+						1, // chargesMax
 						true, // consumedWhenAllChargesUsed
 						// effectsToApply
 						[
 							effectDoNothing
-						] 
+						]
 					),
 					new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
 					new ItemDefn
@@ -1327,7 +1329,7 @@ function DemoData()
 						ItemDefn.InitializeDevice,
 						ItemDefn.UseDevice
 					),
-				]				
+				]
 			);
 
 			entityDefnSetScrolls.push(entityDefn);
@@ -1342,7 +1344,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Spellbooks = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1353,34 +1355,34 @@ function DemoData()
 		entityDefnSets
 	)
 	{
-		var namesOfSpellbooks = 
+		var namesOfSpellbooks =
 		[
 			// attack
 
 			"Force Bolt", // 0
-			"Drain Life", 
-			"Magic Missile", 
-			"Cone of Cold", 
-			"Fireball", 
+			"Drain Life",
+			"Magic Missile",
+			"Cone of Cold",
+			"Fireball",
 			"Finger of Death",  // 5
 
 			// clerical
 
-			"Protection", 
-			"Create Monster", 
-			"Remove Curse", 
-			"Create Familiar", 
+			"Protection",
+			"Create Monster",
+			"Remove Curse",
+			"Create Familiar",
 			"Turn Undead", // 10
 
 			// divination
 
-			"Detect Monsters", 
-			"Light", 
-			"Detect Food", 
-			"Clairvoyance", 
+			"Detect Monsters",
+			"Light",
+			"Detect Food",
+			"Clairvoyance",
 			"Detect Unseen", // 15
-			"Identify", 
-			"Detect Treasure", 
+			"Identify",
+			"Detect Treasure",
 			"Magic Mapping",
 
 			// enchantment
@@ -1416,7 +1418,7 @@ function DemoData()
 			"Cancellation", // 39
  		];
 
-		var appearances = 
+		var appearances =
 		[
 			"Parchment","Vellum","Ragged","Dogeared",
 			"Mottled","Stained","Cloth","Leather",
@@ -1448,9 +1450,9 @@ function DemoData()
 			(
 				new EffectDefn
 				(
-					"Learn Spell: " + nameOfSpellbook, 
-					function(targetEntity) 
-					{ 
+					"Learn Spell: " + nameOfSpellbook,
+					function(targetEntity)
+					{
 						var spellToAdd = new SpellDefn("[Spell]");
 						var spellsKnown = targetEntity.moverData.spells.spells;
 
@@ -1468,15 +1470,15 @@ function DemoData()
 						{
 							spellsKnown.push(spellToAdd);
 						}
-					} 
+					}
 				)
 			);
 
 			var entityDefn = new EntityDefn
 			(
-				"Spellbook of " + nameOfSpellbook, 
+				"Spellbook of " + nameOfSpellbook,
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DeviceDefn(10, true, [ effectLearnSpell ]),
 					new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
 					new ItemDefn
@@ -1489,7 +1491,7 @@ function DemoData()
 						ItemDefn.InitializeDevice,
 						ItemDefn.UseDevice
 					)
-				]				
+				]
 			);
 
 			entityDefnSetSpellbooks.push(entityDefn);
@@ -1504,7 +1506,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Wands = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1519,13 +1521,13 @@ function DemoData()
 		(
 			new EffectDefn
 			(
-				"Display a Message", 
-				function(actingEntity, targetEntity) 
+				"Display a Message",
+				function(actingEntity, targetEntity)
 				{
 					Font.spawnMessageFloater
 					(
-						actingEntity.defn().name, 
-						"NOT IMPLEMENTED - " + actingEntity.defn().name, 
+						actingEntity.defn().name,
+						"NOT IMPLEMENTED - " + actingEntity.defn().name,
 						targetEntity.loc
 					);
 
@@ -1538,8 +1540,8 @@ function DemoData()
 		(
 			new EffectDefn
 			(
-				"Spawn Projectile", 
-				function(actingEntity, targetEntity) 
+				"Spawn Projectile",
+				function(actingEntity, targetEntity)
 				{
 					var universe = Globals.Instance.universe;
 					var loc = targetEntity.loc;
@@ -1563,8 +1565,8 @@ function DemoData()
 		(
 			new EffectDefn
 			(
-				"Teleport", 
-				function(actingEntity, targetEntity) 
+				"Teleport",
+				function(actingEntity, targetEntity)
 				{
 					var loc = targetEntity.loc;
 
@@ -1577,7 +1579,7 @@ function DemoData()
 						var cellToTeleportTo = map.cellAtPos(teleportPos);
 						if (cellToTeleportTo.terrain.costToTraverse > 1)
 						{
-							teleportPos = null;									
+							teleportPos = null;
 						}
 					}
 					loc.posInCells.overwriteWith(teleportPos);
@@ -1588,12 +1590,12 @@ function DemoData()
 			)
 		);
 
-		var wandDatas = 
+		var wandDatas =
 		[
 			[ "Cancelling", 	effectMessage ], // 0
-			[ "Cold", 		effectProjectileSpawn ], 
-			[ "Create Monster", 	effectMessage ], 
-			[ "Death",		effectProjectileSpawn ], 
+			[ "Cold", 		effectProjectileSpawn ],
+			[ "Create Monster", 	effectMessage ],
+			[ "Death",		effectProjectileSpawn ],
 			[ "Digging",		effectTeleport ],
 			[ "Enlightenment",	effectMessage ], // 5
 			[ "Fire",		effectProjectileSpawn ],
@@ -1606,17 +1608,17 @@ function DemoData()
 			[ "Opening",		effectMessage ],
 			[ "Polymorph",		effectMessage ],
 			[ "Probing",		effectMessage ], // 15
-			[ "Secret Door Detection", effectMessage ], 
+			[ "Secret Door Detection", effectMessage ],
 			[ "Sleep",		effectMessage ],
 			[ "Slow Monster",	effectMessage ],
 			[ "Speed Monster", 	effectMessage ],
 			[ "Striking",		effectProjectileSpawn ], // 20
-			[ "Teleport",		effectTeleport ], 
+			[ "Teleport",		effectTeleport ],
 			[ "Turn Undead",	effectMessage ],
 			[ "Wishing",		effectMessage ], // 23
 		];
 
-		appearances = 
+		appearances =
 		[
 			"Glass","Balsa","Crystal","Maple",
 			"Pine","Oak","Ebony","Marble",
@@ -1647,17 +1649,17 @@ function DemoData()
 			(
 				new EntityDefn
 				(
-					"Wand of " + name, 
+					"Wand of " + name,
 					[
-						CollidableDefn.Instances.Clear,
+						collidableDefns.Clear,
 						new DeviceDefn
 						(
-							10, // chargesMax	
+							10, // chargesMax
 							false, // consumedWhenAllChargesUsed
 							// effectsToApply
 							[
 								effect
-							] 
+							]
 						),
 						new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
 						new ItemDefn
@@ -1670,7 +1672,7 @@ function DemoData()
 							ItemDefn.InitializeDevice,
 							ItemDefn.UseDevice
 						),
-					]				
+					]
 				)
 			);
 		}
@@ -1683,7 +1685,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_MagicTools = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1699,7 +1701,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Weapons = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1710,7 +1712,7 @@ function DemoData()
 		entityDefnSets
 	)
 	{
-		var namesAndAppearancesOfWeapons = 
+		var namesAndAppearancesOfWeapons =
 		[
 			[ "Arrow", "Arrow" ],
 			[ "Battle Axe", "Battle Axe" ],
@@ -1741,9 +1743,9 @@ function DemoData()
 
 			var entityDefn = new EntityDefn
 			(
-				name, 
+				name,
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
 					new ItemDefn
 					(
@@ -1769,7 +1771,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Armor = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1787,7 +1789,7 @@ function DemoData()
 		var footwear = categories["Footwear"];
 		var shield = categories["Shield"];
 
-		var namesAndCategoriesOfArmor = 
+		var namesAndCategoriesOfArmor =
 		[
 			[ "Elven Leather Helmet",headwear ],
 			[ "Orcish Helmet", 	headwear ],
@@ -1859,9 +1861,9 @@ function DemoData()
 
 			var entityDefn = new EntityDefn
 			(
-				name,  
+				name,
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
 					new ItemDefn
 					(
@@ -1887,7 +1889,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Tools = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1897,10 +1899,10 @@ function DemoData()
 		effectDoNothing,
 		entityDefnSets
 	)
-	{		
+	{
 		var entityDefnSet = [];
 
-		var namesAndAppearances = 
+		var namesAndAppearances =
 		[
 			[ "Key", ],
 			[ "Lockpick"],
@@ -1955,9 +1957,9 @@ function DemoData()
 
 			var entityDefn = new EntityDefn
 			(
-				name, 
+				name,
 				[
-					CollidableDefn.Instances.Clear,
+					collidableDefns.Clear,
 					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
 					new ItemDefn
 					(
@@ -1981,7 +1983,7 @@ function DemoData()
 
 	DemoData.buildEntityDefns_Items_Stones = function
 	(
-		images, 
+		images,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1992,7 +1994,7 @@ function DemoData()
 		entityDefnSets
 	)
 	{
-		var namesOfStones = 
+		var namesOfStones =
 		[
 			// precious stones
 
@@ -2043,7 +2045,7 @@ function DemoData()
 			"Rock", // 35
 		];
 
-		var appearancesOfStones = 
+		var appearancesOfStones =
 		[
 			"White Gem","White Gem","Red Gem","Orange Gem",
 			"Blue Gem","Black Gem","Green Gem","Green Gem",
@@ -2066,9 +2068,9 @@ function DemoData()
 			(
 				new EntityDefn
 				(
-					namesOfStones[i], 
+					namesOfStones[i],
 					[
-						CollidableDefn.Instances.Clear,
+						collidableDefns.Clear,
 
 						new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
 						new ItemDefn
@@ -2081,7 +2083,7 @@ function DemoData()
 							ItemDefn.InitializeDoNothing,
 							ItemDefn.UseDoNothing
 						),
-					]				
+					]
 				)
 			);
 		}
@@ -2095,11 +2097,11 @@ function DemoData()
 		(
 			new EntityDefn
 			(
-				"Coins", 
+				"Coins",
 				[
 					itemPropertiesStandard,
 					new DrawableDefn(animation(images["Coins"]).toRun(), sizeInPixels),
-				].elementArraysConcatenate()
+				].concatenateAll()
 			)
 		);
 
@@ -2158,7 +2160,7 @@ function DemoData()
 		(
 			"Corpse",
 			[
-				CollidableDefn.Instances.Clear,
+				collidableDefns.Clear,
 				new DrawableDefn(animation(images["Corpse"]).toRun(), sizeInPixels),
 				new ItemDefn
 				(
@@ -2177,9 +2179,9 @@ function DemoData()
 		returnValues[entityDefnCorpse.name] = entityDefnCorpse;
 
 		var moverDefnPlayer = new MoverDefn
-		( 
+		(
 			999, // difficulty
-			1, // movesPerTurn 
+			1, // movesPerTurn
 			new MoverData_Demographics("Human", "Rogue", 1),
 			new MoverData_Traits
 			([
@@ -2250,7 +2252,7 @@ function DemoData()
 		var visualForPlayer = new VisualSet
 		(
 			"Player",
-			[	
+			[
 				animationDefnSetPlayer.toRun(),
 				animationDefnSetReticle.toRun(),
 			]
@@ -2266,11 +2268,11 @@ function DemoData()
 
 		var entityDefnPlayer = new EntityDefn
 		(
-			"Player", 	
+			"Player",
 			// properties
 			[
 				new ActorDefn(activityDefns["Accept User Input"].name),
-				CollidableDefn.Instances.Blocking,
+				collidableDefns.Blocking,
 				new ContainerDefn(),
 				drawableDefnPlayer,
 				new EquippableDefn(equipmentSocketDefnSetBiped),
@@ -2297,11 +2299,11 @@ function DemoData()
 
 			var entityDefnForAgent = new EntityDefn
 			(
-				agentName, 	
+				agentName,
 				// properties
 				[
 					new ActorDefn(activityDefns["Move Toward Player"].name),
-					CollidableDefn.Instances.Blocking,
+					collidableDefns.Blocking,
 					containerDefn,
 					new EquippableDefn(equipmentSocketDefnSetBiped),
 					new EnemyDefn(),
@@ -2309,7 +2311,7 @@ function DemoData()
 					new MoverDefn
 					(
 						difficulty,
-						1, // movesPerTurn 
+						1, // movesPerTurn
 						new MoverData_Demographics(null, null),
 						new MoverData_Skills([]),
 						new MoverData_Spells([]),
@@ -2324,7 +2326,7 @@ function DemoData()
 
 					new DrawableDefn
 					(
-						animation(images[agentName]).toRun(), 
+						animation(images[agentName]).toRun(),
 						sizeInPixels,
 						1 // zIndex
 					),
@@ -2336,7 +2338,7 @@ function DemoData()
 		}
 
 		var entityGroupAgents = new EntityDefnGroup
-		( 
+		(
 			"Agents",
 			0, // relativeFrequency
 			returnValues
@@ -2367,8 +2369,8 @@ function DemoData()
 
 				entityDefnGroupForDifficulty.entityDefns.push(entityDefnForAgent);
 			}
-		} 
-		
+		}
+
 		return groups;
 	}
 
@@ -2398,7 +2400,7 @@ function DemoData()
 
 		// corpse drop frequency at http://www.steelypips.org/nethack/343/mon2-343.html
 
-		var agentDatas = 
+		var agentDatas =
 		[
 			// name, difficulty, numberAppearing, attacks, baseLevel, baseExperience,
 			// speed, base ac, base mr, alignment, frequency, genocidable,
@@ -2631,7 +2633,7 @@ function DemoData()
 			[ "Baby Black Dragon" ],
 			[ "Baby Blue Dragon" ],
 			[ "Baby Green Dragon" ],
-			[ "Baby Yellow Dragon" ],		
+			[ "Baby Yellow Dragon" ],
 			[ "Gray Dragon" ],
 			[ "Silver Dragon" ],
 			[ "Silver Dragon 2" ],
@@ -2972,7 +2974,7 @@ function DemoData()
 			[ "Roshi" ],
 			[ "Guide" ],
 			[ "Warrior" ],
-			[ "Apprentice" ],			
+			[ "Apprentice" ],
 		];
 
 		return agentDatas;
@@ -2982,11 +2984,11 @@ function DemoData()
 	{
 		var skillDefns = DemoData.buildSkillDefns();
 
-		var returnValues = 
+		var returnValues =
 		[
 			new Role
 			(
-				"Wizard", 
+				"Wizard",
 				// ranks
 				[
 					new Role_Rank("Evoker", 0, null),
@@ -3012,7 +3014,7 @@ function DemoData()
 			new SkillDefn("Quarterstaff"),
 		];
 
-		returnValues.addLookups("name");
+		returnValues.addLookupsByName();
 
 		return returnValues;
 	}
@@ -3024,7 +3026,7 @@ function DemoData()
 			// todo
 		];
 
-		returnValues.addLookups("name");
+		returnValues.addLookupsByName();
 
 		return returnValues;
 	}
@@ -3040,7 +3042,7 @@ function DemoData()
 			new TraitDefn("Charisma"),
 		];
 
-		returnValues.addLookups("name");
+		returnValues.addLookupsByName();
 
 		return returnValues;
 	}
@@ -3059,7 +3061,7 @@ function DemoData()
 		this.WallEastWest 	= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "#0000aa", imagesForTiles["WallDungeonEastWest"]);
 		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "#0000aa", imagesForTiles["WallDungeonNorthSouth"]);
 
-		var terrains = 
+		var terrains =
 		[
 			this.Stone,
 			this.Floor,
@@ -3069,8 +3071,8 @@ function DemoData()
 			this.WallNorthSouth,
 		];
 
-		terrains.addLookups("name");
-		terrains.addLookups("codeChar");
+		terrains.addLookupsByName();
+		terrains.addLookups( function(element) { return element["codeChar"]; } );
 
 		return terrains;
 	}
@@ -3096,7 +3098,7 @@ function DemoData()
 	}
 
 	DemoData.buildUniverseDefn = function(imagesForTiles, imagesForTilesTransparent)
-	{	
+	{
 		var imagesOpaque = DemoData.buildImageLookup(imagesForTiles);
 		var imagesTransparent = DemoData.buildImageLookup(imagesForTilesTransparent);
 
@@ -3112,60 +3114,60 @@ function DemoData()
 
 		var Branch = UniverseDefnVenueStructureBranch;
 
-		var branchesMain = 
+		var branchesMain =
 		[
 			/*
 			new Branch
 			(
-				"Tutorial", 
-				"Tutorial", 
-				false, 
-				new Range(0, 0), 
+				"Tutorial",
+				"Tutorial",
+				false,
+				new Range(0, 0),
 				new Range(1, 1),
 				[]
 			),
 			*/
 			new Branch
 			(
-				"DungeonShallow", 
+				"DungeonShallow",
 				"Dungeon",
-				true, 
-				new Range(0, 0), 
+				true,
+				new Range(0, 0),
 				new Range(5, 6),
 				[
 					new Branch
 					(
 						"MinesShallow",
-						"Mines", 
+						"Mines",
 						false,
-						new Range(1, 4), 
+						new Range(1, 4),
 						new Range(2, 4),
 						[]
 					),
 					new Branch
 					(
-						"MinesTown", 
+						"MinesTown",
 						"MinesTown",
 						true,
-						new Range(0, 0), 
+						new Range(0, 0),
 						new Range(1, 1),
 						[]
 					),
 					new Branch
 					(
-						"MinesDeep", 
+						"MinesDeep",
 						"Mines",
 						true,
-						new Range(0, 0), 
+						new Range(0, 0),
 						new Range(2, 4),
 						[]
 					),
 					new Branch
 					(
-						"MinesBottom", 
+						"MinesBottom",
 						"MinesBottom",
 						true,
-						new Range(0, 0), 
+						new Range(0, 0),
 						new Range(1, 1),
 						[]
 					),
@@ -3174,26 +3176,26 @@ function DemoData()
 			new Branch
 			(
 				"Oracle",
-				"Oracle", 
-				true, 
-				new Range(0, 0), 
+				"Oracle",
+				true,
+				new Range(0, 0),
 				new Range(1, 1),
-				[]			
+				[]
 			),
 			new Branch
 			(
-				"DungeonDeep", 
+				"DungeonDeep",
 				"Dungeon",
-				true, 
-				new Range(0, 0), 
+				true,
+				new Range(0, 0),
 				new Range(5, 6),
 				[
 					new Branch
 					(
-						"Puzzle", 
+						"Puzzle",
 						"Puzzle",
 						false,
-						new Range(1, 4), 
+						new Range(1, 4),
 						new Range(2, 4),
 						[]
 					),
@@ -3215,7 +3217,7 @@ function DemoData()
 				true,
 				new Range(0, 0),
 				new Range(1, 1),
-				[]				
+				[]
 			),
 			new Branch
 			(
@@ -3299,7 +3301,7 @@ function DemoData()
 		var mapTerrainsDungeon = DemoData.buildMapTerrainsDungeon(images);
 
 		// hack - Build this on the fly?
-		var propertyNamesKnown = 
+		var propertyNamesKnown =
 		[
 			"Actor",
 			"Collidable",
@@ -3441,7 +3443,7 @@ function DemoData()
 		var entityDefnGroups = universeDefn.entityDefnGroups;
 		var entityDefns = universeDefn.entityDefns;
 
-		entityDefns.addLookups("name");
+		entityDefns.addLookupsByName();
 
 		var mapSizeInCells = new Coords(64, 64);
 		var mapCellsAsStrings = [];
@@ -3477,7 +3479,7 @@ function DemoData()
 			var doesRoomOverlapAnother = true;
 
 			while (doesRoomOverlapAnother == true)
-			{	
+			{
 				var roomSize = new Coords().randomize().multiply
 				(
 					roomSizeRange
@@ -3488,7 +3490,7 @@ function DemoData()
 
 				var roomSizePlusOnes = roomSize.clone().add
 				(
-					Coords.Instances.Ones
+					Coords.Instances().Ones
 				);
 
 				var roomPosRange = mapSizeInCells.clone().subtract
@@ -3496,7 +3498,7 @@ function DemoData()
 					roomSize
 				).subtract
 				(
-					Coords.Instances.TwoTwoZero
+					Coords.Instances().TwoTwoZero
 				);
 
 				var roomPos = new Coords().randomize().multiply
@@ -3504,7 +3506,7 @@ function DemoData()
 					roomPosRange
 				).floor().add
 				(
-					Coords.Instances.Ones
+					Coords.Instances().Ones
 				);
 
 				doesRoomOverlapAnother = Bounds.doBoundsInSetsOverlap
@@ -3536,20 +3538,20 @@ function DemoData()
 			var roomMax = roomPos.clone().add(room.bounds.size);
 
 			for (var y = roomPos.y; y < roomMax.y; y++)
-			{	
+			{
 				var mapCellRowAsString = mapCellsAsStrings[y];
 
 				for (var x = roomPos.x; x < roomMax.x; x++)
-				{	
+				{
 					if (x == roomPos.x || x == roomMax.x - 1)
 					{
 						if (y == roomPos.y)
 						{
-							terrainCodeChar = terrains.WallCornerNorth.codeChar;	
+							terrainCodeChar = terrains.WallCornerNorth.codeChar;
 						}
 						else if (y == roomMax.y - 1)
 						{
-							terrainCodeChar = terrains.WallCornerSouth.codeChar;	
+							terrainCodeChar = terrains.WallCornerSouth.codeChar;
 						}
 						else
 						{
@@ -3565,7 +3567,7 @@ function DemoData()
 						terrainCodeChar = terrains.Floor.codeChar;
 					}
 
-					mapCellRowAsString = 
+					mapCellRowAsString =
 						mapCellRowAsString.substring(0, x)
 						+ terrainCodeChar
 						+ mapCellRowAsString.substring(x + 1);
@@ -3605,20 +3607,20 @@ function DemoData()
 						roomConnectedCenter
 					).absolute().clearZ().sumOfDimensions();
 
-					if 
+					if
 					(
 						nearestRoomsSoFar == null
 						|| distance < distanceBetweenNearestRoomsSoFar
 					)
 					{
-						nearestRoomsSoFar = 
+						nearestRoomsSoFar =
 						[
 							roomConnected,
 							roomToConnect,
 						];
 
 						distanceBetweenNearestRoomsSoFar = distance;
-					}	
+					}
 				}
 			}
 
@@ -3634,12 +3636,12 @@ function DemoData()
 				(
 					roomConnectedBounds.size.clone().subtract
 					(
-						Coords.Instances.TwoTwoZero
+						Coords.Instances().TwoTwoZero
 					)
 				).floor()
 			).add
 			(
-				Coords.Instances.OneOneZero
+				Coords.Instances().OneOneZero
 			);
 
 			var toPos = roomToConnectBounds.pos.clone().add
@@ -3648,12 +3650,12 @@ function DemoData()
 				(
 					roomToConnectBounds.size.clone().subtract
 					(
-						Coords.Instances.TwoTwoZero
+						Coords.Instances().TwoTwoZero
 					)
 				).floor()
 			).add
 			(
-				Coords.Instances.OneOneZero
+				Coords.Instances().OneOneZero
 			);
 
 			var displacementToRoomToConnect = toPos.clone().subtract
@@ -3682,7 +3684,7 @@ function DemoData()
 			directionToRoomToConnect.directions();
 
 			if (directionToRoomToConnect.x > 0)
-			{	
+			{
 				fromPos.x = roomConnectedBounds.max.x;
 				toPos.x = roomToConnectBounds.pos.x - 1;
 			}
@@ -3711,20 +3713,20 @@ function DemoData()
 
 			var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
-			var terrainCodeCharsForWalls = 
+			var terrainCodeCharsForWalls =
 				terrains.WallEastWest.codeChar +
 				terrains.WallNorthSouth.codeChar;
 
-			while (displacementToRoomToConnect.equals(Coords.Instances.Zeroes) == false)
+			while (displacementToRoomToConnect.equals(Coords.Instances().Zeroes) == false)
 			{
 				var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
 				var terrainCodeCharExisting = mapCellRowAsString[cellPos.x];
 
-				mapCellRowAsString = 
+				mapCellRowAsString =
 					mapCellRowAsString.substring(0, cellPos.x)
 					+ terrainCodeChar
-					+ mapCellRowAsString.substring(cellPos.x + 1); 
+					+ mapCellRowAsString.substring(cellPos.x + 1);
 
 				mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
 
@@ -3750,7 +3752,7 @@ function DemoData()
 			}
 
 			roomsToConnect.splice(roomsToConnect.indexOf(roomToConnect), 1);
-			roomsConnected.push(roomToConnect);			
+			roomsConnected.push(roomToConnect);
 		}
 
 		for (var i = 0; i < doorwayPositions.length; i++)
@@ -3759,35 +3761,35 @@ function DemoData()
 
 			var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
-			mapCellRowAsString = 
+			mapCellRowAsString =
 				mapCellRowAsString.substring(0, cellPos.x)
 				+ terrainCodeChar
-				+ mapCellRowAsString.substring(cellPos.x + 1); 
+				+ mapCellRowAsString.substring(cellPos.x + 1);
 
 			mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
 		}
 
 		var entities = [];
-		
+
 		if (venueIndex == 0)
 		{
 			var stairsExit = new Entity
 			(
-				"StairsExit", 
-				entityDefns["StairsExit"].name, 
+				"StairsExit",
+				entityDefns["StairsExit"].name,
 				rooms[0].bounds.center.clone().floor(),
-				[] // propertyValues 
+				[] // propertyValues
 			);
-				
+
 			entities.push(stairsExit);
 		}
 		else
 		{
 			var stairsUp = new Entity
 			(
-				"StairsUp", 
-				entityDefns["StairsUp"].name, 
-				rooms[0].bounds.center.clone().floor(), 
+				"StairsUp",
+				entityDefns["StairsUp"].name,
+				rooms[0].bounds.center.clone().floor(),
 				// propertyValues
 				[
 					new PortalData
@@ -3797,10 +3799,10 @@ function DemoData()
 					),
 				]
 			);
-				
+
 			entities.push(stairsUp);
 		}
-		
+
 		entities.push
 		(
 			Entity.fromDefn
@@ -3810,14 +3812,14 @@ function DemoData()
 				null // pos
 			)
 		);
-		
+
 		if (venueIndex < numberOfVenues - 1)
 		{
 			var stairsDown = new Entity
 			(
-				"StairsDown", 
-				entityDefns["StairsDown"].name, 
-				rooms[1].bounds.center.clone().floor(), 
+				"StairsDown",
+				entityDefns["StairsDown"].name,
+				rooms[1].bounds.center.clone().floor(),
 				// propertyValues
 				[
 					new PortalData
@@ -3827,7 +3829,7 @@ function DemoData()
 					),
 				]
 			);
-			
+
 			entities.push(stairsDown);
 		}
 
@@ -3846,7 +3848,7 @@ function DemoData()
 		var chancesForItemPerRoom = 2;
 		var probabilityOfItemPerChance = 1;
 
-		var entityDefnGroupsForItems = 
+		var entityDefnGroupsForItems =
 		[
 			entityDefnGroups["Armor"],
 			entityDefnGroups["Food"],
@@ -3876,9 +3878,9 @@ function DemoData()
 				var randomValue = Globals.Instance.randomizer.getNextRandom();
 
 				if (randomValue <= probabilityOfItemPerChance)
-				{	
-					randomValue = 
-						Globals.Instance.randomizer.getNextRandom() 
+				{
+					randomValue =
+						Globals.Instance.randomizer.getNextRandom()
 						* sumOfFrequenciesForAllGroups;
 
 					var sumOfFrequenciesForGroupsSoFar = 0;
@@ -3902,7 +3904,7 @@ function DemoData()
 
 					var entityDefnIndex = Math.floor
 					(
-						Globals.Instance.randomizer.getNextRandom() 
+						Globals.Instance.randomizer.getNextRandom()
 						* entityDefns.length
 					);
 
@@ -3915,21 +3917,21 @@ function DemoData()
 					(
 						room.bounds.size.clone().subtract
 						(
-							Coords.Instances.TwoTwoZero
+							Coords.Instances().TwoTwoZero
 						)
 					).floor().add
 					(
 						room.bounds.pos
 					).add
 					(
-						Coords.Instances.OneOneZero
+						Coords.Instances().OneOneZero
 					)
 
 					var entityForItem = new Entity
 					(
-						entityDefnForItem.name, 
-						entityDefnForItem.name, 
-						pos 
+						entityDefnForItem.name,
+						entityDefnForItem.name,
+						pos
 					);
 
 					entities.push(entityForItem);
@@ -4019,7 +4021,7 @@ function DemoData()
 		{
 			stringForTopAndBottomRows += "x";
 			stringForOtherRows += ".";
-		}		 
+		}		
 
 		stringForTopAndBottomRows += "x";
 		stringForOtherRows += "x";
@@ -4051,9 +4053,9 @@ function DemoData()
 
 			new Entity
 			(
-				"StairsDown", 
-				entityDefns["StairsDown"].name, 
-				sizeInCells.clone().subtract(Coords.Instances.Ones),
+				"StairsDown",
+				entityDefns["StairsDown"].name,
+				sizeInCells.clone().subtract(Coords.Instances().Ones),
 				// propertyValues
 				[
 					new PortalData
@@ -4087,7 +4089,7 @@ function DemoData()
 	{
 		var returnValue = [];
 
-		var tileNamesAndPositions = 
+		var tileNamesAndPositions =
 		[
 			// terrains
 			[ "Floor", new Coords(8, 21) ],
@@ -4095,22 +4097,22 @@ function DemoData()
 
 			[ "WallCaveCornerNorth", new Coords(15, 25) ],
 			[ "WallCaveCornerSouth", new Coords(17, 25) ],
-			[ "WallCaveEastWest", new Coords(14, 25) ],	
-			[ "WallCaveNorthSouth", new Coords(13, 25) ],	
+			[ "WallCaveEastWest", new Coords(14, 25) ],
+			[ "WallCaveNorthSouth", new Coords(13, 25) ],
 
 			[ "WallDungeonCornerNorth", new Coords(32, 20) ],
 			[ "WallDungeonCornerSouth", new Coords(34, 20) ],
-			[ "WallDungeonEastWest", new Coords(31, 20) ],	
+			[ "WallDungeonEastWest", new Coords(31, 20) ],
 			[ "WallDungeonNorthSouth", new Coords(30, 20) ],
 
 			[ "WallHadesCornerNorth", new Coords(26, 25) ],
 			[ "WallHadesCornerSouth", new Coords(28, 25) ],
-			[ "WallHadesEastWest", new Coords(25, 25) ],	
+			[ "WallHadesEastWest", new Coords(25, 25) ],
 			[ "WallHadesNorthSouth", new Coords(24, 25) ],
 
 			[ "WallPuzzleCornerNorth", new Coords(8, 26) ],
 			[ "WallPuzzleCornerSouth", new Coords(10, 26) ],
-			[ "WallPuzzleEastWest", new Coords(7, 26) ],	
+			[ "WallPuzzleEastWest", new Coords(7, 26) ],
 			[ "WallPuzzleNorthSouth", new Coords(6, 26) ],
 
 			// emplacements
@@ -4554,7 +4556,7 @@ function DemoData()
 			var image = imagesForTiles[tilePos.y][tilePos.x];
 			image.name = tileName;
 			returnValue.push(image);
-			returnValue[tileName] = image;			
+			returnValue[tileName] = image;
 
 			tilePos.x++;
 
@@ -4567,7 +4569,7 @@ function DemoData()
 
 		var imagesForReticlesClockwiseFromE = [];
 
-		var reticlePixelSetsAsStringArrays =  
+		var reticlePixelSetsAsStringArrays =
 		[
 			[
 				"................",

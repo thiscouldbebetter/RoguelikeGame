@@ -7,7 +7,7 @@ function MoverData_Skills(skillDefns)
 	{
 		var skillDefn = skillDefns[i];
 		var skill = new Skill(skillDefn, 0);
-		this.skills.push(skill);	
+		this.skills.push(skill);
 	}
 }
 
@@ -27,6 +27,6 @@ function MoverData_Skills(skillDefns)
 			);
 		}
 
-		return this.control;				
+		return this.control;
 	}
 }

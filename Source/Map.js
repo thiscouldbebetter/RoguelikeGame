@@ -7,8 +7,8 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	this.sizeInCells = new Coords
 	(
-		cellsAsStrings[0].length, 
-		cellsAsStrings.length, 
+		cellsAsStrings[0].length,
+		cellsAsStrings.length,
 		1
 	);
 
@@ -70,7 +70,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		);
 
 		return returnValue;
-	}
+	};
 
 	// instance methods
 
@@ -81,7 +81,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			cellIndex % this.sizeInCells.x,
 			Math.floor(cellIndex / this.sizeInCells.x)
 		);
-	}
+	};
 
 	Map.prototype.cellAtPos = function(cellPos)
 	{
@@ -95,7 +95,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		}
 
 		return returnValue;
-	}
+	};
 
 	Map.prototype.cellAtPos_Set = function(cellPos, cellToSet)
 	{
@@ -103,7 +103,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		this.cells[cellIndex] = cellToSet;
 
 		this.cellIndicesModified.push(cellIndex);
-	}
+	};
 
 	Map.prototype.clone = function()
 	{
@@ -118,7 +118,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			for (var x = 0; x < map.sizeInCells.x; x++)
 			{
 				cellPos.x = x;
-	
+
 				var cell = this.cellAtPos(cellPos);
 				var cellTerrain = this.terrains[cellAsChar];
 				var terrainChar = terrain.codeChar;
@@ -135,12 +135,12 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			this.cellSizeInPixels,
 			cellsAsStrings
 		);
-	}
+	};
 
 	Map.prototype.copyNCellsAtPositionsToOther = function
 	(
-		numberOfCellsToCopy, 
-		cellPositionsToCopy, 
+		numberOfCellsToCopy,
+		cellPositionsToCopy,
 		other
 	)
 	{
@@ -153,11 +153,11 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 				other.cellAtPos_Set(cellPos, cell);
 			}
 		}
-	}
+	};
 
 	Map.prototype.indexOfCellAtPos = function(cellPos)
 	{
 		return cellPos.y * this.sizeInCells.x + cellPos.x
-	}
+	};
 
 }

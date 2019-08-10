@@ -25,14 +25,14 @@ function ControlList(name, pos, size, bindingPath, listables)
 			drawPos.y += 10; // hack
 			var itemText = Control.getValueFromObjectAtBindingPath
 			(
-				listable, 
+				listable,
 				this.bindingPath
 			);
 			graphics.fillText
 			(
 				itemText,
 				drawPos.x,
-				drawPos.y	
+				drawPos.y
 			)
 		}
 	}

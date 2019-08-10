@@ -45,9 +45,9 @@ function Font(charactersAvailable, characterSize, characterImages)
 					visualForCharacter
 				);
 			}
-		}	
+		};
 
-		var entityDefnProperties = 
+		var entityDefnProperties =
 		[
 			new DrawableDefn
 			(
@@ -71,7 +71,7 @@ function Font(charactersAvailable, characterSize, characterImages)
 		{
 			entityDefnProperties.push
 			(
-				new DynamicDefn(velocity, Coords.Instances.Zeroes)
+				new DynamicDefn(velocity, Coords.Instances().Zeroes)
 			);
 		}
 
@@ -82,12 +82,12 @@ function Font(charactersAvailable, characterSize, characterImages)
 		);
 
 		return entityDefn;
-	}
+	};
 
 	Font.spawnMessage = function
 	(
-		messageIconName, 
-		messageText, 
+		messageIconName,
+		messageText,
 		loc,
 		isFloater
 	)
@@ -95,10 +95,10 @@ function Font(charactersAvailable, characterSize, characterImages)
 		var universe = Globals.Instance.universe;
 		var entityDefns = universe.defn.entityDefns;
 
-		var messageIcon = 
+		var messageIcon =
 		(
-			messageIconName == null 
-			? null 
+			messageIconName == null
+			? null
 			: entityDefns[messageIconName].Drawable.visual
 		);
 
@@ -117,24 +117,24 @@ function Font(charactersAvailable, characterSize, characterImages)
 		//entityMessage.drawableData.isVisible = true;
 
 		universe.venueCurrent.entitiesToSpawn.push(entityMessage);
-	}
+	};
 
 	Font.spawnMessageFixed = function
 	(
-		messageText, 
+		messageText,
 		loc
 	)
 	{
 		Font.spawnMessage(null, messageText, loc, false);
-	}
+	};
 
 	Font.spawnMessageFloater = function
 	(
-		messageIconName, 
-		messageText, 
+		messageIconName,
+		messageText,
 		loc
 	)
 	{
 		Font.spawnMessage(messageIconName, messageText, loc, true);
-	}
+	};
 }

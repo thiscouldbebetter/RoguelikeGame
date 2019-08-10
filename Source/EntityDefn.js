@@ -1,7 +1,7 @@
 
 function EntityDefn
 (
-	name,  
+	name,
 	properties
 )
 {
@@ -25,7 +25,7 @@ function EntityDefn
 		(
 			this.constructor.name,
 			// attributeNameValuePairs
-			[	
+			[
 				[ "name", this.name ],
 			],
 			// children

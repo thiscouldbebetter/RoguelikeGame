@@ -11,7 +11,7 @@ function Color(name, symbol, systemColor)
 
 	Color.getBySymbol = function(symbolToGet)
 	{
-		var returnValue = Color.Instances._All[symbolToGet];
+		var returnValue = Color.Instances()._All[symbolToGet];
 		return returnValue;
 	}
 
@@ -19,10 +19,6 @@ function Color(name, symbol, systemColor)
 
 	function Color_Instances()
 	{
-		if (Color.Instances != null) { return Color.Instances; }
-
-		Color.Instances = this;
-
 		this.Transparent = new Color("Transparent", ".", "rgba(0, 0, 0, 0)");
 
 		this.Black 	= new Color("Black", 	"k", "#000000");
@@ -41,8 +37,8 @@ function Color(name, symbol, systemColor)
 		this.White 	= new Color("White", 	"w", "#ffffff");
 		this.Yellow 	= new Color("Yellow", 	"y", "#ffff00");
 
-		this._All = new Array
-		(
+		this._All =
+		[
 			this.Transparent,
 
 			this.Black,
@@ -59,15 +55,23 @@ function Color(name, symbol, systemColor)
 			this.Red,
 			this.Tan,
 			this.White,
-			this.Yellow	
-		);
+			this.Yellow
+		];
 
 		for (var i = 0; i < this._All.length; i++)
 		{
 			var color = this._All[i];
 			this._All[color.symbol] = color;
 		}
-	}	
+	};
 
-	new Color_Instances();
+	Color.Instances = function()
+	{
+		if (Color._instances == null)
+		{
+			Color._instances = new Color_Instances();
+		}
+
+		return Color._instances;
+	};
 }

@@ -11,7 +11,7 @@ function KillableData(defn)
 		this.integrity = NumberHelper.trimValueToRangeMax
 		(
 			this.integrity + amountToAdd,
-			0, 
+			0,
 			this.defn.integrityMax
 		);
 	}

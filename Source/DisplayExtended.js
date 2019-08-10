@@ -1,38 +1,29 @@
 
-function DisplayHelper()
+function DisplayExtended(display)
 {
-		// helper variables;
-		this.cellPos = new Coords();
-		this.drawPos = new Coords();
-		this.entitiesSortedBottomToTop = [];
+	this.display = display;
+
+	// Helper variables.
+	this.cellPos = new Coords();
+	this.drawPos = new Coords();
+	this.entitiesSortedBottomToTop = [];
 }
 {
-	DisplayHelper.prototype.clear = function()
+	DisplayExtended.prototype.drawControl = function(controlToDraw)
 	{
-		this.graphics.fillStyle = "Black";
-		this.graphics.fillRect
-		(
-			0, 0,
-			this.sizeInPixels.x,
-			this.sizeInPixels.y
-		);
-	}
+		controlToDraw.drawToGraphics(this.display.graphics);
+	};
 
-	DisplayHelper.prototype.drawControl = function(controlToDraw)
-	{
-		controlToDraw.drawToGraphics(this.graphics);	
-	}
-	
-	DisplayHelper.prototype.drawEntitiesForMap = function(entities, map)
+	DisplayExtended.prototype.drawEntitiesForMap = function(entities, map)
 	{
 		for (var i = 0; i < entities.length; i++)
 		{
 			var entity = entities[i];
 			this.drawEntityForMap(entity, map);
 		}
-	}
-	
-	DisplayHelper.prototype.drawEntityForMap = function(entity, map)
+	};
+
+	DisplayExtended.prototype.drawEntityForMap = function(entity, map)
 	{
 		var visual = entity.drawableData.visual;
 		var drawPos = this.drawPos.overwriteWith
@@ -42,15 +33,15 @@ function DisplayHelper()
 		(
 			map.cellSizeInPixels
 		);
-		
+
 		visual.drawToGraphicsAtPos
 		(
-			this.graphics,
+			this.display.graphics,
 			drawPos
-		);		
-	}
+		);
+	};
 
-	DisplayHelper.prototype.drawMap = function(map)
+	DisplayExtended.prototype.drawMap = function(map)
 	{
 		var cellPos = this.cellPos;
 		var drawPos = this.drawPos;
@@ -68,22 +59,22 @@ function DisplayHelper()
 					cellPos,
 					false // drawMovers
 				);
-				
+
 			} // end for x
-			
+
 		} // end for y
-		
+
 		var fieldOfView = Globals.Instance.sightHelper.fieldOfView;
 		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
-		var cellPositionsVisible = fieldOfView.cellPositionsVisible; 
+		var cellPositionsVisible = fieldOfView.cellPositionsVisible;
 		for (var i = 0; i < numberOfCellsVisible; i++)
 		{
 			var cellPos = cellPositionsVisible[i];
 			this.drawMapCellAtPos(map, cellPos, true);
 		}
-	} 
-	
-	DisplayHelper.prototype.drawMapCellAtPos = function(map, cellPos, drawMovers)
+	};
+
+	DisplayExtended.prototype.drawMapCellAtPos = function(map, cellPos, drawMovers)
 	{
 		var cell = map.cellAtPos(cellPos);
 		var cellTerrain = cell.terrain;
@@ -98,12 +89,12 @@ function DisplayHelper()
 			map.cellSizeInPixels
 		);
 
-		this.graphics.drawImage
+		this.display.graphics.drawImage
 		(
 			terrainImage.systemImage,
 			drawPos.x,
-			drawPos.y					
-		);	
+			drawPos.y
+		);
 
 		var entitiesInCell = cell.entitiesPresent;
 		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
@@ -125,25 +116,25 @@ function DisplayHelper()
 			}
 			entitiesSortedBottomToTop.splice(j, 0, entityToSort);
 		}
-				
+
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
 			if (entity.moverData == null || drawMovers == true)
-			{ 
+			{
 				var visual = entity.drawableData.visual;
 				visual.drawToGraphicsAtPos
 				(
-					this.graphics,
+					this.display.graphics,
 					drawPos
 				);
 			}
-					
-		} // end for entitiesSortedBottomToTop
-		
-	} 
 
-	DisplayHelper.prototype.drawVenue = function(venue)
+		} // end for entitiesSortedBottomToTop
+
+	};
+
+	DisplayExtended.prototype.drawVenue = function(venue)
 	{
 		var turnsSoFar = Globals.Instance.universe.turnsSoFar;
 		if (venue.turnLastDrawn != turnsSoFar)
@@ -152,17 +143,5 @@ function DisplayHelper()
 			var map = venue.map;
 			this.drawMap(map);
 		}
-	}
-
-	DisplayHelper.prototype.initialize = function(sizeInPixels)
-	{
-		this.sizeInPixels = sizeInPixels;
-
-		this.canvas = document.createElement("canvas");
-		this.canvas.width = this.sizeInPixels.x;
-		this.canvas.height = this.sizeInPixels.y;
-		this.graphics = this.canvas.getContext("2d");
-
-		document.body.appendChild(this.canvas);
-	}
+	};
 }

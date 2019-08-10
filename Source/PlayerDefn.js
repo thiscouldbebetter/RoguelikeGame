@@ -7,7 +7,7 @@ function PlayerDefn()
 {
 	PlayerDefn.prototype.name = function() { return "Player"; }
 
-	PlayerDefn.prototype.initializeEntityForVenue = function(entity, venue) 
+	PlayerDefn.prototype.initializeEntityForVenue = function(entity, venue)
 	{
 		entity.playerData = new PlayerData();
 
@@ -34,7 +34,7 @@ function PlayerDefn()
 				venue.defn,
 				venue.sizeInPixels,
 				mapKnown,
-				[] // entities 
+				[] // entities
 			);
 
 			venueKnownLookup[venue.name] = venueKnown;
@@ -58,7 +58,7 @@ function PlayerDefn()
 		}
 	}
 
-	PlayerDefn.prototype.updateEntityForVenue = function(entity, venue) 
+	PlayerDefn.prototype.updateEntityForVenue = function(entity, venue)
 	{
 		if (entity.moverData.movesThisTurn <= 0)
 		{
@@ -72,13 +72,13 @@ function PlayerDefn()
 				mover.moverData.movesThisTurn = mover.defn().Mover.movesPerTurn;
 			}
 
-			Globals.Instance.universe.turnsSoFar++;	
+			Globals.Instance.universe.turnsSoFar++;
 
 			var venueKnown = entity.playerData.venueKnownLookup[venue.name];
 
 			Globals.Instance.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
-				venueKnown,						
+				venueKnown,
 				venue, // venueComplete
 				entity.loc.posInCells,
 				8 //sightRange

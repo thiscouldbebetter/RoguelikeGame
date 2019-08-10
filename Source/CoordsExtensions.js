@@ -22,7 +22,7 @@ function CoordsExtensions()
 
 	Coords.prototype.dimensionIndexOfSmallestOrLargest = function
 	(
-		indexOfDimensionThatLosesTies, 
+		indexOfDimensionThatLosesTies,
 		multiplier
 	)
 	{

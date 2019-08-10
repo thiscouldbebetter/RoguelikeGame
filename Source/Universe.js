@@ -6,7 +6,7 @@ function Universe(name, defn, venues, entityForPlayer)
 	this.venues = venues;
 	this.entityForPlayer = entityForPlayer;
 
-	this.venues.addLookups("name");
+	this.venues.addLookupsByName();
 
 	if (this.entityForPlayer == null)
 	{
@@ -15,8 +15,8 @@ function Universe(name, defn, venues, entityForPlayer)
 
 		this.entityForPlayer = new Entity
 		(
-			"Player", 
-			this.defn.entityDefns["Player"].name, 
+			"Player",
+			this.defn.entityDefns["Player"].name,
 			portal0.loc.posInCells.clone()
 		);
 
@@ -53,7 +53,7 @@ function Universe(name, defn, venues, entityForPlayer)
 		(
 			this.constructor.name,
 			// attributeNameValuePairs
-			[	
+			[
 				[ "name", this.name ],
 			],
 			// children

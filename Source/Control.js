@@ -28,20 +28,20 @@ function Control()
 				}
 			}
 		}
-	
+
 		return object;
-	}
+	};
 
 	Control.posAbsoluteOfControl = function(control)
 	{
 		var returnValue = new Coords(0, 0);
 
 		while (control != null)
-		{	
+		{
 			returnValue.add(control.pos);
 			control = control.parent;
 		}
 
 		return returnValue;
-	}
+	};
 }

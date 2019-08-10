@@ -4,13 +4,13 @@ function AnimationDefnSet(name, animationDefns)
 	this.name = name;
 	this.animationDefns = animationDefns;
 
-	this.animationDefns.addLookups("name");
+	this.animationDefns.addLookupsByName();
 }
 
 {
 	AnimationDefnSet.buildFromImage = function(image)
 	{
-		var imageAsImageSets = 
+		var imageAsImageSets =
 		[
 			[
 				image
@@ -19,7 +19,7 @@ function AnimationDefnSet(name, animationDefns)
 
 		var returnValue = new AnimationDefnSet
 		(
-			image.name, 
+			image.name,
 			AnimationDefn.buildManyFromImageSets
 			(
 				imageAsImageSets
@@ -42,7 +42,7 @@ function AnimationDefnSet(name, animationDefns)
 
 		var returnValue = new AnimationDefnSet
 		(
-			image.id, 
+			image.id,
 			AnimationDefn.buildManyFromImageSets
 			(
 				imageAsImageSets

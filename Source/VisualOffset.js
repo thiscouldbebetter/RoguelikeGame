@@ -7,7 +7,7 @@ function VisualOffset(visual, offset)
 
 {
 	VisualOffset.prototype.drawToGraphicsAtPos = function(graphics, drawPos)
-	{	
+	{
 		this.visual.drawToGraphicsAtPos
 		(
 			graphics,

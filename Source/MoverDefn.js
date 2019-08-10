@@ -2,12 +2,12 @@
 function MoverDefn
 (
 	difficulty,
-	movesPerTurn, 
-	demographics, 
-	traits, 
-	skills, 
+	movesPerTurn,
+	demographics,
+	traits,
+	skills,
 	spells,
-	vitals, 
+	vitals,
 	entityDefnCorpse,
 	attributeGroups
 )
@@ -22,7 +22,7 @@ function MoverDefn
 	this.entityDefnCorpse = entityDefnCorpse;
 	this.attributeGroups = attributeGroups;
 
-	this.attributeGroups.addLookups("name");
+	this.attributeGroups.addLookupsByName();
 }
 
 {

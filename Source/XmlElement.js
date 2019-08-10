@@ -20,7 +20,7 @@ function XmlElement(tagName, attributeNameValuePairs, children)
 			returnValues.push(xmlElement);
 		}
 
-		return returnValues;	
+		return returnValues;
 	}
 
 	XmlElement.prototype.toString = function()
@@ -30,10 +30,10 @@ function XmlElement(tagName, attributeNameValuePairs, children)
 		for (var i = 0; i < this.attributeNameValuePairs.length; i++)
 		{
 			var attributeNameValuePair = this.attributeNameValuePairs[i];
-			returnValue += 
+			returnValue +=
 				" "
 				+ attributeNameValuePair[0]
-				+ "='" 
+				+ "='"
 				+ attributeNameValuePair[1]
 				+ "'";
 		}

@@ -17,7 +17,7 @@ function AnimationFrame(visual, ticksToHold)
 			var imageForFrame = imagesForFrames[i];
 			var frame = new AnimationFrame
 			(
-				imageForFrame, 
+				imageForFrame,
 				1 // ticksToHold
 			);
 

@@ -4,7 +4,7 @@ function Bounds(pos, size)
 	this.pos = pos;
 	this.size = size;
 
-	this.max = new Coords(); 
+	this.max = new Coords();
 	this.center = new Coords();
 	this.recalculateMaxAndCenter();
 }
@@ -19,11 +19,11 @@ function Bounds(pos, size)
 		var doAllDimensionsOverlapSoFar = true;
 
 		for (var d = 0; d < Coords.NumberOfDimensions; d++)
-		{		
+		{
 			var doesDimensionOverlap = Bounds.doBoundsOverlapInDimension
 			(
 				bounds0, bounds1, d
-			);	
+			);
 
 			if (doesDimensionOverlap == false)
 			{
@@ -37,7 +37,7 @@ function Bounds(pos, size)
 
 	Bounds.doBoundsOverlapInDimension = function(bounds0, bounds1, dimensionIndex)
 	{
-		var returnValue = 
+		var returnValue =
 		(
 			bounds0.pos.dimension(dimensionIndex) < bounds1.max.dimension(dimensionIndex)
 			&& bounds0.max.dimension(dimensionIndex) > bounds1.pos.dimension(dimensionIndex)
@@ -70,7 +70,7 @@ function Bounds(pos, size)
 				{
 					returnValue = true;
 					break;
-				}				
+				}
 			}
 		}
 
@@ -81,7 +81,7 @@ function Bounds(pos, size)
 
 	Bounds.prototype.recalculateMaxAndCenter = function()
 	{
-		this.max.overwriteWith(this.pos).add(this.size); 
+		this.max.overwriteWith(this.pos).add(this.size);
 		this.center.overwriteWith(this.size).divideScalar(2).add(this.pos);
 	}
 }

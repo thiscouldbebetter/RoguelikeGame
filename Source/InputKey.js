@@ -12,7 +12,7 @@ function InputKey(name, systemKey)
 
 		InputKey.Instances = this;
 
-		this._All = 
+		this._All =
 		[
 			new InputKey("A", "a"),
 			new InputKey("B", "b"),
@@ -40,7 +40,7 @@ function InputKey(name, systemKey)
 			new InputKey("X", "x"),
 			new InputKey("Y", "y"),
 			new InputKey("Z", "z"),
-			
+
 			new InputKey("Num0", "0"),
 			new InputKey("Num1", "1"),
 			new InputKey("Num2", "2"),

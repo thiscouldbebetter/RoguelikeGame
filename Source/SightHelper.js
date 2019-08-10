@@ -8,8 +8,8 @@ function SightHelper()
 	SightHelper.prototype.updateVenueFromCompleteForViewerPosAndRange = function
 	(
 		venueKnown,
-		venueComplete, 
-		viewerPos, 
+		venueComplete,
+		viewerPos,
 		sightRange
 	)
 	{
@@ -17,8 +17,8 @@ function SightHelper()
 
 		fieldOfView.setVenueAndRangeAndViewerPos
 		(
-			venueComplete, 
-			sightRange, 
+			venueComplete,
+			sightRange,
 			viewerPos
 		);
 

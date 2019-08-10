@@ -13,7 +13,7 @@ function EntityDefnGroup(name, relativeFrequency, entityDefns)
 		(
 			this.constructor.name,
 			// attributeNameValuePairs
-			[	
+			[
 				[ "name", this.name ],
 				[ "relativeFrequency", this.relativeFrequency ],
 			],
@@ -22,5 +22,5 @@ function EntityDefnGroup(name, relativeFrequency, entityDefns)
 				new XmlElement("EntityDefns", [], XmlElement.buildManyFromXmlizables(this.entityDefns)),
 			]
 		);
-	}
+	};
 }

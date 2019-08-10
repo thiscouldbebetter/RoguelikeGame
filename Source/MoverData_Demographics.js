@@ -21,14 +21,14 @@ function MoverData_Demographics(species, role, rank)
 				[
 					new ControlLabel
 					(
-						"labelDemographics", 
-						new Coords(10, 10), 
+						"labelDemographics",
+						new Coords(10, 10),
 						"Level " + this.rank + " " + this.species + " " + this.role
 					),
 				]
 			);
 		}
 
-		return this.control;				
+		return this.control;
 	}
 }

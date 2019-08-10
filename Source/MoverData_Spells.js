@@ -20,6 +20,6 @@ function MoverData_Spells(spells)
 			);
 		}
 
-		return this.control;				
+		return this.control;
 	}
 }

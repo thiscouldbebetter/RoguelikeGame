@@ -14,7 +14,7 @@ function Heading()
 		(
 			Math.atan2
 			(
-				coordsToConvert.y, 
+				coordsToConvert.y,
 				coordsToConvert.x
 			)
 			* Heading.numberOfHeadings

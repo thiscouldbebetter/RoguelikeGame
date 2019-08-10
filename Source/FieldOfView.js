@@ -17,14 +17,14 @@ function FieldOfView()
 
 	FieldOfView.prototype.calculateCellPositionsVisible = function()
 	{
-		var numberOfCellPositionsMax = 
-			4 
-			* this.distanceFromEyeMax 
+		var numberOfCellPositionsMax =
+			4
+			* this.distanceFromEyeMax
 			* this.distanceFromEyeMax;
 
-		if 
+		if
 		(
-			this.cellPositionsVisible == null 
+			this.cellPositionsVisible == null
 			|| this.cellPositionsVisible.length < numberOfCellPositionsMax
 		)
 		{
@@ -45,9 +45,9 @@ function FieldOfView()
 			new Range(0, 1)
 		]);
 
-		var displacementFromEyeToCell = new Coords(0, 0);	
+		var displacementFromEyeToCell = new Coords(0, 0);
 
-		var directionsForSides = 
+		var directionsForSides =
 		[
 			new Coords(-1, 1),
 			new Coords(-1, -1),
@@ -55,7 +55,7 @@ function FieldOfView()
 			new Coords(1, 1),
 		];
 
-		var cornerAddendsForSides = 
+		var cornerAddendsForSides =
 		[
 			new Coords(0, 0),
 			new Coords(0, -1),
@@ -76,7 +76,7 @@ function FieldOfView()
 		{
 			cellPosRelative.overwriteWithDimensions(r, 0, 0);
 
-			vertexPositionsRelative[0].overwriteWith(new Coords(r - .5, -.5));			
+			vertexPositionsRelative[0].overwriteWith(new Coords(r - .5, -.5));
 			vertexPositionsRelative[1].overwriteWith(new Coords(r - .5, .5));
 
 			for (var s = 0; s < directionsForSides.length; s++)
@@ -123,7 +123,7 @@ function FieldOfView()
 									cellSpanAsSet
 								);
 							}
-							else 
+							else
 							{
 								var entitiesPresent = this.venue.map.cellAtPos
 								(
@@ -134,7 +134,7 @@ function FieldOfView()
 								{
 									var entityPresent = entitiesPresent[b];
 									if (entityPresent.defn().Collidable.blocksView == true)
-									{							
+									{
 										angleRangeSetNotYetBlocked.subtract(cellSpanAsSet);
 									}
 								}

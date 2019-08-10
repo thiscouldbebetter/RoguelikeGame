@@ -11,9 +11,10 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
 
 	this.entitiesByPropertyName = [];
-	for (var c = 0; c < this.defn.propertyNamesKnown.length; c++)
+	var propertyNamesKnown = this.defn.propertyNamesKnown;
+	for (var c = 0; c < propertyNamesKnown.length; c++)
 	{
-		var propertyName = this.defn.propertyNamesKnown[c];
+		var propertyName = propertyNamesKnown[c];
 
 		var entitiesWithProperty = [];
 		this.entitiesByPropertyName.push(entitiesWithProperty);
@@ -69,7 +70,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	{
 		entityToSpawn.loc.venueName = this.name;
 
-		this.entities.push(entityToSpawn);		
+		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
 
 		var entityProperties = entityToSpawn.defn().properties;
@@ -121,22 +122,23 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 		if (venueKnown != null)
 		{
-			Globals.Instance.displayHelper.drawVenue(venueKnown);
-			Globals.Instance.displayHelper.drawControl
+			var display = Globals.Instance.display;
+			display.drawVenue(venueKnown);
+			display.drawControl
 			(
 				venueKnown.controlUpdate()
 			);
-			Globals.Instance.displayHelper.drawEntitiesForMap
+			display.drawEntitiesForMap
 			(
 				this.ephemerals(), // hack
 				this.map
 			);
 		}
-		
 
-		for (var i = 0; i < this.defn.propertyNamesKnown.length; i++)
+		var propertyNamesKnown = this.defn.propertyNamesKnown;
+		for (var i = 0; i < propertyNamesKnown.length; i++)
 		{
-			var propertyName = this.defn.propertyNamesKnown[i];
+			var propertyName = propertyNamesKnown[i];
 			var entitiesWithProperty = this.entitiesByPropertyName[propertyName];
 
 			for (var b = 0; b < entitiesWithProperty.length; b++)
@@ -184,7 +186,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 				entitiesWithProperty.splice
 				(
-					entitiesWithProperty.indexOf(entityToRemove), 
+					entitiesWithProperty.indexOf(entityToRemove),
 					1
 				);
 			}
@@ -215,29 +217,29 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 		var collisionHelper = Globals.Instance.collisionHelper;
 
-		var collisionSets = 
+		var collisionSets =
 		[
 			collisionHelper.findCollisionsBetweenEntitiesInSets
 			(
-				players, 
+				players,
 				emplacements
 			),
 
 			collisionHelper.findCollisionsBetweenEntitiesInSets
 			(
-				players, 
+				players,
 				enemies
 			),
 
 			collisionHelper.findCollisionsBetweenEntitiesInSets
 			(
-				players, 
+				players,
 				items
 			),
 
 			collisionHelper.findCollisionsBetweenEntitiesInSets
 			(
-				players, 
+				players,
 				portals
 			),
 
@@ -297,13 +299,13 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 					entityForPlayer.moverData.controlUpdate(entityForPlayer),
 				]
 			);
-		}		
+		}
 
 		return this.control;
 	}
-	
+
 	// entities
-	
+
 	Venue.prototype.ephemerals = function()
 	{
 		return this.entitiesByPropertyName["Ephemeral"];

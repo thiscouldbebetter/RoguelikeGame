@@ -37,7 +37,7 @@ function InputHelper()
 	InputHelper.prototype.updateForTick = function()
 	{
 		var inputHelper = Globals.Instance.inputHelper;
-		var actionsBeingPerformed = inputHelper.actionsBeingPerformed;	
+		var actionsBeingPerformed = inputHelper.actionsBeingPerformed;
 
 		var actionsToEnd = [];
 
@@ -46,7 +46,7 @@ function InputHelper()
 			var actionBeingPerformed = actionsBeingPerformed[i];
 
 			actionBeingPerformed.ticksSoFar++;
-		}	
+		}
 	}
 
 	// event handlers

@@ -2,10 +2,10 @@
 function UniverseDefnVenueStructureBranch
 (
 	name,
-	venueDefnName, 
+	venueDefnName,
 	startsAfterSibling,
-	startOffsetRangeWithinParent, 
-	depthRangeInVenues, 
+	startOffsetRangeWithinParent,
+	depthRangeInVenues,
 	children
 )
 {
@@ -46,10 +46,10 @@ function UniverseDefnVenueStructureBranch
 			var venue = venueDefn.venueGenerate
 			(
 				universeDefn, // universeDefn
-				venueDefn, 
+				venueDefn,
 				venuesSoFar.length, // venueIndex
 				numberOfVenuesInBranch,
-				venueDepth 
+				venueDepth
 			);
 
 			this.venues.push(venue);
@@ -66,8 +66,8 @@ function UniverseDefnVenueStructureBranch
 
 			var entityPortalToParentBranch = new Entity
 			(
-				"StairsUp", 
-				universeDefn.entityDefns["StairsUp"].name, 
+				"StairsUp",
+				universeDefn.entityDefns["StairsUp"].name,
 				new Coords().randomize().multiply
 				(
 					venueFirstInBranch.map.sizeInCells

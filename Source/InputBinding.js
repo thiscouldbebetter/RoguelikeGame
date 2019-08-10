@@ -2,7 +2,7 @@
 function InputBinding(key, actionName)
 {
 	this.key = key;
-	this.actionName = actionName;	
+	this.actionName = actionName;
 }
 
 {

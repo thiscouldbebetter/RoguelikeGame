@@ -12,7 +12,7 @@ function ControlLabel(name, pos, textFormat, dataContexts, bindingPaths)
 	ControlLabel.prototype.drawToGraphics = function(graphics)
 	{
 		var drawPos = Control.posAbsoluteOfControl(this);
-		
+
 		var text = this.textFormat;
 
 		if (this.dataContexts != null)
@@ -30,8 +30,8 @@ function ControlLabel(name, pos, textFormat, dataContexts, bindingPaths)
 				(
 					dataContext,
 					bindingPath
-				);		
-				
+				);
+
 				text += textParts[i];
 				text += boundValue;
 			}

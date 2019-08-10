@@ -36,11 +36,11 @@ function Path(map, startPos, goalPos)
 		);
 
 		openList.push(startNode);
-		var startIndex = 
-			"_" + 
+		var startIndex =
+			"_" +
 			(
-				startNode.cellPos.y  
-				* map.sizeInCells.x 
+				startNode.cellPos.y
+				* map.sizeInCells.x
 				+ startNode.cellPos.x
 			);
 
@@ -51,7 +51,7 @@ function Path(map, startPos, goalPos)
 			var current = openList[0];
 
 			if (current.cellPos.equals(goalPos) == true)
-			{	
+			{
 				this.nodes = new Array();
 
 				while (current != null)
@@ -63,11 +63,11 @@ function Path(map, startPos, goalPos)
 			}
 
 			openList.splice(0, 1);
-			var currentIndex = 
-				"_" + 
+			var currentIndex =
+				"_" +
 				(
-					current.cellPos.y 
-					* map.sizeInCells.x 
+					current.cellPos.y
+					* map.sizeInCells.x
 					+ current.cellPos.x
 				);
 
@@ -82,11 +82,11 @@ function Path(map, startPos, goalPos)
 				var neighbor = neighbors[n];
 				var neighborPos = neighbor.cellPos;
 
-				var neighborIndex = 
-					"_" + 
+				var neighborIndex =
+					"_" +
 					(
-						neighborPos.y 
-						* map.sizeInCells.x 
+						neighborPos.y
+						* map.sizeInCells.x
 						+ neighborPos.x
 					);
 
@@ -106,7 +106,7 @@ function Path(map, startPos, goalPos)
 					openLookup[neighborIndex] = neighbor;
 				}
 			}
-		}	
+		}
 	}
 
 	Path.prototype.getNeighborsForNode = function(map, node, goalPos)
@@ -118,7 +118,7 @@ function Path(map, startPos, goalPos)
 		var neighborPositions = [];
 
 		var mapSizeInCellsMinusOnes = map.sizeInCellsMinusOnes;
-		var directions = Direction.Instances._ByHeading;
+		var directions = Direction.Instances()._ByHeading;
 
 		for (var i = 0; i < directions.length; i++)
 		{

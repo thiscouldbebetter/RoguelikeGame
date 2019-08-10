@@ -14,9 +14,9 @@ function MoverData_Traits(traits)
 			for (var i = 0; i < this.traits.length; i++)
 			{
 				var trait = this.traits[i];
-				
+
 				textForTraits += trait.defn.abbreviation + ": " + trait.rank + " ";
-			}			
+			}
 
 			this.control = new ControlContainer
 			(
@@ -29,6 +29,6 @@ function MoverData_Traits(traits)
 			);
 		}
 
-		return this.control;				
-	}
+		return this.control;
+	};
 }

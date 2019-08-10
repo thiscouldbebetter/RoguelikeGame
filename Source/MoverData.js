@@ -36,6 +36,6 @@ function MoverData(moverDefn)
 			);
 		}
 
-		return this.control;				
+		return this.control;
 	}
 }

@@ -4,8 +4,6 @@ function Direction()
 	// static class
 }
 {
-	Direction.Instances = new Direction_Instances();
-
 	function Direction_Instances()
 	{
 		this.E 		= new Coords(1, 0);
@@ -17,7 +15,7 @@ function Direction()
 		this.SW 	= new Coords(-1, 1);
 		this.W 		= new Coords(-1, 0);
 
-		this._ByHeading = 
+		this._ByHeading =
 		[
 			this.E,
 			this.SE,
@@ -28,5 +26,15 @@ function Direction()
 			this.N,
 			this.NE,
 		];
-	}
+	};
+
+	Direction.Instances = function()
+	{
+		if (Direction._instances == null)
+		{
+			Direction._instances = new Direction_Instances();
+		}
+
+		return Direction._instances;
+	};
 }

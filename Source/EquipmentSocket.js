@@ -23,6 +23,6 @@ function EquipmentSocket(defn, itemEquipped)
 			);
 		}
 
-		return this.control;				
-	}
+		return this.control;
+	};
 }
