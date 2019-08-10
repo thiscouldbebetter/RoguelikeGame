@@ -144,10 +144,9 @@ function DemoData()
 
 				indexOfItemSelected += indexOffset;
 
-				indexOfItemSelected = NumberHelper.wrapValueToRangeMax
+				indexOfItemSelected = indexOfItemSelected.wrapToRangeMinMax
 				(
-					indexOfItemSelected,
-					itemsHeld.length
+					0, itemsHeld.length
 				);
 			}
 
@@ -3287,8 +3286,8 @@ function DemoData()
 					this,
 					[],
 					0
-				)
-
+				);
+				
 				return returnValues;
 			}
 		);
@@ -3337,7 +3336,15 @@ function DemoData()
 				mapTerrainsDungeon,
 				DemoData.venueGenerateFortress
 			),
-
+			
+			new VenueDefn
+			(
+				"GameOver",
+				propertyNamesKnown,
+				mapTerrainsDungeon,
+				DemoData.venueGenerateGameOver
+			),
+			
 			new VenueDefn
 			(
 				"Hades",
@@ -3778,7 +3785,12 @@ function DemoData()
 				"StairsExit",
 				entityDefns["StairsExit"].name,
 				rooms[0].bounds.center.clone().floor(),
-				[] // propertyValues
+				[
+					new PortalData
+					(
+						"VenueGameOver", "Start"
+					),				
+				] // propertyValues
 			);
 
 			entities.push(stairsExit);
@@ -3808,7 +3820,7 @@ function DemoData()
 			Entity.fromDefn
 			(
 				"Mover Generator",
-				MoverGenerator.EntityDefn,
+				MoverGenerator.EntityDefn(),
 				null // pos
 			)
 		);
@@ -3963,6 +3975,43 @@ function DemoData()
 	DemoData.venueGenerateFortress = function(universe, venueDefn, venueIndex, venueDepth)
 	{
 		return DemoData.venueGenerateDungeon(universe, venueDefn, venueIndex, venueDepth);
+	}
+	
+	DemoData.venueGenerateGameOver = function(universe, venueDefn, entityDefns, venueIndex, venueDepth)
+	{
+		var map = new Map
+		(
+			"Venue" + venueIndex + "Map",
+			venueDefn.terrains,
+			new Coords(16, 16, 1), // hack - cellSizeInPixels
+			mapCellsAsStrings
+		);
+		
+		var entityDefnName = "Start"; // todo
+		
+		var entityStart = new Entity
+		(
+			entityDefnName,
+			entityDefnName,
+			new Coords(0, 0), // pos
+		);		
+		
+		var entities =
+		[
+			entityStart
+		];
+		
+		var returnValue = new Venue
+		(
+			"VenueGameOver",
+			-1, //venueDepth,
+			venueDefn,
+			new Coords(480, 480, 1), // sizeInPixels
+			map,
+			entities
+		);
+		
+		return returnValue;
 	}
 
 	DemoData.venueGenerateHades = function(universe, venueDefn, entityDefns, venueIndex, venueDepth)

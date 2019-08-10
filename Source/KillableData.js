@@ -8,10 +8,9 @@ function KillableData(defn)
 {
 	KillableData.prototype.integrityAdd = function(amountToAdd)
 	{
-		this.integrity = NumberHelper.trimValueToRangeMax
+		this.integrity += amountToAdd;
+		this.integrity = this.integrity.trimToRangeMax
 		(
-			this.integrity + amountToAdd,
-			0,
 			this.defn.integrityMax
 		);
 	}
