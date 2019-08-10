@@ -61,12 +61,12 @@ function Bounds(pos, size)
 			{
 				var boundsFromSet1 = boundsSet1[j];
 
-				var doBoundsOverlap = this.doBoundsOverlap
+				var doBoundsOverlap = Bounds.doBoundsOverlap
 				(
 					boundsFromSet0, boundsFromSet1
 				);
 
-				if (doBoundsOverlap == true)
+				if (doBoundsOverlap)
 				{
 					returnValue = true;
 					break;

@@ -3480,6 +3480,9 @@ function DemoData()
 		terrainCodeChar = terrains.Floor.codeChar;
 
 		var roomBoundsSetSoFar = [];
+		
+		var ones = Coords.Instances().Ones;
+		var twoTwoZero = Coords.Instances().TwoTwoZero;
 
 		while (roomBoundsSetSoFar.length < numberOfRooms)
 		{
@@ -3497,7 +3500,7 @@ function DemoData()
 
 				var roomSizePlusOnes = roomSize.clone().add
 				(
-					Coords.Instances().Ones
+					ones
 				);
 
 				var roomPosRange = mapSizeInCells.clone().subtract
@@ -3505,7 +3508,7 @@ function DemoData()
 					roomSize
 				).subtract
 				(
-					Coords.Instances().TwoTwoZero
+					twoTwoZero
 				);
 
 				var roomPos = new Coords().randomize().multiply
@@ -3513,17 +3516,17 @@ function DemoData()
 					roomPosRange
 				).floor().add
 				(
-					Coords.Instances().Ones
+					ones
 				);
 
 				doesRoomOverlapAnother = Bounds.doBoundsInSetsOverlap
 				(
-					[ new Bounds(roomPos, roomSizePlusOnes) ],
+					[ Bounds.fromMinAndSize(roomPos, roomSizePlusOnes) ],
 					roomBoundsSetSoFar
 				);
 			}
 
-			var roomBounds = new Bounds(roomPos, roomSize);
+			var roomBounds = Bounds.fromMinAndSize(roomPos, roomSize);
 
 			roomBoundsSetSoFar.push(roomBounds);
 		}
@@ -3540,9 +3543,9 @@ function DemoData()
 		for (var r = 0; r < numberOfRooms; r++)
 		{
 			var room = rooms[r];
-			var roomPos = room.bounds.pos;
-			var roomSize = room.bounds.size;
-			var roomMax = roomPos.clone().add(room.bounds.size);
+			var roomBounds = room.bounds;
+			var roomPos = roomBounds.min();
+			var roomMax = roomBounds.max();
 
 			for (var y = roomPos.y; y < roomMax.y; y++)
 			{
@@ -3637,7 +3640,7 @@ function DemoData()
 			var roomConnectedBounds = roomConnected.bounds;
 			var roomToConnectBounds = roomToConnect.bounds;
 
-			var fromPos = roomConnectedBounds.pos.clone().add
+			var fromPos = roomConnectedBounds.min().clone().add
 			(
 				new Coords().randomize().multiply
 				(
@@ -3651,7 +3654,7 @@ function DemoData()
 				Coords.Instances().OneOneZero
 			);
 
-			var toPos = roomToConnectBounds.pos.clone().add
+			var toPos = roomToConnectBounds.min().clone().add
 			(
 				new Coords().randomize().multiply
 				(
@@ -3674,11 +3677,11 @@ function DemoData()
 
 			var dimensionIndexToClear = directionToRoomToConnect.dimensionIndexOfSmallest(0);
 
-			if (Bounds.doBoundsOverlapInDimension(roomConnectedBounds, roomToConnectBounds, 0) == true)
+			if (roomConnectedBounds.overlapsWithOtherInDimension(roomToConnectBounds, 0))
 			{
 				dimensionIndexToClear = 0;
 			}
-			else if (Bounds.doBoundsOverlapInDimension(roomConnectedBounds, roomToConnectBounds, 1) == true)
+			else if (roomConnectedBounds.overlapsWithOtherInDimension(roomToConnectBounds, 1))
 			{
 				dimensionIndexToClear = 1;
 			}
@@ -3692,23 +3695,23 @@ function DemoData()
 
 			if (directionToRoomToConnect.x > 0)
 			{
-				fromPos.x = roomConnectedBounds.max.x;
-				toPos.x = roomToConnectBounds.pos.x - 1;
+				fromPos.x = roomConnectedBounds.max().x;
+				toPos.x = roomToConnectBounds.min().x - 1;
 			}
 			else if (directionToRoomToConnect.x < 0)
 			{
-				fromPos.x = roomConnectedBounds.pos.x - 1;
-				toPos.x = roomToConnectBounds.max.x;
+				fromPos.x = roomConnectedBounds.min().x - 1;
+				toPos.x = roomToConnectBounds.max().x;
 			}
 			else if (directionToRoomToConnect.y > 0)
 			{
-				fromPos.y = roomConnectedBounds.max.y;
-				toPos.y = roomToConnectBounds.pos.y - 1;
+				fromPos.y = roomConnectedBounds.max().y;
+				toPos.y = roomToConnectBounds.min().y - 1;
 			}
 			else if (directionToRoomToConnect.y < 0)
 			{
-				fromPos.y = roomConnectedBounds.pos.y - 1;
-				toPos.y = roomToConnectBounds.max.y;
+				fromPos.y = roomConnectedBounds.min().y - 1;
+				toPos.y = roomToConnectBounds.max().y;
 			}
 
 			doorwayPositions.push(fromPos.clone().subtract(directionToRoomToConnect));
@@ -3880,6 +3883,8 @@ function DemoData()
 			var entityDefnGroup = entityDefnGroupsForItems[g];
 			sumOfFrequenciesForAllGroups += entityDefnGroup.relativeFrequency;
 		}
+		
+		var oneOneZero = Coords.Instances().OneOneZero;
 
 		for (var r = 0; r < numberOfRooms; r++)
 		{
@@ -3933,10 +3938,10 @@ function DemoData()
 						)
 					).floor().add
 					(
-						room.bounds.pos
+						room.bounds.min()
 					).add
 					(
-						Coords.Instances().OneOneZero
+						oneOneZero
 					)
 
 					var entityForItem = new Entity

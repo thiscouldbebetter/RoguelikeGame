@@ -36,8 +36,6 @@ function FieldOfView()
 			}
 		}
 
-		var tau = Constants.Tau;
-
 		var eyePosCentered = this.eyePos.clone().add(new Coords(.5, .5));
 
 		var angleRangeSetNotYetBlocked = new RangeSet

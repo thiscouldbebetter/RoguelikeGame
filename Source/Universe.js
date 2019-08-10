@@ -44,22 +44,4 @@ function Universe(name, defn, venues, entityForPlayer)
 
 		this.venueCurrent.update();
 	}
-
-	// xml
-
-	Universe.prototype.toXmlElement = function()
-	{
-		return new XmlElement
-		(
-			this.constructor.name,
-			// attributeNameValuePairs
-			[
-				[ "name", this.name ],
-			],
-			// children
-			[
-				this.defn.toXmlElement()
-			]
-		);
-	}
 }

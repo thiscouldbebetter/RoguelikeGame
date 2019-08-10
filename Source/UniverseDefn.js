@@ -33,24 +33,3 @@ function UniverseDefn
 	this.entityDefnGroups.addLookupsByName();
 	this.entityDefns.addLookupsByName();
 }
-
-{
-	// xml
-
-	UniverseDefn.prototype.toXmlElement = function()
-	{
-		return new XmlElement
-		(
-			this.constructor.name,
-			// attributeNameValuePairs
-			[
-				[ "name", this.name ],
-			],
-			// children
-			[
-				new XmlElement("VenueDefns", [], XmlElement.buildManyFromXmlizables(this.venueDefns)),
-				new XmlElement("EntityDefnGroups", [], XmlElement.buildManyFromXmlizables(this.entityDefnGroups)),
-			]
-		);
-	}
-}

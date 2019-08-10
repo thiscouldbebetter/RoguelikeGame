@@ -18,20 +18,4 @@ function EntityDefn
 			this.properties[propertyName] = property;
 		}
 	}
-
-	EntityDefnGroup.prototype.toXmlElement = function()
-	{
-		return new XmlElement
-		(
-			this.constructor.name,
-			// attributeNameValuePairs
-			[
-				[ "name", this.name ],
-			],
-			// children
-			[
-				// todo
-			]
-		);
-	}
 }
