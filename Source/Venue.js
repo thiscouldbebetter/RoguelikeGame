@@ -117,7 +117,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	{
 		this.update_EntitiesToSpawn();
 
-		var player = Globals.Instance.universe.entityForPlayer;
+		var player = Globals.Instance.world.entityForPlayer;
 		var venueKnown = player.playerData.venueKnownLookup[this.name];
 
 		if (venueKnown != null)
@@ -288,7 +288,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	{
 		if (this.control == null)
 		{
-			var entityForPlayer = Globals.Instance.universe.entityForPlayer;
+			var entityForPlayer = Globals.Instance.world.entityForPlayer;
 			this.control = new ControlContainer
 			(
 				"containerVenue",

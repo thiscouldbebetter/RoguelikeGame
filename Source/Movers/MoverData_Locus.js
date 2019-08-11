@@ -23,7 +23,7 @@ function MoverData_Locus()
 						"Floor: ^ Turn: ^",
 						[
 							entity.loc.venue().depth,
-							Globals.Instance.universe
+							Globals.Instance.world
 						],
 						[
 							null,

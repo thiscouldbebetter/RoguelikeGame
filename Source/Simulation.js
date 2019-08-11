@@ -52,20 +52,20 @@ function Simulation()
 
 		Camera.initializeStatic();
 
-		var universeDefn = DemoData.buildUniverseDefn(imagesForTiles, imagesForTilesTransparent);
+		var worldDefn = DemoData.buildWorldDefn(imagesForTiles, imagesForTilesTransparent);
 
-		var venues = universeDefn.buildVenues
+		var venues = worldDefn.buildVenues
 		(
-			universeDefn,
-			universeDefn.venueDefns,
-			universeDefn.entityDefnGroups,
+			worldDefn,
+			worldDefn.venueDefns,
+			worldDefn.entityDefnGroups,
 			[]
 		);
 
-		var universe0 = new Universe
+		var world0 = new World
 		(
-			"Universe0",
-			universeDefn,
+			"World0",
+			worldDefn,
 			venues,
 			null // entityForPlayer
 		);
@@ -75,7 +75,7 @@ function Simulation()
 			DemoData.buildFont(),
 			100, //realWorldMillisecondsPerTick,
 			new Coords(1000, 800), //viewSizeInPixels,
-			universe0
+			world0
 		);
 	}
 }

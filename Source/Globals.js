@@ -17,7 +17,7 @@ function Globals()
 		font,
 		realWorldMillisecondsPerTick,
 		viewSizeInPixels,
-		universe
+		world
 	)
 	{
 		this.sightHelper = new SightHelper();
@@ -33,21 +33,21 @@ function Globals()
 			"White", // colorFore
 			"Black" // colorBack
 		);
-		universe.display = displayInner;
+		world.display = displayInner;
 
-		universe.platformHelper = new PlatformHelper();
-		universe.platformHelper.initialize(universe);
+		world.platformHelper = new PlatformHelper();
+		world.platformHelper.initialize(world);
 
-		displayInner.initialize(universe);
+		displayInner.initialize(world);
 
 		this.display = new DisplayExtended(displayInner);
 
 		this.inputHelper = new InputHelper();
-		this.inputHelper.initialize(universe);
+		this.inputHelper.initialize(world);
 
 		this.realWorldMillisecondsPerTick = realWorldMillisecondsPerTick;
 
-		this.universe = universe;
+		this.world = world;
 
 		this.timer = setInterval
 		(
@@ -58,7 +58,7 @@ function Globals()
 
 	Globals.prototype.processTick = function()
 	{
-		this.universe.update();
+		this.world.update();
 	}
 }
 

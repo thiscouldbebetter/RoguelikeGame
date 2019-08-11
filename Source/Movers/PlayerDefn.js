@@ -72,7 +72,7 @@ function PlayerDefn()
 				mover.moverData.movesThisTurn = mover.defn().Mover.movesPerTurn;
 			}
 
-			Globals.Instance.universe.turnsSoFar++;
+			Globals.Instance.world.turnsSoFar++;
 
 			var venueKnown = entity.playerData.venueKnownLookup[venue.name];
 

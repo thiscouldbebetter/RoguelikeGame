@@ -92,8 +92,8 @@ function Font(charactersAvailable, characterSize, characterImages)
 		isFloater
 	)
 	{
-		var universe = Globals.Instance.universe;
-		var entityDefns = universe.defn.entityDefns;
+		var world = Globals.Instance.world;
+		var entityDefns = world.defn.entityDefns;
 
 		var messageIcon =
 		(
@@ -116,7 +116,7 @@ function Font(charactersAvailable, characterSize, characterImages)
 
 		//entityMessage.drawableData.isVisible = true;
 
-		universe.venueCurrent.entitiesToSpawn.push(entityMessage);
+		world.venueCurrent.entitiesToSpawn.push(entityMessage);
 	};
 
 	Font.spawnMessageFixed = function

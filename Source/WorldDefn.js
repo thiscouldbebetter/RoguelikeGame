@@ -1,5 +1,5 @@
 
-function UniverseDefn
+function WorldDefn
 (
 	name,
 	actions,

@@ -40,7 +40,7 @@ function Entity(name, defnName, pos, propertyValues)
 
 		if (this._defn == null)
 		{
-			returnValue = Globals.Instance.universe.defn.entityDefns[this.defnName];
+			returnValue = Globals.Instance.world.defn.entityDefns[this.defnName];
 		}
 		else
 		{

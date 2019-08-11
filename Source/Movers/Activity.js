@@ -10,7 +10,7 @@ function Activity(defnName, target)
 
 	Activity.prototype.defn = function()
 	{
-		return Globals.Instance.universe.defn.activityDefns[this.defnName];
+		return Globals.Instance.world.defn.activityDefns[this.defnName];
 	}
 
 	Activity.prototype.initialize = function(actor)

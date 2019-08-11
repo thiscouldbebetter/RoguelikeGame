@@ -1,5 +1,5 @@
 
-function Universe(name, defn, venues, entityForPlayer)
+function World(name, defn, venues, entityForPlayer)
 {
 	this.name = name;
 	this.defn = defn;
@@ -31,7 +31,7 @@ function Universe(name, defn, venues, entityForPlayer)
 }
 
 {
-	Universe.prototype.update = function()
+	World.prototype.update = function()
 	{
 		if (this.venueNext != null)
 		{

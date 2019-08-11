@@ -16,6 +16,6 @@ function Location(venueName, posInCells)
 
 	Location.prototype.venue = function()
 	{
-		return Globals.Instance.universe.venues[this.venueName];
+		return Globals.Instance.world.venues[this.venueName];
 	}
 }

@@ -141,7 +141,7 @@ function DisplayExtended(display)
 
 	DisplayExtended.prototype.drawVenue = function(venue)
 	{
-		var turnsSoFar = Globals.Instance.universe.turnsSoFar;
+		var turnsSoFar = Globals.Instance.world.turnsSoFar;
 		if (venue.turnLastDrawn != turnsSoFar)
 		{
 			venue.turnLastDrawn = turnsSoFar;

@@ -19,7 +19,7 @@ function ContainerData()
 	{
 		var itemsHeld = this.items;
 
-		var actionSelectNext = Globals.Instance.universe.defn.actions["Item_SelectNext"];
+		var actionSelectNext = Globals.Instance.world.defn.actions["Item_SelectNext"];
 		actionSelectNext.perform(actor);
 
 		var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
