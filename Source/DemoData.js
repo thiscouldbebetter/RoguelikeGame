@@ -10,10 +10,10 @@ function DemoData()
 	{
 		// Action.perform() declarations
 
-		var actionEmplacement_Use_Perform = function(actor, action)
+		var actionEmplacement_Use_Perform = function(world, actor, action)
 		{
 			var loc = actor.loc;
-			var venue = loc.venue();
+			var venue = loc.venue(world);
 			var posInCells = actor.loc.posInCells;
 			var usablesPresentInCell = venue.entitiesWithPropertyNamePresentAtCellPos
 			(
@@ -53,7 +53,7 @@ function DemoData()
 				var destinationEntity = entities[destinationEntityName];
 				if (destinationEntity != null)
 				{
-					actor.loc.venue().entitiesToRemove.push(actor);
+					actor.loc.venue(world).entitiesToRemove.push(actor);
 					destinationVenue.entitiesToSpawn.push(actor);
 					actor.loc.posInCells.overwriteWith
 					(
@@ -67,10 +67,10 @@ function DemoData()
 			}
 		}
 
-		var actionItem_DropSelected_Perform = function(actor, action)
+		var actionItem_DropSelected_Perform = function(world, actor, action)
 		{
 			var loc = actor.loc;
-			var venue = loc.venue();
+			var venue = loc.venue(world);
 			var posInCells = loc.posInCells;
 			var itemsPresentInCell = venue.entitiesWithPropertyPresentAtCellPos
 			(
@@ -89,10 +89,10 @@ function DemoData()
 			}
 		}
 
-		var actionItem_PickUp_Perform = function(actor, action)
+		var actionItem_PickUp_Perform = function(world, actor, action)
 		{
 			var loc = actor.loc;
-			var venue = loc.venue();
+			var venue = loc.venue(world);
 			var posInCells = actor.loc.posInCells;
 
 			var entitiesPresentAtCellPos = venue.map.cellAtPos(posInCells).entitiesPresent;
@@ -115,7 +115,7 @@ function DemoData()
 			}
 		}
 
-		var actionItem_SelectAtOffset_Perform = function(actor, action)
+		var actionItem_SelectAtOffset_Perform = function(world, actor, action)
 		{
 			var containerData = actor.containerData;
 			var itemsHeld = containerData.items;
@@ -155,14 +155,14 @@ function DemoData()
 			actor.moverData.controlUpdate(actor);
 		}
 
-		var actionItem_TargetSelected_Perform = function(actor, action)
+		var actionItem_TargetSelected_Perform = function(world, actor, action)
 		{
 			var containerData = actor.containerData;
 			containerData.itemTargeted = containerData.itemSelected;
 			actor.moverData.controlUpdate(actor);
 		}
 
-		var actionItem_UseSelected_Perform = function(actor, action)
+		var actionItem_UseSelected_Perform = function(world, actor, action)
 		{
 			var itemToUse = actor.containerData.itemSelected;
 
@@ -179,7 +179,7 @@ function DemoData()
 			}
 		}
 
-		var actionMove_Perform = function(actor, action)
+		var actionMove_Perform = function(world, actor, action)
 		{
 			var directionToMove = action.argumentForPerform;
 
@@ -189,7 +189,7 @@ function DemoData()
 			}
 
 			var actorLoc = actor.loc;
-			var venue = actorLoc.venue();
+			var venue = actorLoc.venue(world);
 
 			var posInCellsDestination = actorLoc.posInCells.clone().add
 			(
@@ -300,7 +300,7 @@ function DemoData()
 
 		}
 
-		var actionWait_Perform = function(actor, action)
+		var actionWait_Perform = function(world, actor, action)
 		{
 			actor.moverData.movesThisTurn = 0;
 		}
@@ -459,7 +459,8 @@ function DemoData()
 			function(actor, activity)
 			{
 				var actorLoc = actor.loc;
-				var venue = actorLoc.venue();
+				var world = Globals.Instance.world;
+				var venue = actorLoc.venue(world);
 
 				var agentsInVenue = venue.entitiesByPropertyName["Mover"];
 
@@ -544,7 +545,8 @@ function DemoData()
 				}
 
 				var actorLoc = actor.loc;
-				var venue = actorLoc.venue();
+				var world = Globals.Instance.world;
+				var venue = actorLoc.venue(world);
 				var players = venue.entitiesByPropertyName["Player"];
 
 				if (players != null && players.length > 0)
@@ -1545,7 +1547,7 @@ function DemoData()
 				{
 					var world = Globals.Instance.world;
 					var loc = targetEntity.loc;
-					var venue = loc.venue();
+					var venue = loc.venue(world);
 
 					var entityForProjectile = new Entity
 					(
@@ -1573,7 +1575,8 @@ function DemoData()
 					var teleportPos = null;
 					while (teleportPos == null)
 					{
-						var map = loc.venue().map;
+						var world = Globals.Instance.world;
+						var map = loc.venue(world).map;
 						teleportPos = new Coords().randomize().multiply(map.sizeInCells).floor();
 
 						var cellToTeleportTo = map.cellAtPos(teleportPos);

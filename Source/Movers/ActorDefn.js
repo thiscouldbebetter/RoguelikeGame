@@ -29,10 +29,11 @@ function ActorDefn(activityDefnNameInitial)
 
 		var entityActions = entity.actorData.actions;
 
+		var world = Globals.Instance.world;
 		for (var a = 0; a < entityActions.length; a++)
 		{
 			var action = entityActions[a];
-			action.perform(entity, action);
+			action.perform(world, entity, action);
 		}
 
 		entityActions.length = 0;

@@ -18,7 +18,8 @@ function ConstraintDefn(name, methodToRun)
 				var entityConstrained = constraint.entityConstrained;
 
 				// hack
-				var entityToFollow = entityConstrained.loc.venue().entitiesByPropertyName
+				var world = Globals.Instance.world;
+				var entityToFollow = entityConstrained.loc.venue(world).entitiesByPropertyName
 				[
 					"Player"
 				][0];

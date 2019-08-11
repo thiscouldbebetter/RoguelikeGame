@@ -10,6 +10,7 @@ function MoverData_Locus()
 	{
 		if (this.control == null)
 		{
+			var world = Globals.Instance.world;
 			this.control = new ControlContainer
 			(
 				"containerMoverData_Locus",
@@ -22,8 +23,8 @@ function MoverData_Locus()
 						new Coords(10, 10),
 						"Floor: ^ Turn: ^",
 						[
-							entity.loc.venue().depth,
-							Globals.Instance.world
+							entity.loc.venue(world).depth,
+							world
 						],
 						[
 							null,

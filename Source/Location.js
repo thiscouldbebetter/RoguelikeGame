@@ -14,8 +14,8 @@ function Location(venueName, posInCells)
 		this.heading = other.heading;
 	}
 
-	Location.prototype.venue = function()
+	Location.prototype.venue = function(world)
 	{
-		return Globals.Instance.world.venues[this.venueName];
+		return world.venues[this.venueName];
 	}
 }

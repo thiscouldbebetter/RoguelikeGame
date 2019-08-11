@@ -12,15 +12,17 @@ function ContainerData()
 		this.removeItem(actor, itemToDrop);
 
 		itemToDrop.loc.overwriteWith(actor.loc);
-		itemToDrop.loc.venue().entitiesToSpawn.push(itemToDrop);
+		var world = Globals.Instance.world;
+		itemToDrop.loc.venue(world).entitiesToSpawn.push(itemToDrop);
 	}
 
 	ContainerData.prototype.removeItem = function(actor, itemToDrop)
 	{
 		var itemsHeld = this.items;
 
-		var actionSelectNext = Globals.Instance.world.defn.actions["Item_SelectNext"];
-		actionSelectNext.perform(actor);
+		var world = Globals.Instance.world;
+		var actionSelectNext = world.defn.actions["Item_SelectNext"];
+		actionSelectNext.perform(world, actor);
 
 		var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
 		itemsHeld.splice(indexOfItemToDrop, 1);
@@ -36,7 +38,8 @@ function ContainerData()
 	ContainerData.prototype.pickUpItem = function(actor, itemToPickUp)
 	{
 		this.items.push(itemToPickUp);
-		itemToPickUp.loc.venue().entitiesToRemove.push(itemToPickUp);
+		var world = Globals.Instance.world;
+		itemToPickUp.loc.venue(world).entitiesToRemove.push(itemToPickUp);
 
 		if (this.itemSelected == null)
 		{
