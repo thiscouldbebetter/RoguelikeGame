@@ -40,14 +40,12 @@ function Simulation()
 
 		var imagesForTiles = ImageHelper.sliceImageIntoTiles
 		(
-			imageTiles,
-			sizeOfImageTilesInTiles
+			imageTiles,	sizeOfImageTilesInTiles
 		);
 
 		var imagesForTilesTransparent = ImageHelper.sliceImageIntoTiles
 		(
-			imageTilesTransparent,
-			sizeOfImageTilesInTiles
+			imageTilesTransparent, sizeOfImageTilesInTiles
 		);
 
 		Camera.initializeStatic();

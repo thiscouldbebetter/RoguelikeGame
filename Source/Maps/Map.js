@@ -38,6 +38,13 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			this.cells.push(cell);
 		}
 	}
+
+	// Helper variables.
+	this.cellPos = new Coords();
+	this.drawPos = new Coords();
+	this.drawLoc = { pos: this.drawPos };
+	this.drawable = { loc: this.drawLoc };
+	this.entitiesSortedBottomToTop = [];
 }
 
 {
@@ -160,4 +167,131 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		return cellPos.y * this.sizeInCells.x + cellPos.x
 	};
 
+	// drawable
+
+	Map.prototype.draw = function(world, display)
+	{
+		var cellPos = this.cellPos;
+		var drawPos = this.drawPos;
+		for (var y = 0; y < this.sizeInCells.y; y++)
+		{
+			cellPos.y = y;
+
+			for (var x = 0; x < this.sizeInCells.x; x++)
+			{
+				cellPos.x = x;
+
+				this.drawCellAtPos
+				(
+					world,
+					display,
+					cellPos,
+					false // drawMovers
+				);
+
+			} // end for x
+
+		} // end for y
+
+		var fieldOfView = Globals.Instance.sightHelper.fieldOfView;
+		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
+		var cellPositionsVisible = fieldOfView.cellPositionsVisible;
+		for (var i = 0; i < numberOfCellsVisible; i++)
+		{
+			var cellPos = cellPositionsVisible[i];
+			this.drawCellAtPos(world, display, cellPos, true);
+		}
+	};
+
+	Map.prototype.drawCellAtPos = function(world, display, cellPos, drawMovers)
+	{
+		var map = this;
+
+		var cell = map.cellAtPos(cellPos);
+		var cellTerrain = cell.terrain;
+		var terrainImage = cellTerrain.image;
+		var drawPos = this.drawable.loc.pos;
+
+		drawPos.overwriteWith
+		(
+			cellPos
+		).multiply
+		(
+			map.cellSizeInPixels
+		);
+
+		display.graphics.drawImage
+		(
+			terrainImage.systemImage,
+			drawPos.x, drawPos.y
+		);
+
+		var entitiesInCell = cell.entitiesPresent;
+		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
+		entitiesSortedBottomToTop.length = 0;
+
+		for (var i = 0; i < entitiesInCell.length; i++)
+		{
+			var entityToSort = entitiesInCell[i];
+			var entityToSortZIndex = entityToSort.defn(world).Drawable.zIndex;
+			var j;
+			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
+			{
+				var entitySorted = entitiesSortedBottomToTop[j];
+				var entitySortedZIndex = entitySorted.defn(world).Drawable.zIndex;
+				if (entityToSortZIndex <= entitySortedZIndex)
+				{
+					break;
+				}
+			}
+			entitiesSortedBottomToTop.splice(j, 0, entityToSort);
+		}
+
+		drawPos.add(map.cellSizeInPixels.clone().half());
+
+		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
+		{
+			var entity = entitiesSortedBottomToTop[i];
+			if (entity.moverData == null || drawMovers == true)
+			{
+				var visual = entity.drawableData.visual;
+				visual.draw
+				(
+					null, null, // universe, world
+					display,
+					this.drawable
+				);
+			}
+
+		} // end for entitiesSortedBottomToTop
+
+	};
+
+	Map.prototype.drawEntities = function(display, entities)
+	{
+		for (var i = 0; i < entities.length; i++)
+		{
+			var entity = entities[i];
+			this.drawEntityForMap(entity, map);
+		}
+	};
+
+	Map.prototype.drawEntity = function(display, entity)
+	{
+		var visual = entity.drawableData.visual;
+		this.drawable.loc.pos.overwriteWith
+		(
+			entity.loc.posInCells
+		).multiply
+		(
+			map.cellSizeInPixels
+		);
+
+		visual.draw
+		(
+			null, null, // universe, world
+			display,
+			this.drawable
+		);
+	};
 }

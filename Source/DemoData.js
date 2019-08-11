@@ -1038,7 +1038,7 @@ function DemoData(randomizer)
 				var actingEntityDefnName = actingEntity.defn(world).name;
 				Font.spawnMessageFloater
 				(
-					world, 
+					world,
 					actingEntityDefnName,
 					"NOT IMPLEMENTED - " + actingEntityDefnName,
 					targetEntity.loc
@@ -1089,7 +1089,7 @@ function DemoData(randomizer)
 		];
 
 		var entityDefnSetPotions = [];
-		
+
 		for (var i = 0; i < namesAndEffectDefnsOfPotions.length; i++)
 		{
 			var appearanceIndex = Math.floor

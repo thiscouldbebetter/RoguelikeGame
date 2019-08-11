@@ -79,7 +79,7 @@ function PlayerDefn()
 
 			Globals.Instance.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
-				world, 
+				world,
 				venueKnown,
 				venue, // venueComplete
 				entity.loc.posInCells,

@@ -68,7 +68,7 @@ function FieldOfView()
 		this.numberOfCellsVisible = 1;
 
 		var map = venue.map;
-		
+
 		for (var r = 1; r <= this.distanceFromEyeMax; r++)
 		{
 			cellPosRelative.overwriteWithDimensions(r, 0, 0);

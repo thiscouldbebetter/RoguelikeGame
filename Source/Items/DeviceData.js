@@ -8,7 +8,7 @@ function DeviceData(numberOfCharges)
 	DeviceData.prototype.use = function(world, userEntity, deviceEntity, targetEntity)
 	{
 		var deviceDefn = deviceEntity.defn(world).Device;
-	
+
 		if (this.numberOfCharges > 0)
 		{
 			this.numberOfCharges--;

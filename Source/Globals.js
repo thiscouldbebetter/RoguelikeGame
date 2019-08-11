@@ -14,10 +14,7 @@ function Globals()
 {
 	Globals.prototype.initialize = function
 	(
-		font,
-		realWorldMillisecondsPerTick,
-		viewSizeInPixels,
-		world
+		font, realWorldMillisecondsPerTick, viewSizeInPixels, world
 	)
 	{
 		this.sightHelper = new SightHelper();
@@ -25,7 +22,7 @@ function Globals()
 		this.collisionHelper = new CollisionHelper();
 		this.font = font;
 
-		var displayInner = new Display
+		var display = new Display
 		(
 			[viewSizeInPixels],
 			"todo", // fontName
@@ -33,14 +30,14 @@ function Globals()
 			"White", // colorFore
 			"Black" // colorBack
 		);
-		world.display = displayInner;
+		world.display = display;
 
 		world.platformHelper = new PlatformHelper();
 		world.platformHelper.initialize(world);
 
-		displayInner.initialize(world);
+		display.initialize(world);
 
-		this.display = new DisplayExtended(displayInner);
+		this.display = display;
 
 		this.inputHelper = new InputHelper();
 		this.inputHelper.initialize(world);

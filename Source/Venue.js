@@ -94,7 +94,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	}
 
 	Venue.prototype.initialize = function(world)
-	{	
+	{
 		for (var b = 0; b < this.entities.length; b++)
 		{
 			var entity = this.entities[b];
@@ -123,18 +123,16 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		if (venueKnown != null)
 		{
 			var display = Globals.Instance.display;
-			display.drawVenue(world, venueKnown);
-			display.drawControl
+			venueKnown.draw(world, display);
+			var venueKnownAsControl = venueKnown.controlUpdate(world);
+			venueKnownAsControl.drawToGraphics(display.graphics);
+			this.map.drawEntities
 			(
-				venueKnown.controlUpdate(world)
-			);
-			display.drawEntitiesForMap
-			(
-				this.ephemerals(), // hack
-				this.map
+				display,
+				this.ephemerals() // hack
 			);
 		}
-		
+
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
 		{
@@ -207,7 +205,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	}
 
 	Venue.prototype.update_Collidables = function(world)
-	{		
+	{
 		var emplacements = this.entitiesByPropertyName["Emplacement"];
 		var enemies = this.entitiesByPropertyName["Enemy"];
 		var items = this.entitiesByPropertyName["Item"];
@@ -303,6 +301,18 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 		return this.control;
 	}
+
+	// drawable
+
+	Venue.prototype.draw = function(world, display)
+	{
+		var turnsSoFar = world.turnsSoFar;
+		if (this.turnLastDrawn != turnsSoFar)
+		{
+			this.turnLastDrawn = turnsSoFar;
+			this.map.draw(world, display, this);
+		}
+	};
 
 	// entities
 
