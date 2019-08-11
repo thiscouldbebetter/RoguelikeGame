@@ -30,14 +30,11 @@ function DrawableDefn(visual, sizeInPixels, zIndex)
 
 		var drawableData = entity.drawableData;
 		var drawableDefn = entity.defn().Drawable;
-		drawableData.visual = drawableDefn.visual.cloneAsVisual();
+		drawableData.visual = drawableDefn.visual.clone();
 	};
 
 	DrawableDefn.prototype.updateEntityForVenue = function(entity, venue)
 	{
-		entity.drawableData.visual.updateForVenue
-		(
-			entity, venue
-		);
+		//entity.drawableData.visual.updateForVenue(entity, venue);
 	};
 }

@@ -1045,7 +1045,7 @@ function DemoData()
 
 				targetEntity.controlUpdate();
 			}
-		);	
+		);
 
 		var namesAndEffectDefnsOfPotions =
 		[
@@ -2197,7 +2197,7 @@ function DemoData()
 			[] // attributeGroups
 		);
 
-		var visualForPlayerBase = images["Rogue"];
+		var visualForPlayerBase = new VisualImageImmediate(images["Rogue"]);
 
 		var animationDefnSetPlayer = new AnimationDefnSet
 		(
@@ -2215,7 +2215,7 @@ function DemoData()
 						),
 						new AnimationFrame
 						(
-							images["Wizard"],
+							new VisualImageImmediate(images["Wizard"]),
 							100 // ticksToHold
 						),
 
@@ -2235,12 +2235,12 @@ function DemoData()
 					[
 						new AnimationFrame
 						(
-							images["Reticle0"],
+							new VisualImageImmediate(images["Reticle0"]),
 							10 // ticksToHold
 						),
 						new AnimationFrame
 						(
-							images["Reticle1"],
+							new VisualImageImmediate(images["Reticle1"]),
 							10 // ticksToHold
 						),
 					]
@@ -3287,7 +3287,7 @@ function DemoData()
 					[],
 					0
 				);
-				
+
 				return returnValues;
 			}
 		);
@@ -3336,7 +3336,7 @@ function DemoData()
 				mapTerrainsDungeon,
 				DemoData.venueGenerateFortress
 			),
-			
+
 			new VenueDefn
 			(
 				"GameOver",
@@ -3344,7 +3344,7 @@ function DemoData()
 				mapTerrainsDungeon,
 				DemoData.venueGenerateGameOver
 			),
-			
+
 			new VenueDefn
 			(
 				"Hades",
@@ -3480,7 +3480,7 @@ function DemoData()
 		terrainCodeChar = terrains.Floor.codeChar;
 
 		var roomBoundsSetSoFar = [];
-		
+
 		var ones = Coords.Instances().Ones;
 		var twoTwoZero = Coords.Instances().TwoTwoZero;
 
@@ -3792,7 +3792,7 @@ function DemoData()
 					new PortalData
 					(
 						"VenueGameOver", "Start"
-					),				
+					),
 				] // propertyValues
 			);
 
@@ -3883,7 +3883,7 @@ function DemoData()
 			var entityDefnGroup = entityDefnGroupsForItems[g];
 			sumOfFrequenciesForAllGroups += entityDefnGroup.relativeFrequency;
 		}
-		
+
 		var oneOneZero = Coords.Instances().OneOneZero;
 
 		for (var r = 0; r < numberOfRooms; r++)
@@ -3981,7 +3981,7 @@ function DemoData()
 	{
 		return DemoData.venueGenerateDungeon(universe, venueDefn, venueIndex, venueDepth);
 	}
-	
+
 	DemoData.venueGenerateGameOver = function(universe, venueDefn, entityDefns, venueIndex, venueDepth)
 	{
 		var map = new Map
@@ -3991,21 +3991,21 @@ function DemoData()
 			new Coords(16, 16, 1), // hack - cellSizeInPixels
 			mapCellsAsStrings
 		);
-		
+
 		var entityDefnName = "Start"; // todo
-		
+
 		var entityStart = new Entity
 		(
 			entityDefnName,
 			entityDefnName,
 			new Coords(0, 0), // pos
-		);		
-		
+		);
+
 		var entities =
 		[
 			entityStart
 		];
-		
+
 		var returnValue = new Venue
 		(
 			"VenueGameOver",
@@ -4015,7 +4015,7 @@ function DemoData()
 			map,
 			entities
 		);
-		
+
 		return returnValue;
 	}
 
@@ -4075,7 +4075,7 @@ function DemoData()
 		{
 			stringForTopAndBottomRows += "x";
 			stringForOtherRows += ".";
-		}		
+		}
 
 		stringForTopAndBottomRows += "x";
 		stringForOtherRows += "x";

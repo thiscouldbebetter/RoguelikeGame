@@ -10,7 +10,7 @@ function AnimationDefnSetFake(image)
 {
 	AnimationDefnSetFake.buildFromImage = function(image)
 	{
-		return new AnimationDefnSetFake(image);
+		return new AnimationDefnSetFake(new VisualImageImmediate(image));
 	}
 
 	AnimationDefnSetFake.prototype.toRun = function()

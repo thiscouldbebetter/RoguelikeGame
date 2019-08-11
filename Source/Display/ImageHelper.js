@@ -75,11 +75,10 @@ function ImageHelper()
 		htmlImageFromCanvas.height = canvas.height;
 		htmlImageFromCanvas.src = imageFromCanvasURL;
 
-		var returnValue = Image.buildFromSystemImage
+		var returnValue = Image.fromSystemImage
 		(
 			name,
-			htmlImageFromCanvas,
-			sizeInPixels
+			htmlImageFromCanvas
 		);
 
 		return returnValue;
@@ -112,11 +111,10 @@ function ImageHelper()
 		htmlImageFromCanvas.style.position = "absolute";
 		htmlImageFromCanvas.src = imageFromCanvasURL;
 
-		var returnValue = Image.buildFromSystemImage
+		var returnValue = Image.fromSystemImage
 		(
 			imageToCopyFrom.name,
-			htmlImageFromCanvas,
-			regionSize
+			htmlImageFromCanvas
 		);
 
 		return returnValue;
@@ -128,10 +126,9 @@ function ImageHelper()
 
 		var htmlElementLibrary = Globals.Instance.htmlElementLibrary;
 
-		var systemImageToSlice = htmlElementLibrary.getElementByID
-		(
-			imageToSlice.htmlElementID
-		);
+		var systemImageToSlice =
+			//htmlElementLibrary.getElementByID(imageToSlice.htmlElementID);
+			imageToSlice.systemImage;
 
 		var imageToSliceSize = imageToSlice.sizeInPixels;
 		var tileSize = imageToSliceSize.clone().divide(sizeInTiles);
@@ -177,11 +174,10 @@ function ImageHelper()
 				htmlImageFromCanvas.style.position = "absolute";
 				htmlImageFromCanvas.src = imageFromCanvasURL;
 
-				imageFromCanvas = Image.buildFromSystemImage
+				imageFromCanvas = Image.fromSystemImage
 				(
 					imageToSlice.name + tilePos.toString(),
-					htmlImageFromCanvas,
-					tileSize
+					htmlImageFromCanvas
 				);
 
 				returnImageRow.push(imageFromCanvas);

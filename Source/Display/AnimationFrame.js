@@ -15,9 +15,10 @@ function AnimationFrame(visual, ticksToHold)
 		for (var i = 0; i < numberOfImages; i++)
 		{
 			var imageForFrame = imagesForFrames[i];
+			var visualForFrame = new VisualImageImmediate(imageForFrame);
 			var frame = new AnimationFrame
 			(
-				imageForFrame,
+				visualForFrame,
 				1 // ticksToHold
 			);
 

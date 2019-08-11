@@ -15,5 +15,5 @@ function EffectableDefn()
 	EffectableDefn.prototype.updateEntityForVenue = function(entity, venue)
 	{
 		// todo
-	}		
+	}
 }

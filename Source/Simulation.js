@@ -22,19 +22,17 @@ function Simulation()
 
 	Simulation.prototype.main2 = function(mediaLoader)
 	{
-		var imageTiles = Image.buildFromSystemImage
+		var imageTiles = Image.fromSystemImage
 		(
 			"Tiles",
-			mediaLoader.items["Tiles"].htmlElement,
-			new Coords(640, 432) // sizeInPixels
+			mediaLoader.items["Tiles"].htmlElement
 		);
 		imageTiles.onload = null;
 
-		var imageTilesTransparent = Image.buildFromSystemImage
+		var imageTilesTransparent = Image.fromSystemImage
 		(
 			"TilesTransparent",
-			mediaLoader.items["TilesTransparent"].htmlElement,
-			new Coords(640, 432) // sizeInPixels
+			mediaLoader.items["TilesTransparent"].htmlElement
 		);
 		imageTilesTransparent.onload = null;
 

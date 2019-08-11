@@ -6,6 +6,8 @@ function DisplayExtended(display)
 	// Helper variables.
 	this.cellPos = new Coords();
 	this.drawPos = new Coords();
+	this.drawLoc = { pos: this.drawPos };
+	this.drawable = { loc: this.drawLoc };
 	this.entitiesSortedBottomToTop = [];
 }
 {
@@ -26,7 +28,7 @@ function DisplayExtended(display)
 	DisplayExtended.prototype.drawEntityForMap = function(entity, map)
 	{
 		var visual = entity.drawableData.visual;
-		var drawPos = this.drawPos.overwriteWith
+		this.drawable.loc.pos.overwriteWith
 		(
 			entity.loc.posInCells
 		).multiply
@@ -34,10 +36,11 @@ function DisplayExtended(display)
 			map.cellSizeInPixels
 		);
 
-		visual.drawToGraphicsAtPos
+		visual.draw
 		(
-			this.display.graphics,
-			drawPos
+			null, null, // universe, world
+			this.display,
+			this.drawable
 		);
 	};
 
@@ -79,7 +82,7 @@ function DisplayExtended(display)
 		var cell = map.cellAtPos(cellPos);
 		var cellTerrain = cell.terrain;
 		var terrainImage = cellTerrain.image;
-		var drawPos = this.drawPos;
+		var drawPos = this.drawable.loc.pos;
 
 		drawPos.overwriteWith
 		(
@@ -92,8 +95,7 @@ function DisplayExtended(display)
 		this.display.graphics.drawImage
 		(
 			terrainImage.systemImage,
-			drawPos.x,
-			drawPos.y
+			drawPos.x, drawPos.y
 		);
 
 		var entitiesInCell = cell.entitiesPresent;
@@ -117,16 +119,19 @@ function DisplayExtended(display)
 			entitiesSortedBottomToTop.splice(j, 0, entityToSort);
 		}
 
+		drawPos.add(map.cellSizeInPixels.clone().half());
+
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
 			if (entity.moverData == null || drawMovers == true)
 			{
 				var visual = entity.drawableData.visual;
-				visual.drawToGraphicsAtPos
+				visual.draw
 				(
-					this.display.graphics,
-					drawPos
+					null, null, // universe, world
+					this.display,
+					this.drawable
 				);
 			}
 

@@ -18,7 +18,7 @@ function MoverGenerator()
 				]
 			);
 		}
-		
+
 		return MoverGenerator._entityDefn;
 	}
 }

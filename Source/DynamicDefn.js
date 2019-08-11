@@ -13,6 +13,5 @@ function DynamicDefn(vel, accel)
 		entity.dynamicData = new DynamicData(entity.defn().Dynamic);
 		var dynamicData = entity.dynamicData;
 		entity.loc.posInCells.add(dynamicData.vel);
-	}		
-
+	}
 }

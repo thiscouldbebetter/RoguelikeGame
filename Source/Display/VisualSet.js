@@ -6,18 +6,18 @@ function VisualSet(name, visuals)
 }
 
 {
-	VisualSet.prototype.cloneAsVisual = function()
+	VisualSet.prototype.clone = function()
 	{
 		return this; // todo
 	}
 
-	VisualSet.prototype.drawToGraphicsAtPos = function(graphics, drawPos)
+	VisualSet.prototype.draw = function(universe, world, display, drawable)
 	{
 		for (var i = 0; i < this.visuals.length; i++)
 		{
 			var visual = this.visuals[i];
 
-			visual.drawToGraphicsAtPos(graphics, drawPos);
+			visual.draw(universe, world, display, drawable);
 		}
 	}
 

@@ -3,12 +3,12 @@ function AnimationRun(animationDefnSet)
 {
 	this.animationDefnSet = animationDefnSet;
 
-	var animationDefns= this.animationDefnSet.animationDefns;
+	var animationDefns = this.animationDefnSet.animationDefns;
 	this.animationDefnNameCurrent = animationDefns[0].name;
 	this.frameIndexCurrent = 0;
 	this.ticksOnFrameCurrent = 0;
 
-	this.visualForFrameCurrent = this.frameCurrent().visual.cloneAsVisual();
+	this.visualForFrameCurrent = this.frameCurrent().visual.clone();
 }
 
 {
@@ -56,19 +56,14 @@ function AnimationRun(animationDefnSet)
 		return new AnimationRun(this.animationDefnSet);
 	}
 
-	AnimationRun.prototype.cloneAsVisual = function()
-	{
-		return this.clone();
-	}
-
 	AnimationRun.prototype.frameCurrent = function()
 	{
 		return this.animationDefnCurrent().frames[this.frameIndexCurrent];
 	}
 
-	AnimationRun.prototype.drawToGraphicsAtPos = function(graphics, drawPos)
+	AnimationRun.prototype.draw = function(universe, world, display, drawable)
 	{
-		this.visualForFrameCurrent.drawToGraphicsAtPos(graphics, drawPos);
+		this.visualForFrameCurrent.draw(universe, world, display, drawable);
 	}
 
 	AnimationRun.prototype.updateForVenue = function(entity)

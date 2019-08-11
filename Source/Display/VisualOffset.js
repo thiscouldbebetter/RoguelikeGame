@@ -3,15 +3,18 @@ function VisualOffset(visual, offset)
 {
 	this.visual = visual;
 	this.offset = offset;
+
+	this._drawPosSaved = new Coords();
 }
 
 {
-	VisualOffset.prototype.drawToGraphicsAtPos = function(graphics, drawPos)
+	VisualOffset.prototype.draw = function(universe, world, display, drawable)
 	{
-		this.visual.drawToGraphicsAtPos
+		this._drawPosSaved.overwritewith(drawable.loc.pos);
+		this.visual.draw
 		(
-			graphics,
-			drawPos.clone().add(this.offset)
+			universe, world, display, drawable
 		);
+		drawable.loc.pos.overwriteWith(this._drawPosSaved);
 	}
 }
