@@ -75,7 +75,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 		var world = Globals.Instance.world;
 
-		var entityProperties = entityToSpawn.defn().properties;
+		var entityProperties = entityToSpawn.defn(world).properties;
 		for (var c = 0; c < entityProperties.length; c++)
 		{
 			var entityProperty = entityProperties[c];
@@ -103,7 +103,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		{
 			var entity = this.entities[b];
 
-			var entityDefnProperties = entity.defn().properties;
+			var entityDefnProperties = entity.defn(world).properties;
 			for (var c = 0; c < entityDefnProperties.length; c++)
 			{
 				var entityProperty = entityDefnProperties[c];
@@ -150,7 +150,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			for (var b = 0; b < entitiesWithProperty.length; b++)
 			{
 				var entity = entitiesWithProperty[b];
-				var entityDefnProperty = entity.defn().properties[propertyName];
+				var entityDefnProperty = entity.defn(world).properties[propertyName];
 				if (entityDefnProperty.updateEntityForVenue != null)
 				{
 					entityDefnProperty.updateEntityForVenue(world, entity, this);
@@ -183,7 +183,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			this.entities.splice(this.entities.indexOf(entityToRemove), 1);
 			delete this.entities[entityToRemove.name];
 
-			var entityDefnProperties = entityToRemove.defn().properties;
+			var entityDefnProperties = entityToRemove.defn(world).properties;
 			for (var c = 0; c < entityDefnProperties.length; c++)
 			{
 				var entityDefnProperty = entityDefnProperties[c];

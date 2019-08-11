@@ -7,7 +7,8 @@ function ProjectileDefn()
 {
 	ProjectileDefn.prototype.collide = function(entityOther)
 	{
-		var entityOtherDefnProperties = entityOther.defn().properties;
+		var world = Globals.Instance.world;
+		var entityOtherDefnProperties = entityOther.defn(world).properties;
 		if (entityOtherDefnProperties["Enemy"] != null)
 		{
 			entityOther.killableData.integrity = 0;

@@ -99,7 +99,7 @@ function DemoData()
 			for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
 			{
 				var entityPresent = entitiesPresentAtCellPos[i];
-				if (entityPresent.defn().properties["Item"] != null)
+				if (entityPresent.defn(world).properties["Item"] != null)
 				{
 					var itemToPickUp = entityPresent;
 					var costToPickUp = 1;
@@ -210,7 +210,7 @@ function DemoData()
 					isDestinationAccessible = false;
 				}
 
-				if (entityInCell.defn().properties["Mover"] != null)
+				if (entityInCell.defn(world).properties["Mover"] != null)
 				{
 					isDestinationAccessible = false;
 
@@ -241,7 +241,7 @@ function DemoData()
 						{
 							defnsOfEntitiesToSpawn.push
 							(
-								entityInCell.defn().Mover.entityDefnCorpse
+								entityInCell.defn(world).Mover.entityDefnCorpse
 							);
 						}
 						else
@@ -1035,10 +1035,12 @@ function DemoData()
 			"Display Not Implemented Message",
 			function(actingEntity, targetEntity)
 			{
+				var world = Globals.Instance.world;
+				var actingEntityDefnName = actingEntity.defn(world).name;
 				Font.spawnMessageFloater
 				(
-					actingEntity.defn().name,
-					"NOT IMPLEMENTED - " + actingEntity.defn().name,
+					actingEntityDefnName,
+					"NOT IMPLEMENTED - " + actingEntityDefnName,
 					targetEntity.loc
 				);
 
@@ -1522,10 +1524,12 @@ function DemoData()
 				"Display a Message",
 				function(actingEntity, targetEntity)
 				{
+					var world = Globals.Instance.world;
+					var actingEntityDefnName = actingEntity.defn(world).name;
 					Font.spawnMessageFloater
 					(
-						actingEntity.defn().name,
-						"NOT IMPLEMENTED - " + actingEntity.defn().name,
+						actingEntityDefnName,
+						"NOT IMPLEMENTED - " + actingEntityDefnName,
 						targetEntity.loc
 					);
 
