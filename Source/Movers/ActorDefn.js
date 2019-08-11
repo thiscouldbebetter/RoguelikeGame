@@ -7,7 +7,7 @@ function ActorDefn(activityDefnNameInitial)
 {
 	ActorDefn.prototype.name = function() { return "Actor"; }
 
-	ActorDefn.prototype.initializeEntityForVenue = function(entity, venue)
+	ActorDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
 	{
 		var actorData = new ActorData();
 		entity.actorData = actorData;
@@ -20,12 +20,13 @@ function ActorDefn(activityDefnNameInitial)
 			null
 		);
 
-		actorData.activity_Set(entity, activity);
+		actorData.activity_Set(world, entity, activity);
 	}
 
-	ActorDefn.prototype.updateEntityForVenue = function(entity, venue)
+	ActorDefn.prototype.updateEntityForVenue = function(world, entity, venue)
 	{
-		entity.actorData.activity_Get().perform(entity);
+		var world = Globals.Instance.world;
+		entity.actorData.activity_Get().perform(world, entity);
 
 		var entityActions = entity.actorData.actions;
 

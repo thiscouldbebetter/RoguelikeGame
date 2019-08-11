@@ -73,6 +73,8 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
 
+		var world = Globals.Instance.world;
+
 		var entityProperties = entityToSpawn.defn().properties;
 		for (var c = 0; c < entityProperties.length; c++)
 		{
@@ -87,7 +89,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 				if (entityProperty.initializeEntityForVenue != null)
 				{
-					entityProperty.initializeEntityForVenue(entityToSpawn, this);
+					entityProperty.initializeEntityForVenue(world, entityToSpawn, this);
 				}
 			}
 		}
@@ -95,6 +97,8 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 	Venue.prototype.initialize = function()
 	{
+		var world = Globals.Instance.world;
+	
 		for (var b = 0; b < this.entities.length; b++)
 		{
 			var entity = this.entities[b];
@@ -107,7 +111,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 				if (entityProperty.initializeEntityForVenue != null)
 				{
-					entityProperty.initializeEntityForVenue(entity, this);
+					entityProperty.initializeEntityForVenue(world, entity, this);
 				}
 			}
 		}
@@ -134,6 +138,8 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 				this.map
 			);
 		}
+		
+		var world = Globals.Instance.world;
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
@@ -147,7 +153,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 				var entityDefnProperty = entity.defn().properties[propertyName];
 				if (entityDefnProperty.updateEntityForVenue != null)
 				{
-					entityDefnProperty.updateEntityForVenue(entity, this);
+					entityDefnProperty.updateEntityForVenue(world, entity, this);
 				}
 			}
 		}

@@ -24,7 +24,7 @@ function CollidableDefn(blocksMovement, blocksView)
 
 	CollidableDefn.prototype.name = function() { return "Collidable"; };
 
-	CollidableDefn.prototype.initializeEntityForVenue = function(entity, venue)
+	CollidableDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
 	{
 		var collidableData = new CollidableData
 		(
@@ -40,7 +40,7 @@ function CollidableDefn(blocksMovement, blocksView)
 		entity.collidableData = collidableData;
 	};
 
-	CollidableDefn.prototype.updateEntityForVenue = function(entity, venue)
+	CollidableDefn.prototype.updateEntityForVenue = function(world, entity, venue)
 	{
 		// todo
 	};

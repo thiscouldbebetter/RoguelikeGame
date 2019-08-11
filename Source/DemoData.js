@@ -41,7 +41,6 @@ function DemoData()
 			var portalData = portal.portalData;
 			var destinationVenueName = portalData.destinationVenueName;
 			var destinationEntityName = portalData.destinationEntityName;
-			var world = Globals.Instance.world;
 
 			var destinationVenue = world.venues[destinationVenueName];
 			if (destinationVenue != null)
@@ -433,13 +432,13 @@ function DemoData()
 			"Do Nothing",
 
 			// initialize
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				// do nothing
 			}
@@ -450,16 +449,15 @@ function DemoData()
 			"Generate Movers",
 
 			// initialize
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				var actorLoc = actor.loc;
-				var world = Globals.Instance.world;
 				var venue = actorLoc.venue(world);
 
 				var agentsInVenue = venue.entitiesByPropertyName["Mover"];
@@ -474,7 +472,6 @@ function DemoData()
 					{
 						var difficulty = 1; // hack
 
-						var world = Globals.Instance.world;
 						var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
 						var entityDefnsForAgentsOfDifficulty =
 							world.defn.entityDefnGroups[entityDefnGroupName].entityDefns;
@@ -502,16 +499,16 @@ function DemoData()
 			"Move Randomly",
 
 			// initialize
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				// hack
-				var actionsMoves = Globals.Instance.world.defn.actions._MovesByHeading;
+				var actionsMoves = world.defn.actions._MovesByHeading;
 
 				var numberOfDirectionsAvailable = actionsMoves.length;
 				var directionIndexRandom = Math.floor
@@ -531,13 +528,13 @@ function DemoData()
 			"Move Toward Player",
 
 			// initialize
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				if (actor.moverData.movesThisTurn <= 0)
 				{
@@ -545,7 +542,6 @@ function DemoData()
 				}
 
 				var actorLoc = actor.loc;
-				var world = Globals.Instance.world;
 				var venue = actorLoc.venue(world);
 				var players = venue.entitiesByPropertyName["Player"];
 
@@ -577,7 +573,7 @@ function DemoData()
 					var heading = Heading.fromCoords(directionsToPathNode1);
 
 					// hack
-					var actionsMoves = Globals.Instance.world.defn.actions._MovesByHeading;
+					var actionsMoves = world.defn.actions._MovesByHeading;
 					var actionMoveInDirection = actionsMoves[heading];
 
 					actor.actorData.actions.push
@@ -593,7 +589,7 @@ function DemoData()
 			"Accept User Input",
 
 			// initialize
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				activity.target =
 				[
@@ -619,7 +615,7 @@ function DemoData()
 			},
 
 			// perform
-			function(actor, activity)
+			function(world, actor, activity)
 			{
 				var inputHelper = Globals.Instance.inputHelper;
 				var inputToActionMappings = activity.target;
@@ -633,7 +629,7 @@ function DemoData()
 					if (inputMapping != null)
 					{
 						var actionName = inputMapping.actionName;
-						var action = Globals.Instance.world.defn.actions[actionName];
+						var action = world.defn.actions[actionName];
 
 						/*
 						var ticksToHold =

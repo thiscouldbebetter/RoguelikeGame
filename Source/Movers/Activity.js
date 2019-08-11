@@ -8,18 +8,18 @@ function Activity(defnName, target)
 {
 	// instance methods
 
-	Activity.prototype.defn = function()
+	Activity.prototype.defn = function(world)
 	{
-		return Globals.Instance.world.defn.activityDefns[this.defnName];
+		return world.defn.activityDefns[this.defnName];
 	}
 
-	Activity.prototype.initialize = function(actor)
+	Activity.prototype.initialize = function(world, actor)
 	{
-		this.defn().initialize(actor, this);
+		this.defn(world).initialize(world, actor, this);
 	}
 
-	Activity.prototype.perform = function(actor)
+	Activity.prototype.perform = function(world, actor)
 	{
-		this.defn().perform(actor, this);
+		this.defn(world).perform(world, actor, this);
 	}
 }

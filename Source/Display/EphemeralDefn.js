@@ -7,7 +7,7 @@ function EphemeralDefn(ticksToLive)
 {
 	EphemeralDefn.prototype.name = function() { return "Ephemeral"; }
 
-	EphemeralDefn.prototype.initializeEntityForVenue = function(entity, venue)
+	EphemeralDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
 	{
 		entity.ephemeralData = new EphemeralData
 		(
@@ -15,7 +15,7 @@ function EphemeralDefn(ticksToLive)
 		);
 	}
 
-	EphemeralDefn.prototype.updateEntityForVenue = function(entity, venue)
+	EphemeralDefn.prototype.updateEntityForVenue = function(world, entity, venue)
 	{
 		var ephemeralData = entity.ephemeralData;
 
