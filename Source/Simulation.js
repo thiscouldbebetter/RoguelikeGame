@@ -52,7 +52,7 @@ function Simulation()
 
 		Camera.initializeStatic();
 
-		var randomizer = new Globals.Instance.randomizer;
+		var randomizer = Globals.Instance.randomizer;
 		var worldDefn = new DemoData(randomizer).buildWorldDefn
 		(
 			imagesForTiles, imagesForTilesTransparent
