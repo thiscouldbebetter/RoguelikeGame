@@ -29,7 +29,7 @@ function DrawableDefn(visual, sizeInPixels, zIndex)
 		);
 
 		var drawableData = entity.drawableData;
-		var drawableDefn = entity.defn().Drawable;
+		var drawableDefn = entity.defn(world).Drawable;
 		drawableData.visual = drawableDefn.visual.clone();
 	};
 

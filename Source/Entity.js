@@ -34,13 +34,13 @@ function Entity(name, defnName, pos, propertyValues)
 		return returnValue;
 	}
 
-	Entity.prototype.defn = function()
+	Entity.prototype.defn = function(world)
 	{
 		var returnValue;
 
 		if (this._defn == null)
 		{
-			returnValue = Globals.Instance.world.defn.entityDefns[this.defnName];
+			returnValue = world.defn.entityDefns[this.defnName];
 		}
 		else
 		{

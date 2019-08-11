@@ -49,6 +49,7 @@ function PlayerDefn()
 
 			Globals.Instance.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
+				world,
 				venueKnown,
 				venue,
 				entity.loc.posInCells,
@@ -62,29 +63,30 @@ function PlayerDefn()
 	{
 		if (entity.moverData.movesThisTurn <= 0)
 		{
-			var vitals = entity.moverData.vitals.addSatietyToMover(-1, entity);
+			var vitals = entity.moverData.vitals.addSatietyToMover(world, -1, entity);
 
 			var propertyName = "Mover";
 			var moversToRecharge = venue.entitiesByPropertyName[propertyName];
 			for (var i = 0; i < moversToRecharge.length; i++)
 			{
 				var mover = moversToRecharge[i];
-				mover.moverData.movesThisTurn = mover.defn().Mover.movesPerTurn;
+				mover.moverData.movesThisTurn = mover.defn(world).Mover.movesPerTurn;
 			}
 
-			Globals.Instance.world.turnsSoFar++;
+			world.turnsSoFar++;
 
 			var venueKnown = entity.playerData.venueKnownLookup[venue.name];
 
 			Globals.Instance.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
+				world, 
 				venueKnown,
 				venue, // venueComplete
 				entity.loc.posInCells,
 				8 //sightRange
 			);
 
-			entity.moverData.controlUpdate(entity);
+			entity.moverData.controlUpdate(world, entity);
 		}
 	}
 }

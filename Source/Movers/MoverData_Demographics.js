@@ -9,7 +9,7 @@ function MoverData_Demographics(species, role, rank)
 {
 	// controls
 
-	MoverData_Demographics.prototype.controlUpdate = function(entity, pos)
+	MoverData_Demographics.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{

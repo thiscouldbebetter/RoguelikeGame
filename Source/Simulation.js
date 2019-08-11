@@ -52,7 +52,11 @@ function Simulation()
 
 		Camera.initializeStatic();
 
-		var worldDefn = DemoData.buildWorldDefn(imagesForTiles, imagesForTilesTransparent);
+		var randomizer = new Globals.Instance.randomizer;
+		var worldDefn = new DemoData(randomizer).buildWorldDefn
+		(
+			imagesForTiles, imagesForTilesTransparent
+		);
 
 		var venues = worldDefn.buildVenues
 		(
@@ -72,7 +76,7 @@ function Simulation()
 
 		Globals.Instance.initialize
 		(
-			DemoData.buildFont(),
+			new DemoData().buildFont(),
 			100, //realWorldMillisecondsPerTick,
 			new Coords(1000, 800), //viewSizeInPixels,
 			world0

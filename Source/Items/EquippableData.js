@@ -10,7 +10,7 @@ function EquippableData(equippableDefn)
 {
 	// control
 
-	EquippableData.prototype.controlUpdate = function(entity)
+	EquippableData.prototype.controlUpdate = function(world, entity)
 	{
 		if (this.control == null)
 		{

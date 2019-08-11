@@ -6,11 +6,10 @@ function MoverData_Locus()
 {
 	// controls
 
-	MoverData_Locus.prototype.controlUpdate = function(entity, pos)
+	MoverData_Locus.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{
-			var world = Globals.Instance.world;
 			this.control = new ControlContainer
 			(
 				"containerMoverData_Locus",

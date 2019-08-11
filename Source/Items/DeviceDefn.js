@@ -13,17 +13,17 @@ function DeviceDefn(chargesMax, consumedWhenAllChargesUsed, effectsToApply)
 	{
 		entity.deviceData = new DeviceData
 		(
-			entity.defn().Device.chargesMax
+			entity.defn(world).Device.chargesMax
 		);
 	}
 
-	DeviceDefn.prototype.use = function(userEntity, deviceEntity, targetEntity)
+	DeviceDefn.prototype.use = function(world, userEntity, deviceEntity, targetEntity)
 	{
 		for (var i = 0; i < this.effectsToApply.length; i++)
 		{
 			var effect = this.effectsToApply[i];
 
-			effect.applyToEntity(deviceEntity, targetEntity);
+			effect.applyToEntity(world, deviceEntity, targetEntity);
 		}
 	}
 }

@@ -5,33 +5,35 @@ function DeviceData(numberOfCharges)
 }
 
 {
-	DeviceData.prototype.use = function(userEntity, deviceEntity, targetEntity)
+	DeviceData.prototype.use = function(world, userEntity, deviceEntity, targetEntity)
 	{
+		var deviceDefn = deviceEntity.defn(world).Device;
+	
 		if (this.numberOfCharges > 0)
 		{
 			this.numberOfCharges--;
 
-			deviceEntity.defn().Device.use
+			deviceDefn.use
 			(
-				userEntity, deviceEntity, targetEntity
+				world, userEntity, deviceEntity, targetEntity
 			);
 		}
 
 		if (this.numberOfCharges <= 0)
 		{
-			var deviceDefn = deviceEntity.defn().Device;
 			if (deviceDefn.consumedWhenAllChargesUsed == true)
 			{
 				userEntity.containerData.removeItem
 				(
-					userEntity, deviceEntity
+					world, userEntity, deviceEntity
 				);
 			}
 			else
 			{
 				Font.spawnMessageFloater
 				(
-					deviceEntity.defn().name,
+					world,
+					deviceEntity.defn(world).name,
 					Message.getTextForName("NothingHappens"),
 					userEntity.loc
 				);

@@ -7,6 +7,7 @@ function SightHelper()
 {
 	SightHelper.prototype.updateVenueFromCompleteForViewerPosAndRange = function
 	(
+		world,
 		venueKnown,
 		venueComplete,
 		viewerPos,
@@ -15,14 +16,9 @@ function SightHelper()
 	{
 		var fieldOfView = this.fieldOfView;
 
-		fieldOfView.setVenueAndRangeAndViewerPos
-		(
-			venueComplete,
-			sightRange,
-			viewerPos
-		);
+		fieldOfView.setRangeAndViewerPos(sightRange, viewerPos);
 
-		fieldOfView.calculateCellPositionsVisible();
+		fieldOfView.calculateCellPositionsVisible(world, venueComplete);
 
 		venueComplete.map.copyNCellsAtPositionsToOther
 		(

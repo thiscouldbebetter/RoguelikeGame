@@ -5,9 +5,8 @@ function ProjectileDefn()
 }
 
 {
-	ProjectileDefn.prototype.collide = function(entityOther)
+	ProjectileDefn.prototype.collide = function(world, entityOther)
 	{
-		var world = Globals.Instance.world;
 		var entityOtherDefnProperties = entityOther.defn(world).properties;
 		if (entityOtherDefnProperties["Enemy"] != null)
 		{

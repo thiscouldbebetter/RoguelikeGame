@@ -12,7 +12,7 @@ function MoverData_Skills(skillDefns)
 }
 
 {
-	MoverData_Skills.prototype.controlUpdate = function(entity, pos)
+	MoverData_Skills.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{

@@ -1,8 +1,8 @@
 
-function ConstraintDefn(name, methodToRun)
+function ConstraintDefn(name, apply)
 {
 	this.name = name;
-	this.methodToRun = methodToRun;
+	this.apply = apply;
 }
 
 {
@@ -13,12 +13,11 @@ function ConstraintDefn(name, methodToRun)
 		this.Follow = new ConstraintDefn
 		(
 			"Follow",
-			function (constraint)
+			function apply(world, constraint)
 			{
 				var entityConstrained = constraint.entityConstrained;
 
 				// hack
-				var world = Globals.Instance.world;
 				var entityToFollow = entityConstrained.loc.venue(world).entitiesByPropertyName
 				[
 					"Player"

@@ -16,7 +16,7 @@ function ActorDefn(activityDefnNameInitial)
 
 		var activity = new Activity
 		(
-			entity.defn().Actor.activityDefnNameInitial,
+			entity.defn(world).Actor.activityDefnNameInitial,
 			null
 		);
 
@@ -25,12 +25,10 @@ function ActorDefn(activityDefnNameInitial)
 
 	ActorDefn.prototype.updateEntityForVenue = function(world, entity, venue)
 	{
-		var world = Globals.Instance.world;
 		entity.actorData.activity_Get().perform(world, entity);
 
 		var entityActions = entity.actorData.actions;
 
-		var world = Globals.Instance.world;
 		for (var a = 0; a < entityActions.length; a++)
 		{
 			var action = entityActions[a];

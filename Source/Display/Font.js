@@ -84,15 +84,8 @@ function Font(charactersAvailable, characterSize, characterImages)
 		return entityDefn;
 	};
 
-	Font.spawnMessage = function
-	(
-		messageIconName,
-		messageText,
-		loc,
-		isFloater
-	)
+	Font.spawnMessage = function(world, messageIconName, messageText, loc, isFloater)
 	{
-		var world = Globals.Instance.world;
 		var entityDefns = world.defn.entityDefns;
 
 		var messageIcon =
@@ -119,22 +112,13 @@ function Font(charactersAvailable, characterSize, characterImages)
 		world.venueCurrent.entitiesToSpawn.push(entityMessage);
 	};
 
-	Font.spawnMessageFixed = function
-	(
-		messageText,
-		loc
-	)
+	Font.spawnMessageFixed = function(world, messageText, loc)
 	{
-		Font.spawnMessage(null, messageText, loc, false);
+		Font.spawnMessage(world, null, messageText, loc, false);
 	};
 
-	Font.spawnMessageFloater = function
-	(
-		messageIconName,
-		messageText,
-		loc
-	)
+	Font.spawnMessageFloater = function(world, messageIconName, messageText, loc)
 	{
-		Font.spawnMessage(messageIconName, messageText, loc, true);
+		Font.spawnMessage(world, messageIconName, messageText, loc, true);
 	};
 }

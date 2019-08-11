@@ -31,9 +31,9 @@ function ItemDefn(appearance, mass, stackSizeMax, relativeFrequency, categoryNam
 		// do nothing
 	}
 
-	ItemDefn.UseDevice = function(userEntity, deviceEntity, targetEntity)
+	ItemDefn.UseDevice = function(world, userEntity, deviceEntity, targetEntity)
 	{
-		deviceEntity.deviceData.use(userEntity, deviceEntity, targetEntity);
+		deviceEntity.deviceData.use(world, userEntity, deviceEntity, targetEntity);
 	}
 
 	ItemDefn.UseDoNothing = function()
@@ -41,9 +41,9 @@ function ItemDefn(appearance, mass, stackSizeMax, relativeFrequency, categoryNam
 		// do nothing
 	}
 
-	ItemDefn.UseEquip = function(entity, item)
+	ItemDefn.UseEquip = function(world, entity, item)
 	{
-		var itemCategoryNames = item.defn().categoryNames;
+		var itemCategoryNames = item.defn(world).categoryNames;
 
 		var equippableData = entity.equippableData;
 		var socketSet = equippableData.equipmentSocketSet;
@@ -66,7 +66,7 @@ function ItemDefn(appearance, mass, stackSizeMax, relativeFrequency, categoryNam
 					if (itemCategoryName == nameOfCategoryAllowed)
 					{
 						socket.itemEquipped = item;
-						entity.moverData.controlUpdate(entity);
+						entity.moverData.controlUpdate(world, entity);
 						return;
 					}
 				}

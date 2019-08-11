@@ -5,22 +5,20 @@ function ContainerData()
 }
 
 {
-	ContainerData.prototype.dropItem = function(actor, itemToDrop)
+	ContainerData.prototype.dropItem = function(world, actor, itemToDrop)
 	{
 		var itemsHeld = this.items;
 
-		this.removeItem(actor, itemToDrop);
+		this.removeItem(world, actor, itemToDrop);
 
 		itemToDrop.loc.overwriteWith(actor.loc);
-		var world = Globals.Instance.world;
 		itemToDrop.loc.venue(world).entitiesToSpawn.push(itemToDrop);
 	}
 
-	ContainerData.prototype.removeItem = function(actor, itemToDrop)
+	ContainerData.prototype.removeItem = function(world, actor, itemToDrop)
 	{
 		var itemsHeld = this.items;
 
-		var world = Globals.Instance.world;
 		var actionSelectNext = world.defn.actions["Item_SelectNext"];
 		actionSelectNext.perform(world, actor);
 
@@ -32,13 +30,12 @@ function ContainerData()
 			this.itemSelected = null;
 		}
 
-		this.controlUpdate(actor);
+		this.controlUpdate(world, actor);
 	}
 
-	ContainerData.prototype.pickUpItem = function(actor, itemToPickUp)
+	ContainerData.prototype.pickUpItem = function(world, actor, itemToPickUp)
 	{
 		this.items.push(itemToPickUp);
-		var world = Globals.Instance.world;
 		itemToPickUp.loc.venue(world).entitiesToRemove.push(itemToPickUp);
 
 		if (this.itemSelected == null)
@@ -46,12 +43,12 @@ function ContainerData()
 			this.itemSelected = itemToPickUp;
 		}
 
-		this.controlUpdate(actor);
+		this.controlUpdate(world, actor);
 	}
 
 	// control
 
-	ContainerData.prototype.controlUpdate = function(entity, pos)
+	ContainerData.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{

@@ -2,9 +2,9 @@
 function CollisionHelper()
 {}
 {
-	CollisionHelper.prototype.collideEntities = function(collision, entity0, entity1)
+	CollisionHelper.prototype.collideEntities = function(world, collision, entity0, entity1)
 	{
-		var entity0DefnProperties = entity0.defn().properties;
+		var entity0DefnProperties = entity0.defn(world).properties;
 
 		for (var c = 0; c < entity0DefnProperties.length; c++)
 		{

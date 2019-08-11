@@ -11,7 +11,7 @@ function EquippableDefn(equipmentSocketDefnSet)
 	{
 		entity.equippableData = new EquippableData
 		(
-			entity.defn().Equippable
+			entity.defn(world).Equippable
 		);
 	}
 }

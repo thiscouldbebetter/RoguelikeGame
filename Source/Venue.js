@@ -66,14 +66,12 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		return returnEntities;
 	}
 
-	Venue.prototype.entitySpawn = function(entityToSpawn)
+	Venue.prototype.entitySpawn = function(world, entityToSpawn)
 	{
 		entityToSpawn.loc.venueName = this.name;
 
 		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
-
-		var world = Globals.Instance.world;
 
 		var entityProperties = entityToSpawn.defn(world).properties;
 		for (var c = 0; c < entityProperties.length; c++)
@@ -95,10 +93,8 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		}
 	}
 
-	Venue.prototype.initialize = function()
-	{
-		var world = Globals.Instance.world;
-	
+	Venue.prototype.initialize = function(world)
+	{	
 		for (var b = 0; b < this.entities.length; b++)
 		{
 			var entity = this.entities[b];
@@ -117,20 +113,20 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		}
 	}
 
-	Venue.prototype.update = function()
+	Venue.prototype.update = function(world)
 	{
-		this.update_EntitiesToSpawn();
+		this.update_EntitiesToSpawn(world);
 
-		var player = Globals.Instance.world.entityForPlayer;
+		var player = world.entityForPlayer;
 		var venueKnown = player.playerData.venueKnownLookup[this.name];
 
 		if (venueKnown != null)
 		{
 			var display = Globals.Instance.display;
-			display.drawVenue(venueKnown);
+			display.drawVenue(world, venueKnown);
 			display.drawControl
 			(
-				venueKnown.controlUpdate()
+				venueKnown.controlUpdate(world)
 			);
 			display.drawEntitiesForMap
 			(
@@ -139,8 +135,6 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			);
 		}
 		
-		var world = Globals.Instance.world;
-
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
 		{
@@ -158,12 +152,12 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			}
 		}
 
-		this.update_Collidables();
+		this.update_Collidables(world);
 
-		this.update_EntitiesToRemove();
+		this.update_EntitiesToRemove(world);
 	}
 
-	Venue.prototype.update_EntitiesToRemove = function()
+	Venue.prototype.update_EntitiesToRemove = function(world)
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -201,19 +195,19 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		this.entitiesToRemove.length = 0;
 	}
 
-	Venue.prototype.update_EntitiesToSpawn = function()
+	Venue.prototype.update_EntitiesToSpawn = function(world)
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
 			var entityToSpawn = this.entitiesToSpawn[i];
-			this.entitySpawn(entityToSpawn);
+			this.entitySpawn(world, entityToSpawn);
 		}
 
 		this.entitiesToSpawn.length = 0;
 	}
 
-	Venue.prototype.update_Collidables = function()
-	{
+	Venue.prototype.update_Collidables = function(world)
+	{		
 		var emplacements = this.entitiesByPropertyName["Emplacement"];
 		var enemies = this.entitiesByPropertyName["Enemy"];
 		var items = this.entitiesByPropertyName["Item"];
@@ -276,11 +270,11 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 						collisionHelper.collideEntities
 						(
-							collision, entityThis, entityOther
+							world, collision, entityThis, entityOther
 						);
 						collisionHelper.collideEntities
 						(
-							collision, entityOther, entityThis
+							world, collision, entityOther, entityThis
 						);
 					}
 				}
@@ -290,11 +284,11 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 	// controls
 
-	Venue.prototype.controlUpdate = function()
+	Venue.prototype.controlUpdate = function(world)
 	{
 		if (this.control == null)
 		{
-			var entityForPlayer = Globals.Instance.world.entityForPlayer;
+			var entityForPlayer = world.entityForPlayer;
 			this.control = new ControlContainer
 			(
 				"containerVenue",
@@ -302,7 +296,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 				new Coords(220, 240), // size
 				// children
 				[
-					entityForPlayer.moverData.controlUpdate(entityForPlayer),
+					entityForPlayer.moverData.controlUpdate(world, entityForPlayer),
 				]
 			);
 		}

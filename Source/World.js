@@ -35,13 +35,13 @@ function World(name, defn, venues, entityForPlayer)
 	{
 		if (this.venueNext != null)
 		{
-			this.venueNext.initialize();
+			this.venueNext.initialize(this);
 
 			this.venueCurrent = this.venueNext;
 
 			this.venueNext = null;
 		}
 
-		this.venueCurrent.update();
+		this.venueCurrent.update(this);
 	}
 }

@@ -8,7 +8,7 @@ function EquipmentSocket(defn, itemEquipped)
 {
 	// control
 
-	EquipmentSocket.prototype.controlUpdate = function(entity)
+	EquipmentSocket.prototype.controlUpdate = function(world, entity)
 	{
 		if (this.control == null)
 		{

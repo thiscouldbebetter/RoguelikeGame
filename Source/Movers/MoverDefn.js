@@ -30,7 +30,7 @@ function MoverDefn
 
 	MoverDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
 	{
-		entity.moverData = new MoverData(entity.defn().Mover);
+		entity.moverData = new MoverData(entity.defn(world).Mover);
 	}
 
 	MoverDefn.prototype.updateEntityForVenue = function(world, entity, venue)

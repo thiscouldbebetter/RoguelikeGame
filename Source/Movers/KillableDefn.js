@@ -11,7 +11,7 @@ function KillableDefn(integrityMax)
 	{
 		entity.killableData = new KillableData
 		(
-			entity.defn().Killable
+			entity.defn(world).Killable
 		);
 	}
 

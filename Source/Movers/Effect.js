@@ -5,9 +5,9 @@ function Effect(defn)
 }
 
 {
-	Effect.prototype.applyToEntity = function(actingEntity, targetEntity)
+	Effect.prototype.applyToEntity = function(world, actingEntity, targetEntity)
 	{
-		this.defn.apply(actingEntity, targetEntity);
+		this.defn.apply(world, actingEntity, targetEntity);
 	}
 
 	Effect.prototype.clone = function()

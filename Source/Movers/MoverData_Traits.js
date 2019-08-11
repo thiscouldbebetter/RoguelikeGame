@@ -5,7 +5,7 @@ function MoverData_Traits(traits)
 }
 
 {
-	MoverData_Traits.prototype.controlUpdate = function(entity, pos)
+	MoverData_Traits.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{

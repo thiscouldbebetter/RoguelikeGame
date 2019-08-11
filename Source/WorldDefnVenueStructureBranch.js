@@ -41,8 +41,9 @@ function WorldDefnVenueStructureBranch
 		{
 			venueDepth++;
 
-			var venue = venueDefn.venueGenerate
+			var venue = venueDefn.venueGenerate.call
 			(
+				new DemoData(Globals.Instance.randomizer), // hack
 				worldDefn,
 				venueDefn,
 				venuesSoFar.length, // venueIndex

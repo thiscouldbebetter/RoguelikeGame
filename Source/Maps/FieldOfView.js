@@ -5,17 +5,16 @@ function FieldOfView()
 }
 
 {
-	FieldOfView.prototype.setVenueAndRangeAndViewerPos = function
+	FieldOfView.prototype.setRangeAndViewerPos = function
 	(
-		venue, distanceFromEyeMax, eyePos
+		distanceFromEyeMax, eyePos
 	)
 	{
-		this.venue = venue;
 		this.distanceFromEyeMax = distanceFromEyeMax;
 		this.eyePos = eyePos;
 	}
 
-	FieldOfView.prototype.calculateCellPositionsVisible = function()
+	FieldOfView.prototype.calculateCellPositionsVisible = function(world, venue)
 	{
 		var numberOfCellPositionsMax =
 			4
@@ -68,8 +67,8 @@ function FieldOfView()
 		this.cellPositionsVisible[0] = this.eyePos.clone();
 		this.numberOfCellsVisible = 1;
 
-		var map = this.venue.map;
-
+		var map = venue.map;
+		
 		for (var r = 1; r <= this.distanceFromEyeMax; r++)
 		{
 			cellPosRelative.overwriteWithDimensions(r, 0, 0);
@@ -123,7 +122,7 @@ function FieldOfView()
 							}
 							else
 							{
-								var entitiesPresent = this.venue.map.cellAtPos
+								var entitiesPresent = map.cellAtPos
 								(
 									cellPos
 								).entitiesPresent;
@@ -131,7 +130,7 @@ function FieldOfView()
 								for (var b = 0; b < entitiesPresent.length; b++)
 								{
 									var entityPresent = entitiesPresent[b];
-									if (entityPresent.defn().Collidable.blocksView == true)
+									if (entityPresent.defn(world).Collidable.blocksView == true)
 									{
 										angleRangeSetNotYetBlocked.subtract(cellSpanAsSet);
 									}

@@ -5,7 +5,7 @@ function MoverData_Spells(spells)
 }
 
 {
-	MoverData_Spells.prototype.controlUpdate = function(entity, pos)
+	MoverData_Spells.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{

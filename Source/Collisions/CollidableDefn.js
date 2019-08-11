@@ -28,7 +28,7 @@ function CollidableDefn(blocksMovement, blocksView)
 	{
 		var collidableData = new CollidableData
 		(
-			entity.defn().Collidable
+			entity.defn(world).Collidable
 		);
 
 		var map = venue.map;

@@ -11,7 +11,7 @@ function EphemeralDefn(ticksToLive)
 	{
 		entity.ephemeralData = new EphemeralData
 		(
-			entity.defn().Ephemeral
+			entity.defn(world).Ephemeral
 		);
 	}
 

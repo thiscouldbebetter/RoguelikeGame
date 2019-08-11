@@ -1,12 +1,12 @@
 
-function DemoData()
+function DemoData(randomizer)
 {
-	// do nothing
+	this.randomizer = randomizer;
 }
 {
 	var collidableDefns = CollidableDefn.Instances();
 
-	DemoData.buildActions = function()
+	DemoData.prototype.buildActions = function()
 	{
 		// Action.perform() declarations
 
@@ -45,8 +45,8 @@ function DemoData()
 			var destinationVenue = world.venues[destinationVenueName];
 			if (destinationVenue != null)
 			{
-				destinationVenue.initialize();
-				destinationVenue.update();
+				destinationVenue.initialize(world);
+				destinationVenue.update(world);
 
 				var entities = destinationVenue.entities;
 				var destinationEntity = entities[destinationEntityName];
@@ -61,7 +61,7 @@ function DemoData()
 
 					world.venueNext = destinationVenue;
 
-					actor.moverData.controlUpdate(actor);
+					actor.moverData.controlUpdate(world, actor);
 				}
 			}
 		}
@@ -84,7 +84,7 @@ function DemoData()
 			if (itemToDrop != null && actor.moverData.movesThisTurn >= costToDrop)
 			{
 				actor.moverData.movesThisTurn -= costToDrop;
-				actor.containerData.dropItem(actor, itemToDrop);
+				actor.containerData.dropItem(world, actor, itemToDrop);
 			}
 		}
 
@@ -108,7 +108,7 @@ function DemoData()
 					{
 						actor.moverData.movesThisTurn -= costToPickUp;
 
-						actor.containerData.pickUpItem(actor, itemToPickUp);
+						actor.containerData.pickUpItem(world, actor, itemToPickUp);
 					}
 				}
 			}
@@ -151,14 +151,14 @@ function DemoData()
 
 			containerData.itemSelected = itemsHeld[indexOfItemSelected];
 
-			actor.moverData.controlUpdate(actor);
+			actor.moverData.controlUpdate(world, actor);
 		}
 
 		var actionItem_TargetSelected_Perform = function(world, actor, action)
 		{
 			var containerData = actor.containerData;
 			containerData.itemTargeted = containerData.itemSelected;
-			actor.moverData.controlUpdate(actor);
+			actor.moverData.controlUpdate(world, actor);
 		}
 
 		var actionItem_UseSelected_Perform = function(world, actor, action)
@@ -173,7 +173,7 @@ function DemoData()
 				{
 					actor.moverData.movesThisTurn -= movesToUse;
 
-					itemToUse.defn.itemDefn.use(actor, itemToUse, actor);
+					itemToUse.defn.itemDefn.use(world, actor, itemToUse, actor);
 				}
 			}
 		}
@@ -225,9 +225,7 @@ function DemoData()
 
 					Font.spawnMessageFloater
 					(
-						"Dagger",
-						"-" + damageInflicted,
-						actorLoc
+						world, "Dagger", "-" + damageInflicted, actorLoc
 					);
 
 					if (damageInflicted > 0)
@@ -425,7 +423,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildActivityDefns = function()
+	DemoData.prototype.buildActivityDefns = function()
 	{
 		var activityDefnDoNothing = new ActivityDefn
 		(
@@ -514,7 +512,7 @@ function DemoData()
 				var directionIndexRandom = Math.floor
 				(
 					numberOfDirectionsAvailable
-					* Globals.Instance.randomizer.getNextRandom() // Math.random()
+					* this.randomizer.getNextRandom() // Math.random()
 				);
 
 				var actionMoveInRandomDirection = actionsMoves[directionIndexRandom];
@@ -662,7 +660,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildItemCategories = function()
+	DemoData.prototype.buildItemCategories = function()
 	{
 		var returnValues =
 		[
@@ -692,15 +690,15 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildEntityDefnGroups = function(images, activityDefns, itemCategories)
+	DemoData.prototype.buildEntityDefnGroups = function(images, activityDefns, itemCategories)
 	{
 		// entityDefns
 
-		var emplacements = DemoData.buildEntityDefnGroups_Emplacements(images);
+		var emplacements = this.buildEntityDefnGroups_Emplacements(images);
 
-		var items = DemoData.buildEntityDefnGroups_Items(images, itemCategories);
+		var items = this.buildEntityDefnGroups_Items(images, itemCategories);
 
-		var movers = DemoData.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
+		var movers = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
 
 		var cameras = new EntityDefnGroup("Cameras", 0, [ Camera.EntityDefn ]);
 
@@ -715,7 +713,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildEntityDefnGroups_Emplacements = function(images)
+	DemoData.prototype.buildEntityDefnGroups_Emplacements = function(images)
 	{
 		var animation = AnimationDefnSetFake.buildFromImage;
 
@@ -798,7 +796,7 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.buildEntityDefnGroups_Items = function(images, itemCategories)
+	DemoData.prototype.buildEntityDefnGroups_Items = function(images, itemCategories)
 	{
 		// convenience variables
 
@@ -838,7 +836,7 @@ function DemoData()
 		var effectDefnDoNothing = new EffectDefn
 		(
 			"Do Nothing",
-			function(targetEntity)
+			function apply(world, targetEntity)
 			{
 				// do nothing
 			}
@@ -850,25 +848,27 @@ function DemoData()
 
 		var methodsToRun =
 		[
-			DemoData.buildEntityDefns_Items_Containers,
-			DemoData.buildEntityDefns_Items_Food,
-			DemoData.buildEntityDefns_Items_Potions,
-			DemoData.buildEntityDefns_Items_Rings,
-			DemoData.buildEntityDefns_Items_Scrolls,
-			DemoData.buildEntityDefns_Items_Spellbooks,
-			DemoData.buildEntityDefns_Items_Wands,
-			DemoData.buildEntityDefns_Items_Weapons,
-			DemoData.buildEntityDefns_Items_Armor,
-			DemoData.buildEntityDefns_Items_Tools,
-			DemoData.buildEntityDefns_Items_Stones,
+			this.buildEntityDefns_Items_Containers,
+			this.buildEntityDefns_Items_Food,
+			this.buildEntityDefns_Items_Potions,
+			this.buildEntityDefns_Items_Rings,
+			this.buildEntityDefns_Items_Scrolls,
+			this.buildEntityDefns_Items_Spellbooks,
+			this.buildEntityDefns_Items_Wands,
+			this.buildEntityDefns_Items_Weapons,
+			this.buildEntityDefns_Items_Armor,
+			this.buildEntityDefns_Items_Tools,
+			this.buildEntityDefns_Items_Stones,
 		];
 
 		var itemDefnGroups = [];
 
 		for (var i = 0; i < methodsToRun.length; i++)
 		{
-			var itemDefnGroup = methodsToRun[i]
+			var methodToRun = methodsToRun[i];
+			var itemDefnGroup = methodToRun.call
 			(
+				this,
 				images,
 				animation,
 				itemCategories,
@@ -888,7 +888,7 @@ function DemoData()
 		return itemDefnGroups;
 	}
 
-	DemoData.buildEntityDefns_Items_Containers = function
+	DemoData.prototype.buildEntityDefns_Items_Containers = function
 	(
 		images,
 		animation,
@@ -918,7 +918,7 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.buildEntityDefns_Items_Food = function
+	DemoData.prototype.buildEntityDefns_Items_Food = function
 	(
 		images,
 		animation,
@@ -963,10 +963,10 @@ function DemoData()
 			new EffectDefn
 			(
 				"Nourish",
-				function(targetEntity)
+				function apply(world, targetEntity)
 				{
-					targetEntity.moverData.vitals.addSatietyToMover(1000, targetEntity);
-					targetEntity.moverData.controlUpdate(targetEntity);
+					targetEntity.moverData.vitals.addSatietyToMover(world, 1000, targetEntity);
+					targetEntity.moverData.controlUpdate(world, targetEntity);
 				}
 			)
 		);
@@ -1013,7 +1013,7 @@ function DemoData()
 		return new EntityDefnGroup("Food", 1, entityDefnSets[0]);
 	}
 
-	DemoData.buildEntityDefns_Items_Potions = function
+	DemoData.prototype.buildEntityDefns_Items_Potions = function
 	(
 		images,
 		animation,
@@ -1033,35 +1033,35 @@ function DemoData()
 		var effectMessageNotImplemented = new EffectDefn
 		(
 			"Display Not Implemented Message",
-			function(actingEntity, targetEntity)
+			function apply(world, actingEntity, targetEntity)
 			{
-				var world = Globals.Instance.world;
 				var actingEntityDefnName = actingEntity.defn(world).name;
 				Font.spawnMessageFloater
 				(
+					world, 
 					actingEntityDefnName,
 					"NOT IMPLEMENTED - " + actingEntityDefnName,
 					targetEntity.loc
 				);
 
-				targetEntity.controlUpdate();
+				targetEntity.controlUpdate(world);
 			}
 		);
 
 		var namesAndEffectDefnsOfPotions =
 		[
-			[ "Acid" 		, new ED( null, function(ab, tb) { tb.moverData.integrityAdd(-30); tb.moverData.controlUpdate(tb); } ) ],
+			[ "Acid" 		, new ED( null, function(w, ae, te) { te.moverData.integrityAdd(-30); te.moverData.controlUpdate(w, te); } ) ],
 			[ "Blindness" 		, effectMessageNotImplemented ],
 			[ "Booze" 		, effectMessageNotImplemented ],
 			[ "Enlightenment" 	, effectMessageNotImplemented ],
 			[ "Confusion" 		, effectMessageNotImplemented ],
-			[ "Fruit Juice" 	, new ED( null, function(ab, tb) { tb.moverData.vitals.addSatietyToMover(100, targetEntity); tb.moverData.controlUpdate(targetEntity); } ) ],
-			[ "Gain Ability" 	, new ED( null, function(ab, tb) { tb.moverData.traits.strength += 1; tb.moverData.controlUpdate(tb); } ) ],
-			[ "Gain Energy" 	, new ED( null, function(ab, tb) { tb.moverData.vitals.energy += 100; tb.moverData.controlUpdate(tb); } ) ],
-			[ "Gain Level" 		, new ED( null, function(ab, tb) { tb.moverData.demographics.level += 1; tb.moverData.controlUpdate(tb); } ) ],
-			[ "Healing" 		, new ED( null, function(ab, tb) { tb.killableData.integrityAdd(10); tb.moverData.controlUpdate(tb); } ) ],
-			[ "Healing Extra" 	, new ED( null, function(ab, tb) { tb.killableData.integrityAdd(30); tb.moverData.controlUpdate(tb); } ) ],
-			[ "Healing Full" 	, new ED( null, function(ab, tb) { tb.killableData.integrityAdd(1000); tb.moverData.controlUpdate(tb); } ) ],
+			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.moverData.vitals.addSatietyToMover(w, 100, targetEntity); te.moverData.controlUpdate(targetEntity); } ) ],
+			[ "Gain aeility" 	, new ED( null, function(w, ae, te) { te.moverData.traits.strength += 1; te.moverData.controlUpdate(w, te); } ) ],
+			[ "Gain Energy" 	, new ED( null, function(w, ae, te) { te.moverData.vitals.energy += 100; te.moverData.controlUpdate(te); } ) ],
+			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.moverData.demographics.level += 1; te.moverData.controlUpdate(te); } ) ],
+			[ "Healing" 		, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(10); te.moverData.controlUpdate(w, te); } ) ],
+			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(30); te.moverData.controlUpdate(w, te); } ) ],
+			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(1000); te.moverData.controlUpdate(w, te); } ) ],
 			[ "Invisibility" 	, effectMessageNotImplemented ],
 			[ "Levitation" 		, effectMessageNotImplemented ],
 			[ "Monster Detection" 	, effectMessageNotImplemented ],
@@ -1069,9 +1069,9 @@ function DemoData()
 			[ "Object Detection" 	, effectMessageNotImplemented ],
 			[ "Oil" 		, effectMessageNotImplemented ],
 			[ "Polymorph" 		, effectMessageNotImplemented ],
-			[ "Restore Ability" 	, effectMessageNotImplemented ],
+			[ "Restore aeility" 	, effectMessageNotImplemented ],
 			[ "See Invisible" 	, effectMessageNotImplemented ],
-			[ "Sickness" 		, new ED( null, function(ab, tb) { tb.killableData.integrityAdd(-20); tb.moverData.controlUpdate(tb); } ) ],
+			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(-20); te.moverData.controlUpdate(w, te); } ) ],
 			[ "Sleeping" 		, effectMessageNotImplemented ],
 			[ "Speed" 		, effectMessageNotImplemented ],
 			[ "Water" 		, effectMessageNotImplemented ],
@@ -1089,12 +1089,12 @@ function DemoData()
 		];
 
 		var entityDefnSetPotions = [];
-
+		
 		for (var i = 0; i < namesAndEffectDefnsOfPotions.length; i++)
 		{
 			var appearanceIndex = Math.floor
 			(
-				Globals.Instance.randomizer.getNextRandom()
+				this.randomizer.getNextRandom()
 				* appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Potion";
@@ -1142,7 +1142,7 @@ function DemoData()
 		return new EntityDefnGroup("Potions", 1, entityDefnSets[0]);
 	}
 
-	DemoData.buildEntityDefns_Items_Rings = function
+	DemoData.prototype.buildEntityDefns_Items_Rings = function
 	(
 		images,
 		animation,
@@ -1206,8 +1206,7 @@ function DemoData()
 		{
 			var appearanceIndex = Math.floor
 			(
-				Globals.Instance.randomizer.getNextRandom()
-				* appearances.length
+				this.randomizer.getNextRandom() * appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Ring";
 			appearances.splice(appearanceIndex, 1);
@@ -1240,7 +1239,7 @@ function DemoData()
 		return new EntityDefnGroup("Rings", 1, entityDefnSets[0]);
 	}
 
-	DemoData.buildEntityDefns_Items_Scrolls = function
+	DemoData.prototype.buildEntityDefns_Items_Scrolls = function
 	(
 		images,
 		animation,
@@ -1298,7 +1297,7 @@ function DemoData()
 		{
 			var appearanceIndex = Math.floor
 			(
-				Globals.Instance.randomizer.getNextRandom()
+				this.randomizer.getNextRandom()
 				* appearances.length
 			);
 			var appearance = "Scroll Titled '" + appearances[appearanceIndex] + "'";
@@ -1342,7 +1341,7 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.buildEntityDefns_Items_Spellbooks = function
+	DemoData.prototype.buildEntityDefns_Items_Spellbooks = function
 	(
 		images,
 		animation,
@@ -1440,7 +1439,7 @@ function DemoData()
 
 			var appearanceIndex = Math.floor
 			(
-				Globals.Instance.randomizer.getNextRandom()
+				this.randomizer.getNextRandom()
 				* appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Spellbook";
@@ -1451,7 +1450,7 @@ function DemoData()
 				new EffectDefn
 				(
 					"Learn Spell: " + nameOfSpellbook,
-					function(targetEntity)
+					function apply(world, targetEntity)
 					{
 						var spellToAdd = new SpellDefn("[Spell]");
 						var spellsKnown = targetEntity.moverData.spells.spells;
@@ -1504,7 +1503,7 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.buildEntityDefns_Items_Wands = function
+	DemoData.prototype.buildEntityDefns_Items_Wands = function
 	(
 		images,
 		animation,
@@ -1522,18 +1521,18 @@ function DemoData()
 			new EffectDefn
 			(
 				"Display a Message",
-				function(actingEntity, targetEntity)
+				function apply(world, actingEntity, targetEntity)
 				{
-					var world = Globals.Instance.world;
 					var actingEntityDefnName = actingEntity.defn(world).name;
 					Font.spawnMessageFloater
 					(
+						world,
 						actingEntityDefnName,
 						"NOT IMPLEMENTED - " + actingEntityDefnName,
 						targetEntity.loc
 					);
 
-					targetEntity.controlUpdate();
+					targetEntity.controlUpdate(world);
 				}
 			)
 		);
@@ -1543,9 +1542,8 @@ function DemoData()
 			new EffectDefn
 			(
 				"Spawn Projectile",
-				function(actingEntity, targetEntity)
+				function apply(world, actingEntity, targetEntity)
 				{
-					var world = Globals.Instance.world;
 					var loc = targetEntity.loc;
 					var venue = loc.venue(world);
 
@@ -1558,7 +1556,7 @@ function DemoData()
 
 					venue.entitiesToSpawn.push(entityForProjectile);
 
-					targetEntity.controlUpdate();
+					targetEntity.controlUpdate(world);
 				}
 			)
 		);
@@ -1568,14 +1566,13 @@ function DemoData()
 			new EffectDefn
 			(
 				"Teleport",
-				function(actingEntity, targetEntity)
+				function apply(world, actingEntity, targetEntity)
 				{
 					var loc = targetEntity.loc;
 
 					var teleportPos = null;
 					while (teleportPos == null)
 					{
-						var world = Globals.Instance.world;
 						var map = loc.venue(world).map;
 						teleportPos = new Coords().randomize().multiply(map.sizeInCells).floor();
 
@@ -1587,8 +1584,8 @@ function DemoData()
 					}
 					loc.posInCells.overwriteWith(teleportPos);
 
-					targetEntity.controlUpdate();
-					targetEntity.moverData.controlUpdate(targetEntity);
+					targetEntity.controlUpdate(world);
+					targetEntity.moverData.controlUpdate(world, targetEntity);
 				}
 			)
 		);
@@ -1642,7 +1639,7 @@ function DemoData()
 
 			var appearanceIndex = Math.floor
 			(
-				Globals.Instance.randomizer.getNextRandom(),
+				this.randomizer.getNextRandom(),
 				appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Wand";
@@ -1686,7 +1683,7 @@ function DemoData()
 
 	}
 
-	DemoData.buildEntityDefns_Items_MagicTools = function
+	DemoData.prototype.buildEntityDefns_Items_MagicTools = function
 	(
 		images,
 		animation,
@@ -1702,7 +1699,7 @@ function DemoData()
 		// todo
 	}
 
-	DemoData.buildEntityDefns_Items_Weapons = function
+	DemoData.prototype.buildEntityDefns_Items_Weapons = function
 	(
 		images,
 		animation,
@@ -1772,7 +1769,7 @@ function DemoData()
 		return new EntityDefnGroup("Weapons", 1, entityDefnSets[0]);
 	}
 
-	DemoData.buildEntityDefns_Items_Armor = function
+	DemoData.prototype.buildEntityDefns_Items_Armor = function
 	(
 		images,
 		animation,
@@ -1890,7 +1887,7 @@ function DemoData()
 		return new EntityDefnGroup("Armor", 1, entityDefnSets[0]);
 	}
 
-	DemoData.buildEntityDefns_Items_Tools = function
+	DemoData.prototype.buildEntityDefns_Items_Tools = function
 	(
 		images,
 		animation,
@@ -1984,7 +1981,7 @@ function DemoData()
 		return new EntityDefnGroup("Tools", 1, entityDefnSet);
 	}
 
-	DemoData.buildEntityDefns_Items_Stones = function
+	DemoData.prototype.buildEntityDefns_Items_Stones = function
 	(
 		images,
 		animation,
@@ -2115,7 +2112,7 @@ function DemoData()
 		return new EntityDefnGroup("Valuables", 1, entityDefnSets[1]);
 	}
 
-	DemoData.buildEntityDefns_Items_EquipmentSocketDefnSet = function(itemCategories)
+	DemoData.prototype.buildEntityDefns_Items_EquipmentSocketDefnSet = function(itemCategories)
 	{
 		var biped = new EquipmentSocketDefnSet
 		(
@@ -2138,7 +2135,7 @@ function DemoData()
 		return biped;
 	}
 
-	DemoData.buildEntityDefnGroups_Movers = function(images, activityDefns, itemCategories)
+	DemoData.prototype.buildEntityDefnGroups_Movers = function(images, activityDefns, itemCategories)
 	{
 		var returnValues = [];
 
@@ -2148,13 +2145,13 @@ function DemoData()
 
 		var sizeInPixels = images["Floor"].sizeInPixels;
 
-		var skillDefns = DemoData.buildSkillDefns();
-		var spellDefns = DemoData.buildSpellDefns();
-		var traitDefns = DemoData.buildTraitDefns();
+		var skillDefns = this.buildSkillDefns();
+		var spellDefns = this.buildSpellDefns();
+		var traitDefns = this.buildTraitDefns();
 
 		// player
 
-		var equipmentSocketDefnSetBiped = DemoData.buildEntityDefns_Items_EquipmentSocketDefnSet
+		var equipmentSocketDefnSetBiped = this.buildEntityDefns_Items_EquipmentSocketDefnSet
 		(
 			itemCategories
 		);
@@ -2292,7 +2289,7 @@ function DemoData()
 
 		var containerDefn = new ContainerDefn();
 
-		var agentDatas = DemoData.buildAgentDatas();
+		var agentDatas = this.buildAgentDatas();
 
 		for (var i = 0; i < agentDatas.length; i++)
 		{
@@ -2377,7 +2374,7 @@ function DemoData()
 		return groups;
 	}
 
-	DemoData.buildAgentDatas = function()
+	DemoData.prototype.buildAgentDatas = function()
 	{
 		// resistances
 
@@ -2983,9 +2980,9 @@ function DemoData()
 		return agentDatas;
 	}
 
-	DemoData.buildRoles = function()
+	DemoData.prototype.buildRoles = function()
 	{
-		var skillDefns = DemoData.buildSkillDefns();
+		var skillDefns = this.buildSkillDefns();
 
 		var returnValues =
 		[
@@ -3008,7 +3005,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildSkillDefns = function()
+	DemoData.prototype.buildSkillDefns = function()
 	{
 		var returnValues =
 		[
@@ -3022,7 +3019,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildSpellDefns = function()
+	DemoData.prototype.buildSpellDefns = function()
 	{
 		var returnValues =
 		[
@@ -3034,7 +3031,7 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildTraitDefns = function()
+	DemoData.prototype.buildTraitDefns = function()
 	{
 		var returnValues =
 		[
@@ -3050,12 +3047,12 @@ function DemoData()
 		return returnValues;
 	}
 
-	DemoData.buildMapTerrainsMines = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsMines = function(imagesForTiles)
 	{
-		return DemoData.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(imagesForTiles);
 	}
 
-	DemoData.buildMapTerrainsDungeon = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsDungeon = function(imagesForTiles)
 	{
 		this.Floor 		= new MapTerrain("Floor", 		".", 1, 	false, "#00aa00", imagesForTiles["Floor"]);
 		this.Stone 		= new MapTerrain("Stone", 		"x", 1000000, 	true, "#000000", imagesForTiles["Stone"]);
@@ -3080,40 +3077,40 @@ function DemoData()
 		return terrains;
 	}
 
-	DemoData.buildMapTerrainsHades = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsHades = function(imagesForTiles)
 	{
-		return DemoData.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(imagesForTiles);
 	}
 
-	DemoData.buildMapTerrainsLabyrinth = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsLabyrinth = function(imagesForTiles)
 	{
-		return DemoData.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(imagesForTiles);
 	}
 
-	DemoData.buildMapTerrainsPuzzle = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsPuzzle = function(imagesForTiles)
 	{
-		return DemoData.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(imagesForTiles);
 	}
 
-	DemoData.buildMapTerrainsThrowback = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsThrowback = function(imagesForTiles)
 	{
-		return DemoData.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(imagesForTiles);
 	}
 
-	DemoData.buildWorldDefn = function(imagesForTiles, imagesForTilesTransparent)
+	DemoData.prototype.buildWorldDefn = function(imagesForTiles, imagesForTilesTransparent)
 	{
-		var imagesOpaque = DemoData.buildImageLookup(imagesForTiles);
-		var imagesTransparent = DemoData.buildImageLookup(imagesForTilesTransparent);
+		var imagesOpaque = this.buildImageLookup(imagesForTiles);
+		var imagesTransparent = this.buildImageLookup(imagesForTilesTransparent);
 
-		var actions = DemoData.buildActions();
+		var actions = this.buildActions();
 
-		var activityDefns = DemoData.buildActivityDefns();
+		var activityDefns = this.buildActivityDefns();
 
-		var itemCategories = DemoData.buildItemCategories();
+		var itemCategories = this.buildItemCategories();
 
-		var entityDefnGroups = DemoData.buildEntityDefnGroups(imagesOpaque, activityDefns, itemCategories);
+		var entityDefnGroups = this.buildEntityDefnGroups(imagesOpaque, activityDefns, itemCategories);
 
-		var venueDefns = DemoData.buildVenueDefns(imagesOpaque, actions);
+		var venueDefns = this.buildVenueDefns(imagesOpaque, actions);
 
 		var Branch = WorldDefnVenueStructureBranch;
 
@@ -3299,9 +3296,9 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.buildVenueDefns = function(images, actions)
+	DemoData.prototype.buildVenueDefns = function(images, actions)
 	{
-		var mapTerrainsDungeon = DemoData.buildMapTerrainsDungeon(images);
+		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(images);
 
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
@@ -3330,7 +3327,7 @@ function DemoData()
 				"Dungeon",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateDungeon
+				this.venueGenerateDungeon
 			),
 
 			new VenueDefn
@@ -3338,7 +3335,7 @@ function DemoData()
 				"Fortress",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateFortress
+				this.venueGenerateFortress
 			),
 
 			new VenueDefn
@@ -3346,39 +3343,39 @@ function DemoData()
 				"GameOver",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateGameOver
+				this.venueGenerateGameOver
 			),
 
 			new VenueDefn
 			(
 				"Hades",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsHades(images),
-				DemoData.venueGenerateHades
+				this.buildMapTerrainsHades(images),
+				this.venueGenerateHades
 			),
 
 			new VenueDefn
 			(
 				"Mines",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsMines(images),
-				DemoData.venueGenerateMines
+				this.buildMapTerrainsMines(images),
+				this.venueGenerateMines
 			),
 
 			new VenueDefn
 			(
 				"MinesTown",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsMines(images),
-				DemoData.venueGenerateMines
+				this.buildMapTerrainsMines(images),
+				this.venueGenerateMines
 			),
 
 			new VenueDefn
 			(
 				"MinesBottom",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsMines(images),
-				DemoData.venueGenerateMines
+				this.buildMapTerrainsMines(images),
+				this.venueGenerateMines
 			),
 
 			new VenueDefn
@@ -3386,15 +3383,15 @@ function DemoData()
 				"Island",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateIsland
+				this.venueGenerateIsland
 			),
 
 			new VenueDefn
 			(
 				"Labyrinth",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsLabyrinth(images),
-				DemoData.venueGenerateLabyrinth
+				this.buildMapTerrainsLabyrinth(images),
+				this.venueGenerateLabyrinth
 			),
 
 			new VenueDefn
@@ -3402,7 +3399,7 @@ function DemoData()
 				"Limbo",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateLimbo
+				this.venueGenerateLimbo
 			),
 
 			new VenueDefn
@@ -3410,15 +3407,15 @@ function DemoData()
 				"Oracle",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateLimbo
+				this.venueGenerateLimbo
 			),
 
 			new VenueDefn
 			(
 				"Puzzle",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsPuzzle(images),
-				DemoData.venueGeneratePuzzle
+				this.buildMapTerrainsPuzzle(images),
+				this.venueGeneratePuzzle
 			),
 
 			new VenueDefn
@@ -3426,15 +3423,15 @@ function DemoData()
 				"SingleChamber",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateSingleChamber
+				this.venueGenerateSingleChamber
 			),
 
 			new VenueDefn
 			(
 				"Throwback",
 				propertyNamesKnown,
-				DemoData.buildMapTerrainsThrowback(images),
-				DemoData.venueGenerateThrowback
+				this.buildMapTerrainsThrowback(images),
+				this.venueGenerateThrowback
 			),
 
 			new VenueDefn
@@ -3442,14 +3439,14 @@ function DemoData()
 				"Tutorial",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				DemoData.venueGenerateTutorial
+				this.venueGenerateTutorial
 			),
 		];
 
 		return returnValues;
 	}
 
-	DemoData.venueGenerateDungeon = function(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth)
+	DemoData.prototype.venueGenerateDungeon = function(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth)
 	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
 		var entityDefns = worldDefn.entityDefns;
@@ -3896,12 +3893,12 @@ function DemoData()
 
 			for (var c = 0; c < chancesForItemPerRoom; c++)
 			{
-				var randomValue = Globals.Instance.randomizer.getNextRandom();
+				var randomValue = this.randomizer.getNextRandom();
 
 				if (randomValue <= probabilityOfItemPerChance)
 				{
 					randomValue =
-						Globals.Instance.randomizer.getNextRandom()
+						this.randomizer.getNextRandom()
 						* sumOfFrequenciesForAllGroups;
 
 					var sumOfFrequenciesForGroupsSoFar = 0;
@@ -3925,7 +3922,7 @@ function DemoData()
 
 					var entityDefnIndex = Math.floor
 					(
-						Globals.Instance.randomizer.getNextRandom()
+						this.randomizer.getNextRandom()
 						* entityDefns.length
 					);
 
@@ -3981,12 +3978,12 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.venueGenerateFortress = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateFortress = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateGameOver = function(world, venueDefn, entityDefns, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateGameOver = function(world, venueDefn, entityDefns, venueIndex, venueDepth)
 	{
 		var map = new Map
 		(
@@ -4023,52 +4020,52 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.venueGenerateHades = function(world, venueDefn, entityDefns, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateHades = function(world, venueDefn, entityDefns, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateIsland = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateIsland = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateMines = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateMines = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateOracle = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateOracle = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateLabyrinth = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateLabyrinth = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateLimbo = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateLimbo = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGeneratePuzzle = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGeneratePuzzle = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateSingleChamber = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateSingleChamber = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateThrowback = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateThrowback = function(world, venueDefn, venueIndex, venueDepth)
 	{
-		return DemoData.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
+		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
 	}
 
-	DemoData.venueGenerateTutorial = function(worldDefn, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateTutorial = function(worldDefn, venueDefn, venueIndex, venueDepth)
 	{
 		var sizeInCells = new Coords(16, 16);
 
@@ -4138,12 +4135,12 @@ function DemoData()
 
 		var locationForMessages = new Location(returnValue.name, new Coords(0, 0));
 
-		//Font.spawnMessageFixed("Tutorial", locationForMessages);
+		//Font.spawnMessageFixed(world, "Tutorial", locationForMessages);
 
 		return returnValue;
 	}
 
-	DemoData.buildImageLookup = function(imagesForTiles)
+	DemoData.prototype.buildImageLookup = function(imagesForTiles)
 	{
 		var returnValue = [];
 
@@ -4603,7 +4600,7 @@ function DemoData()
 			returnValue[tileName] = image;
 		}
 
-		var agentNames = DemoData.buildAgentDatas();
+		var agentNames = this.buildAgentDatas();
 
 		var tilePos = new Coords(0, 0);
 		var imageSizeInTiles = new Coords(40, 27);
@@ -4724,7 +4721,7 @@ function DemoData()
 		return returnValue;
 	}
 
-	DemoData.buildFont = function()
+	DemoData.prototype.buildFont = function()
 	{
 		var characterImages = ImageHelper.buildImagesFromStringArrays
 		(

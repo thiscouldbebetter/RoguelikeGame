@@ -44,7 +44,7 @@ function DisplayExtended(display)
 		);
 	};
 
-	DisplayExtended.prototype.drawMap = function(map)
+	DisplayExtended.prototype.drawMap = function(world, map)
 	{
 		var cellPos = this.cellPos;
 		var drawPos = this.drawPos;
@@ -58,6 +58,7 @@ function DisplayExtended(display)
 
 				this.drawMapCellAtPos
 				(
+					world, 
 					map,
 					cellPos,
 					false // drawMovers
@@ -73,11 +74,11 @@ function DisplayExtended(display)
 		for (var i = 0; i < numberOfCellsVisible; i++)
 		{
 			var cellPos = cellPositionsVisible[i];
-			this.drawMapCellAtPos(map, cellPos, true);
+			this.drawMapCellAtPos(world, map, cellPos, true);
 		}
 	};
 
-	DisplayExtended.prototype.drawMapCellAtPos = function(map, cellPos, drawMovers)
+	DisplayExtended.prototype.drawMapCellAtPos = function(world, map, cellPos, drawMovers)
 	{
 		var cell = map.cellAtPos(cellPos);
 		var cellTerrain = cell.terrain;
@@ -101,16 +102,16 @@ function DisplayExtended(display)
 		var entitiesInCell = cell.entitiesPresent;
 		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
 		entitiesSortedBottomToTop.length = 0;
-
+		
 		for (var i = 0; i < entitiesInCell.length; i++)
 		{
 			var entityToSort = entitiesInCell[i];
-			var entityToSortZIndex = entityToSort.defn().Drawable.zIndex;
+			var entityToSortZIndex = entityToSort.defn(world).Drawable.zIndex;
 			var j;
 			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
 			{
 				var entitySorted = entitiesSortedBottomToTop[j];
-				var entitySortedZIndex = entitySorted.defn().Drawable.zIndex;
+				var entitySortedZIndex = entitySorted.defn(world).Drawable.zIndex;
 				if (entityToSortZIndex <= entitySortedZIndex)
 				{
 					break;
@@ -139,14 +140,14 @@ function DisplayExtended(display)
 
 	};
 
-	DisplayExtended.prototype.drawVenue = function(venue)
+	DisplayExtended.prototype.drawVenue = function(world, venue)
 	{
-		var turnsSoFar = Globals.Instance.world.turnsSoFar;
+		var turnsSoFar = world.turnsSoFar;
 		if (venue.turnLastDrawn != turnsSoFar)
 		{
 			venue.turnLastDrawn = turnsSoFar;
 			var map = venue.map;
-			this.drawMap(map);
+			this.drawMap(world, map);
 		}
 	};
 }
