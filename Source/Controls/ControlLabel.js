@@ -9,9 +9,10 @@ function ControlLabel(name, pos, textFormat, dataContexts, bindingPaths)
 }
 
 {
-	ControlLabel.prototype.drawToGraphics = function(graphics)
+	ControlLabel.prototype.draw = function(display)
 	{
 		var drawPos = Control.posAbsoluteOfControl(this);
+		drawPos.y -= 10; // hack
 
 		var text = this.textFormat;
 
@@ -42,11 +43,6 @@ function ControlLabel(name, pos, textFormat, dataContexts, bindingPaths)
 			}
 		}
 
-		graphics.fillStyle = "Gray";
-		graphics.fillText
-		(
-			text,
-			drawPos.x, drawPos.y
-		);
+		display.drawText(text, 10, drawPos, "Gray");
 	}
 }

@@ -700,11 +700,8 @@ function DemoData(randomizer)
 
 		var movers = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
 
-		var cameras = new EntityDefnGroup("Cameras", 0, [ Camera.EntityDefn ]);
-
 		var returnValues =
 		[
-			[ cameras ],
 			[ emplacements ],
 			items,
 			movers,

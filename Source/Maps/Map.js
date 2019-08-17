@@ -169,10 +169,12 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	// drawable
 
-	Map.prototype.draw = function(world, display)
+	Map.prototype.draw = function(world, display, venue)
 	{
+		var player = world.entityForPlayer;
+		var playerPos = player.loc.posInCells;
+
 		var cellPos = this.cellPos;
-		var drawPos = this.drawPos;
 		for (var y = 0; y < this.sizeInCells.y; y++)
 		{
 			cellPos.y = y;
@@ -185,6 +187,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 				(
 					world,
 					display,
+					playerPos,
 					cellPos,
 					false // drawMovers
 				);
@@ -199,11 +202,11 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < numberOfCellsVisible; i++)
 		{
 			var cellPos = cellPositionsVisible[i];
-			this.drawCellAtPos(world, display, cellPos, true);
+			this.drawCellAtPos(world, display, playerPos, cellPos, true);
 		}
 	};
 
-	Map.prototype.drawCellAtPos = function(world, display, cellPos, drawMovers)
+	Map.prototype.drawCellAtPos = function(world, display, playerPos, cellPos, drawMovers)
 	{
 		var map = this;
 
@@ -215,16 +218,18 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		drawPos.overwriteWith
 		(
 			cellPos
+		).subtract
+		(
+			playerPos
 		).multiply
 		(
 			map.cellSizeInPixels
+		).add
+		(
+			display.sizeInPixels.clone().half()
 		);
 
-		display.graphics.drawImage
-		(
-			terrainImage.systemImage,
-			drawPos.x, drawPos.y
-		);
+		display.drawImage(terrainImage, drawPos);
 
 		var entitiesInCell = cell.entitiesPresent;
 		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;

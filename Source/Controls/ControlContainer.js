@@ -16,19 +16,16 @@ function ControlContainer(name, pos, size, children)
 }
 
 {
-	ControlContainer.prototype.drawToGraphics = function(graphics)
+	ControlContainer.prototype.draw = function(display)
 	{
 		var drawPos = Control.posAbsoluteOfControl(this);
 
-		graphics.fillStyle = "rgba(0, 0, 0, 0)";
-		graphics.strokeStyle = "Gray";
-		graphics.fillRect(drawPos.x, drawPos.y, this.size.x, this.size.y);
-		graphics.strokeRect(drawPos.x, drawPos.y, this.size.x, this.size.y);
+		display.drawRectangle(drawPos, this.size, null, "Gray");
 
 		for (var i = 0; i < this.children.length; i++)
 		{
 			var child = this.children[i];
-			child.drawToGraphics(graphics);
+			child.draw(display);
 		}
 	}
-}
+8}

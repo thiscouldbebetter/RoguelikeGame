@@ -30,16 +30,6 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		entity.loc.venueName = this.name;
 		this.entitiesToSpawn.push(entity);
 	}
-
-	this.camera = new Camera
-	(
-		"Camera",
-		Camera.ViewSizeStandard
-	);
-
-	this.camera.entity.loc.venueName = this.name;
-
-	this.entitiesToSpawn.push(this.camera.entity);
 }
 
 {
@@ -125,7 +115,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			var display = Globals.Instance.display;
 			venueKnown.draw(world, display);
 			var venueKnownAsControl = venueKnown.controlUpdate(world);
-			venueKnownAsControl.drawToGraphics(display.graphics);
+			venueKnownAsControl.draw(display);
 			this.map.drawEntities
 			(
 				display,
@@ -319,5 +309,10 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 	Venue.prototype.ephemerals = function()
 	{
 		return this.entitiesByPropertyName["Ephemeral"];
+	}
+
+	Venue.prototype.player = function()
+	{
+		return this.entitiesByPropertyName["Player"][0];
 	}
 }

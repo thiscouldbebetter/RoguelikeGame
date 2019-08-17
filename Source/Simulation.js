@@ -48,8 +48,6 @@ function Simulation()
 			imageTilesTransparent, sizeOfImageTilesInTiles
 		);
 
-		Camera.initializeStatic();
-
 		var randomizer = Globals.Instance.randomizer;
 		var worldDefn = new DemoData(randomizer).buildWorldDefn
 		(
@@ -76,7 +74,7 @@ function Simulation()
 		(
 			new DemoData().buildFont(),
 			100, //realWorldMillisecondsPerTick,
-			new Coords(1000, 800), //viewSizeInPixels,
+			new Coords(640, 640), //viewSizeInPixels,
 			world0
 		);
 	}

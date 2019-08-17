@@ -22,22 +22,24 @@ function Globals()
 		this.collisionHelper = new CollisionHelper();
 		this.font = font;
 
-		var display = new Display
+		var display = new DisplayPane
 		(
-			[viewSizeInPixels],
-			"todo", // fontName
-			10, // fontHeightInPixels
-			"White", // colorFore
-			"Black" // colorBack
+			"root",
+			Coords.Instances().Zeroes,
+			viewSizeInPixels,
+			[
+				// todo - children
+			]
 		);
 		world.display = display;
 
-		world.platformHelper = new PlatformHelper();
-		world.platformHelper.initialize(world);
+		var platformHelper = new PlatformHelper();
+		world.platformHelper = platformHelper;
+		platformHelper.initialize(world);
 
 		display.initialize(world);
-
 		this.display = display;
+		platformHelper.platformableAdd(this.display);
 
 		this.inputHelper = new InputHelper();
 		this.inputHelper.initialize(world);
