@@ -22,16 +22,16 @@ function MoverData(moverDefn)
 			(
 				"containerMoverData",
 				new Coords(0, 0), // pos
-				new Coords(220, 240), // size
+				new Coords(180, 272), // size
 				[
 					new ControlLabel("labelName", new Coords(10, 16), "Name: " + entity.name),
 					this.demographics.controlUpdate(world, entity, new Coords(10, 32)),
 					this.traits.controlUpdate(world, entity, new Coords(10, 48)),
 					this.vitals.controlUpdate(world, entity, new Coords(10, 64)),
-					this.locus.controlUpdate(world, entity, new Coords(10, 80)),
-					this.skills.controlUpdate(world, entity, new Coords(10, 96)),
-					this.spells.controlUpdate(world, entity, new Coords(10, 112)),
-					entity.containerData.controlUpdate(world, entity, new Coords(10, 128)),
+					this.locus.controlUpdate(world, entity, new Coords(10, 112)),
+					this.skills.controlUpdate(world, entity, new Coords(10, 128)),
+					this.spells.controlUpdate(world, entity, new Coords(10, 144)),
+					entity.containerData.controlUpdate(world, entity, new Coords(10, 160)),
 				]
 			);
 		}

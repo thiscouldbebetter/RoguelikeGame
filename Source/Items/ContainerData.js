@@ -56,14 +56,14 @@ function ContainerData()
 			(
 				"containerContainerData",
 				pos,
-				new Coords(200, 100), // size
+				new Coords(160, 100), // size
 				[
 					new ControlLabel("labelItems", new Coords(10, 10), "Items"),
 					new ControlList
 					(
 						"listItems",
 						new Coords(10, 20), // pos
-						new Coords(180, 70), // size
+						new Coords(140, 70), // size
 						"defn().Item.appearance", // bindingPath
 						this.items
 					)

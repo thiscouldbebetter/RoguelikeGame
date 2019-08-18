@@ -14,7 +14,7 @@ function MoverData_Locus()
 			(
 				"containerMoverData_Locus",
 				pos,
-				new Coords(200, 16), // size
+				new Coords(160, 16), // size
 				[
 					new ControlLabel
 					(

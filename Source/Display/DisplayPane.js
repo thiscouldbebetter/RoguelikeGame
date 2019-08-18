@@ -1,4 +1,4 @@
-function DisplayPane(name, pos, size, children)
+function DisplayPane(name, pos, size, colorFore, colorBack, children)
 {
 	this.name = name;
 	this.pos = pos;
@@ -10,13 +10,13 @@ function DisplayPane(name, pos, size, children)
 	(
 		[ this.sizeInPixels ],
 		"todo", 10, // fontName, fontHeightInPixels,
-		"Gray", "Black" // colorFore, colorBack
+		colorFore, colorBack
 	);
 }
 {
 	DisplayPane.prototype.childSelectByName = function(paneName)
 	{
-		this.childSelected = this.children[paneName];
+		this.childSelected = (paneName == null ? null : this.children[paneName]);
 	};
 
 	DisplayPane.prototype.childrenDraw = function()
@@ -61,6 +61,11 @@ function DisplayPane(name, pos, size, children)
 	DisplayPane.prototype.clear = function()
 	{
 		this.displayToUse().clear();
+	};
+
+	DisplayPane.prototype.drawBackground = function(colorBorder, colorBack)
+	{
+		this.displayToUse().drawBackground(colorBorder, colorBack);
 	};
 
 	DisplayPane.prototype.drawImage = function(imageToDraw, pos, size)

@@ -33,7 +33,7 @@ function MoverData_Vitals(defn)
 			(
 				"containerMoverData_Vitals",
 				pos,
-				new Coords(200, 16), // size
+				new Coords(160, 48), // size
 				[
 					new ControlLabel
 					(
@@ -47,14 +47,14 @@ function MoverData_Vitals(defn)
 					new ControlLabel
 					(
 						"labelEnergy",
-						new Coords(60, 10),
-						" Power:" + this.energy + "/" + this.defn.energyMax
+						new Coords(10, 20),
+						"Power:" + this.energy + "/" + this.defn.energyMax
 					),
 					new ControlLabel
 					(
 						"labelSatiety",
-						new Coords(120, 10),
-						" Sat: " + this.satiety + "/" + this.defn.satietyMax
+						new Coords(10, 30),
+						"Satiety: " + this.satiety + "/" + this.defn.satietyMax
 					),
 				]
 			);

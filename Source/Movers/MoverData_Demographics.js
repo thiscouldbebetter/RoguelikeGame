@@ -17,7 +17,7 @@ function MoverData_Demographics(species, role, rank)
 			(
 				"containerMoverData_Demographics",
 				pos,
-				new Coords(200, 16), // size
+				new Coords(160, 16), // size
 				[
 					new ControlLabel
 					(

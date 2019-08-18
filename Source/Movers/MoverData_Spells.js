@@ -13,7 +13,7 @@ function MoverData_Spells(spells)
 			(
 				"containerMoverData_Spells",
 				pos,
-				new Coords(200, 16), // size
+				new Coords(160, 16), // size
 				[
 					new ControlLabel("labelSpells", new Coords(10, 10), "Spells"),
 				]

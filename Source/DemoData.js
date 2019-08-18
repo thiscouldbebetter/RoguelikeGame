@@ -3962,7 +3962,7 @@ function DemoData(randomizer)
 			mapCellsAsStrings
 		);
 
-		var returnValue = new Venue
+		var returnValue = new VenueLevel
 		(
 			"Venue" + venueIndex,
 			venueDepth,
@@ -4004,7 +4004,7 @@ function DemoData(randomizer)
 			entityStart
 		];
 
-		var returnValue = new Venue
+		var returnValue = new VenueLevel
 		(
 			"VenueGameOver",
 			-1, //venueDepth,
@@ -4120,7 +4120,7 @@ function DemoData(randomizer)
 
 		];
 
-		var returnValue = new Venue
+		var returnValue = new VenueLevel
 		(
 			"Venue" + venueIndex,
 			venueDepth,

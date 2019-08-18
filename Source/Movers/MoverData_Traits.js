@@ -15,14 +15,14 @@ function MoverData_Traits(traits)
 			{
 				var trait = this.traits[i];
 
-				textForTraits += trait.defn.abbreviation + ": " + trait.rank + " ";
+				textForTraits += trait.defn.abbreviation + trait.rank + " ";
 			}
 
 			this.control = new ControlContainer
 			(
 				"containerMoverData_Traits",
 				pos,
-				new Coords(200, 16), // size
+				new Coords(160, 16), // size
 				[
 					new ControlLabel("labelTraits", new Coords(10, 10), textForTraits),
 				]

@@ -20,7 +20,7 @@ function MoverData_Skills(skillDefns)
 			(
 				"containerMoverData_Skills",
 				pos,
-				new Coords(200, 16), // size
+				new Coords(160, 16), // size
 				[
 					new ControlLabel("labelSkills", new Coords(10, 10), "Skills"),
 				]

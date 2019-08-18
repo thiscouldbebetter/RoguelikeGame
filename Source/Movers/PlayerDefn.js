@@ -27,7 +27,7 @@ function PlayerDefn()
 				mapComplete.sizeInCells
 			);
 
-			venueKnown = new Venue
+			venueKnown = new VenueLevel
 			(
 				venue.name + "_Known",
 				venue.depth,

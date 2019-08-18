@@ -1,5 +1,5 @@
 
-function Venue(name, depth, defn, sizeInPixels, map, entities)
+function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 {
 	this.name = name;
 	this.depth = depth;
@@ -35,7 +35,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 {
 	// instance methods
 
-	Venue.prototype.entitiesWithPropertyNamePresentAtCellPos = function(propertyName, cellPosToCheck)
+	VenueLevel.prototype.entitiesWithPropertyNamePresentAtCellPos = function(propertyName, cellPosToCheck)
 	{
 		var returnEntities = [];
 
@@ -56,7 +56,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		return returnEntities;
 	}
 
-	Venue.prototype.entitySpawn = function(world, entityToSpawn)
+	VenueLevel.prototype.entitySpawn = function(world, entityToSpawn)
 	{
 		entityToSpawn.loc.venueName = this.name;
 
@@ -83,7 +83,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		}
 	}
 
-	Venue.prototype.initialize = function(world)
+	VenueLevel.prototype.initialize = function(world)
 	{
 		for (var b = 0; b < this.entities.length; b++)
 		{
@@ -103,7 +103,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		}
 	}
 
-	Venue.prototype.update = function(world)
+	VenueLevel.prototype.update = function(world)
 	{
 		this.update_EntitiesToSpawn(world);
 
@@ -114,13 +114,14 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		{
 			var display = Globals.Instance.display;
 			venueKnown.draw(world, display);
-			var venueKnownAsControl = venueKnown.controlUpdate(world);
-			venueKnownAsControl.draw(display);
 			this.map.drawEntities
 			(
-				display,
-				this.ephemerals() // hack
+				display, this.ephemerals() // hack
 			);
+
+			display.childSelectByName("Status");
+			var venueKnownAsControl = venueKnown.controlUpdate(world);
+			venueKnownAsControl.draw(display);
 		}
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
@@ -145,7 +146,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		this.update_EntitiesToRemove(world);
 	}
 
-	Venue.prototype.update_EntitiesToRemove = function(world)
+	VenueLevel.prototype.update_EntitiesToRemove = function(world)
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -183,7 +184,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		this.entitiesToRemove.length = 0;
 	}
 
-	Venue.prototype.update_EntitiesToSpawn = function(world)
+	VenueLevel.prototype.update_EntitiesToSpawn = function(world)
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
@@ -194,7 +195,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 		this.entitiesToSpawn.length = 0;
 	}
 
-	Venue.prototype.update_Collidables = function(world)
+	VenueLevel.prototype.update_Collidables = function(world)
 	{
 		var emplacements = this.entitiesByPropertyName["Emplacement"];
 		var enemies = this.entitiesByPropertyName["Enemy"];
@@ -272,7 +273,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 	// controls
 
-	Venue.prototype.controlUpdate = function(world)
+	VenueLevel.prototype.controlUpdate = function(world)
 	{
 		if (this.control == null)
 		{
@@ -281,7 +282,7 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 			(
 				"containerVenue",
 				new Coords(10, 10), // pos
-				new Coords(220, 240), // size
+				new Coords(180, 272), // size
 				// children
 				[
 					entityForPlayer.moverData.controlUpdate(world, entityForPlayer),
@@ -294,24 +295,38 @@ function Venue(name, depth, defn, sizeInPixels, map, entities)
 
 	// drawable
 
-	Venue.prototype.draw = function(world, display)
+	VenueLevel.prototype.draw = function(world, display)
 	{
+		display.childSelectByName(null);
+		display.drawBackground();
+
 		var turnsSoFar = world.turnsSoFar;
 		if (this.turnLastDrawn != turnsSoFar)
 		{
 			this.turnLastDrawn = turnsSoFar;
+			display.childSelectByName("Map");
 			this.map.draw(world, display, this);
 		}
+
+		display.childrenDraw();
+
+		display.childSelectByName(null);
+		display.drawRectangle
+		(
+			Coords.Instances().Zeroes,
+			display.displayToUse().sizeInPixels,
+			null, "Gray"
+		);
 	};
 
 	// entities
 
-	Venue.prototype.ephemerals = function()
+	VenueLevel.prototype.ephemerals = function()
 	{
 		return this.entitiesByPropertyName["Ephemeral"];
 	}
 
-	Venue.prototype.player = function()
+	VenueLevel.prototype.player = function()
 	{
 		return this.entitiesByPropertyName["Player"][0];
 	}

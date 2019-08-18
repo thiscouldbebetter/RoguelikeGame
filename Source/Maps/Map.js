@@ -14,7 +14,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract
 	(
-		new Coords(1, 1, 1)
+		Coords.Instances().Ones
 	);
 
 	this.sizeInPixels = this.sizeInCells.clone().multiply(this.cellSizeInPixels);
@@ -226,7 +226,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			map.cellSizeInPixels
 		).add
 		(
-			display.sizeInPixels.clone().half()
+			display.displayToUse().sizeInPixels.clone().half()
 		);
 
 		display.drawImage(terrainImage, drawPos);

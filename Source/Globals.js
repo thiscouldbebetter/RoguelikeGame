@@ -14,7 +14,7 @@ function Globals()
 {
 	Globals.prototype.initialize = function
 	(
-		font, realWorldMillisecondsPerTick, viewSizeInPixels, world
+		font, realWorldMillisecondsPerTick, display, world
 	)
 	{
 		this.sightHelper = new SightHelper();
@@ -22,15 +22,6 @@ function Globals()
 		this.collisionHelper = new CollisionHelper();
 		this.font = font;
 
-		var display = new DisplayPane
-		(
-			"root",
-			Coords.Instances().Zeroes,
-			viewSizeInPixels,
-			[
-				// todo - children
-			]
-		);
 		world.display = display;
 
 		var platformHelper = new PlatformHelper();
