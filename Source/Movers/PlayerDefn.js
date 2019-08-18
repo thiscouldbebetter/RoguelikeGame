@@ -47,7 +47,7 @@ function PlayerDefn()
 				entity.drawableData.isVisible = false;
 			}
 
-			Globals.Instance.sightHelper.updateVenueFromCompleteForViewerPosAndRange
+			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
 				world,
 				venueKnown,
@@ -77,7 +77,7 @@ function PlayerDefn()
 
 			var venueKnown = entity.playerData.venueKnownLookup[venue.name];
 
-			Globals.Instance.sightHelper.updateVenueFromCompleteForViewerPosAndRange
+			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
 				world,
 				venueKnown,

@@ -112,7 +112,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 		if (venueKnown != null)
 		{
-			var display = Globals.Instance.display;
+			var display = world.display;
 			venueKnown.draw(world, display);
 			this.map.drawEntities
 			(
@@ -204,7 +204,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		var portals = this.entitiesByPropertyName["Portal"];
 		var projectiles = this.entitiesByPropertyName["Projectile"];
 
-		var collisionHelper = Globals.Instance.collisionHelper;
+		var collisionHelper = world.collisionHelper;
 
 		var collisionSets =
 		[

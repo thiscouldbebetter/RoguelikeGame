@@ -46,7 +46,14 @@ function main_MediaLoadingCompleted(mediaLoader)
 		imageTilesTransparent, sizeOfImageTilesInTiles
 	);
 
-	var randomizer = Globals.Instance.randomizer;
+	var randomizer = new RandomizerLCG
+	(
+		1103515245, // multiplier
+		12345, // addend
+		Math.pow(2.0, 31), // modulus
+		0.12345 // firstRandom
+	);
+
 	var worldDefn = new DemoData(randomizer).buildWorldDefn
 	(
 		imagesForTiles, imagesForTilesTransparent
@@ -58,14 +65,6 @@ function main_MediaLoadingCompleted(mediaLoader)
 		worldDefn.venueDefns,
 		worldDefn.entityDefnGroups,
 		[]
-	);
-
-	var world0 = new World
-	(
-		"World0",
-		worldDefn,
-		venues,
-		null // entityForPlayer
 	);
 
 	var displaySize = new Coords(800, 600);
@@ -101,11 +100,17 @@ function main_MediaLoadingCompleted(mediaLoader)
 
 	display.childSelectByName("Map"); // todo
 
-	Globals.Instance.initialize
+	var world = new World
 	(
+		"World0",
+		worldDefn,
+		venues,
+		null, // entityForPlayer
+		randomizer,
 		new DemoData().buildFont(),
-		100, //realWorldMillisecondsPerTick,
-		display,
-		world0
+		100, // millisecondsPerTick
+		display
 	);
+
+	world.initialize();
 }

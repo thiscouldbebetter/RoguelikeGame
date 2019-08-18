@@ -218,7 +218,7 @@ function DemoData(randomizer)
 					actor.moverData.movesThisTurn -= costToAttack;
 
 					// todo - Calculate damage.
-					var damageInflicted = DiceRoll.roll("1d6");
+					var damageInflicted = DiceRoll.roll(world.randomizer, "1d6");
 
 					var entityDefns = world.defn.entityDefns;
 					var defnsOfEntitiesToSpawn = [];
@@ -477,7 +477,14 @@ function DemoData(randomizer)
 						var entityDefnIndex = Math.floor(Math.random() * numberOfEntityDefns);
 						var entityDefnForAgentToSpawn = entityDefnsForAgentsOfDifficulty[entityDefnIndex];
 
-						var posToSpawnAt = new Coords().randomize().multiply(venue.map.sizeInCells).floor();
+						var randomizer = world.randomizer;
+						var posToSpawnAt = new Coords().randomize
+						(
+							randomizer
+						).multiply
+						(
+							venue.map.sizeInCells
+						).floor();
 
 						var entityForAgent = new Entity
 						(
@@ -612,10 +619,9 @@ function DemoData(randomizer)
 				].addLookups( function(element) { return element["inputName"]; } );
 			},
 
-			// perform
-			function(world, actor, activity)
+			function perform(world, actor, activity)
 			{
-				var inputHelper = Globals.Instance.inputHelper;
+				var inputHelper = world.inputHelper;
 				var inputToActionMappings = activity.target;
 				var inputsActive = inputHelper.inputsPressed;
 				var actionsFromActor = actor.actorData.actions;
@@ -1571,7 +1577,10 @@ function DemoData(randomizer)
 					while (teleportPos == null)
 					{
 						var map = loc.venue(world).map;
-						teleportPos = new Coords().randomize().multiply(map.sizeInCells).floor();
+						teleportPos = new Coords().randomize(randomizer).multiply
+						(
+							map.sizeInCells
+						).floor();
 
 						var cellToTeleportTo = map.cellAtPos(teleportPos);
 						if (cellToTeleportTo.terrain.costToTraverse > 1)
@@ -3265,7 +3274,9 @@ function DemoData(randomizer)
 				new Range(0, 0),
 				branchesMain
 			)
-		)
+		);
+
+		var randomizer = this.randomizer;
 
 		var returnValue = new WorldDefn
 		(
@@ -3276,14 +3287,14 @@ function DemoData(randomizer)
 			entityDefnGroups,
 			venueDefns,
 			venueStructure,
-			// buildVenues
-			function()
+			function buildVenues()
 			{
 				var returnValues = this.venueStructure.branchRoot.buildVenuesAndAddToList
 				(
-					this,
-					[],
-					0
+					this, // worldDefn
+					[], // venuesSoFar
+					0, // venueDepth
+					randomizer
 				);
 
 				return returnValues;
@@ -3443,7 +3454,10 @@ function DemoData(randomizer)
 		return returnValues;
 	}
 
-	DemoData.prototype.venueGenerateDungeon = function(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth)
+	DemoData.prototype.venueGenerateDungeon = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
 		var entityDefns = worldDefn.entityDefns;
@@ -3488,7 +3502,7 @@ function DemoData(randomizer)
 
 			while (doesRoomOverlapAnother == true)
 			{
-				var roomSize = new Coords().randomize().multiply
+				var roomSize = new Coords().randomize(randomizer).multiply
 				(
 					roomSizeRange
 				).floor().add
@@ -3509,7 +3523,7 @@ function DemoData(randomizer)
 					twoTwoZero
 				);
 
-				var roomPos = new Coords().randomize().multiply
+				var roomPos = new Coords().randomize(randomizer).multiply
 				(
 					roomPosRange
 				).floor().add
@@ -3640,7 +3654,7 @@ function DemoData(randomizer)
 
 			var fromPos = roomConnectedBounds.min().clone().add
 			(
-				new Coords().randomize().multiply
+				new Coords().randomize(randomizer).multiply
 				(
 					roomConnectedBounds.size.clone().subtract
 					(
@@ -3654,7 +3668,7 @@ function DemoData(randomizer)
 
 			var toPos = roomToConnectBounds.min().clone().add
 			(
-				new Coords().randomize().multiply
+				new Coords().randomize(randomizer).multiply
 				(
 					roomToConnectBounds.size.clone().subtract
 					(
@@ -3890,7 +3904,7 @@ function DemoData(randomizer)
 
 			for (var c = 0; c < chancesForItemPerRoom; c++)
 			{
-				var randomValue = this.randomizer.getNextRandom();
+				var randomValue = randomizer.getNextRandom();
 
 				if (randomValue <= probabilityOfItemPerChance)
 				{
@@ -3928,7 +3942,7 @@ function DemoData(randomizer)
 						entityDefnIndex
 					];
 
-					var pos = new Coords().randomize().multiply
+					var pos = new Coords().randomize(randomizer).multiply
 					(
 						room.bounds.size.clone().subtract
 						(
@@ -3973,14 +3987,20 @@ function DemoData(randomizer)
 		);
 
 		return returnValue;
-	}
+	};
 
-	DemoData.prototype.venueGenerateFortress = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateFortress = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateGameOver = function(world, venueDefn, entityDefns, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateGameOver = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
 		var map = new Map
 		(
@@ -4015,54 +4035,84 @@ function DemoData(randomizer)
 		);
 
 		return returnValue;
-	}
+	};
 
-	DemoData.prototype.venueGenerateHades = function(world, venueDefn, entityDefns, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateHades = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateIsland = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateIsland = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateMines = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateMines = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateOracle = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateOracle = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateLabyrinth = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateLabyrinth = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateLimbo = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateLimbo = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGeneratePuzzle = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGeneratePuzzle = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateSingleChamber = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateSingleChamber = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateThrowback = function(world, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateThrowback = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
-		return this.venueGenerateDungeon(world, venueDefn, venueIndex, venueDepth);
-	}
+		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, venueDepth, randomizer);
+	};
 
-	DemoData.prototype.venueGenerateTutorial = function(worldDefn, venueDefn, venueIndex, venueDepth)
+	DemoData.prototype.venueGenerateTutorial = function
+	(
+		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+	)
 	{
 		var sizeInCells = new Coords(16, 16);
 

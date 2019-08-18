@@ -26,14 +26,14 @@ function WorldDefnVenueStructureBranch
 {
 	WorldDefnVenueStructureBranch.prototype.buildVenuesAndAddToList = function
 	(
-		worldDefn, venuesSoFar, venueDepth
+		worldDefn, venuesSoFar, venueDepth, randomizer
 	)
 	{
 		var venueDefns = worldDefn.venueDefns;
 		var entityDefns = worldDefn.entityDefns;
 
 		var venueDefn = venueDefns[this.venueDefnName];
-		var numberOfVenuesInBranch = Math.floor(this.depthRangeInVenues.random());
+		var numberOfVenuesInBranch = Math.floor(this.depthRangeInVenues.random(randomizer));
 
 		var indexOfFirstVenueInBranch = venuesSoFar.length;
 
@@ -43,12 +43,13 @@ function WorldDefnVenueStructureBranch
 
 			var venue = venueDefn.venueGenerate.call
 			(
-				new DemoData(Globals.Instance.randomizer), // hack
+				new DemoData(randomizer), // hack
 				worldDefn,
 				venueDefn,
 				venuesSoFar.length, // venueIndex
 				numberOfVenuesInBranch,
-				venueDepth
+				venueDepth,
+				randomizer
 			);
 
 			this.venues.push(venue);
@@ -60,14 +61,17 @@ function WorldDefnVenueStructureBranch
 
 		if (this.parent != null && this.parent.venues.length > 0)
 		{
-			var venueIndexToBranchFrom = Math.floor(this.startOffsetRangeWithinParent.random());
+			var venueIndexToBranchFrom = Math.floor
+			(
+				this.startOffsetRangeWithinParent.random(randomizer)
+			);
 			var venueToBranchFrom = this.parent.venues[venueIndexToBranchFrom];
 
 			var entityPortalToParentBranch = new Entity
 			(
 				"StairsUp",
 				worldDefn.entityDefns["StairsUp"].name,
-				new Coords().randomize().multiply
+				new Coords().randomize(randomizer).multiply
 				(
 					venueFirstInBranch.map.sizeInCells
 				).floor(),
@@ -88,7 +92,7 @@ function WorldDefnVenueStructureBranch
 		for (var i = 0; i < this.children.length; i++)
 		{
 			var child = this.children[i];
-			child.buildVenuesAndAddToList(worldDefn, venuesSoFar, 0);
+			child.buildVenuesAndAddToList(worldDefn, venuesSoFar, 0, randomizer);
 		}
 
 		return venuesSoFar;

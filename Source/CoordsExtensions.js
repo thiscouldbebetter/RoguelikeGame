@@ -46,9 +46,8 @@ function CoordsExtensions()
 		return returnValue;
 	}
 
-	Coords.prototype.randomize = function()
+	Coords.prototype.randomize = function(randomizer)
 	{
-		var randomizer = Globals.Instance.randomizer;
 		this.x = randomizer.getNextRandom();
 		this.y = randomizer.getNextRandom();
 		this.z = randomizer.getNextRandom();

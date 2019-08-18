@@ -1,12 +1,14 @@
 
-function World(name, defn, venues, entityForPlayer)
+function World(name, defn, venues, entityForPlayer, randomizer, font, millisecondsPerTick, display)
 {
 	this.name = name;
 	this.defn = defn;
-	this.venues = venues;
+	this.venues = venues.addLookupsByName();
 	this.entityForPlayer = entityForPlayer;
-
-	this.venues.addLookupsByName();
+	this.randomizer = randomizer;
+	this.font = font;
+	this.millisecondsPerTick = millisecondsPerTick;
+	this.display = display;
 
 	if (this.entityForPlayer == null)
 	{
@@ -28,9 +30,31 @@ function World(name, defn, venues, entityForPlayer)
 	this.venueNext = this.venues[this.entityForPlayer.loc.venueName];
 
 	this.turnsSoFar = 0;
+
+	this.collisionHelper = new CollisionHelper();
+	this.idHelper = new IDHelper();
+	this.platformHelper = new PlatformHelper();
+	this.sightHelper = new SightHelper();
+	this.inputHelper = new InputHelper();
 }
 
 {
+	World.prototype.initialize = function()
+	{
+		this.display.initialize(this);
+
+		this.platformHelper.initialize(this);
+		this.platformHelper.platformableAdd(this.display);
+
+		this.inputHelper.initialize(this);
+
+		this.timer = setInterval
+		(
+			this.update.bind(this),
+			this.millisecondsPerTick
+		);
+	}
+
 	World.prototype.update = function()
 	{
 		if (this.venueNext != null)

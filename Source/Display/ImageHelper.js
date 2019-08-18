@@ -34,8 +34,6 @@ function ImageHelper()
 			stringsForPixels.length
 		);
 
-		var htmlElementLibrary = Globals.Instance.htmlElementLibrary;
-
 		var canvas = document.createElement("canvas");
 		canvas.width = sizeInPixels.x * scaleFactor.x;
 		canvas.height = sizeInPixels.y * scaleFactor.y;
@@ -70,7 +68,7 @@ function ImageHelper()
 		}
 
 		var imageFromCanvasURL = canvas.toDataURL("image/png");
-		var htmlImageFromCanvas = htmlElementLibrary.createElement("img");
+		var htmlImageFromCanvas = document.createElement("img");
 		htmlImageFromCanvas.width = canvas.width;
 		htmlImageFromCanvas.height = canvas.height;
 		htmlImageFromCanvas.src = imageFromCanvasURL;
@@ -124,10 +122,7 @@ function ImageHelper()
 	{
 		var returnImages = [];
 
-		var htmlElementLibrary = Globals.Instance.htmlElementLibrary;
-
 		var systemImageToSlice =
-			//htmlElementLibrary.getElementByID(imageToSlice.htmlElementID);
 			imageToSlice.systemImage;
 
 		var imageToSliceSize = imageToSlice.sizeInPixels;
@@ -168,7 +163,7 @@ function ImageHelper()
 				// browser dependent?
 				var imageFromCanvasURL = canvas.toDataURL("image/png");
 
-				var htmlImageFromCanvas = htmlElementLibrary.createElement("img");
+				var htmlImageFromCanvas = document.createElement("img");
 				htmlImageFromCanvas.width = canvas.width;
 				htmlImageFromCanvas.height = canvas.height;
 				htmlImageFromCanvas.style.position = "absolute";

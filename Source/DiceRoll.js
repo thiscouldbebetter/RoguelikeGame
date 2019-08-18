@@ -7,11 +7,11 @@ function DiceRoll(expression)
 {
 	// static methods
 
-	DiceRoll.roll = function(expression)
+	DiceRoll.roll = function(randomizer, expression)
 	{
 		var diceRoll = DiceRoll.Instance;
 		diceRoll.overwriteWithExpression(expression)
-		var returnValue = diceRoll.roll();
+		var returnValue = diceRoll.roll(randomizer);
 		return returnValue;
 	}
 
@@ -28,7 +28,7 @@ function DiceRoll(expression)
 		return this;
 	}
 
-	DiceRoll.prototype.roll = function()
+	DiceRoll.prototype.roll = function(randomizer)
 	{
 		var expression = this.expression;
 
@@ -62,7 +62,7 @@ function DiceRoll(expression)
 						1
 						+ Math.floor
 						(
-							Globals.Instance.randomizer.getNextRandom()
+							randomizer.getNextRandom()
 							* sidesPerDie
 						);
 

@@ -11,11 +11,9 @@ function MediaLoaderItemType(name, load)
 		this.Image = new MediaLoaderItemType
 		(
 			"Image",
-			function(mediaLoader, mediaLoaderItem)
+			function load(mediaLoader, mediaLoaderItem)
 			{
-
-				var htmlElementLibrary = Globals.Instance.htmlElementLibrary;
-				var htmlElement = htmlElementLibrary.createElement("img");
+				var htmlElement = document.createElement("img");
 				mediaLoaderItem.htmlElement = htmlElement;
 				htmlElement.mediaLoaderItem = mediaLoaderItem;
 				htmlElement.onload = mediaLoader.itemLoaded.bind(mediaLoader);

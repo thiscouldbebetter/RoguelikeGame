@@ -22,9 +22,9 @@ function Range(min, max)
 		return returnValue;
 	}
 
-	Range.prototype.random = function()
+	Range.prototype.random = function(randomizer)
 	{
-		return this.min + (this.max - this.min) * Globals.Instance.randomizer.getNextRandom();
+		return this.min + (this.max - this.min) * randomizer.getNextRandom();
 	}
 
 	Range.prototype.subtract = function(other)

@@ -97,8 +97,8 @@ function Font(charactersAvailable, characterSize, characterImages)
 
 		var entityMessage = Entity.fromDefn
 		(
-			Globals.Instance.idHelper.idNext(),
-			Globals.Instance.font.buildEntityDefnForText
+			world.idHelper.idNext(),
+			world.font.buildEntityDefnForText
 			(
 				messageIcon,
 				messageText.toUpperCase(),

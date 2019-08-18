@@ -196,7 +196,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 		} // end for y
 
-		var fieldOfView = Globals.Instance.sightHelper.fieldOfView;
+		var fieldOfView = world.sightHelper.fieldOfView;
 		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
 		var cellPositionsVisible = fieldOfView.cellPositionsVisible;
 		for (var i = 0; i < numberOfCellsVisible; i++)
