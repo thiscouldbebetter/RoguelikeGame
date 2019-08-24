@@ -20,7 +20,7 @@ function EquippableData(equippableDefn)
 				new Coords(0, 0), // pos
 				new Coords(100, 100), // size
 				[
-					new ControlLabel("labelEquipment", new Coords(10, 10), "Equipment:"),
+					ControlLabel.fromPosAndText(new Coords(10, 10), "Equipment:"),
 				]
 			);
 		}

@@ -2,19 +2,14 @@
 // data
 
 // hack
-function AnimationDefnSetFake(image)
+function AnimationDefnSetFake(visual)
 {
-	this.image = image;
+	this.visual = visual;
 }
 
 {
-	AnimationDefnSetFake.buildFromImage = function(image)
-	{
-		return new AnimationDefnSetFake(new VisualImageImmediate(image));
-	}
-
 	AnimationDefnSetFake.prototype.toRun = function()
 	{
-		return this.image;
+		return this.visual;
 	}
 }

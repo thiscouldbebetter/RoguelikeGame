@@ -24,7 +24,7 @@ function MoverData(moverDefn)
 				new Coords(0, 0), // pos
 				new Coords(180, 272), // size
 				[
-					new ControlLabel("labelName", new Coords(10, 16), "Name: " + entity.name),
+					ControlLabel.fromPosAndText(new Coords(10, 16), "Name: " + entity.name),
 					this.demographics.controlUpdate(world, entity, new Coords(10, 32)),
 					this.traits.controlUpdate(world, entity, new Coords(10, 48)),
 					this.vitals.controlUpdate(world, entity, new Coords(10, 64)),

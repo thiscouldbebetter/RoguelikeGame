@@ -16,20 +16,17 @@ function MoverData_Locus()
 				pos,
 				new Coords(160, 16), // size
 				[
-					new ControlLabel
-					(
-						"labelLocus",
-						new Coords(10, 10),
-						"Floor: ^ Turn: ^",
-						[
-							entity.loc.venue(world).depth,
-							world
-						],
-						[
-							null,
-							"turnsSoFar"
-						]
-					),
+					ControlLabel.fromPosAndText(new Coords(10, 10), "Floor: ^ Turn: ^"),
+					/*
+					[
+						entity.loc.venue(world).depth,
+						world
+					],
+					[
+						null,
+						"turnsSoFar"
+					]
+					*/
 				]
 			);
 		}

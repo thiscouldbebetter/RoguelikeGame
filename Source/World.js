@@ -1,5 +1,5 @@
 
-function World(name, defn, venues, entityForPlayer, randomizer, font, millisecondsPerTick, display)
+function World(name, defn, venues, entityForPlayer, randomizer, font)
 {
 	this.name = name;
 	this.defn = defn;
@@ -7,8 +7,6 @@ function World(name, defn, venues, entityForPlayer, randomizer, font, millisecon
 	this.entityForPlayer = entityForPlayer;
 	this.randomizer = randomizer;
 	this.font = font;
-	this.millisecondsPerTick = millisecondsPerTick;
-	this.display = display;
 
 	if (this.entityForPlayer == null)
 	{
@@ -31,41 +29,93 @@ function World(name, defn, venues, entityForPlayer, randomizer, font, millisecon
 
 	this.turnsSoFar = 0;
 
-	this.collisionHelper = new CollisionHelper();
 	this.idHelper = new IDHelper();
-	this.platformHelper = new PlatformHelper();
 	this.sightHelper = new SightHelper();
-	this.inputHelper = new InputHelper();
 }
 
 {
-	World.prototype.initialize = function()
+	World.new = function()
 	{
-		this.display.initialize(this);
-
-		this.platformHelper.initialize(this);
-		this.platformHelper.platformableAdd(this.display);
-
-		this.inputHelper.initialize(this);
-
-		this.timer = setInterval
+		var randomizer = new RandomizerLCG
 		(
-			this.update.bind(this),
-			this.millisecondsPerTick
+			1103515245, // multiplier
+			12345, // addend
+			Math.pow(2.0, 31), // modulus
+			0.12345 // firstRandom
 		);
+
+		var visualsForTiles = [];
+		var sizeInTiles = new Coords(40, 27);
+		var tileSizeInPixels = new Coords(16, 16);
+		for (var y = 0; y < sizeInTiles.y; y++)
+		{
+			var visualsForTilesRow = [];
+
+			for (var x = 0; x < sizeInTiles.x; x++)
+			{
+				var tilePosInTiles = new Coords(x, y);
+				var tilePosInPixels = tilePosInTiles.clone().multiply(tileSizeInPixels);
+
+				var visualForTile =
+					new VisualImagePartial
+					(
+						new VisualImageFromLibrary("Tiles"),
+						Bounds.fromMinAndSize(tilePosInPixels, tileSizeInPixels) // todo
+					);
+
+				visualsForTilesRow.push(visualForTile);
+			}
+
+			visualsForTiles.push(visualsForTilesRow);
+		}
+
+		var worldDefn = new DemoData(randomizer).buildWorldDefn
+		(
+			visualsForTiles
+		);
+
+		var venues = worldDefn.buildVenues
+		(
+			worldDefn,
+			worldDefn.venueDefns,
+			worldDefn.entityDefnGroups,
+			[]
+		);
+
+		var world = new World
+		(
+			"World0",
+			worldDefn,
+			venues,
+			null, // entityForPlayer
+			randomizer,
+			new DemoData().buildFont()
+		);
+
+		return world;
 	}
 
-	World.prototype.update = function()
+	World.prototype.draw = function()
+	{
+		// todo
+	}
+
+	World.prototype.initialize = function()
+	{
+		// Do nothing.
+	}
+
+	World.prototype.updateForTimerTick = function(universe)
 	{
 		if (this.venueNext != null)
 		{
-			this.venueNext.initialize(this);
+			this.venueNext.initialize(universe, this);
 
 			this.venueCurrent = this.venueNext;
 
 			this.venueNext = null;
 		}
 
-		this.venueCurrent.update(this);
+		this.venueCurrent.update(universe, this);
 	}
 }

@@ -10,7 +10,7 @@ function DemoData(randomizer)
 	{
 		// Action.perform() declarations
 
-		var actionEmplacement_Use_Perform = function(world, actor, action)
+		var actionEmplacement_Use_Perform = function(universe, world, actor, action)
 		{
 			var loc = actor.loc;
 			var venue = loc.venue(world);
@@ -66,7 +66,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionItem_DropSelected_Perform = function(world, actor, action)
+		var actionItem_DropSelected_Perform = function(universe, world, actor, action)
 		{
 			var loc = actor.loc;
 			var venue = loc.venue(world);
@@ -88,7 +88,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionItem_PickUp_Perform = function(world, actor, action)
+		var actionItem_PickUp_Perform = function(universe, world, actor, action)
 		{
 			var loc = actor.loc;
 			var venue = loc.venue(world);
@@ -114,7 +114,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionItem_SelectAtOffset_Perform = function(world, actor, action)
+		var actionItem_SelectAtOffset_Perform = function(universe, world, actor, action)
 		{
 			var containerData = actor.containerData;
 			var itemsHeld = containerData.items;
@@ -154,14 +154,14 @@ function DemoData(randomizer)
 			actor.moverData.controlUpdate(world, actor);
 		}
 
-		var actionItem_TargetSelected_Perform = function(world, actor, action)
+		var actionItem_TargetSelected_Perform = function(universe, world, actor, action)
 		{
 			var containerData = actor.containerData;
 			containerData.itemTargeted = containerData.itemSelected;
 			actor.moverData.controlUpdate(world, actor);
 		}
 
-		var actionItem_UseSelected_Perform = function(world, actor, action)
+		var actionItem_UseSelected_Perform = function(universe, world, actor, action)
 		{
 			var itemToUse = actor.containerData.itemSelected;
 
@@ -178,7 +178,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionMove_Perform = function(world, actor, action)
+		var actionMove_Perform = function(universe, world, actor, action)
 		{
 			var directionToMove = action.argumentForPerform;
 
@@ -297,7 +297,7 @@ function DemoData(randomizer)
 
 		}
 
-		var actionWait_Perform = function(world, actor, action)
+		var actionWait_Perform = function(universe, world, actor, action)
 		{
 			actor.moverData.movesThisTurn = 0;
 		}
@@ -430,13 +430,13 @@ function DemoData(randomizer)
 			"Do Nothing",
 
 			// initialize
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				// do nothing
 			}
@@ -447,13 +447,13 @@ function DemoData(randomizer)
 			"Generate Movers",
 
 			// initialize
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				var actorLoc = actor.loc;
 				var venue = actorLoc.venue(world);
@@ -504,13 +504,13 @@ function DemoData(randomizer)
 			"Move Randomly",
 
 			// initialize
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				// hack
 				var actionsMoves = world.defn.actions._MovesByHeading;
@@ -533,13 +533,13 @@ function DemoData(randomizer)
 			"Move Toward Player",
 
 			// initialize
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				if (actor.moverData.movesThisTurn <= 0)
 				{
@@ -594,7 +594,7 @@ function DemoData(randomizer)
 			"Accept User Input",
 
 			// initialize
-			function(world, actor, activity)
+			function(universe, world, actor, activity)
 			{
 				activity.target =
 				[
@@ -619,9 +619,9 @@ function DemoData(randomizer)
 				].addLookups( function(element) { return element["inputName"]; } );
 			},
 
-			function perform(world, actor, activity)
+			function perform(universe, world, actor, activity)
 			{
-				var inputHelper = world.inputHelper;
+				var inputHelper = universe.inputHelper;
 				var inputToActionMappings = activity.target;
 				var inputsActive = inputHelper.inputsPressed;
 				var actionsFromActor = actor.actorData.actions;
@@ -716,11 +716,9 @@ function DemoData(randomizer)
 		return returnValues;
 	}
 
-	DemoData.prototype.buildEntityDefnGroups_Emplacements = function(images)
+	DemoData.prototype.buildEntityDefnGroups_Emplacements = function(visuals)
 	{
-		var animation = AnimationDefnSetFake.buildFromImage;
-
-		var sizeInPixels = images["Floor"].sizeInPixels;
+		var sizeInPixels = visuals["Floor"].size;
 
 		var entityDefns =
 		[
@@ -729,7 +727,7 @@ function DemoData(randomizer)
 				"Blood",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images["Blood"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["Blood"], sizeInPixels),
 					new EmplacementDefn(),
 					new EphemeralDefn(30),
 				]
@@ -740,7 +738,7 @@ function DemoData(randomizer)
 				"Door",
 				[
 					collidableDefns.Concealing,
-					new DrawableDefn(animation(images["Door"]).toRun(), sizeInPixels) ,
+					new DrawableDefn(visuals["Door"], sizeInPixels) ,
 					new EmplacementDefn(),
 				]
 			),
@@ -750,7 +748,7 @@ function DemoData(randomizer)
 				"Gravestone",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images["Gravestone"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["Gravestone"], sizeInPixels),
 					new EmplacementDefn(),
 				]
 			),
@@ -760,7 +758,7 @@ function DemoData(randomizer)
 				"StairsDown",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images["StairsDown"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["StairsDown"], sizeInPixels),
 					new EmplacementDefn(),
 					new PortalDefn(),
 				]
@@ -771,7 +769,7 @@ function DemoData(randomizer)
 				"StairsExit",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images["StairsUp"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["StairsUp"], sizeInPixels),
 					new EmplacementDefn(),
 				]
 			),
@@ -781,7 +779,7 @@ function DemoData(randomizer)
 				"StairsUp",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images["StairsUp"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["StairsUp"], sizeInPixels),
 					new EmplacementDefn(),
 					new PortalDefn(),
 				]
@@ -893,7 +891,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Containers = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -911,7 +909,7 @@ function DemoData(randomizer)
 				"Chest",
 				[
 					itemPropertiesNoStack,
-					new DrawableDefn(animation(images["Chest"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["Chest"], sizeInPixels),
 				]
 			),
 		]);
@@ -923,7 +921,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Food = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -994,7 +992,7 @@ function DemoData(randomizer)
 							effectNourish
 						]
 					),
-					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals[name], sizeInPixels),
 					new ItemDefn
 					(
 						name,
@@ -1018,7 +1016,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Potions = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1122,8 +1120,7 @@ function DemoData(randomizer)
 							new Effect(effectDefn)
 						]
 					),
-					//new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels)
-					new DrawableDefn(images[appearance], sizeInPixels),
+					new DrawableDefn(visuals[appearance], sizeInPixels),
 					new ItemDefn
 					(
 						appearance,
@@ -1147,7 +1144,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Rings = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1221,7 +1218,7 @@ function DemoData(randomizer)
 					"Ring of " + namesOfRings[i],
 					[
 						collidableDefns.Clear,
-						new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
+						new DrawableDefn(visuals[appearance], sizeInPixels),
 						new ItemDefn
 						(
 							appearance,
@@ -1244,7 +1241,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Scrolls = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1320,7 +1317,7 @@ function DemoData(randomizer)
 							effectDoNothing
 						]
 					),
-					new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals[appearance], sizeInPixels),
 					new ItemDefn
 					(
 						appearance,
@@ -1346,7 +1343,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Spellbooks = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1482,7 +1479,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new DeviceDefn(10, true, [ effectLearnSpell ]),
-					new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals[appearance], sizeInPixels),
 					new ItemDefn
 					(
 						appearance,
@@ -1508,7 +1505,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Wands = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1667,7 +1664,7 @@ function DemoData(randomizer)
 								effect
 							]
 						),
-						new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
+						new DrawableDefn(visuals[appearance], sizeInPixels),
 						new ItemDefn
 						(
 							appearance,
@@ -1691,7 +1688,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_MagicTools = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1707,7 +1704,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Weapons = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1752,7 +1749,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals[name], sizeInPixels),
 					new ItemDefn
 					(
 						appearance,
@@ -1777,7 +1774,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Armor = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1870,7 +1867,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals[name], sizeInPixels),
 					new ItemDefn
 					(
 						appearance,
@@ -1895,7 +1892,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Tools = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -1966,7 +1963,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(animation(images[name]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals[name], sizeInPixels),
 					new ItemDefn
 					(
 						appearance,
@@ -1989,7 +1986,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildEntityDefns_Items_Stones = function
 	(
-		images,
+		visuals,
 		animation,
 		categories,
 		categoriesCommon,
@@ -2078,7 +2075,7 @@ function DemoData(randomizer)
 					[
 						collidableDefns.Clear,
 
-						new DrawableDefn(animation(images[appearance]).toRun(), sizeInPixels),
+						new DrawableDefn(visuals[appearance], sizeInPixels),
 						new ItemDefn
 						(
 							appearance,
@@ -2106,7 +2103,7 @@ function DemoData(randomizer)
 				"Coins",
 				[
 					itemPropertiesStandard,
-					new DrawableDefn(animation(images["Coins"]).toRun(), sizeInPixels),
+					new DrawableDefn(visuals["Coins"], sizeInPixels),
 				].concatenateAll()
 			)
 		);
@@ -2141,7 +2138,7 @@ function DemoData(randomizer)
 		return biped;
 	}
 
-	DemoData.prototype.buildEntityDefnGroups_Movers = function(images, activityDefns, itemCategories)
+	DemoData.prototype.buildEntityDefnGroups_Movers = function(visuals, activityDefns, itemCategories)
 	{
 		var returnValues = [];
 
@@ -2149,7 +2146,7 @@ function DemoData(randomizer)
 
 		var animation = AnimationDefnSet.buildFromImage;
 
-		var sizeInPixels = images["Floor"].sizeInPixels;
+		var sizeInPixels = visuals["Floor"].size;
 
 		var skillDefns = this.buildSkillDefns();
 		var spellDefns = this.buildSpellDefns();
@@ -2167,7 +2164,7 @@ function DemoData(randomizer)
 			"Corpse",
 			[
 				collidableDefns.Clear,
-				new DrawableDefn(animation(images["Corpse"]).toRun(), sizeInPixels),
+				new DrawableDefn(visuals["Corpse"], sizeInPixels),
 				new ItemDefn
 				(
 					"Corpse",
@@ -2204,7 +2201,7 @@ function DemoData(randomizer)
 			[] // attributeGroups
 		);
 
-		var visualForPlayerBase = new VisualImageImmediate(images["Rogue"]);
+		var visualForPlayerBase = visuals["Rogue"];
 
 		var animationDefnSetPlayer = new AnimationDefnSet
 		(
@@ -2222,7 +2219,7 @@ function DemoData(randomizer)
 						),
 						new AnimationFrame
 						(
-							new VisualImageImmediate(images["Wizard"]),
+							visuals["Wizard"],
 							100 // ticksToHold
 						),
 
@@ -2242,12 +2239,12 @@ function DemoData(randomizer)
 					[
 						new AnimationFrame
 						(
-							new VisualImageImmediate(images["Reticle0"]),
+							visuals["Reticle0"],
 							10 // ticksToHold
 						),
 						new AnimationFrame
 						(
-							new VisualImageImmediate(images["Reticle1"]),
+							visuals["Reticle1"],
 							10 // ticksToHold
 						),
 					]
@@ -2332,7 +2329,7 @@ function DemoData(randomizer)
 
 					new DrawableDefn
 					(
-						animation(images[agentName]).toRun(),
+						visuals[agentName],
 						sizeInPixels,
 						1 // zIndex
 					),
@@ -3053,19 +3050,19 @@ function DemoData(randomizer)
 		return returnValues;
 	}
 
-	DemoData.prototype.buildMapTerrainsMines = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsMines = function(visualsForTiles)
 	{
-		return this.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(visualsForTiles);
 	}
 
-	DemoData.prototype.buildMapTerrainsDungeon = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsDungeon = function(visualsForTiles)
 	{
-		this.Floor 		= new MapTerrain("Floor", 		".", 1, 	false, "#00aa00", imagesForTiles["Floor"]);
-		this.Stone 		= new MapTerrain("Stone", 		"x", 1000000, 	true, "#000000", imagesForTiles["Stone"]);
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", 	"+", 1000000, 	true, "#0000aa", imagesForTiles["WallDungeonCornerNorth"]);
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", 	"*", 1000000, 	true, "#0000aa", imagesForTiles["WallDungeonCornerSouth"]);
-		this.WallEastWest 	= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "#0000aa", imagesForTiles["WallDungeonEastWest"]);
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "#0000aa", imagesForTiles["WallDungeonNorthSouth"]);
+		this.Floor 		= new MapTerrain("Floor", 		".", 1, 	false, "#00aa00", visualsForTiles["Floor"]);
+		this.Stone 		= new MapTerrain("Stone", 		"x", 1000000, 	true, "#000000", visualsForTiles["Stone"]);
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", 	"+", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonCornerNorth"]);
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", 	"*", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonCornerSouth"]);
+		this.WallEastWest 	= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonEastWest"]);
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonNorthSouth"]);
 
 		var terrains =
 		[
@@ -3083,30 +3080,29 @@ function DemoData(randomizer)
 		return terrains;
 	}
 
-	DemoData.prototype.buildMapTerrainsHades = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsHades = function(visualsForTiles)
 	{
-		return this.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(visualsForTiles);
 	}
 
-	DemoData.prototype.buildMapTerrainsLabyrinth = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsLabyrinth = function(visualsForTiles)
 	{
-		return this.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(visualsForTiles);
 	}
 
-	DemoData.prototype.buildMapTerrainsPuzzle = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsPuzzle = function(visualsForTiles)
 	{
-		return this.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(visualsForTiles);
 	}
 
-	DemoData.prototype.buildMapTerrainsThrowback = function(imagesForTiles)
+	DemoData.prototype.buildMapTerrainsThrowback = function(visualsForTiles)
 	{
-		return this.buildMapTerrainsDungeon(imagesForTiles);
+		return this.buildMapTerrainsDungeon(visualsForTiles);
 	}
 
-	DemoData.prototype.buildWorldDefn = function(imagesForTiles, imagesForTilesTransparent)
+	DemoData.prototype.buildWorldDefn = function(visualsForTiles)
 	{
-		var imagesOpaque = this.buildImageLookup(imagesForTiles);
-		var imagesTransparent = this.buildImageLookup(imagesForTilesTransparent);
+		var visualsOpaque = this.buildVisualLookup(visualsForTiles);
 
 		var actions = this.buildActions();
 
@@ -3114,9 +3110,9 @@ function DemoData(randomizer)
 
 		var itemCategories = this.buildItemCategories();
 
-		var entityDefnGroups = this.buildEntityDefnGroups(imagesOpaque, activityDefns, itemCategories);
+		var entityDefnGroups = this.buildEntityDefnGroups(visualsOpaque, activityDefns, itemCategories);
 
-		var venueDefns = this.buildVenueDefns(imagesOpaque, actions);
+		var venueDefns = this.buildVenueDefns(visualsOpaque, actions);
 
 		var Branch = WorldDefnVenueStructureBranch;
 
@@ -3304,9 +3300,9 @@ function DemoData(randomizer)
 		return returnValue;
 	}
 
-	DemoData.prototype.buildVenueDefns = function(images, actions)
+	DemoData.prototype.buildVenueDefns = function(visuals, actions)
 	{
-		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(images);
+		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visuals);
 
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
@@ -3358,7 +3354,7 @@ function DemoData(randomizer)
 			(
 				"Hades",
 				propertyNamesKnown,
-				this.buildMapTerrainsHades(images),
+				this.buildMapTerrainsHades(visuals),
 				this.venueGenerateHades
 			),
 
@@ -3366,7 +3362,7 @@ function DemoData(randomizer)
 			(
 				"Mines",
 				propertyNamesKnown,
-				this.buildMapTerrainsMines(images),
+				this.buildMapTerrainsMines(visuals),
 				this.venueGenerateMines
 			),
 
@@ -3374,7 +3370,7 @@ function DemoData(randomizer)
 			(
 				"MinesTown",
 				propertyNamesKnown,
-				this.buildMapTerrainsMines(images),
+				this.buildMapTerrainsMines(visuals),
 				this.venueGenerateMines
 			),
 
@@ -3382,7 +3378,7 @@ function DemoData(randomizer)
 			(
 				"MinesBottom",
 				propertyNamesKnown,
-				this.buildMapTerrainsMines(images),
+				this.buildMapTerrainsMines(visuals),
 				this.venueGenerateMines
 			),
 
@@ -3398,7 +3394,7 @@ function DemoData(randomizer)
 			(
 				"Labyrinth",
 				propertyNamesKnown,
-				this.buildMapTerrainsLabyrinth(images),
+				this.buildMapTerrainsLabyrinth(visuals),
 				this.venueGenerateLabyrinth
 			),
 
@@ -3422,7 +3418,7 @@ function DemoData(randomizer)
 			(
 				"Puzzle",
 				propertyNamesKnown,
-				this.buildMapTerrainsPuzzle(images),
+				this.buildMapTerrainsPuzzle(visuals),
 				this.venueGeneratePuzzle
 			),
 
@@ -3438,7 +3434,7 @@ function DemoData(randomizer)
 			(
 				"Throwback",
 				propertyNamesKnown,
-				this.buildMapTerrainsThrowback(images),
+				this.buildMapTerrainsThrowback(visuals),
 				this.venueGenerateThrowback
 			),
 
@@ -4180,14 +4176,14 @@ function DemoData(randomizer)
 			entities
 		);
 
-		var locationForMessages = new Location(returnValue.name, new Coords(0, 0));
+		//var locationForMessages = new Location(returnValue.name, new Coords(0, 0));
 
 		//Font.spawnMessageFixed(world, "Tutorial", locationForMessages);
 
 		return returnValue;
 	}
 
-	DemoData.prototype.buildImageLookup = function(imagesForTiles)
+	DemoData.prototype.buildVisualLookup = function(visualsForTiles)
 	{
 		var returnValue = [];
 
@@ -4641,10 +4637,10 @@ function DemoData(randomizer)
 			var tileName = tileNameAndPosition[0];
 			var tilePos = tileNameAndPosition[1];
 
-			var image = imagesForTiles[tilePos.y][tilePos.x];
-			image.name = tileName;
-			returnValue.push(image);
-			returnValue[tileName] = image;
+			var visual = visualsForTiles[tilePos.y][tilePos.x];
+			visual.name = tileName;
+			returnValue.push(visual);
+			returnValue[tileName] = visual;
 		}
 
 		var agentNames = this.buildAgentDatas();
@@ -4655,10 +4651,10 @@ function DemoData(randomizer)
 		for (var i = 0; i < agentNames.length; i++)
 		{
 			var tileName = agentNames[i][0];
-			var image = imagesForTiles[tilePos.y][tilePos.x];
-			image.name = tileName;
-			returnValue.push(image);
-			returnValue[tileName] = image;
+			var visual = visualsForTiles[tilePos.y][tilePos.x];
+			visual.name = tileName;
+			returnValue.push(visual);
+			returnValue[tileName] = visual;
 
 			tilePos.x++;
 
@@ -4761,8 +4757,9 @@ function DemoData(randomizer)
 				imageName,
 				pixelsAsStrings
 			);
+			var visualForReticle = new VisualImageImmediate(imageForReticle);
 
-			returnValue[imageName] = imageForReticle;
+			returnValue[imageName] = visualForReticle;
 		}
 
 		return returnValue;
@@ -5070,7 +5067,7 @@ function DemoData(randomizer)
 			]
 		);
 
-		var returnValue = new Font
+		var returnValue = new FontRoguelike
 		(
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ "
 			+ "0123456789"

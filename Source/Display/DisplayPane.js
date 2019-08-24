@@ -9,7 +9,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	this.displayInner = new Display
 	(
 		[ this.sizeInPixels ],
-		"todo", 10, // fontName, fontHeightInPixels,
+		"Font", 10, // fontName, fontHeightInPixels,
 		colorFore, colorBack
 	);
 }
@@ -19,21 +19,18 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		this.childSelected = (paneName == null ? null : this.children[paneName]);
 	};
 
-	DisplayPane.prototype.childrenDraw = function()
-	{
-		for (var i = 0; i < this.children.length; i++)
-		{
-			var child = this.children[i];
-			this.displayInner.drawImage
-			(
-				child.toImage(), child.pos
-			);
-		}
-	};
-
 	DisplayPane.prototype.displayToUse = function()
 	{
 		return (this.childSelected == null ? this.displayInner : this.childSelected);
+	};
+
+	DisplayPane.prototype.flush = function()
+	{
+		var child = this.childSelected;
+		if (child != null)
+		{
+			this.displayInner.drawImage(child.toImage(), child.pos);
+		}
 	};
 
 	DisplayPane.prototype.initialize = function()
@@ -61,16 +58,31 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	DisplayPane.prototype.clear = function()
 	{
 		this.displayToUse().clear();
+		this.flush();
 	};
 
 	DisplayPane.prototype.drawBackground = function(colorBorder, colorBack)
 	{
 		this.displayToUse().drawBackground(colorBorder, colorBack);
+		this.flush();
 	};
 
-	DisplayPane.prototype.drawImage = function(imageToDraw, pos, size)
+	DisplayPane.prototype.drawImage = function(imageToDraw, pos)
+	{
+		this.displayToUse().drawImage(imageToDraw, pos);
+		this.flush();
+	};
+
+	DisplayPane.prototype.drawImagePartial = function(imageToDraw, pos, boundsToShow)
+	{
+		this.displayToUse().drawImagePartial(imageToDraw, pos, boundsToShow);
+		this.flush();
+	};
+
+	DisplayPane.prototype.drawImageScaled = function(imageToDraw, pos, size)
 	{
 		this.displayToUse().drawImage(imageToDraw, pos, size);
+		this.flush();
 	};
 
 	DisplayPane.prototype.drawRectangle = function
@@ -90,6 +102,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 			colorBorder,
 			areColorsReversed
 		);
+		this.flush();
 	};
 
 	DisplayPane.prototype.drawText = function
@@ -115,5 +128,16 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 			isCentered,
 			widthMaxInPixels
 		);
+		this.flush();
 	};
+
+	DisplayPane.prototype.scaleFactor = function()
+	{
+		return this.displayToUse().scaleFactor();
+	}
+
+	DisplayPane.prototype.sizeDefault = function()
+	{
+		return this.sizeInPixels;
+	}
 }

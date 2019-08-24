@@ -8,7 +8,7 @@ function DynamicDefn(vel, accel)
 {
 	DynamicDefn.prototype.name = function() { return "Dynamic"; }
 
-	DynamicDefn.prototype.updateEntityForVenue = function(world, entity, venue)
+	DynamicDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
 	{
 		entity.dynamicData = new DynamicData(entity.defn(world).Dynamic);
 		var dynamicData = entity.dynamicData;

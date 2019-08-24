@@ -86,7 +86,7 @@ function FieldOfView()
 				{
 					cellPos.overwriteWith(this.eyePos).add(cellPosRelative);
 
-					if (cellPos.isInRangeMax(map.sizeInCellsMinusOnes) == true)
+					if (cellPos.isInRangeMax(map.sizeInCellsMinusOnes))
 					{
 						var cellSpan = new Range
 						(
@@ -98,7 +98,7 @@ function FieldOfView()
 
 						cellSpanAsSet.splitRangesThatSpanPeriod(1);
 
-						if (cellSpanAsSet.overlaps(angleRangeSetNotYetBlocked) == true)
+						if (cellSpanAsSet.overlaps(angleRangeSetNotYetBlocked))
 						{
 							var cellPosVisible = this.cellPositionsVisible
 							[

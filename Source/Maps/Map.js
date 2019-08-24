@@ -7,9 +7,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	this.sizeInCells = new Coords
 	(
-		cellsAsStrings[0].length,
-		cellsAsStrings.length,
-		1
+		cellsAsStrings[0].length, cellsAsStrings.length, 1
 	);
 
 	this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract
@@ -94,7 +92,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	{
 		var returnValue = null;
 
-		if (cellPos.isInRangeMax(this.sizeInCellsMinusOnes) == true)
+		if (cellPos.isInRangeMax(this.sizeInCellsMinusOnes))
 		{
 			var cellIndex = this.indexOfCellAtPos(cellPos);
 
@@ -169,12 +167,13 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	// drawable
 
-	Map.prototype.draw = function(world, display, venue)
+	Map.prototype.draw = function(universe, world, display, venue)
 	{
 		var player = world.entityForPlayer;
 		var playerPos = player.loc.posInCells;
 
 		var cellPos = this.cellPos;
+		var shouldDrawMovers = false;
 		for (var y = 0; y < this.sizeInCells.y; y++)
 		{
 			cellPos.y = y;
@@ -185,11 +184,12 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 				this.drawCellAtPos
 				(
+					universe,
 					world,
 					display,
 					playerPos,
 					cellPos,
-					false // drawMovers
+					shouldDrawMovers
 				);
 
 			} // end for x
@@ -199,21 +199,23 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var fieldOfView = world.sightHelper.fieldOfView;
 		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
 		var cellPositionsVisible = fieldOfView.cellPositionsVisible;
+		shouldDrawMovers = true;
 		for (var i = 0; i < numberOfCellsVisible; i++)
 		{
 			var cellPos = cellPositionsVisible[i];
-			this.drawCellAtPos(world, display, playerPos, cellPos, true);
+			this.drawCellAtPos(universe, world, display, playerPos, cellPos, shouldDrawMovers);
 		}
 	};
 
-	Map.prototype.drawCellAtPos = function(world, display, playerPos, cellPos, drawMovers)
+	Map.prototype.drawCellAtPos = function(universe, world, display, playerPos, cellPos, drawMovers)
 	{
 		var map = this;
 
 		var cell = map.cellAtPos(cellPos);
 		var cellTerrain = cell.terrain;
-		var terrainImage = cellTerrain.image;
-		var drawPos = this.drawable.loc.pos;
+		var terrainVisual = cellTerrain.visual;
+		var drawable = this.drawable;
+		var drawPos = drawable.loc.pos;
 
 		drawPos.overwriteWith
 		(
@@ -229,7 +231,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			display.displayToUse().sizeInPixels.clone().half()
 		);
 
-		display.drawImage(terrainImage, drawPos);
+		terrainVisual.draw(universe, world, display, drawable);
 
 		var entitiesInCell = cell.entitiesPresent;
 		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
@@ -252,20 +254,13 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			entitiesSortedBottomToTop.splice(j, 0, entityToSort);
 		}
 
-		drawPos.add(map.cellSizeInPixels.clone().half());
-
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
-			if (entity.moverData == null || drawMovers == true)
+			if (entity.moverData == null || drawMovers)
 			{
 				var visual = entity.drawableData.visual;
-				visual.draw
-				(
-					null, null, // universe, world
-					display,
-					this.drawable
-				);
+				visual.draw(universe, world, display, drawable);
 			}
 
 		} // end for entitiesSortedBottomToTop

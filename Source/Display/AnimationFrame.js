@@ -2,26 +2,21 @@
 function AnimationFrame(visual, ticksToHold)
 {
 	this.visual = visual;
-	this.ticksToHold = ticksToHold;
+	this.ticksToHold = (ticksToHold == null ? 1 : ticksToHold);
 }
 
 {
-	AnimationFrame.buildManyFromImages = function(imagesForFrames)
+	AnimationFrame.buildManyFromVisuals = function(visualsForFrames)
 	{
 		var returnValues = [];
 
-		var numberOfImages = imagesForFrames.length;
+		var numberOfVisuals = visualsForFrames.length;
 
-		for (var i = 0; i < numberOfImages; i++)
+		for (var i = 0; i < numberOfVisuals; i++)
 		{
-			var imageForFrame = imagesForFrames[i];
-			var visualForFrame = new VisualImageImmediate(imageForFrame);
-			var frame = new AnimationFrame
-			(
-				visualForFrame,
-				1 // ticksToHold
-			);
-
+			var visualForFrame = visualsForFrames[i];
+			var visualForFrame = visualForFrame;
+			var frame = new AnimationFrame(visualForFrame);
 			returnValues.push(frame);
 		}
 

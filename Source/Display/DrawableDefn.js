@@ -21,7 +21,7 @@ function DrawableDefn(visual, sizeInPixels, zIndex)
 {
 	DrawableDefn.prototype.name = function() { return "Drawable"; };
 
-	DrawableDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
+	DrawableDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
 		entity.drawableData = new DrawableData
 		(
@@ -30,10 +30,10 @@ function DrawableDefn(visual, sizeInPixels, zIndex)
 
 		var drawableData = entity.drawableData;
 		var drawableDefn = entity.defn(world).Drawable;
-		drawableData.visual = drawableDefn.visual.clone();
+		drawableData.visual = drawableDefn.visual; //.clone();
 	};
 
-	DrawableDefn.prototype.updateEntityForVenue = function(world, entity, venue)
+	DrawableDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
 	{
 		//entity.drawableData.visual.updateForVenue(entity, venue);
 	};

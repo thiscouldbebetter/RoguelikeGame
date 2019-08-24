@@ -8,7 +8,7 @@ function AnimationRun(animationDefnSet)
 	this.frameIndexCurrent = 0;
 	this.ticksOnFrameCurrent = 0;
 
-	this.visualForFrameCurrent = this.frameCurrent().visual.clone();
+	this.visualForFrameCurrent = this.frameCurrent().visual;
 }
 
 {

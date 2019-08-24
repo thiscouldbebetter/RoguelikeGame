@@ -15,7 +15,7 @@ function MoverData_Spells(spells)
 				pos,
 				new Coords(160, 16), // size
 				[
-					new ControlLabel("labelSpells", new Coords(10, 10), "Spells"),
+					ControlLabel.fromPosAndText(new Coords(10, 10), "Spells"),
 				]
 			);
 		}

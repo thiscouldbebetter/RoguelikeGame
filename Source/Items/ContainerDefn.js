@@ -7,7 +7,7 @@ function ContainerDefn()
 {
 	ContainerDefn.prototype.name = function() { return "Container"; }
 
-	ContainerDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
+	ContainerDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
 		entity.containerData = new ContainerData();
 	}

@@ -20,7 +20,7 @@ function ContainerData()
 		var itemsHeld = this.items;
 
 		var actionSelectNext = world.defn.actions["Item_SelectNext"];
-		actionSelectNext.perform(world, actor);
+		actionSelectNext.perform(null, world, actor);
 
 		var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
 		itemsHeld.splice(indexOfItemToDrop, 1);
@@ -58,7 +58,7 @@ function ContainerData()
 				pos,
 				new Coords(160, 100), // size
 				[
-					new ControlLabel("labelItems", new Coords(10, 10), "Items"),
+					ControlLabel.fromPosAndText(new Coords(10, 10), "Items"),
 					new ControlList
 					(
 						"listItems",

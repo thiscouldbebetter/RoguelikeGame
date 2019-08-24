@@ -22,7 +22,7 @@ function MoverData_Skills(skillDefns)
 				pos,
 				new Coords(160, 16), // size
 				[
-					new ControlLabel("labelSkills", new Coords(10, 10), "Skills"),
+					ControlLabel.fromPosAndText(new Coords(10, 10), "Skills"),
 				]
 			);
 		}

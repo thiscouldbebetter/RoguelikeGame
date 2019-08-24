@@ -78,7 +78,7 @@ function ItemDefn(appearance, mass, stackSizeMax, relativeFrequency, categoryNam
 
 	ItemDefn.prototype.name = function() { return "Item"; }
 
-	ItemDefn.prototype.initializeEntityForVenue = function(world, entity)
+	ItemDefn.prototype.initializeEntityForVenue = function(universe, world, entity)
 	{
 		entity.itemData = new ItemData();
 	}

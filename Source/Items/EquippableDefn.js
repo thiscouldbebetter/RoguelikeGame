@@ -7,7 +7,7 @@ function EquippableDefn(equipmentSocketDefnSet)
 {
 	EquippableDefn.prototype.name = function() { return "Equippable"; }
 
-	EquippableDefn.prototype.initializeEntityForVenue = function(world, entity)
+	EquippableDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
 		entity.equippableData = new EquippableData
 		(

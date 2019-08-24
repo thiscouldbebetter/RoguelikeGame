@@ -30,6 +30,10 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		entity.loc.venueName = this.name;
 		this.entitiesToSpawn.push(entity);
 	}
+
+	// Helper variables.
+
+	this._drawLoc = new Location(new Coords());
 }
 
 {
@@ -56,7 +60,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		return returnEntities;
 	}
 
-	VenueLevel.prototype.entitySpawn = function(world, entityToSpawn)
+	VenueLevel.prototype.entitySpawn = function(universe, world, entityToSpawn)
 	{
 		entityToSpawn.loc.venueName = this.name;
 
@@ -77,13 +81,16 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 				if (entityProperty.initializeEntityForVenue != null)
 				{
-					entityProperty.initializeEntityForVenue(world, entityToSpawn, this);
+					entityProperty.initializeEntityForVenue
+					(
+						universe, world, entityToSpawn, this
+					);
 				}
 			}
 		}
 	}
 
-	VenueLevel.prototype.initialize = function(world)
+	VenueLevel.prototype.initialize = function(universe, world)
 	{
 		for (var b = 0; b < this.entities.length; b++)
 		{
@@ -97,31 +104,32 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 				if (entityProperty.initializeEntityForVenue != null)
 				{
-					entityProperty.initializeEntityForVenue(world, entity, this);
+					entityProperty.initializeEntityForVenue(null, world, entity, this);
 				}
 			}
 		}
 	}
 
-	VenueLevel.prototype.update = function(world)
+	VenueLevel.prototype.update = function(universe, world)
 	{
-		this.update_EntitiesToSpawn(world);
+		this.update_EntitiesToSpawn(universe, world);
 
 		var player = world.entityForPlayer;
 		var venueKnown = player.playerData.venueKnownLookup[this.name];
 
 		if (venueKnown != null)
 		{
-			var display = world.display;
-			venueKnown.draw(world, display);
+			var display = universe.display;
+			venueKnown.draw(universe, world, display);
 			this.map.drawEntities
 			(
-				display, this.ephemerals() // hack
+				universe, world, display, this.ephemerals() // hack
 			);
 
 			display.childSelectByName("Status");
+			display.clear();
 			var venueKnownAsControl = venueKnown.controlUpdate(world);
-			venueKnownAsControl.draw(display);
+			venueKnownAsControl.draw(universe, display, this._drawLoc);
 		}
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
@@ -136,17 +144,17 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 				var entityDefnProperty = entity.defn(world).properties[propertyName];
 				if (entityDefnProperty.updateEntityForVenue != null)
 				{
-					entityDefnProperty.updateEntityForVenue(world, entity, this);
+					entityDefnProperty.updateEntityForVenue(universe, world, entity, this);
 				}
 			}
 		}
 
-		this.update_Collidables(world);
+		this.update_Collidables(universe, world);
 
-		this.update_EntitiesToRemove(world);
+		this.update_EntitiesToRemove(universe, world);
 	}
 
-	VenueLevel.prototype.update_EntitiesToRemove = function(world)
+	VenueLevel.prototype.update_EntitiesToRemove = function(universe, world)
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -184,18 +192,18 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.entitiesToRemove.length = 0;
 	}
 
-	VenueLevel.prototype.update_EntitiesToSpawn = function(world)
+	VenueLevel.prototype.update_EntitiesToSpawn = function(universe, world)
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
 			var entityToSpawn = this.entitiesToSpawn[i];
-			this.entitySpawn(world, entityToSpawn);
+			this.entitySpawn(universe, world, entityToSpawn);
 		}
 
 		this.entitiesToSpawn.length = 0;
 	}
 
-	VenueLevel.prototype.update_Collidables = function(world)
+	VenueLevel.prototype.update_Collidables = function(universe, world)
 	{
 		var emplacements = this.entitiesByPropertyName["Emplacement"];
 		var enemies = this.entitiesByPropertyName["Enemy"];
@@ -204,7 +212,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		var portals = this.entitiesByPropertyName["Portal"];
 		var projectiles = this.entitiesByPropertyName["Projectile"];
 
-		var collisionHelper = world.collisionHelper;
+		var collisionHelper = universe.collisionHelper;
 
 		var collisionSets =
 		[
@@ -295,20 +303,20 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	// drawable
 
-	VenueLevel.prototype.draw = function(world, display)
+	VenueLevel.prototype.draw = function(universe, world, display)
 	{
 		display.childSelectByName(null);
-		display.drawBackground();
 
 		var turnsSoFar = world.turnsSoFar;
 		if (this.turnLastDrawn != turnsSoFar)
 		{
 			this.turnLastDrawn = turnsSoFar;
 			display.childSelectByName("Map");
-			this.map.draw(world, display, this);
+			display.drawBackground();
+			this.map.draw(universe, world, display, this);
 		}
 
-		display.childrenDraw();
+		//display.childrenDraw();
 
 		display.childSelectByName(null);
 		display.drawRectangle

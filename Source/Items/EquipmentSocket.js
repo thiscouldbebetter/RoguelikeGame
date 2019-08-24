@@ -18,7 +18,7 @@ function EquipmentSocket(defn, itemEquipped)
 				new Coords(0, 0), // pos
 				new Coords(100, 100), // size
 				[
-					new ControlLabel("labelName", new Coords(10, 10), this.defn.name),
+					ControlLabel.fromPosAndText(new Coords(10, 10), this.defn.name),
 				]
 			);
 		}

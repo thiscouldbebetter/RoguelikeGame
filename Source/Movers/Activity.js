@@ -13,13 +13,13 @@ function Activity(defnName, target)
 		return world.defn.activityDefns[this.defnName];
 	}
 
-	Activity.prototype.initialize = function(world, actor)
+	Activity.prototype.initialize = function(universe, world, actor)
 	{
-		this.defn(world).initialize(world, actor, this);
+		this.defn(world).initialize(universe, world, actor, this);
 	}
 
-	Activity.prototype.perform = function(world, actor)
+	Activity.prototype.perform = function(universe, world, actor)
 	{
-		this.defn(world).perform(world, actor, this);
+		this.defn(world).perform(universe, world, actor, this);
 	}
 }

@@ -1,5 +1,5 @@
 
-function Location(venueName, posInCells)
+function LocationRoguelike(venueName, posInCells)
 {
 	this.venueName = venueName;
 	this.posInCells = posInCells;
@@ -7,15 +7,15 @@ function Location(venueName, posInCells)
 }
 
 {
-	Location.prototype.overwriteWith = function(other)
+	LocationRoguelike.prototype.overwriteWith = function(other)
 	{
 		this.venueName = other.venueName;
 		this.posInCells.overwriteWith(other.posInCells);
 		this.heading = other.heading;
-	}
+	};
 
-	Location.prototype.venue = function(world)
+	LocationRoguelike.prototype.venue = function(world)
 	{
 		return world.venues[this.venueName];
-	}
+	};
 }

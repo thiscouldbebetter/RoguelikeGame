@@ -3,7 +3,7 @@ function Entity(name, defnName, pos, propertyValues)
 {
 	this.name = name;
 	this.defnName = defnName;
-	this.loc = new Location
+	this.loc = new LocationRoguelike
 	(
 		null, // venueName
 		pos

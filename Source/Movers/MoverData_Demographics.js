@@ -19,9 +19,8 @@ function MoverData_Demographics(species, role, rank)
 				pos,
 				new Coords(160, 16), // size
 				[
-					new ControlLabel
+					ControlLabel.fromPosAndText
 					(
-						"labelDemographics",
 						new Coords(10, 10),
 						"Level " + this.rank + " " + this.species + " " + this.role
 					),

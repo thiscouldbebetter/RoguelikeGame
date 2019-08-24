@@ -1,5 +1,5 @@
 
-function Font(charactersAvailable, characterSize, characterImages)
+function FontRoguelike(charactersAvailable, characterSize, characterImages)
 {
 	this.charactersAvailable = charactersAvailable;
 	this.characterSize = characterSize;
@@ -7,7 +7,7 @@ function Font(charactersAvailable, characterSize, characterImages)
 }
 
 {
-	Font.prototype.buildEntityDefnForText = function
+	FontRoguelike.prototype.buildEntityDefnForText = function
 	(
 		visualForIcon, text, isFloater
 	)
@@ -84,7 +84,7 @@ function Font(charactersAvailable, characterSize, characterImages)
 		return entityDefn;
 	};
 
-	Font.spawnMessage = function(world, messageIconName, messageText, loc, isFloater)
+	FontRoguelike.spawnMessage = function(world, messageIconName, messageText, loc, isFloater)
 	{
 		var entityDefns = world.defn.entityDefns;
 
@@ -112,12 +112,12 @@ function Font(charactersAvailable, characterSize, characterImages)
 		world.venueCurrent.entitiesToSpawn.push(entityMessage);
 	};
 
-	Font.spawnMessageFixed = function(world, messageText, loc)
+	FontRoguelike.spawnMessageFixed = function(world, messageText, loc)
 	{
 		Font.spawnMessage(world, null, messageText, loc, false);
 	};
 
-	Font.spawnMessageFloater = function(world, messageIconName, messageText, loc)
+	FontRoguelike.spawnMessageFloater = function(world, messageIconName, messageText, loc)
 	{
 		Font.spawnMessage(world, messageIconName, messageText, loc, true);
 	};

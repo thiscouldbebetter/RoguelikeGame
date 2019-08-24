@@ -28,12 +28,12 @@ function MoverDefn
 {
 	MoverDefn.prototype.name = function() { return "Mover"; }
 
-	MoverDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
+	MoverDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
 		entity.moverData = new MoverData(entity.defn(world).Mover);
 	}
 
-	MoverDefn.prototype.updateEntityForVenue = function(world, entity, venue)
+	MoverDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
 	{
 		var entityLoc = entity.loc;
 

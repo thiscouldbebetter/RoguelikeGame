@@ -7,7 +7,7 @@ function KillableDefn(integrityMax)
 {
 	KillableDefn.prototype.name = function() { return "Killable"; }
 
-	KillableDefn.prototype.initializeEntityForVenue = function(world, entity, venue)
+	KillableDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
 		entity.killableData = new KillableData
 		(
@@ -15,7 +15,7 @@ function KillableDefn(integrityMax)
 		);
 	}
 
-	KillableDefn.prototype.updateEntityForVenue = function(world, entity, venue)
+	KillableDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
 	{
 		var killableData = entity.killableData;
 
