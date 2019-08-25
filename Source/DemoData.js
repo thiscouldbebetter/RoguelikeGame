@@ -2,6 +2,7 @@
 function DemoData(randomizer)
 {
 	this.randomizer = randomizer;
+	this.imageHelper = new ImageHelper();
 }
 {
 	var collidableDefns = CollidableDefn.Instances();
@@ -635,7 +636,6 @@ function DemoData(randomizer)
 						var actionName = inputMapping.actionName;
 						var action = world.defn.actions[actionName];
 
-						/*
 						var ticksToHold =
 						(
 							action.ticksToHold == null ? action.ticksSoFar : action.ticksToHold
@@ -645,7 +645,7 @@ function DemoData(randomizer)
 						{
 							actionsFromActor.push(action);
 						}
-						*/
+
 						actionsFromActor.push(action);
 					}
 				}
@@ -4752,7 +4752,7 @@ function DemoData(randomizer)
 
 			var pixelsAsStrings = reticlePixelSetsAsStringArrays[i];
 
-			var imageForReticle = ImageHelper.buildImageFromStrings
+			var imageForReticle = this.imageHelper.buildImageFromStrings
 			(
 				imageName,
 				pixelsAsStrings
@@ -4767,7 +4767,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildFont = function()
 	{
-		var characterImages = ImageHelper.buildImagesFromStringArrays
+		var characterImages = this.imageHelper.buildImagesFromStringArrays
 		(
 			"Font",
 			[

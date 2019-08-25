@@ -38,7 +38,7 @@ function MoverData_Vitals(defn)
 					ControlLabel.fromPosAndText
 					(
 						//"labelHealth",
-						new Coords(10, 10),
+						new Coords(10, 5),
 						"Life:^/^",
 						//[ entity.killableData, entity.killableData.defn ],
 						//[ "integrity", "integrityMax" ]
@@ -47,13 +47,13 @@ function MoverData_Vitals(defn)
 					ControlLabel.fromPosAndText
 					(
 						//"labelEnergy",
-						new Coords(10, 20),
+						new Coords(10, 15),
 						"Power:" + this.energy + "/" + this.defn.energyMax
 					),
 					ControlLabel.fromPosAndText
 					(
 						//"labelSatiety",
-						new Coords(10, 30),
+						new Coords(10, 25),
 						"Satiety: " + this.satiety + "/" + this.defn.satietyMax
 					),
 				]

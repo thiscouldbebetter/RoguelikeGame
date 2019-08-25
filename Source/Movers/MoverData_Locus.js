@@ -16,7 +16,7 @@ function MoverData_Locus()
 				pos,
 				new Coords(160, 16), // size
 				[
-					ControlLabel.fromPosAndText(new Coords(10, 10), "Floor: ^ Turn: ^"),
+					ControlLabel.fromPosAndText(new Coords(10, 5), "Floor: ^ Turn: ^"),
 					/*
 					[
 						entity.loc.venue(world).depth,

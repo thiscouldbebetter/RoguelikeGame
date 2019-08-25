@@ -81,7 +81,25 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 
 	DisplayPane.prototype.drawImageScaled = function(imageToDraw, pos, size)
 	{
-		this.displayToUse().drawImage(imageToDraw, pos, size);
+		this.displayToUse().drawImageScaled(imageToDraw, pos, size);
+		this.flush();
+	};
+
+	DisplayPane.prototype.drawCircle = function
+	(
+		pos,
+		radius,
+		colorFill,
+		colorBorder
+	)
+	{
+		this.displayToUse().drawCircle
+		(
+			pos,
+			radius,
+			colorFill,
+			colorBorder
+		);
 		this.flush();
 	};
 

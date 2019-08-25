@@ -4,29 +4,29 @@ function ImageHelper()
 {
 	// static methods
 
-	ImageHelper.buildImageFromStrings = function(name, stringsForPixels)
+	ImageHelper.prototype.buildImageFromStrings = function(name, stringsForPixels)
 	{
-		return ImageHelper.buildImageFromStringsScaled
+		return this.buildImageFromStringsScaled
 		(
 			name, Coords.Instances().Ones, stringsForPixels
 		);
 	}
 
-	ImageHelper.buildImagesFromStringArrays = function(name, stringArraysForImagePixels)
+	ImageHelper.prototype.buildImagesFromStringArrays = function(name, stringArraysForImagePixels)
 	{
 		var returnValue = [];
 
 		for (var i = 0; i < stringArraysForImagePixels.length; i++)
 		{
 			var stringsForImagePixels = stringArraysForImagePixels[i];
-			var image = ImageHelper.buildImageFromStrings(name + i, stringsForImagePixels);
+			var image = this.buildImageFromStrings(name + i, stringsForImagePixels);
 			returnValue.push(image);
 		}
 
 		return returnValue;
 	}
 
-	ImageHelper.buildImageFromStringsScaled = function(name, scaleFactor, stringsForPixels)
+	ImageHelper.prototype.buildImageFromStringsScaled = function(name, scaleFactor, stringsForPixels)
 	{
 		var sizeInPixels = new Coords
 		(
@@ -82,7 +82,7 @@ function ImageHelper()
 		return returnValue;
 	}
 
-	ImageHelper.copyRegionFromImage = function(imageToCopyFrom, regionPos, regionSize)
+	ImageHelper.prototype.copyRegionFromImage = function(imageToCopyFrom, regionPos, regionSize)
 	{
 		var canvas		 = document.createElement("canvas");
 		canvas.id		 = "region_" + regionPos.x + "_" + regionPos.y;
@@ -94,7 +94,7 @@ function ImageHelper()
 
 		graphics.drawImage
 		(
-			imageToCopyFrom.htmlElement,
+			imageToCopyFrom.systemImage,
 			regionPos.x, regionPos.y, // source pos
 			regionSize.x, regionSize.y, // source size
 			0, 0, // destination pos
@@ -118,7 +118,7 @@ function ImageHelper()
 		return returnValue;
 	}
 
-	ImageHelper.sliceImageIntoTiles = function(imageToSlice, sizeInTiles)
+	ImageHelper.prototype.sliceImageIntoTiles = function(imageToSlice, sizeInTiles)
 	{
 		var returnImages = [];
 

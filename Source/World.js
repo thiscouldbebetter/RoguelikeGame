@@ -31,10 +31,11 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 
 	this.idHelper = new IDHelper();
 	this.sightHelper = new SightHelper();
+	this.timerTicksSoFar = 0;
 }
 
 {
-	World.new = function()
+	World.new = function(universe)
 	{
 		var randomizer = new RandomizerLCG
 		(
@@ -45,25 +46,35 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 		);
 
 		var visualsForTiles = [];
-		var sizeInTiles = new Coords(40, 27);
-		var tileSizeInPixels = new Coords(16, 16);
-		for (var y = 0; y < sizeInTiles.y; y++)
+		var imageTileset = universe.mediaLibrary.imageGetByName("Tiles");
+		var visualImageTileset = new VisualImageFromLibrary(imageTileset.name);
+		var imageTilesetSizeInTiles = new Coords(40, 27);
+		var tileSizeInPixels =
+			imageTileset.sizeInPixels.clone().divide(imageTilesetSizeInTiles);
+		var imageHelper = new ImageHelper();
+		for (var y = 0; y < imageTilesetSizeInTiles.y; y++)
 		{
 			var visualsForTilesRow = [];
 
-			for (var x = 0; x < sizeInTiles.x; x++)
+			for (var x = 0; x < imageTilesetSizeInTiles.x; x++)
 			{
 				var tilePosInTiles = new Coords(x, y);
-				var tilePosInPixels = tilePosInTiles.clone().multiply(tileSizeInPixels);
-
-				var visualForTile =
-					new VisualImagePartial
-					(
-						new VisualImageFromLibrary("Tiles"),
-						Bounds.fromMinAndSize(tilePosInPixels, tileSizeInPixels) // todo
-					);
-
-				visualsForTilesRow.push(visualForTile);
+				var tilePosInPixels =
+					tilePosInTiles.clone().multiply(tileSizeInPixels);
+				var imageTile = imageHelper.copyRegionFromImage
+				(
+					imageTileset, tilePosInPixels, tileSizeInPixels
+				);
+				var visualTile = new VisualImageImmediate(imageTile);
+				/*
+				var visualTile = new VisualImagePartial
+				(
+					visualImageTileset,
+					Bounds.fromMinAndSize(tilePosInPixels, tileSizeInPixels)
+				);
+				*/
+				//var visualTile = new VisualRectangle(tileSizeInPixels, null, "Violet");
+				visualsForTilesRow.push(visualTile);
 			}
 
 			visualsForTiles.push(visualsForTilesRow);
@@ -117,5 +128,35 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 		}
 
 		this.venueCurrent.update(universe, this);
+
+		this.timerTicksSoFar++;
+
+//this.logTicksPerSecond();
+	}
+
+	// debugging
+
+	World.prototype.logTicksPerSecond = function()
+	{
+		var reportingWindowInTicks = 10;
+		if (this.timerTicksSoFar % reportingWindowInTicks == 0)
+		{
+			var now = new Date();
+
+			if (this.timeReportingWindowStarted != null)
+			{
+				var reportingWindowInMilliseconds =
+					now - this.timeReportingWindowStarted;
+				var reportingWindowInSeconds =
+					reportingWindowInMilliseconds / 1000;
+				var ticksPerSecond = Math.floor
+				(
+					reportingWindowInTicks / reportingWindowInSeconds
+				);
+				console.log(ticksPerSecond + " cps");
+			}
+
+			this.timeReportingWindowStarted = now;
+		}
 	}
 }

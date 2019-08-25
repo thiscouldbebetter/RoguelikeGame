@@ -120,7 +120,9 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		if (venueKnown != null)
 		{
 			var display = universe.display;
+
 			venueKnown.draw(universe, world, display);
+
 			this.map.drawEntities
 			(
 				universe, world, display, this.ephemerals() // hack
@@ -129,6 +131,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			display.childSelectByName("Status");
 			display.clear();
 			var venueKnownAsControl = venueKnown.controlUpdate(world);
+			this._drawLoc.pos.clear();
 			venueKnownAsControl.draw(universe, display, this._drawLoc);
 		}
 
