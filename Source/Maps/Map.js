@@ -38,11 +38,13 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	}
 
 	// Helper variables.
-	this.cellPos = new Coords();
-	this.drawPos = new Coords();
-	this.drawLoc = { pos: this.drawPos };
-	this.drawable = { loc: this.drawLoc };
-	this.entitiesSortedBottomToTop = [];
+	this._boundsVisible =
+		Bounds.fromMinAndSize(new Coords(0, 0), this.sizeInCells.clone());
+	this._cellPos = new Coords();
+	this._drawPos = new Coords();
+	this._drawLoc = { pos: this._drawPos };
+	this._drawable = { loc: this._drawLoc };
+	this._entitiesSortedBottomToTop = [];
 }
 
 {
@@ -172,13 +174,18 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var player = world.entityForPlayer;
 		var playerPos = player.loc.posInCells;
 
-		var cellPos = this.cellPos;
+		var cellPos = this._cellPos;
 		var shouldDrawMovers = false;
-		for (var y = 0; y < this.sizeInCells.y; y++)
+
+		var boundsVisible = this._boundsVisible;
+		var cellPosVisibleMin = boundsVisible.min();
+		var cellPosVisibleMax = boundsVisible.max();
+
+		for (var y = cellPosVisibleMin.y; y < cellPosVisibleMax.y; y++)
 		{
 			cellPos.y = y;
 
-			for (var x = 0; x < this.sizeInCells.x; x++)
+			for (var x = cellPosVisibleMin.x; x < cellPosVisibleMax.x; x++)
 			{
 				cellPos.x = x;
 
@@ -205,6 +212,8 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			var cellPos = cellPositionsVisible[i];
 			this.drawCellAtPos(universe, world, display, playerPos, cellPos, shouldDrawMovers);
 		}
+
+		display.flush();
 	};
 
 	Map.prototype.drawCellAtPos = function(universe, world, display, playerPos, cellPos, drawMovers)
@@ -214,7 +223,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var cell = map.cellAtPos(cellPos);
 		var cellTerrain = cell.terrain;
 		var terrainVisual = cellTerrain.visual;
-		var drawable = this.drawable;
+		var drawable = this._drawable;
 		var drawPos = drawable.loc.pos;
 
 		drawPos.overwriteWith
@@ -234,7 +243,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		terrainVisual.draw(universe, world, display, drawable);
 
 		var entitiesInCell = cell.entitiesPresent;
-		var entitiesSortedBottomToTop = this.entitiesSortedBottomToTop;
+		var entitiesSortedBottomToTop = this._entitiesSortedBottomToTop;
 		entitiesSortedBottomToTop.length = 0;
 
 		for (var i = 0; i < entitiesInCell.length; i++)
@@ -264,7 +273,6 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			}
 
 		} // end for entitiesSortedBottomToTop
-
 	};
 
 	Map.prototype.drawEntities = function(display, entities)
@@ -272,14 +280,14 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entities.length; i++)
 		{
 			var entity = entities[i];
-			this.drawEntityForMap(entity, map);
+			this._drawEntityForMap(entity, map);
 		}
 	};
 
 	Map.prototype.drawEntity = function(display, entity)
 	{
 		var visual = entity.drawableData.visual;
-		this.drawable.loc.pos.overwriteWith
+		this._drawable.loc.pos.overwriteWith
 		(
 			entity.loc.posInCells
 		).multiply
@@ -291,7 +299,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		(
 			null, null, // universe, world
 			display,
-			this.drawable
+			this._drawable
 		);
 	};
 }

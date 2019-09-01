@@ -133,6 +133,16 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			var venueKnownAsControl = venueKnown.controlUpdate(world);
 			this._drawLoc.pos.clear();
 			venueKnownAsControl.draw(universe, display, this._drawLoc);
+			display.flush();
+
+			display.childSelectByName("Messages");
+			display.clear();
+			var messageLogAsControl = player.playerData.messageLog.controlUpdate(world);
+			this._drawLoc.pos.clear();
+			messageLogAsControl.draw(universe, display, this._drawLoc);
+			display.flush();
+
+			display.childSelectByName(null);
 		}
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;

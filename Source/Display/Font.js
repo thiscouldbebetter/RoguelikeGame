@@ -84,7 +84,7 @@ function FontRoguelike(charactersAvailable, characterSize, characterImages)
 		return entityDefn;
 	};
 
-	FontRoguelike.spawnMessage = function(world, messageIconName, messageText, loc, isFloater)
+	FontRoguelike.prototype.spawnMessage = function(world, messageIconName, messageText, loc, isFloater)
 	{
 		var entityDefns = world.defn.entityDefns;
 
@@ -98,7 +98,7 @@ function FontRoguelike(charactersAvailable, characterSize, characterImages)
 		var entityMessage = Entity.fromDefn
 		(
 			world.idHelper.idNext(),
-			world.font.buildEntityDefnForText
+			this.buildEntityDefnForText
 			(
 				messageIcon,
 				messageText.toUpperCase(),
@@ -112,13 +112,13 @@ function FontRoguelike(charactersAvailable, characterSize, characterImages)
 		world.venueCurrent.entitiesToSpawn.push(entityMessage);
 	};
 
-	FontRoguelike.spawnMessageFixed = function(world, messageText, loc)
+	FontRoguelike.prototype.spawnMessageFixed = function(world, messageText, loc)
 	{
-		Font.spawnMessage(world, null, messageText, loc, false);
+		this.spawnMessage(world, null, messageText, loc, false);
 	};
 
-	FontRoguelike.spawnMessageFloater = function(world, messageIconName, messageText, loc)
+	FontRoguelike.prototype.spawnMessageFloater = function(world, messageIconName, messageText, loc)
 	{
-		Font.spawnMessage(world, messageIconName, messageText, loc, true);
+		this.spawnMessage(world, messageIconName, messageText, loc, true);
 	};
 }

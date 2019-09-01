@@ -224,7 +224,7 @@ function DemoData(randomizer)
 					var entityDefns = world.defn.entityDefns;
 					var defnsOfEntitiesToSpawn = [];
 
-					Font.spawnMessageFloater
+					world.font.spawnMessageFloater
 					(
 						world, "Dagger", "-" + damageInflicted, actorLoc
 					);
@@ -1037,7 +1037,7 @@ function DemoData(randomizer)
 			function apply(world, actingEntity, targetEntity)
 			{
 				var actingEntityDefnName = actingEntity.defn(world).name;
-				Font.spawnMessageFloater
+				world.font.spawnMessageFloater
 				(
 					world,
 					actingEntityDefnName,
@@ -1524,7 +1524,7 @@ function DemoData(randomizer)
 				function apply(world, actingEntity, targetEntity)
 				{
 					var actingEntityDefnName = actingEntity.defn(world).name;
-					Font.spawnMessageFloater
+					world.font.spawnMessageFloater
 					(
 						world,
 						actingEntityDefnName,

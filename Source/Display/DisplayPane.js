@@ -58,31 +58,26 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	DisplayPane.prototype.clear = function()
 	{
 		this.displayToUse().clear();
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawBackground = function(colorBorder, colorBack)
 	{
 		this.displayToUse().drawBackground(colorBorder, colorBack);
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawImage = function(imageToDraw, pos)
 	{
 		this.displayToUse().drawImage(imageToDraw, pos);
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawImagePartial = function(imageToDraw, pos, boundsToShow)
 	{
 		this.displayToUse().drawImagePartial(imageToDraw, pos, boundsToShow);
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawImageScaled = function(imageToDraw, pos, size)
 	{
 		this.displayToUse().drawImageScaled(imageToDraw, pos, size);
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawCircle = function
@@ -100,7 +95,6 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 			colorFill,
 			colorBorder
 		);
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawRectangle = function
@@ -120,7 +114,6 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 			colorBorder,
 			areColorsReversed
 		);
-		this.flush();
 	};
 
 	DisplayPane.prototype.drawText = function
@@ -146,7 +139,6 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 			isCentered,
 			widthMaxInPixels
 		);
-		this.flush();
 	};
 
 	DisplayPane.prototype.scaleFactor = function()

@@ -25,7 +25,15 @@ function main()
 			(
 				"Status",
 				new Coords(displaySize.y, 0), // pos
-				new Coords(displaySize.x - displaySize.y, displaySize.y), // size
+				new Coords(displaySize.x - displaySize.y, displaySize.y / 2), // size
+				colorFore, colorBack,
+				[] // children
+			),
+			new DisplayPane
+			(
+				"Messages",
+				new Coords(displaySize.y, displaySize.y / 2), // pos
+				new Coords(displaySize.x - displaySize.y, displaySize.y / 2), // size
 				colorFore, colorBack,
 				[] // children
 			),
