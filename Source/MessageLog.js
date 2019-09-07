@@ -1,7 +1,10 @@
 function MessageLog()
 {
 	this.messagesMax = 20;
-	this.messages = [];
+	this.messages =
+	[
+		"Message log begins."
+	];
 }
 {
 	MessageLog.prototype.messageAdd = function(messageToAdd)
@@ -18,6 +21,14 @@ function MessageLog()
 	{
 		if (this.control == null)
 		{
+
+			controlForMessages = ControlList.fromPosSizeAndItems
+			(
+				new Coords(10, 15), // pos
+				new Coords(160, 260), // size
+				this.messages // items
+			);
+
 			this.control = new ControlContainer
 			(
 				"containerMessageLog",
@@ -27,8 +38,9 @@ function MessageLog()
 					ControlLabel.fromPosAndText
 					(
 						new Coords(10, 5),
-						"[messageLog]"
+						"Message Log:"
 					),
+					controlForMessages
 				]
 			);
 		}

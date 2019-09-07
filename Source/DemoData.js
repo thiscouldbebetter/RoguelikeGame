@@ -46,8 +46,8 @@ function DemoData(randomizer)
 			var destinationVenue = world.venues[destinationVenueName];
 			if (destinationVenue != null)
 			{
-				destinationVenue.initialize(world);
-				destinationVenue.update(world);
+				destinationVenue.initialize(universe, world);
+				destinationVenue.update(universe, world);
 
 				var entities = destinationVenue.entities;
 				var destinationEntity = entities[destinationEntityName];
@@ -100,16 +100,18 @@ function DemoData(randomizer)
 			for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
 			{
 				var entityPresent = entitiesPresentAtCellPos[i];
-				if (entityPresent.defn(world).properties["Item"] != null)
+				var entityPresentDefn = entityPresent.defn(world);
+				var itemToPickUp = entityPresentDefn.Item;
+				if (itemToPickUp != null)
 				{
-					var itemToPickUp = entityPresent;
 					var costToPickUp = 1;
 
 					if (actor.moverData.movesThisTurn >= costToPickUp)
 					{
 						actor.moverData.movesThisTurn -= costToPickUp;
 
-						actor.containerData.pickUpItem(world, actor, itemToPickUp);
+						actor.containerData.pickUpItem(world, actor, entityPresent);
+						actor.playerData.messageLog.messageAdd("You pick up the " + itemToPickUp.appearance + ".");
 					}
 				}
 			}
@@ -461,7 +463,7 @@ function DemoData(randomizer)
 
 				var agentsInVenue = venue.entitiesByPropertyName["Mover"];
 
-				var numberOfAgentsDesired = 5;
+				var numberOfAgentsDesired = 0; // hack - No monsters yet.
 
 				if (agentsInVenue.length < numberOfAgentsDesired)
 				{
