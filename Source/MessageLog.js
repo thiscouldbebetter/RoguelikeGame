@@ -3,7 +3,7 @@ function MessageLog()
 	this.messagesMax = 20;
 	this.messages =
 	[
-		"Message log begins."
+		"You enter the dungeon."
 	];
 }
 {
@@ -21,7 +21,6 @@ function MessageLog()
 	{
 		if (this.control == null)
 		{
-
 			controlForMessages = ControlList.fromPosSizeAndItems
 			(
 				new Coords(10, 15), // pos

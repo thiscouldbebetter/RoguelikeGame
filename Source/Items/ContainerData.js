@@ -58,14 +58,17 @@ function ContainerData()
 				pos,
 				new Coords(160, 100), // size
 				[
-					ControlLabel.fromPosAndText(new Coords(10, 10), "Items"),
-					new ControlList
+					ControlLabel.fromPosAndText(new Coords(10, 10), "Items:"),
+					ControlList.fromPosSizeItemsAndBindingForItemText
 					(
-						"listItems",
 						new Coords(10, 20), // pos
 						new Coords(140, 70), // size
-						"defn().Item.appearance", // bindingPath
-						this.items
+						this.items,
+						new DataBinding
+						(
+							null,
+							function get(c) { return c.defn(world).Item.appearance; }
+						)
 					)
 				]
 			);

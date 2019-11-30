@@ -39,9 +39,14 @@ function MoverData_Vitals(defn)
 					(
 						//"labelHealth",
 						new Coords(10, 5),
-						"Life:^/^",
-						//[ entity.killableData, entity.killableData.defn ],
-						//[ "integrity", "integrityMax" ]
+						new DataBinding
+						(
+							entity.killableData,
+							function get(c)
+							{
+								return "Life: " + c.integrity + "/" + c.defn.integrityMax;
+							}
+						)
 					),
 
 					ControlLabel.fromPosAndText
@@ -54,7 +59,14 @@ function MoverData_Vitals(defn)
 					(
 						//"labelSatiety",
 						new Coords(10, 25),
-						"Satiety: " + this.satiety + "/" + this.defn.satietyMax
+						new DataBinding
+						(
+							this,
+							function get(c)
+							{
+								return "Satiety: " + c.satiety + "/" + c.defn.satietyMax;
+							}
+						)
 					),
 				]
 			);

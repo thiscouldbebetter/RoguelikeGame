@@ -59,9 +59,11 @@ function main()
 
 	var timerHelper = new TimerHelper(20);
 
+	var version = "0.0.0-20191130-1545";
+
 	var universe = Universe.new
 	(
-		"RoguelikeGame", timerHelper, display, mediaLibrary, null
+		"RoguelikeGame", version, timerHelper, display, mediaLibrary, null
 	);
 	universe.initialize();
 

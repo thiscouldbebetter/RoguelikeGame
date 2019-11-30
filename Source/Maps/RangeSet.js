@@ -3,7 +3,7 @@ function RangeSet(ranges)
 	this.ranges = ranges;
 }
 {
-	RangeSet.prototype.overlaps = function(other)
+	RangeSet.prototype.overlapsWith = function(other)
 	{
 		var returnValue = false;
 
@@ -15,7 +15,7 @@ function RangeSet(ranges)
 			{
 				var rangeOther = other.ranges[j];
 
-				if (rangeThis.overlaps(rangeOther) == true)
+				if (rangeThis.overlapsWith(rangeOther) == true)
 				{
 					returnValue = true;
 					i = this.ranges.length;
@@ -62,7 +62,7 @@ function RangeSet(ranges)
 				{
 					var rangeOther = other.ranges[j];
 
-					if (rangeThis.overlaps(rangeOther) == true)
+					if (rangeThis.overlapsWith(rangeOther) == true)
 					{
 						doAnyRangesOverlap = true;
 						var rangesSubtracted = rangeThis.subtract

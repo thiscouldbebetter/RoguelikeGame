@@ -601,25 +601,25 @@ function DemoData(randomizer)
 			{
 				activity.target =
 				[
-					new InputToActionMapping("f", "Use Selected Item"),
-					new InputToActionMapping("g", "Pick Up Item"),
-					new InputToActionMapping("r", "Drop Selected Item"),
-					new InputToActionMapping("t", "Target Selected Item"),
-					new InputToActionMapping("u", "Use Emplacement"),
+					new ActionToInputsMapping("Use Selected Item", [ "f" ]),
+					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
+					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),
+					new ActionToInputsMapping("Target Selected Item", [ "t" ], ),
+					new ActionToInputsMapping("Use Emplacement", [ "u" ] ),
 
-					new InputToActionMapping("_1", "Move Southwest"),
-					new InputToActionMapping("_2", "Move South"),
-					new InputToActionMapping("_3", "Move Southeast"),
-					new InputToActionMapping("_4", "Move West"),
-					new InputToActionMapping("_6", "Move East"),
-					new InputToActionMapping("_7", "Move Northwest"),
-					new InputToActionMapping("_8", "Move North"),
-					new InputToActionMapping("_9", "Move Northeast"),
+					new ActionToInputsMapping("Move Southwest", [ "_1" ]),
+					new ActionToInputsMapping("Move South", [ "_2" ]),
+					new ActionToInputsMapping("Move Southeast", [ "_3" ]),
+					new ActionToInputsMapping("Move West", [ "_4" ]),
+					new ActionToInputsMapping("Move East", [ "_6" ]),
+					new ActionToInputsMapping("Move Northwest", [ "_7" ]),
+					new ActionToInputsMapping("Move North", [ "_8" ]),
+					new ActionToInputsMapping("Move Northeast", [ "_9" ]),
 
-					new InputToActionMapping("]", "Select Next Item"),
-					new InputToActionMapping("[", "Select Previous Item"),
-					new InputToActionMapping(".", "Wait"),
-				].addLookups( function(element) { return element["inputName"]; } );
+					new ActionToInputsMapping("Select Next Item", [ "]" ]),
+					new ActionToInputsMapping("Select Previous Item", [ "[" ]),
+					new ActionToInputsMapping("Wait", ["."]),
+				].addLookups( function(element) { return element.inputNames[0]; } );
 			},
 
 			function perform(universe, world, actor, activity)
@@ -3498,7 +3498,7 @@ function DemoData(randomizer)
 		{
 			var doesRoomOverlapAnother = true;
 
-			while (doesRoomOverlapAnother == true)
+			while (doesRoomOverlapAnother)
 			{
 				var roomSize = new Coords().randomize(randomizer).multiply
 				(
@@ -3529,9 +3529,12 @@ function DemoData(randomizer)
 					ones
 				);
 
+				var roomBoundsWithWalls =
+					Bounds.fromMinAndSize(roomPos, roomSizePlusOnes);
+
 				doesRoomOverlapAnother = Bounds.doBoundsInSetsOverlap
 				(
-					[ Bounds.fromMinAndSize(roomPos, roomSizePlusOnes) ],
+					[ roomBoundsWithWalls ],
 					roomBoundsSetSoFar
 				);
 			}

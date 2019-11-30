@@ -98,7 +98,7 @@ function FieldOfView()
 
 						cellSpanAsSet.splitRangesThatSpanPeriod(1);
 
-						if (cellSpanAsSet.overlaps(angleRangeSetNotYetBlocked))
+						if (cellSpanAsSet.overlapsWith(angleRangeSetNotYetBlocked))
 						{
 							var cellPosVisible = this.cellPositionsVisible
 							[
