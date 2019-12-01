@@ -9,7 +9,10 @@ function PlayerDefn()
 
 	PlayerDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
-		entity.playerData = new PlayerData();
+		if (entity.playerData == null)
+		{
+			entity.playerData = new PlayerData();
+		}
 
 		entity.moverData.movesThisTurn = 0;
 

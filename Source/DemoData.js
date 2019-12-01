@@ -2,7 +2,7 @@
 function DemoData(randomizer)
 {
 	this.randomizer = randomizer;
-	this.imageHelper = new ImageHelper();
+	this.imageBuilder = new ImageBuilder(Color.Instances()._All);
 }
 {
 	var collidableDefns = CollidableDefn.Instances();
@@ -117,7 +117,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionItem_SelectAtOffset_Perform = function(universe, world, actor, action)
+		var actionItem_SelectAtOffset_Perform = function(universe, world, actor, action, indexOffset)
 		{
 			var containerData = actor.containerData;
 			var itemsHeld = containerData.items;
@@ -141,8 +141,6 @@ function DemoData(randomizer)
 				(
 					itemSelected
 				);
-
-				var indexOffset = this.argumentForPerform;
 
 				indexOfItemSelected += indexOffset;
 
@@ -181,10 +179,8 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionMove_Perform = function(universe, world, actor, action)
+		var actionMove_Perform = function(universe, world, actor, action, directionToMove)
 		{
-			var directionToMove = action.argumentForPerform;
-
 			if (directionToMove.magnitude() == 0)
 			{
 				return;
@@ -313,80 +309,123 @@ function DemoData(randomizer)
 
 		var actionEmplacement_Use = new Action
 		(
-			"Use Emplacement", 1, actionEmplacement_Use_Perform
+			"Use Emplacement",
+			actionEmplacement_Use_Perform
 		);
 
 		var actionItem_DropSelected = new Action
 		(
-			"Drop Selected Item", 1, actionItem_DropSelected_Perform
+			"Drop Selected Item",
+			actionItem_DropSelected_Perform
 		);
 
 		var actionItem_PickUp = new Action
 		(
-			"Pick Up Item", 1, actionItem_PickUp_Perform
+			"Pick Up Item", 
+			actionItem_PickUp_Perform
 		);
 
 		var actionItem_SelectNext = new Action
 		(
-			"Select Next Item", null, actionItem_SelectAtOffset_Perform, 1
+			"Select Next Item",
+			function perform(universe, world, actor, action)
+			{
+				actionItem_SelectAtOffset_Perform(universe, world, actor, action, 1);
+			}
 		);
 
 		var actionItem_SelectPrev = new Action
 		(
-			"Select Previous Item", null, actionItem_SelectAtOffset_Perform, -1
+			"Select Previous Item",
+			function perform(universe, world, actor, action)
+			{
+				actionItem_SelectAtOffset_Perform(universe, world, actor, action, -1);
+			}
 		);
 
 		var actionItem_TargetSelected= new Action
 		(
-			"Target Selected Item", 1, actionItem_TargetSelected_Perform
+			"Target Selected Item", actionItem_TargetSelected_Perform
 		);
 
 		var actionItem_UseSelected 	= new Action
 		(
-			"Use Selected Item", 1, actionItem_UseSelected_Perform
+			"Use Selected Item", actionItem_UseSelected_Perform
 		);
 
 		var actionMoveE = new Action
 		(
-			"Move East", null, actionMove_Perform, directions[0]
+			"Move East",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[0]);
+			}
 		);
 
 		var actionMoveSE = new Action
 		(
-			"Move Southeast", null, actionMove_Perform, directions[1]
+			"Move Southeast",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[1]);
+			}
 		);
 
 		var actionMoveS = new Action
 		(
-			"Move South", null, actionMove_Perform, directions[2]
+			"Move South",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[2]);
+			}
 		);
 
 		var actionMoveSW = new Action
 		(
-			"Move Southwest", null, actionMove_Perform, directions[3]
+			"Move Southwest",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[3]);
+			}
 		);
 
 		var actionMoveW = new Action
 		(
-			"Move West", null, actionMove_Perform, directions[4]
+			"Move West",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[4]);
+			}
 		);
 
 		var actionMoveNW = new Action
 		(
-			"Move Northwest", null, actionMove_Perform, directions[5]
+			"Move Northwest",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[5]);
+			}
 		);
 
 		var actionMoveN = new Action
 		(
-			"Move North", null, actionMove_Perform, directions[6]
+			"Move North",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[6]);
+			}
 		);
 
 		var actionMoveNE = new Action
 		(
-			"Move Northeast", null, actionMove_Perform, directions[7]
+			"Move Northeast",
+			function perform(universe, world, actor, action)
+			{
+				actionMove_Perform(universe, world, actor, action, directions[7]);
+			}
 		);
 
-		var actionWait = new Action("Wait", null, actionWait_Perform);
+		var actionWait = new Action("Wait", actionWait_Perform);
 
 		var returnValues =
 		[
@@ -618,7 +657,10 @@ function DemoData(randomizer)
 
 					new ActionToInputsMapping("Select Next Item", [ "]" ]),
 					new ActionToInputsMapping("Select Previous Item", [ "[" ]),
-					new ActionToInputsMapping("Wait", ["."]),
+					new ActionToInputsMapping("Wait", [ "." ]),
+
+					new ActionToInputsMapping("ShowMenu", [ "Escape" ]),
+
 				].addLookups( function(element) { return element.inputNames[0]; } );
 			},
 
@@ -638,10 +680,7 @@ function DemoData(randomizer)
 						var actionName = inputMapping.actionName;
 						var action = world.defn.actions[actionName];
 
-						var ticksToHold =
-						(
-							action.ticksToHold == null ? action.ticksSoFar : action.ticksToHold
-						);
+						var ticksToHold = 1; // hack
 
 						if (action.ticksSoFar <= ticksToHold)
 						{
@@ -803,8 +842,6 @@ function DemoData(randomizer)
 	{
 		// convenience variables
 
-		var animation = AnimationDefnSetFake.buildFromImage;
-
 		var categoriesCommon =
 		[
 			"Collidable",
@@ -873,7 +910,6 @@ function DemoData(randomizer)
 			(
 				this,
 				images,
-				animation,
 				itemCategories,
 				categoriesCommon,
 				sizeInPixels,
@@ -894,7 +930,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Containers = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -924,7 +959,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Food = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1019,7 +1053,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Potions = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1147,7 +1180,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Rings = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1244,7 +1276,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Scrolls = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1346,7 +1377,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Spellbooks = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1508,7 +1538,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Wands = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1691,7 +1720,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_MagicTools = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1707,7 +1735,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Weapons = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1777,7 +1804,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Armor = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1895,7 +1921,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Tools = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -1989,7 +2014,6 @@ function DemoData(randomizer)
 	DemoData.prototype.buildEntityDefns_Items_Stones = function
 	(
 		visuals,
-		animation,
 		categories,
 		categoriesCommon,
 		sizeInPixels,
@@ -2144,22 +2168,7 @@ function DemoData(randomizer)
 	{
 		var returnValues = [];
 
-		// convenience variables
-
-		var animation = AnimationDefnSet.buildFromImage;
-
 		var sizeInPixels = visuals["Floor"].size;
-
-		var skillDefns = this.buildSkillDefns();
-		var spellDefns = this.buildSpellDefns();
-		var traitDefns = this.buildTraitDefns();
-
-		// player
-
-		var equipmentSocketDefnSetBiped = this.buildEntityDefns_Items_EquipmentSocketDefnSet
-		(
-			itemCategories
-		);
 
 		var entityDefnCorpse = new EntityDefn
 		(
@@ -2183,112 +2192,10 @@ function DemoData(randomizer)
 		returnValues.push(entityDefnCorpse);
 		returnValues[entityDefnCorpse.name] = entityDefnCorpse;
 
-		var moverDefnPlayer = new MoverDefn
+		this.buildEntityDefnGroups_Movers_Player
 		(
-			999, // difficulty
-			1, // movesPerTurn
-			new MoverData_Demographics("Human", "Rogue", 1),
-			new MoverData_Traits
-			([
-				new Trait(traitDefns["Strength"], 10),
-				new Trait(traitDefns["Dexterity"], 10),
-				new Trait(traitDefns["Willpower"], 10),
-				new Trait(traitDefns["Constitution"], 10),
-				new Trait(traitDefns["Charisma"], 10),
-			]),
-			new MoverData_Skills(skillDefns),
-			new MoverData_Spells(spellDefns),
-			new MoverDefn_Vitals(20, 1000),
-			entityDefnCorpse,
-			[] // attributeGroups
+			visuals, activityDefns, itemCategories, entityDefnCorpse, returnValues
 		);
-
-		var visualForPlayerBase = visuals["Rogue"];
-
-		var animationDefnSetPlayer = new AnimationDefnSet
-		(
-			"AnimationDefnSetPlayer",
-			[
-				new AnimationDefn
-				(
-					"AnimationDefnPlayer",
-					"AnimationDefnPlayer", // animationDefnNameNext
-					[
-						new AnimationFrame
-						(
-							visualForPlayerBase,
-							100 // ticksToHold
-						),
-						new AnimationFrame
-						(
-							visuals["Wizard"],
-							100 // ticksToHold
-						),
-
-					]
-				)
-			]
-		);
-
-		var animationDefnSetReticle = new AnimationDefnSet
-		(
-			"AnimationDefnSetReticle",
-			[
-				new AnimationDefn
-				(
-					"AnimationDefnReticle",
-					"AnimationDefnReticle", // animationDefnNameNext
-					[
-						new AnimationFrame
-						(
-							visuals["Reticle0"],
-							10 // ticksToHold
-						),
-						new AnimationFrame
-						(
-							visuals["Reticle1"],
-							10 // ticksToHold
-						),
-					]
-				)
-			]
-		);
-
-		var visualForPlayer = new VisualSet
-		(
-			"Player",
-			[
-				animationDefnSetPlayer.toRun(),
-				animationDefnSetReticle.toRun(),
-			]
-		);
-
-		var drawableDefnPlayer = new DrawableDefn
-		(
-
-			visualForPlayer,
-			sizeInPixels,
-			1 // zIndex
-		);
-
-		var entityDefnPlayer = new EntityDefn
-		(
-			"Player",
-			// properties
-			[
-				new ActorDefn(activityDefns["Accept User Input"].name),
-				collidableDefns.Blocking,
-				new ContainerDefn(),
-				drawableDefnPlayer,
-				new EquippableDefn(equipmentSocketDefnSetBiped),
-				new KillableDefn(160, null),
-				moverDefnPlayer,
-				new PlayerDefn(),
-			]
-		);
-
-		returnValues.push(entityDefnPlayer);
-		returnValues["Player"] = entityDefnPlayer;
 
 		// agents
 
@@ -2310,7 +2217,7 @@ function DemoData(randomizer)
 					new ActorDefn(activityDefns["Move Toward Player"].name),
 					collidableDefns.Blocking,
 					containerDefn,
-					new EquippableDefn(equipmentSocketDefnSetBiped),
+					//new EquippableDefn(equipmentSocketDefnSetBiped),
 					new EnemyDefn(),
 					new KillableDefn(5, null),
 					new MoverDefn
@@ -2377,7 +2284,78 @@ function DemoData(randomizer)
 		}
 
 		return groups;
-	}
+	};
+
+	DemoData.prototype.buildEntityDefnGroups_Movers_Player = function
+	(
+		visuals, activityDefns, itemCategories, entityDefnCorpse, returnValues
+	)
+	{
+		var sizeInPixels = visuals["Floor"].size;
+		var skillDefns = this.buildSkillDefns();
+		var spellDefns = this.buildSpellDefns();
+		var traitDefns = this.buildTraitDefns();
+
+		var equipmentSocketDefnSetBiped = this.buildEntityDefns_Items_EquipmentSocketDefnSet
+		(
+			itemCategories
+		);
+
+		var moverDefnPlayer = new MoverDefn
+		(
+			999, // difficulty
+			1, // movesPerTurn
+			new MoverData_Demographics("Human", "Rogue", 1),
+			new MoverData_Traits
+			([
+				new Trait(traitDefns["Strength"], 10),
+				new Trait(traitDefns["Dexterity"], 10),
+				new Trait(traitDefns["Willpower"], 10),
+				new Trait(traitDefns["Constitution"], 10),
+				new Trait(traitDefns["Charisma"], 10),
+			]),
+			new MoverData_Skills(skillDefns),
+			new MoverData_Spells(spellDefns),
+			new MoverDefn_Vitals(20, 1000),
+			entityDefnCorpse,
+			[] // attributeGroups
+		);
+
+		var visualForPlayerBase = visuals["Rogue"];
+
+		var visualForPlayer = new VisualGroup
+		([
+				visualForPlayerBase,
+				visuals["Reticle0"]
+		]);
+
+		var drawableDefnPlayer = new DrawableDefn
+		(
+
+			visualForPlayer,
+			sizeInPixels,
+			1 // zIndex
+		);
+
+		var entityDefnPlayer = new EntityDefn
+		(
+			"Player",
+			// properties
+			[
+				new ActorDefn(activityDefns["Accept User Input"].name),
+				collidableDefns.Blocking,
+				new ContainerDefn(),
+				drawableDefnPlayer,
+				new EquippableDefn(equipmentSocketDefnSetBiped),
+				new KillableDefn(160, null),
+				moverDefnPlayer,
+				new PlayerDefn(),
+			]
+		);
+
+		returnValues.push(entityDefnPlayer);
+		returnValues["Player"] = entityDefnPlayer;
+	};
 
 	DemoData.prototype.buildAgentDatas = function()
 	{
@@ -4757,7 +4735,7 @@ function DemoData(randomizer)
 
 			var pixelsAsStrings = reticlePixelSetsAsStringArrays[i];
 
-			var imageForReticle = this.imageHelper.buildImageFromStrings
+			var imageForReticle = this.imageBuilder.buildImageFromStrings
 			(
 				imageName,
 				pixelsAsStrings
@@ -4772,7 +4750,7 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildFont = function()
 	{
-		var characterImages = this.imageHelper.buildImagesFromStringArrays
+		var characterImages = this.imageBuilder.buildImagesFromStringArrays
 		(
 			"Font",
 			[
