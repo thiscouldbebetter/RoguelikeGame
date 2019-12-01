@@ -44,14 +44,5 @@ function CoordsExtensions()
 		}
 
 		return returnValue;
-	}
-
-	Coords.prototype.randomize = function(randomizer)
-	{
-		this.x = randomizer.getNextRandom();
-		this.y = randomizer.getNextRandom();
-		this.z = randomizer.getNextRandom();
-		return this;
-	}
-
+	};
 }

@@ -9,7 +9,7 @@ function DeviceDefn(chargesMax, consumedWhenAllChargesUsed, effectsToApply)
 {
 	DeviceDefn.prototype.name = function() { return "Device"; }
 
-	DeviceDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
+	DeviceDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
 		entity.deviceData = new DeviceData
 		(

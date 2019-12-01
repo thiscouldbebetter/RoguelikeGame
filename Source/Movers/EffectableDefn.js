@@ -7,12 +7,12 @@ function EffectableDefn()
 {
 	EffectableDefn.prototype.name = function() { return "Effectable"; }
 
-	EffectableDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
+	EffectableDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
 		entity.effectData = new EffectData();
 	}
 
-	EffectableDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
+	EffectableDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
 	{
 		// todo
 	}

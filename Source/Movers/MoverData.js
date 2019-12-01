@@ -31,7 +31,7 @@ function MoverData(moverDefn)
 					this.locus.controlUpdate(world, entity, new Coords(10, 112)),
 					this.skills.controlUpdate(world, entity, new Coords(10, 128)),
 					this.spells.controlUpdate(world, entity, new Coords(10, 144)),
-					entity.containerData.controlUpdate(world, entity, new Coords(10, 160)),
+					//entity.ItemHolder.controlUpdate(world, entity, new Coords(10, 160)),
 				]
 			);
 		}

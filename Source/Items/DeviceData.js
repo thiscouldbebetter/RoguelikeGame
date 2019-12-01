@@ -23,7 +23,7 @@ function DeviceData(numberOfCharges)
 		{
 			if (deviceDefn.consumedWhenAllChargesUsed == true)
 			{
-				userEntity.containerData.removeItem
+				userEntity.ItemHolder.removeItem
 				(
 					world, userEntity, deviceEntity
 				);

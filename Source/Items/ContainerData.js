@@ -5,46 +5,6 @@ function ContainerData()
 }
 
 {
-	ContainerData.prototype.dropItem = function(world, actor, itemToDrop)
-	{
-		var itemsHeld = this.items;
-
-		this.removeItem(world, actor, itemToDrop);
-
-		itemToDrop.loc.overwriteWith(actor.loc);
-		itemToDrop.loc.venue(world).entitiesToSpawn.push(itemToDrop);
-	}
-
-	ContainerData.prototype.removeItem = function(world, actor, itemToDrop)
-	{
-		var itemsHeld = this.items;
-
-		var actionSelectNext = world.defn.actions["Item_SelectNext"];
-		actionSelectNext.perform(null, world, actor);
-
-		var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
-		itemsHeld.splice(indexOfItemToDrop, 1);
-
-		if (itemsHeld.length == 0)
-		{
-			this.itemSelected = null;
-		}
-
-		this.controlUpdate(world, actor);
-	}
-
-	ContainerData.prototype.pickUpItem = function(world, actor, itemToPickUp)
-	{
-		this.items.push(itemToPickUp);
-		itemToPickUp.loc.venue(world).entitiesToRemove.push(itemToPickUp);
-
-		if (this.itemSelected == null)
-		{
-			this.itemSelected = itemToPickUp;
-		}
-
-		this.controlUpdate(world, actor);
-	}
 
 	// control
 

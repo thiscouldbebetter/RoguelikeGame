@@ -3,6 +3,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	this.name = name;
 	this.pos = pos;
 	this.sizeInPixels = size;
+	this.sizesAvailable = [ size ];
 	this.children = children.addLookupsByName();
 
 	this.childSelected = null;

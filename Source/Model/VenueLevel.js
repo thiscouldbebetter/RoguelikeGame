@@ -50,7 +50,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var i = 0; i < entitiesWithPropertyName.length; i++)
 			{
 				var entity = entitiesWithPropertyName[i];
-				if (entity.loc.posInCells.equals(cellPosToCheck) == true)
+				if (entity.loc.posInCells.equalsXY(cellPosToCheck) == true)
 				{
 					returnEntities.splice(0, 0, entity);
 				}
@@ -67,7 +67,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
 
-		var entityProperties = entityToSpawn.defn(world).properties;
+		var entityDefn = entityToSpawn.defn(world);
+		var entityProperties = entityDefn.properties;
 		for (var c = 0; c < entityProperties.length; c++)
 		{
 			var entityProperty = entityProperties[c];
@@ -91,7 +92,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 				{
 					entityProperty.initializeEntityForVenue
 					(
-						universe, world, entityToSpawn, this
+						universe, world, this, entityToSpawn
 					);
 				}
 			}
@@ -113,7 +114,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 				if (entityProperty.initializeEntityForVenue != null)
 				{
-					entityProperty.initializeEntityForVenue(null, world, entity, this);
+					entityProperty.initializeEntityForVenue(null, world, this, entity);
 				}
 			}
 		}
@@ -166,7 +167,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 				var entityDefnProperty = entity.defn(world).properties[propertyName];
 				if (entityDefnProperty.updateEntityForVenue != null)
 				{
-					entityDefnProperty.updateEntityForVenue(universe, world, entity, this);
+					entityDefnProperty.updateEntityForVenue(universe, world, this, entity);
 				}
 			}
 		}
@@ -200,7 +201,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var c = 0; c < entityDefnProperties.length; c++)
 			{
 				var entityDefnProperty = entityDefnProperties[c];
-				var entityDefnPropertyName = entityDefnProperty.name();
+				var entityDefnPropertyName = 
+					(entityDefnProperty.name == null ? entityDefnProperty.constructor.name : entityDefnProperty.name() );
 				var entitiesWithProperty = this.entitiesByPropertyName[entityDefnPropertyName];
 
 				entitiesWithProperty.splice
@@ -238,31 +240,31 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 		var collisionSets =
 		[
-			collisionHelper.findCollisionsBetweenEntitiesInSets
+			collisionHelper.collisionsOfCollidablesInSets
 			(
 				players,
 				emplacements
 			),
 
-			collisionHelper.findCollisionsBetweenEntitiesInSets
+			collisionHelper.collisionsOfCollidablesInSets
 			(
 				players,
 				enemies
 			),
 
-			collisionHelper.findCollisionsBetweenEntitiesInSets
+			collisionHelper.collisionsOfCollidablesInSets
 			(
 				players,
 				items
 			),
 
-			collisionHelper.findCollisionsBetweenEntitiesInSets
+			collisionHelper.collisionsOfCollidablesInSets
 			(
 				players,
 				portals
 			),
 
-			collisionHelper.findCollisionsBetweenEntitiesInSets
+			collisionHelper.collisionsOfCollidablesInSets
 			(
 				enemies,
 				projectiles
@@ -273,19 +275,19 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		{
 			var collisions = collisionSets[s];
 
-			var numberOfCollisions = collisions.length;
-			for (var c = 0; c < numberOfCollisions; c++)
+			for (var c = 0; c < collisions.length; c++)
 			{
 				var collision = collisions[c];
 
-				var numberOfEntities = collision.entities.length;
+				var collidables = collision.collidables;
 
-				for (var b0 = 0; b0 < numberOfEntities; b0++)
+				for (var i = 0; i < collidables.length; i++)
 				{
-					var entityThis = collision.entities[b0];
-					for (var b1 = b0 + 1; b1 < numberOfEntities; b1++)
+					var entityThis = collidables[i];
+
+					for (var j = i + 1; j < collidables.length; j++)
 					{
-						var entityOther = collision.entities[b1];
+						var entityOther = collidables[j];
 
 						collisionHelper.collideEntities
 						(

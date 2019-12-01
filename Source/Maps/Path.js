@@ -50,9 +50,9 @@ function Path(map, startPos, goalPos)
 		{
 			var current = openList[0];
 
-			if (current.cellPos.equals(goalPos) == true)
+			if (current.cellPos.equalsXY(goalPos) == true)
 			{
-				this.nodes = new Array();
+				this.nodes = [];
 
 				while (current != null)
 				{

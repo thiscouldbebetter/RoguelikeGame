@@ -28,7 +28,7 @@ function MoverDefn
 {
 	MoverDefn.prototype.name = function() { return "Mover"; };
 
-	MoverDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
+	MoverDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
 		if (entity.moverData == null)
 		{
@@ -36,7 +36,7 @@ function MoverDefn
 		}
 	};
 
-	MoverDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
+	MoverDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
 	{
 		var entityLoc = entity.loc;
 

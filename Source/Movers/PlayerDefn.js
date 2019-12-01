@@ -7,7 +7,7 @@ function PlayerDefn()
 {
 	PlayerDefn.prototype.name = function() { return "Player"; }
 
-	PlayerDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
+	PlayerDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
 		if (entity.playerData == null)
 		{
@@ -62,7 +62,7 @@ function PlayerDefn()
 		}
 	}
 
-	PlayerDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
+	PlayerDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
 	{
 		if (entity.moverData.movesThisTurn <= 0)
 		{

@@ -11,7 +11,7 @@ function DemoData(randomizer)
 	{
 		// Action.perform() declarations
 
-		var actionEmplacement_Use_Perform = function(universe, world, actor, action)
+		var actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
 		{
 			var loc = actor.loc;
 			var venue = loc.venue(world);
@@ -39,7 +39,7 @@ function DemoData(randomizer)
 
 			var portal = usableToUse;
 
-			var portalData = portal.portalData;
+			var portalData = portal.PortalData;
 			var destinationVenueName = portalData.destinationVenueName;
 			var destinationEntityName = portalData.destinationEntityName;
 
@@ -55,7 +55,7 @@ function DemoData(randomizer)
 				{
 					actor.loc.venue(world).entitiesToRemove.push(actor);
 					destinationVenue.entitiesToSpawn.push(actor);
-					actor.loc.posInCells.overwriteWith
+					actor.loc.posInCells.overwriteWithXY
 					(
 						destinationEntity.loc.posInCells
 					);
@@ -67,7 +67,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionItem_DropSelected_Perform = function(universe, world, actor, action)
+		var actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
 		{
 			var loc = actor.loc;
 			var venue = loc.venue(world);
@@ -78,18 +78,45 @@ function DemoData(randomizer)
 				posInCells
 			);
 
-			var containerData = actor.containerData;
-			var itemToDrop = containerData.itemSelected;
+			var itemHolder = actor.ItemHolder;
+			var itemToDrop = itemHolder.itemSelected;
 			var costToDrop = 1;
 
 			if (itemToDrop != null && actor.moverData.movesThisTurn >= costToDrop)
 			{
 				actor.moverData.movesThisTurn -= costToDrop;
-				actor.containerData.dropItem(world, actor, itemToDrop);
+
+				function removeItem(itemHolder, world, actor, itemToDrop)
+				{
+					var itemsHeld = itemHolder.itemEntities;
+
+					var actionSelectNext = world.defn.actions["Item_SelectNext"];
+					actionSelectNext.perform(null, world, "[place]", actor);
+
+					var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
+					itemsHeld.splice(indexOfItemToDrop, 1);
+
+					if (itemsHeld.length == 0)
+					{
+						itemHolder.itemSelected = null;
+					}
+				}
+
+				function dropItem(itemHolder, world, actor, itemToDrop)
+				{
+					var itemsHeld = itemHolder.itemEntities;
+
+					removeItem(itemHolder, world, actor, itemToDrop);
+
+					itemToDrop.loc.overwriteWith(actor.loc);
+					itemToDrop.loc.venue(world).entitiesToSpawn.push(itemToDrop);
+				}
+
+				dropItem(actor.ItemHolder, world, actor, itemToDrop);
 			}
 		}
 
-		var actionItem_PickUp_Perform = function(universe, world, actor, action)
+		var actionItem_PickUp_Perform = function(universe, world, place, actor, action)
 		{
 			var loc = actor.loc;
 			var venue = loc.venue(world);
@@ -110,24 +137,35 @@ function DemoData(randomizer)
 					{
 						actor.moverData.movesThisTurn -= costToPickUp;
 
-						actor.containerData.pickUpItem(world, actor, entityPresent);
+						function pickUpItem(itemHolder, world, actor, itemToPickUp)
+						{
+							itemHolder.itemEntities.push(itemToPickUp);
+							itemToPickUp.loc.venue(world).entitiesToRemove.push(itemToPickUp);
+
+							if (itemHolder.itemSelected == null)
+							{
+								itemHolder.itemSelected = itemToPickUp;
+							}
+						}
+
+						pickUpItem(actor.ItemHolder, world, actor, entityPresent);
 						actor.playerData.messageLog.messageAdd("You pick up the " + itemToPickUp.appearance + ".");
 					}
 				}
 			}
 		}
 
-		var actionItem_SelectAtOffset_Perform = function(universe, world, actor, action, indexOffset)
+		var actionItem_SelectAtOffset_Perform = function(universe, world, place, actor, action, indexOffset)
 		{
-			var containerData = actor.containerData;
-			var itemsHeld = containerData.items;
+			var itemHolder = actor.ItemHolder;
+			var itemsHeld = itemHolder.items;
 
 			if (itemsHeld.length == 0)
 			{
 				return;
 			}
 
-			var itemSelected = containerData.itemSelected;
+			var itemSelected = itemHolder.itemSelected;
 
 			var indexOfItemSelected;
 
@@ -150,21 +188,21 @@ function DemoData(randomizer)
 				);
 			}
 
-			containerData.itemSelected = itemsHeld[indexOfItemSelected];
+			itemHolder.itemSelected = itemsHeld[indexOfItemSelected];
 
 			actor.moverData.controlUpdate(world, actor);
 		}
 
-		var actionItem_TargetSelected_Perform = function(universe, world, actor, action)
+		var actionItem_TargetSelected_Perform = function(universe, world, place, actor, action)
 		{
-			var containerData = actor.containerData;
-			containerData.itemTargeted = containerData.itemSelected;
+			var itemHolder = actor.ItemHolder;
+			itemHolder.itemTargeted = itemHolder.itemSelected;
 			actor.moverData.controlUpdate(world, actor);
 		}
 
-		var actionItem_UseSelected_Perform = function(universe, world, actor, action)
+		var actionItem_UseSelected_Perform = function(universe, world, place, actor, action)
 		{
-			var itemToUse = actor.containerData.itemSelected;
+			var itemToUse = actor.ItemHolder.itemSelected;
 
 			if (itemToUse != null)
 			{
@@ -179,7 +217,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var actionMove_Perform = function(universe, world, actor, action, directionToMove)
+		var actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
 		{
 			if (directionToMove.magnitude() == 0)
 			{
@@ -299,7 +337,7 @@ function DemoData(randomizer)
 
 		}
 
-		var actionWait_Perform = function(universe, world, actor, action)
+		var actionWait_Perform = function(universe, world, place, actor, action)
 		{
 			actor.moverData.movesThisTurn = 0;
 		}
@@ -340,7 +378,7 @@ function DemoData(randomizer)
 		var actionItem_SelectPrev = new Action
 		(
 			"Select Previous Item",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
 				actionItem_SelectAtOffset_Perform(universe, world, actor, action, -1);
 			}
@@ -359,72 +397,72 @@ function DemoData(randomizer)
 		var actionMoveE = new Action
 		(
 			"Move East",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[0]);
+				actionMove_Perform(universe, world, place, actor, action, directions[0]);
 			}
 		);
 
 		var actionMoveSE = new Action
 		(
 			"Move Southeast",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[1]);
+				actionMove_Perform(universe, world, place, actor, action, directions[1]);
 			}
 		);
 
 		var actionMoveS = new Action
 		(
 			"Move South",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[2]);
+				actionMove_Perform(universe, world, place, actor, action, directions[2]);
 			}
 		);
 
 		var actionMoveSW = new Action
 		(
 			"Move Southwest",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[3]);
+				actionMove_Perform(universe, world, place, actor, action, directions[3]);
 			}
 		);
 
 		var actionMoveW = new Action
 		(
 			"Move West",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[4]);
+				actionMove_Perform(universe, world, place, actor, action, directions[4]);
 			}
 		);
 
 		var actionMoveNW = new Action
 		(
 			"Move Northwest",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[5]);
+				actionMove_Perform(universe, world, place, actor, action, directions[5]);
 			}
 		);
 
 		var actionMoveN = new Action
 		(
 			"Move North",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[6]);
+				actionMove_Perform(universe, world, place, actor, action, directions[6]);
 			}
 		);
 
 		var actionMoveNE = new Action
 		(
 			"Move Northeast",
-			function perform(universe, world, actor, action)
+			function perform(universe, world, place, actor, action)
 			{
-				actionMove_Perform(universe, world, actor, action, directions[7]);
+				actionMove_Perform(universe, world, place, actor, action, directions[7]);
 			}
 		);
 
@@ -448,6 +486,8 @@ function DemoData(randomizer)
 			actionMoveN,
 			actionMoveNE,
 			actionWait,
+			Action.Instances().ShowMenu,
+			Action.Instances().ShowItems,
 		];
 
 		// hack
@@ -475,13 +515,13 @@ function DemoData(randomizer)
 			"Do Nothing",
 
 			// initialize
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				// do nothing
 			}
@@ -492,13 +532,13 @@ function DemoData(randomizer)
 			"Generate Movers",
 
 			// initialize
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				var actorLoc = actor.loc;
 				var venue = actorLoc.venue(world);
@@ -549,13 +589,13 @@ function DemoData(randomizer)
 			"Move Randomly",
 
 			// initialize
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				// hack
 				var actionsMoves = world.defn.actions._MovesByHeading;
@@ -578,13 +618,13 @@ function DemoData(randomizer)
 			"Move Toward Player",
 
 			// initialize
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
 			// perform
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				if (actor.moverData.movesThisTurn <= 0)
 				{
@@ -639,7 +679,7 @@ function DemoData(randomizer)
 			"Accept User Input",
 
 			// initialize
-			function(universe, world, actor, activity)
+			function(universe, world, place, actor, activity)
 			{
 				activity.target =
 				[
@@ -658,8 +698,10 @@ function DemoData(randomizer)
 					new ActionToInputsMapping("Move North", [ "_8" ]),
 					new ActionToInputsMapping("Move Northeast", [ "_9" ]),
 
+					new ActionToInputsMapping("ShowItems", [ "Tab" ]),
 					new ActionToInputsMapping("Select Next Item", [ "]" ]),
 					new ActionToInputsMapping("Select Previous Item", [ "[" ]),
+
 					new ActionToInputsMapping("Wait", [ "." ]),
 
 					new ActionToInputsMapping("ShowMenu", [ "Escape" ]),
@@ -667,7 +709,7 @@ function DemoData(randomizer)
 				].addLookups( function(element) { return element.inputNames[0]; } );
 			},
 
-			function perform(universe, world, actor, activity)
+			function perform(universe, world, place, actor, activity)
 			{
 				var inputHelper = universe.inputHelper;
 				var inputToActionMappings = activity.target;
@@ -856,6 +898,7 @@ function DemoData(randomizer)
 
 		var itemPropertiesNoStack = new ItemDefn
 		(
+			"[noStack]",
 			"[Appearance]",
 			1, // mass
 			1, // stackSizeMax
@@ -867,6 +910,7 @@ function DemoData(randomizer)
 
 		var itemPropertiesStandard = new ItemDefn
 		(
+			"[standard]",
 			"[Appearance]",
 			1, // mass
 			999, // stackSizeMax
@@ -1035,6 +1079,7 @@ function DemoData(randomizer)
 					new ItemDefn
 					(
 						name,
+						name, // appearance
 						1, // mass
 						1, // stackSizeMax,
 						1, // relativeFrequency
@@ -1164,6 +1209,7 @@ function DemoData(randomizer)
 					new ItemDefn
 					(
 						appearance,
+						appearance,
 						1, // mass
 						1, // stackSizeMax,
 						1, // relativeFrequency
@@ -1260,6 +1306,7 @@ function DemoData(randomizer)
 						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
+							appearance,
 							appearance,
 							1, // mass
 							1, // stackSizeMax
@@ -1358,6 +1405,7 @@ function DemoData(randomizer)
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
+						appearance,
 						appearance,
 						1, // mass
 						1, // stackSizeMax
@@ -1519,6 +1567,7 @@ function DemoData(randomizer)
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
+						appearance,
 						appearance,
 						1, // mass
 						1, // stackSizeMax
@@ -1706,6 +1755,7 @@ function DemoData(randomizer)
 						new ItemDefn
 						(
 							appearance,
+							appearance,
 							1, // mass
 							1, // stackSizeMax
 							1, // relativeFrequency
@@ -1788,6 +1838,7 @@ function DemoData(randomizer)
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
+						appearance,
 						appearance,
 						1, // mass
 						1, // stackSizeMax
@@ -1906,6 +1957,7 @@ function DemoData(randomizer)
 					new ItemDefn
 					(
 						appearance,
+						appearance,
 						1, // mass
 						1, // stackSizeMax
 						1, // relativeFrequency
@@ -2000,6 +2052,7 @@ function DemoData(randomizer)
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
+						appearance,
 						appearance,
 						1, // mass
 						1, // stackSizeMax
@@ -2112,6 +2165,7 @@ function DemoData(randomizer)
 						new ItemDefn
 						(
 							appearance,
+							appearance,
 							1, // mass
 							1, // stackSizeMax
 							1, // relativeFrequency
@@ -2186,6 +2240,7 @@ function DemoData(randomizer)
 				new ItemDefn
 				(
 					"Corpse",
+					"Corpse",
 					1, // mass
 					1, // stackSizeMax,
 					1, // relativeFrequency
@@ -2206,7 +2261,7 @@ function DemoData(randomizer)
 
 		// agents
 
-		var containerDefn = new ContainerDefn();
+		var itemHolder = new ItemHolder();
 
 		var agentDatas = this.buildAgentDatas();
 
@@ -2223,7 +2278,7 @@ function DemoData(randomizer)
 				[
 					new ActorDefn(activityDefns["Move Toward Player"].name),
 					collidableDefns.Blocking,
-					containerDefn,
+					itemHolder,
 					//new EquippableDefn(equipmentSocketDefnSetBiped),
 					new EnemyDefn(),
 					new Killable(5, null),
@@ -2340,7 +2395,7 @@ function DemoData(randomizer)
 			[
 				new ActorDefn(activityDefns["Accept User Input"].name),
 				collidableDefns.Blocking,
-				new ContainerDefn(),
+				new ItemHolder(),
 				drawableDefnPlayer,
 				new EquippableDefn(equipmentSocketDefnSetBiped),
 				new Killable(160, null),
@@ -3285,7 +3340,6 @@ function DemoData(randomizer)
 		[
 			"Actor",
 			"Collidable",
-			"Container",
 			"Device",
 			"Drawable",
 			"Dynamic",
@@ -3294,6 +3348,7 @@ function DemoData(randomizer)
 			"Ephemeral",
 			"Equippable",
 			"Item",
+			"ItemHolder",
 			"Killable",
 			"Mover",
 			"Player",
@@ -3912,10 +3967,7 @@ function DemoData(randomizer)
 						* entityDefns.length
 					);
 
-					var entityDefnForItem = entityDefns
-					[
-						entityDefnIndex
-					];
+					var entityDefnForItem = entityDefns[entityDefnIndex];
 
 					var pos = new Coords().randomize(randomizer).multiply
 					(

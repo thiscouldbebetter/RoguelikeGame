@@ -20,9 +20,9 @@ function CollisionHelper()
 				}
 			}
 		}
-	}
+	};
 
-	CollisionHelper.prototype.doEntitiesCollide = function(entity0, entity1)
+	CollisionHelper.prototype.doCollidablesCollide = function(entity0, entity1)
 	{
 		var returnValue = entity0.loc.posInCells.equals
 		(
@@ -30,37 +30,30 @@ function CollisionHelper()
 		);
 
 		return returnValue;
-	}
+	};
 
-	CollisionHelper.prototype.findCollisionsBetweenEntitiesInSets = function
-	(
-		entitySet0, entitySet1
-	)
+	CollisionHelper.prototype.collisionsOfCollidablesInSets = function(entitySet0, entitySet1)
 	{
 		var returnValues = [];
 
-		var numberOfEntitiesInSet0 = entitySet0 == null ? 0 : entitySet0.length;
-		var numberOfEntitiesInSet1 = entitySet1 == null ? 0 : entitySet1.length;
-
-		for (var i = 0; i < numberOfEntitiesInSet0; i++)
+		for (var i = 0; i < entitySet0.length; i++)
 		{
 			var entityFromSet0 = entitySet0[i];
 
-			for (var j = 0; j < numberOfEntitiesInSet1; j++)
+			for (var j = 0; j < entitySet1.length; j++)
 			{
 				var entityFromSet1 = entitySet1[j];
 
-				if (this.doEntitiesCollide(entityFromSet0, entityFromSet1) == true)
+				if (this.doCollidablesCollide(entityFromSet0, entityFromSet1))
 				{
-					var collision = new Collision
-					(
-						[entityFromSet0, entityFromSet1]
-					);
+					var collision = new Collision();
+					collision.collidables.push(entityFromSet0);
+					collision.collidables.push(entityFromSet1);
 					returnValues.push(collision);
 				}
 			}
 		}
 
 		return returnValues;
-	}
+	};
 }
