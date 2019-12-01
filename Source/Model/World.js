@@ -1,12 +1,11 @@
 
-function World(name, defn, venues, entityForPlayer, randomizer, font)
+function World(name, defn, venues, entityForPlayer, randomizer)
 {
 	this.name = name;
 	this.defn = defn;
 	this.venues = venues.addLookupsByName();
 	this.entityForPlayer = entityForPlayer;
 	this.randomizer = randomizer;
-	this.font = font;
 
 	if (this.entityForPlayer == null)
 	{
@@ -37,14 +36,7 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 {
 	World.new = function(universe)
 	{
-		var randomizer = new RandomizerLCG
-		(
-			1103515245, // multiplier
-			12345, // addend
-			Math.pow(2.0, 31), // modulus
-			0.12345 // firstRandom
-		);
-
+		var randomizer = RandomizerLCG.default();
 		var visualsForTiles = [];
 		var imageTileset = universe.mediaLibrary.imageGetByName("Tiles");
 		var visualImageTileset = new VisualImageFromLibrary(imageTileset.name);
@@ -91,8 +83,7 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 			worldDefn,
 			venues,
 			null, // entityForPlayer
-			randomizer,
-			new DemoData().buildFont()
+			randomizer
 		);
 
 		return world;

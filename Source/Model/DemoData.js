@@ -222,10 +222,12 @@ function DemoData(randomizer)
 					var entityDefns = world.defn.entityDefns;
 					var defnsOfEntitiesToSpawn = [];
 
+					/*
 					world.font.spawnMessageFloater
 					(
 						world, "Dagger", "-" + damageInflicted, actorLoc
 					);
+					*/
 
 					if (damageInflicted > 0)
 					{
@@ -509,7 +511,7 @@ function DemoData(randomizer)
 				{
 					var chanceOfSpawnPerTurn = 1; // hack - actually per tick
 
-					if (Math.random() < chanceOfSpawnPerTurn)
+					if (universe.randomizer().getNextRandom() < chanceOfSpawnPerTurn)
 					{
 						var difficulty = 1; // hack
 
@@ -517,7 +519,7 @@ function DemoData(randomizer)
 						var entityDefnsForAgentsOfDifficulty =
 							world.defn.entityDefnGroups[entityDefnGroupName].entityDefns;
 						var numberOfEntityDefns = entityDefnsForAgentsOfDifficulty.length;
-						var entityDefnIndex = Math.floor(Math.random() * numberOfEntityDefns);
+						var entityDefnIndex = Math.floor(this.randomizer.getNextRandom() * numberOfEntityDefns);
 						var entityDefnForAgentToSpawn = entityDefnsForAgentsOfDifficulty[entityDefnIndex];
 
 						var randomizer = world.randomizer;
@@ -562,7 +564,7 @@ function DemoData(randomizer)
 				var directionIndexRandom = Math.floor
 				(
 					numberOfDirectionsAvailable
-					* this.randomizer.getNextRandom() // Math.random()
+					* this.randomizer.getNextRandom()
 				);
 
 				var actionMoveInRandomDirection = actionsMoves[directionIndexRandom];
@@ -771,7 +773,7 @@ function DemoData(randomizer)
 					collidableDefns.Clear,
 					new Drawable(visuals["Blood"]),
 					new EmplacementDefn(),
-					new EphemeralDefn(30),
+					new Ephemeral(30),
 				]
 			),
 
@@ -1073,6 +1075,7 @@ function DemoData(randomizer)
 			function apply(world, actingEntity, targetEntity)
 			{
 				var actingEntityDefnName = actingEntity.defn(world).name;
+				/*
 				world.font.spawnMessageFloater
 				(
 					world,
@@ -1080,6 +1083,7 @@ function DemoData(randomizer)
 					"NOT IMPLEMENTED - " + actingEntityDefnName,
 					targetEntity.loc
 				);
+				*/
 
 				targetEntity.controlUpdate(world);
 			}
@@ -1556,6 +1560,7 @@ function DemoData(randomizer)
 				function apply(world, actingEntity, targetEntity)
 				{
 					var actingEntityDefnName = actingEntity.defn(world).name;
+					/*
 					world.font.spawnMessageFloater
 					(
 						world,
@@ -1563,6 +1568,7 @@ function DemoData(randomizer)
 						"NOT IMPLEMENTED - " + actingEntityDefnName,
 						targetEntity.loc
 					);
+					*/
 
 					targetEntity.controlUpdate(world);
 				}
@@ -4149,12 +4155,8 @@ function DemoData(randomizer)
 			entities
 		);
 
-		//var locationForMessages = new Location(returnValue.name, new Coords(0, 0));
-
-		//Font.spawnMessageFixed(world, "Tutorial", locationForMessages);
-
 		return returnValue;
-	}
+	};
 
 	DemoData.prototype.buildVisualLookup = function(visualsForTiles)
 	{
@@ -4736,320 +4738,5 @@ function DemoData(randomizer)
 		}
 
 		return returnValue;
-	}
-
-	DemoData.prototype.buildFont = function()
-	{
-		var characterImages = this.imageBuilder.buildImagesFromStringArrays
-		(
-			"Font",
-			[
-			[
-				".rrr..",
-				"r...r.",
-				"rrrrr.",
-				"r...r.",
-				"r...r.",
-			],
-
-			[
-				"rrrr..",
-				"r...r.",
-				"rrrr..",
-				"r...r.",
-				"rrrr..",
-			],
-			[
-				".rrrr.",
-				"r.....",
-				"r.....",
-				"r.....",
-				".rrrr.",
-			],
-			[
-				"rrrr..",
-				"r...r.",
-				"r...r.",
-				"r...r.",
-				"rrrr..",
-			],
-			[
-				"rrrrr.",
-				"r.....",
-				"rrrr..",
-				"r.....",
-				"rrrrr.",
-			],
-			[
-				"rrrrr.",
-				"r.....",
-				"rrrr..",
-				"r.....",
-				"r.....",
-			],
-			[
-				".rrrr.",
-				"r.....",
-				"r..rr.",
-				"r...r.",
-				".rrrr.",
-			],
-			[
-				"r...r.",
-				"r...r.",
-				"rrrrr.",
-				"r...r.",
-				"r...r.",
-			],
-			[
-				"rrrrr.",
-				"..r...",
-				"..r...",
-				"..r...",
-				"rrrrr.",
-			],
-			[
-				".rrrrr.",
-				"....r..",
-				"....r..",
-				".r..r..",
-				"..rr...",
-			],
-			[
-				"r...r.",
-				"r..r..",
-				"rrr...",
-				"r..r..",
-				"r...r.",
-			],
-			[
-				"r.....",
-				"r.....",
-				"r.....",
-				"r.....",
-				"rrrrr.",
-			],
-			[
-				"r...r.",
-				"rr.rr.",
-				"r.r.r.",
-				"r...r.",
-				"r...r.",
-			],
-			[
-				"r...r.",
-				"rr..r.",
-				"r.r.r.",
-				"r..rr.",
-				"r...r.",
-			],
-			[
-				".rrr..",
-				"r...r.",
-				"r...r.",
-				"r...r.",
-				".rrr..",
-			],
-			[
-				"rrrr..",
-				"r...r.",
-				"rrrr..",
-				"r.....",
-				"r......",
-			],
-			[
-				".rrr..",
-				"r...r.",
-				"r...r.",
-				".rrr..",
-				"..r...",
-			],
-			[
-				"rrrr..",
-				"r...r.",
-				"rrrr..",
-				"r..r..",
-				"r...r.",
-			],
-			[
-				".rrrr.",
-				"r.....",
-				".rrr..",
-				"....r.",
-				"rrrr..",
-			],
-			[
-				"rrrrr.",
-				"..r...",
-				"..r...",
-				"..r...",
-				"..r...",
-			],
-			[
-				"r...r.",
-				"r...r.",
-				"r...r.",
-				"r...r.",
-				".rrr..",
-			],
-			[
-				"r...r.",
-				"r...r.",
-				".r.r..",
-				".r.r..",
-				"..r...",
-			],
-			[
-				"r...r.",
-				"r...r.",
-				"r.r.r.",
-				"rr.rr.",
-				"r...r.",
-			],
-			[
-				"r...r.",
-				".r.r..",
-				"..r...",
-				".r.r..",
-				"r...r.",
-			],
-			[
-				"r...r.",
-				".r.r..",
-				"..r...",
-				"..r...",
-				"..r...",
-			],
-			[
-				"rrrrr.",
-				"...r..",
-				"..r...",
-				".r....",
-				"rrrrr.",
-			],
-
-			// space
-
-			[
-				"......",
-				"......",
-				"......",
-				"......",
-				"......",
-			],
-
-			// numerals
-
-			[
-				".rrr..",
-				"r...r.",
-				"r.r.r.",
-				"r...r.",
-				".rrr..",
-			],
-			[
-				"..r...",
-				".rr...",
-				"..r...",
-				"..r...",
-				"rrrrr.",
-			],
-			[
-				"rrrr..",
-				"....r.",
-				".rrrr.",
-				"r.....",
-				"rrrrr.",
-			],
-			[
-				"rrrr..",
-				"....r.",
-				"..rr..",
-				"....r.",
-				"rrrr..",
-			],
-			[
-				"r...r.",
-				"r...r.",
-				"rrrrr.",
-				"....r.",
-				"....r.",
-			],
-			[
-				"rrrrr.",
-				"r.....",
-				"rrrr..",
-				"....r.",
-				"rrrr..",
-			],
-			[
-				".rrr..",
-				"r.....",
-				"rrrr..",
-				"r...r.",
-				".rrr..",
-			],
-			[
-				"rrrrr.",
-				"....r.",
-				"....r.",
-				"....r.",
-				"....r.",
-			],
-			[
-				".rrr..",
-				"r...r.",
-				".rrr..",
-				"r...r.",
-				".rrr..",
-			],
-			[
-				".rrr..",
-				"r...r.",
-				".rrrr.",
-				"....r.",
-				"....r.",
-			],
-
-			// symbols
-
-			[
-				"......",
-				"......",
-				"......",
-				"......",
-				"r.....",
-			],
-
-			[
-				"......",
-				"......",
-				"rrrrr.",
-				"......",
-				"......",
-			],
-
-			[
-				"..g...",
-				"..g...",
-				"ggggg.",
-				"..g...",
-				"..g...",
-			],
-
-			]
-		);
-
-		var returnValue = new FontRoguelike
-		(
-			"ABCDEFGHIJKLMNOPQRSTUVWXYZ "
-			+ "0123456789"
-			+ ".-+",
-			new Coords(6, 5), // characterSize
-			characterImages
-		);
-
-		return returnValue;
-	}
-
+	};
 }
