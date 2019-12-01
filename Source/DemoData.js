@@ -229,12 +229,13 @@ function DemoData(randomizer)
 
 					if (damageInflicted > 0)
 					{
-						entityInCell.killableData.integrityAdd
+						var killable = entityInCell.Killable;
+						killable.integrityAdd
 						(
 							0 - damageInflicted
 						);
 
-						if (entityInCell.killableData.integrity <= 0)
+						if (killable.integrity <= 0)
 						{
 							defnsOfEntitiesToSpawn.push
 							(
@@ -2219,7 +2220,7 @@ function DemoData(randomizer)
 					containerDefn,
 					//new EquippableDefn(equipmentSocketDefnSetBiped),
 					new EnemyDefn(),
-					new KillableDefn(5, null),
+					new Killable(5, null),
 					new MoverDefn
 					(
 						difficulty,
@@ -2347,7 +2348,7 @@ function DemoData(randomizer)
 				new ContainerDefn(),
 				drawableDefnPlayer,
 				new EquippableDefn(equipmentSocketDefnSetBiped),
-				new KillableDefn(160, null),
+				new Killable(160, null),
 				moverDefnPlayer,
 				new PlayerDefn(),
 			]

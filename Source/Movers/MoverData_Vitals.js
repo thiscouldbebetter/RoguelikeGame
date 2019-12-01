@@ -13,7 +13,7 @@ function MoverData_Vitals(defn)
 
 		if (this.satiety <= 0)
 		{
-			moverEntity.killableData.integrity = 0;
+			moverEntity.Killable.integrity = 0;
 		}
 		else if (this.satiety >= moverEntity.defn(world).Mover.vitals.satietyMax)
 		{
@@ -41,10 +41,10 @@ function MoverData_Vitals(defn)
 						new Coords(10, 5),
 						new DataBinding
 						(
-							entity.killableData,
+							entity.Killable,
 							function get(c)
 							{
-								return "Life: " + c.integrity + "/" + c.defn.integrityMax;
+								return "Life: " + c.integrity + "/" + c.integrityMax;
 							}
 						)
 					),
