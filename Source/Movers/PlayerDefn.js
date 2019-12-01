@@ -12,6 +12,7 @@ function PlayerDefn()
 		if (entity.playerData == null)
 		{
 			entity.playerData = new PlayerData();
+			entity.loc.posInCells.z = 2;
 		}
 
 		entity.moverData.movesThisTurn = 0;
@@ -47,7 +48,7 @@ function PlayerDefn()
 			for (var i = 0; i < entitiesNotYetVisible.length; i++)
 			{
 				var entity = entitiesNotYetVisible[i];
-				entity.drawableData.isVisible = false;
+				entity.Drawable.isVisible = false;
 			}
 
 			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
@@ -58,7 +59,6 @@ function PlayerDefn()
 				entity.loc.posInCells,
 				8 //sightRange
 			);
-
 		}
 	}
 

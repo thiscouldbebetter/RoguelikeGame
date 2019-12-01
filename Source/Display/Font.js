@@ -49,11 +49,9 @@ function FontRoguelike(charactersAvailable, characterSize, characterImages)
 
 		var entityDefnProperties =
 		[
-			new DrawableDefn
+			new Drawable
 			(
-				new VisualSet(text, visualsForCharacters),
-				null, // sizeInPixels
-				2 // zIndex
+				new VisualGroup(visualsForCharacters)
 			),
 			new EphemeralDefn(100)
 		]
@@ -106,8 +104,6 @@ function FontRoguelike(charactersAvailable, characterSize, characterImages)
 			),
 			loc.posInCells.clone()
 		);
-
-		//entityMessage.drawableData.isVisible = true;
 
 		world.venueCurrent.entitiesToSpawn.push(entityMessage);
 	};

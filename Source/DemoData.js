@@ -769,7 +769,7 @@ function DemoData(randomizer)
 				"Blood",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals["Blood"], sizeInPixels),
+					new Drawable(visuals["Blood"]),
 					new EmplacementDefn(),
 					new EphemeralDefn(30),
 				]
@@ -780,7 +780,7 @@ function DemoData(randomizer)
 				"Door",
 				[
 					collidableDefns.Concealing,
-					new DrawableDefn(visuals["Door"], sizeInPixels) ,
+					new Drawable(visuals["Door"]),
 					new EmplacementDefn(),
 				]
 			),
@@ -790,7 +790,7 @@ function DemoData(randomizer)
 				"Gravestone",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals["Gravestone"], sizeInPixels),
+					new Drawable(visuals["Gravestone"]),
 					new EmplacementDefn(),
 				]
 			),
@@ -800,7 +800,7 @@ function DemoData(randomizer)
 				"StairsDown",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals["StairsDown"], sizeInPixels),
+					new Drawable(visuals["StairsDown"]),
 					new EmplacementDefn(),
 					new PortalDefn(),
 				]
@@ -811,7 +811,7 @@ function DemoData(randomizer)
 				"StairsExit",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals["StairsUp"], sizeInPixels),
+					new Drawable(visuals["StairsUp"]),
 					new EmplacementDefn(),
 				]
 			),
@@ -821,7 +821,7 @@ function DemoData(randomizer)
 				"StairsUp",
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals["StairsUp"], sizeInPixels),
+					new Drawable(visuals["StairsUp"]),
 					new EmplacementDefn(),
 					new PortalDefn(),
 				]
@@ -947,7 +947,7 @@ function DemoData(randomizer)
 				"Chest",
 				[
 					itemPropertiesNoStack,
-					new DrawableDefn(visuals["Chest"], sizeInPixels),
+					new Drawable(visuals["Chest"]),
 				]
 			),
 		]);
@@ -1029,7 +1029,7 @@ function DemoData(randomizer)
 							effectNourish
 						]
 					),
-					new DrawableDefn(visuals[name], sizeInPixels),
+					new Drawable(visuals[name]),
 					new ItemDefn
 					(
 						name,
@@ -1156,7 +1156,7 @@ function DemoData(randomizer)
 							new Effect(effectDefn)
 						]
 					),
-					new DrawableDefn(visuals[appearance], sizeInPixels),
+					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						appearance,
@@ -1253,7 +1253,7 @@ function DemoData(randomizer)
 					"Ring of " + namesOfRings[i],
 					[
 						collidableDefns.Clear,
-						new DrawableDefn(visuals[appearance], sizeInPixels),
+						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
 							appearance,
@@ -1351,7 +1351,7 @@ function DemoData(randomizer)
 							effectDoNothing
 						]
 					),
-					new DrawableDefn(visuals[appearance], sizeInPixels),
+					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						appearance,
@@ -1512,7 +1512,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new DeviceDefn(10, true, [ effectLearnSpell ]),
-					new DrawableDefn(visuals[appearance], sizeInPixels),
+					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						appearance,
@@ -1696,7 +1696,7 @@ function DemoData(randomizer)
 								effect
 							]
 						),
-						new DrawableDefn(visuals[appearance], sizeInPixels),
+						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
 							appearance,
@@ -1779,7 +1779,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals[name], sizeInPixels),
+					new Drawable(visuals[name]),
 					new ItemDefn
 					(
 						appearance,
@@ -1896,7 +1896,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals[name], sizeInPixels),
+					new Drawable(visuals[name]),
 					new ItemDefn
 					(
 						appearance,
@@ -1991,7 +1991,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DrawableDefn(visuals[name], sizeInPixels),
+					new Drawable(visuals[name]),
 					new ItemDefn
 					(
 						appearance,
@@ -2102,7 +2102,7 @@ function DemoData(randomizer)
 					[
 						collidableDefns.Clear,
 
-						new DrawableDefn(visuals[appearance], sizeInPixels),
+						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
 							appearance,
@@ -2130,7 +2130,7 @@ function DemoData(randomizer)
 				"Coins",
 				[
 					itemPropertiesStandard,
-					new DrawableDefn(visuals["Coins"], sizeInPixels),
+					new Drawable(visuals["Coins"]),
 				].concatenateAll()
 			)
 		);
@@ -2176,7 +2176,7 @@ function DemoData(randomizer)
 			"Corpse",
 			[
 				collidableDefns.Clear,
-				new DrawableDefn(visuals["Corpse"], sizeInPixels),
+				new Drawable(visuals["Corpse"]),
 				new ItemDefn
 				(
 					"Corpse",
@@ -2237,12 +2237,7 @@ function DemoData(randomizer)
 						]
 					),
 
-					new DrawableDefn
-					(
-						visuals[agentName],
-						sizeInPixels,
-						1 // zIndex
-					),
+					new Drawable(visuals[agentName], 1),
 				]
 			);
 
@@ -2330,13 +2325,7 @@ function DemoData(randomizer)
 				visuals["Reticle0"]
 		]);
 
-		var drawableDefnPlayer = new DrawableDefn
-		(
-
-			visualForPlayer,
-			sizeInPixels,
-			1 // zIndex
-		);
+		var drawableDefnPlayer = new Drawable(visualForPlayer);
 
 		var entityDefnPlayer = new EntityDefn
 		(
