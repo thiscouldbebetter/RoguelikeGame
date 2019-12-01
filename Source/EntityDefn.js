@@ -1,9 +1,5 @@
 
-function EntityDefn
-(
-	name,
-	properties
-)
+function EntityDefn(name, properties)
 {
 	this.name = name;
 	this.properties = properties;
@@ -13,7 +9,7 @@ function EntityDefn
 		for (var i = 0; i < this.properties.length; i++)
 		{
 			var property = this.properties[i];
-			var propertyName = property.name();
+			var propertyName = ( property.name == null ? property.constructor.name : property.name() );
 			this[propertyName] = property;
 			this.properties[propertyName] = property;
 		}

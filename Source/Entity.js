@@ -15,10 +15,12 @@ function Entity(name, defnName, pos, propertyValues)
 		{
 			var propertyValue = propertyValues[i];
 			var propertyName = propertyValue.constructor.name;
-			propertyName =
-				propertyName.substring(0, 1).toLowerCase()
-				+ propertyName.substring(1);
-
+			if (propertyName.endsWith("Defn")) // hack
+			{
+				propertyName =
+					propertyName.substring(0, 1).toLowerCase()
+					+ propertyName.substring(1);
+			}
 			this[propertyName] = propertyValue;
 		}
 	}

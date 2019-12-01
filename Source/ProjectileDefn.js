@@ -10,7 +10,7 @@ function ProjectileDefn()
 		var entityOtherDefnProperties = entityOther.defn(world).properties;
 		if (entityOtherDefnProperties["Enemy"] != null)
 		{
-			entityOther.killableData.integrity = 0;
+			entityOther.Killable.integrity = 0;
 		}
 	}
 }

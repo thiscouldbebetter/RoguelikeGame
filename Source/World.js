@@ -51,7 +51,7 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 		var imageTilesetSizeInTiles = new Coords(40, 27);
 		var tileSizeInPixels =
 			imageTileset.sizeInPixels.clone().divide(imageTilesetSizeInTiles);
-		var imageHelper = new ImageHelper();
+		var imageBuilder = new ImageBuilder(Color.Instances()._All);
 		for (var y = 0; y < imageTilesetSizeInTiles.y; y++)
 		{
 			var visualsForTilesRow = [];
@@ -61,19 +61,11 @@ function World(name, defn, venues, entityForPlayer, randomizer, font)
 				var tilePosInTiles = new Coords(x, y);
 				var tilePosInPixels =
 					tilePosInTiles.clone().multiply(tileSizeInPixels);
-				var imageTile = imageHelper.copyRegionFromImage
+				var imageTile = imageBuilder.copyRegionFromImage
 				(
 					imageTileset, tilePosInPixels, tileSizeInPixels
 				);
 				var visualTile = new VisualImageImmediate(imageTile);
-				/*
-				var visualTile = new VisualImagePartial
-				(
-					visualImageTileset,
-					Bounds.fromMinAndSize(tilePosInPixels, tileSizeInPixels)
-				);
-				*/
-				//var visualTile = new VisualRectangle(tileSizeInPixels, null, "Violet");
 				visualsForTilesRow.push(visualTile);
 			}
 

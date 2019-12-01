@@ -26,12 +26,15 @@ function MoverDefn
 }
 
 {
-	MoverDefn.prototype.name = function() { return "Mover"; }
+	MoverDefn.prototype.name = function() { return "Mover"; };
 
 	MoverDefn.prototype.initializeEntityForVenue = function(universe, world, entity, venue)
 	{
-		entity.moverData = new MoverData(entity.defn(world).Mover);
-	}
+		if (entity.moverData == null)
+		{
+			entity.moverData = new MoverData(entity.defn(world).Mover);
+		}
+	};
 
 	MoverDefn.prototype.updateEntityForVenue = function(universe, world, entity, venue)
 	{
@@ -41,5 +44,5 @@ function MoverDefn
 		(
 			venue.map.sizeInCellsMinusOnes
 		);
-	}
+	};
 }

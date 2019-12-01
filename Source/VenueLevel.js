@@ -71,7 +71,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		for (var c = 0; c < entityProperties.length; c++)
 		{
 			var entityProperty = entityProperties[c];
-			var entityPropertyName = entityProperty.name();
+			var entityPropertyName =
+				( entityProperty.name == null ? entityProperty.constructor.name : entityProperty.name() );
 
 			var entityListForPropertyName = this.entitiesByPropertyName[entityPropertyName];
 
@@ -79,7 +80,14 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			{
 				entityListForPropertyName.push(entityToSpawn);
 
-				if (entityProperty.initializeEntityForVenue != null)
+				if (entityProperty.initializeEntityForVenue == null)
+				{
+					if (entityProperty.clone != null)
+					{
+						entityToSpawn[entityPropertyName] = entityProperty.clone();
+					}
+				}
+				else
 				{
 					entityProperty.initializeEntityForVenue
 					(
@@ -100,7 +108,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var c = 0; c < entityDefnProperties.length; c++)
 			{
 				var entityProperty = entityDefnProperties[c];
-				var entityPropertyName = entityProperty.name();
+				var entityPropertyName =
+					( entityProperty.name == null ? entityProperty.constructor.name : entityProperty.name() );
 
 				if (entityProperty.initializeEntityForVenue != null)
 				{
