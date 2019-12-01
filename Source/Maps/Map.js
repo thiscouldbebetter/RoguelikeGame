@@ -7,7 +7,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	this.sizeInCells = new Coords
 	(
-		cellsAsStrings[0].length, cellsAsStrings.length, 1
+		cellsAsStrings[0].length, cellsAsStrings.length, Number.POSITIVE_INFINITY // 1
 	);
 
 	this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract
@@ -243,18 +243,22 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		terrainVisual.draw(universe, world, display, drawable);
 
 		var entitiesInCell = cell.entitiesPresent;
+
 		var entitiesSortedBottomToTop = this._entitiesSortedBottomToTop;
+
+		// note - Array.sort() fails to order stacks of items correctly.
+
 		entitiesSortedBottomToTop.length = 0;
 
 		for (var i = 0; i < entitiesInCell.length; i++)
 		{
 			var entityToSort = entitiesInCell[i];
-			var entityToSortZIndex = entityToSort.defn(world).Drawable.zIndex;
+			var entityToSortZIndex = entityToSort.loc.posInCells.z;
 			var j;
 			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
 			{
 				var entitySorted = entitiesSortedBottomToTop[j];
-				var entitySortedZIndex = entitySorted.defn(world).Drawable.zIndex;
+				var entitySortedZIndex = entitySorted.loc.posInCells.z;
 				if (entityToSortZIndex <= entitySortedZIndex)
 				{
 					break;
@@ -268,7 +272,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			var entity = entitiesSortedBottomToTop[i];
 			if (entity.moverData == null || drawMovers)
 			{
-				var visual = entity.drawableData.visual;
+				var visual = entity.Drawable.visual;
 				visual.draw(universe, world, display, drawable);
 			}
 
@@ -286,7 +290,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	Map.prototype.drawEntity = function(display, entity)
 	{
-		var visual = entity.drawableData.visual;
+		var visual = entity.Drawable.visual;
 		this._drawable.loc.pos.overwriteWith
 		(
 			entity.loc.posInCells
