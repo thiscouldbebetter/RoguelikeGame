@@ -31,6 +31,19 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 	this.idHelper = new IDHelper();
 	this.sightHelper = new SightHelper();
 	this.timerTicksSoFar = 0;
+
+	var itemDefns = this.defn.entityDefns.map
+	(
+		(x) => x.ItemDefn
+	).filter
+	(
+		(x) => x != null
+	).addLookupsByName();
+
+	this.defns = 
+	{
+		"itemDefns" : itemDefns
+	};
 }
 
 {

@@ -9,7 +9,12 @@ function EntityDefn(name, properties)
 		for (var i = 0; i < this.properties.length; i++)
 		{
 			var property = this.properties[i];
-			var propertyName = ( property.name == null ? property.constructor.name : property.name() );
+			var propertyName =
+			(
+				property.name == null || property.name.constructor.name != "Function"
+				? property.constructor.name
+				: property.name()
+			);
 			this[propertyName] = property;
 			this.properties[propertyName] = property;
 		}

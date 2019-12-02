@@ -73,7 +73,11 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		{
 			var entityProperty = entityProperties[c];
 			var entityPropertyName =
-				( entityProperty.name == null ? entityProperty.constructor.name : entityProperty.name() );
+			(
+				entityProperty.name == null || entityProperty.name.constructor.name != "Function"
+				? entityProperty.constructor.name
+				: entityProperty.name()
+			);
 
 			var entityListForPropertyName = this.entitiesByPropertyName[entityPropertyName];
 
@@ -202,14 +206,21 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			{
 				var entityDefnProperty = entityDefnProperties[c];
 				var entityDefnPropertyName = 
-					(entityDefnProperty.name == null ? entityDefnProperty.constructor.name : entityDefnProperty.name() );
+				(
+					entityDefnProperty.name == null || entityDefnProperty.name.constructor.name != "Function"
+					? entityDefnProperty.constructor.name
+					: entityDefnProperty.name()
+				);
 				var entitiesWithProperty = this.entitiesByPropertyName[entityDefnPropertyName];
 
-				entitiesWithProperty.splice
-				(
-					entitiesWithProperty.indexOf(entityToRemove),
-					1
-				);
+				if (entitiesWithProperty != null) // hack
+				{
+					var entityIndex = entitiesWithProperty.indexOf(entityToRemove);
+					if (entityIndex >= 0) // hack
+					{
+						entitiesWithProperty.splice(entityIndex, 1);
+					}
+				}
 			}
 		}
 

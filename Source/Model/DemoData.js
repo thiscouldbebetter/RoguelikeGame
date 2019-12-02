@@ -127,8 +127,7 @@ function DemoData(randomizer)
 			for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
 			{
 				var entityPresent = entitiesPresentAtCellPos[i];
-				var entityPresentDefn = entityPresent.defn(world);
-				var itemToPickUp = entityPresentDefn.Item;
+				var itemToPickUp = entityPresent.Item;
 				if (itemToPickUp != null)
 				{
 					var costToPickUp = 1;
@@ -149,7 +148,9 @@ function DemoData(randomizer)
 						}
 
 						pickUpItem(actor.ItemHolder, world, actor, entityPresent);
-						actor.playerData.messageLog.messageAdd("You pick up the " + itemToPickUp.appearance + ".");
+						var itemToPickUpDefn = itemToPickUp.defn(world);
+						var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
+						actor.playerData.messageLog.messageAdd(message);
 					}
 				}
 			}
@@ -986,17 +987,16 @@ function DemoData(randomizer)
 		entityDefnSets
 	)
 	{
-		entityDefnSets.push
-		([
-			new EntityDefn
-			(
-				"Chest",
-				[
-					itemPropertiesNoStack,
-					new Drawable(visuals["Chest"]),
-				]
-			),
-		]);
+		var entityDefnChest = new EntityDefn
+		(
+			"Chest",
+			[
+				itemPropertiesNoStack,
+				new Drawable(visuals["Chest"]),
+			]
+		);
+
+		entityDefnSets.push([entityDefnChest]);
 
 		var returnValue = new EntityDefnGroup("Containers", 1, entityDefnSets[0]);
 
@@ -1735,37 +1735,37 @@ function DemoData(randomizer)
 			var appearance = appearances[appearanceIndex] + " Wand";
 			appearances.splice(appearanceIndex, 1);
 
-			entityDefnSetWands.push
+			var wandName = "Wand of " + name;
+			var entityDefnWand = new EntityDefn
 			(
-				new EntityDefn
-				(
-					"Wand of " + name,
-					[
-						collidableDefns.Clear,
-						new DeviceDefn
-						(
-							10, // chargesMax
-							false, // consumedWhenAllChargesUsed
-							// effectsToApply
-							[
-								effect
-							]
-						),
-						new Drawable(visuals[appearance]),
-						new ItemDefn
-						(
-							appearance,
-							appearance,
-							1, // mass
-							1, // stackSizeMax
-							1, // relativeFrequency
-							[ "Wand" ], // categoryNames
-							ItemDefn.InitializeDevice,
-							ItemDefn.UseDevice
-						),
-					]
-				)
+				wandName,
+				[
+					collidableDefns.Clear,
+					new DeviceDefn
+					(
+						10, // chargesMax
+						false, // consumedWhenAllChargesUsed
+						// effectsToApply
+						[
+							effect
+						]
+					),
+					new Drawable(visuals[appearance]),
+					new ItemDefn
+					(
+						wandName,
+						appearance,
+						1, // mass
+						1, // stackSizeMax
+						1, // relativeFrequency
+						[ "Wand" ], // categoryNames
+						ItemDefn.InitializeDevice,
+						ItemDefn.UseDevice
+					),
+				]
 			);
+
+			entityDefnSetWands.push(entityDefnWand);
 		}
 
 		entityDefnSets.push(entityDefnSetWands);
@@ -3987,7 +3987,10 @@ function DemoData(randomizer)
 					(
 						entityDefnForItem.name,
 						entityDefnForItem.name,
-						pos
+						pos,
+						[
+							new Item(entityDefnForItem.name, 1)
+						]
 					);
 
 					entities.push(entityForItem);
