@@ -1066,7 +1066,7 @@ function DemoData(randomizer)
 				name,
 				[
 					collidableDefns.Clear,
-					new DeviceDefn
+					new Device
 					(
 						1, // chargesMax
 						true, // consumedWhenAllChargesUsed
@@ -1196,7 +1196,7 @@ function DemoData(randomizer)
 				"Potion of " + name,
 				[
 					collidableDefns.Clear,
-					new DeviceDefn
+					new Device
 					(
 						1, // chargesMax
 						true, // consumedWhenAllChargesUsed
@@ -1393,7 +1393,7 @@ function DemoData(randomizer)
 				"Scroll of " + namesOfScrolls[i],
 				[
 					collidableDefns.Clear,
-					new DeviceDefn
+					new Device
 					(
 						1, // chargesMax
 						true, // consumedWhenAllChargesUsed
@@ -1563,7 +1563,7 @@ function DemoData(randomizer)
 				"Spellbook of " + nameOfSpellbook,
 				[
 					collidableDefns.Clear,
-					new DeviceDefn(10, true, [ effectLearnSpell ]),
+					new Device(10, true, [ effectLearnSpell ]),
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
@@ -1741,7 +1741,7 @@ function DemoData(randomizer)
 				wandName,
 				[
 					collidableDefns.Clear,
-					new DeviceDefn
+					new Device
 					(
 						10, // chargesMax
 						false, // consumedWhenAllChargesUsed
