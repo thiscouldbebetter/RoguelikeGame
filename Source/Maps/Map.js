@@ -43,7 +43,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	this._cellPos = new Coords();
 	this._drawPos = new Coords();
 	this._drawLoc = { pos: this._drawPos };
-	this._drawable = { loc: this._drawLoc };
+	this._drawableEntity = new Entity( "_drawableEntity", [ new Locatable(this._drawLoc) ] );
 	this._entitiesSortedBottomToTop = [];
 }
 
@@ -223,8 +223,8 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var cell = map.cellAtPos(cellPos);
 		var cellTerrain = cell.terrain;
 		var terrainVisual = cellTerrain.visual;
-		var drawable = this._drawable;
-		var drawPos = drawable.loc.pos;
+		var drawableEntity = this._drawableEntity;
+		var drawPos = drawableEntity.Locatable.loc.pos;
 
 		drawPos.overwriteWith
 		(
@@ -240,7 +240,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			display.displayToUse().sizeInPixels.clone().half()
 		);
 
-		terrainVisual.draw(universe, world, display, drawable);
+		terrainVisual.draw(universe, world, display, null, drawableEntity);
 
 		var entitiesInCell = cell.entitiesPresent;
 
@@ -273,7 +273,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			if (entity.moverData == null || drawMovers)
 			{
 				var visual = entity.Drawable.visual;
-				visual.draw(universe, world, display, drawable);
+				visual.draw(universe, world, display, null, drawableEntity);
 			}
 
 		} // end for entitiesSortedBottomToTop
@@ -291,7 +291,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	Map.prototype.drawEntity = function(display, entity)
 	{
 		var visual = entity.Drawable.visual;
-		this._drawable.loc.pos.overwriteWith
+		this._drawableEntity.Locatable.loc.pos.overwriteWith
 		(
 			entity.loc.posInCells
 		).multiply
@@ -303,7 +303,8 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		(
 			null, null, // universe, world
 			display,
-			this._drawable
+			null, // drawable
+			this._drawableEntity // entity
 		);
 	};
 }

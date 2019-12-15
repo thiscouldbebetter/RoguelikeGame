@@ -67,7 +67,7 @@ function WorldDefnVenueStructureBranch
 			);
 			var venueToBranchFrom = this.parent.venues[venueIndexToBranchFrom];
 
-			var entityPortalToParentBranch = new Entity
+			var entityPortalToParentBranch = new EntityRoguelike
 			(
 				"StairsUp",
 				worldDefn.entityDefns["StairsUp"].name,

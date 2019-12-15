@@ -1,5 +1,5 @@
 
-function Entity(name, defnName, pos, propertyValues)
+function EntityRoguelike(name, defnName, pos, propertyValues)
 {
 	this.name = name;
 	this.defnName = defnName;
@@ -27,16 +27,14 @@ function Entity(name, defnName, pos, propertyValues)
 }
 
 {
-	Entity.EntityText = "Entity";
-
-	Entity.fromDefn = function(name, defn, pos, propertyValues)
+	EntityRoguelike.fromDefn = function(name, defn, pos, propertyValues)
 	{
-		var returnValue = new Entity(name, null, pos, propertyValues);
+		var returnValue = new EntityRoguelike(name, null, pos, propertyValues);
 		returnValue._defn = defn;
 		return returnValue;
 	}
 
-	Entity.prototype.defn = function(world)
+	EntityRoguelike.prototype.defn = function(world)
 	{
 		var returnValue;
 

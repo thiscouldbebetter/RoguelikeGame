@@ -12,7 +12,7 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 		var venue0 = this.venues[0];
 		var portal0 = venue0.entitiesToSpawn[0]; // hack
 
-		this.entityForPlayer = new Entity
+		this.entityForPlayer = new EntityRoguelike
 		(
 			"Player",
 			this.defn.entityDefns["Player"].name,

@@ -296,7 +296,7 @@ function DemoData(randomizer)
 					{
 						var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
 
-						var entityToSpawn = new Entity
+						var entityToSpawn = new EntityRoguelike
 						(
 							defnOfEntityToSpawn.name + "_Spawned",
 							defnOfEntityToSpawn.name,
@@ -572,7 +572,7 @@ function DemoData(randomizer)
 							venue.map.sizeInCells
 						).floor();
 
-						var entityForAgent = new Entity
+						var entityForAgent = new EntityRoguelike
 						(
 							entityDefnForAgentToSpawn.name + "0",
 							entityDefnForAgentToSpawn.name,
@@ -3988,7 +3988,7 @@ function DemoData(randomizer)
 
 		if (venueIndex == 0)
 		{
-			var stairsExit = new Entity
+			var stairsExit = new EntityRoguelike
 			(
 				"StairsExit",
 				entityDefns["StairsExit"].name,
@@ -4005,7 +4005,7 @@ function DemoData(randomizer)
 		}
 		else
 		{
-			var stairsUp = new Entity
+			var stairsUp = new EntityRoguelike
 			(
 				"StairsUp",
 				entityDefns["StairsUp"].name,
@@ -4025,7 +4025,7 @@ function DemoData(randomizer)
 
 		entities.push
 		(
-			Entity.fromDefn
+			EntityRoguelike.fromDefn
 			(
 				"Mover Generator",
 				MoverGenerator.EntityDefn(),
@@ -4035,7 +4035,7 @@ function DemoData(randomizer)
 
 		//if (venueIndex < numberOfVenues - 1)
 		{
-			var stairsDown = new Entity
+			var stairsDown = new EntityRoguelike
 			(
 				"StairsDown",
 				entityDefns["StairsDown"].name,
@@ -4055,7 +4055,7 @@ function DemoData(randomizer)
 
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{
-			var entityForDoor = new Entity
+			var entityForDoor = new EntityRoguelike
 			(
 				"Door" + i,
 				entityDefns["Door"].name,
@@ -4146,7 +4146,7 @@ function DemoData(randomizer)
 						oneOneZero
 					)
 
-					var entityForItem = new Entity
+					var entityForItem = new EntityRoguelike
 					(
 						entityDefnForItem.name,
 						entityDefnForItem.name,
@@ -4187,7 +4187,7 @@ function DemoData(randomizer)
 
 		var entityDefnName = "Start"; // todo
 
-		var entityStart = new Entity
+		var entityStart = new EntityRoguelike
 		(
 			entityDefnName,
 			entityDefnName,
@@ -4328,7 +4328,7 @@ function DemoData(randomizer)
 		[
 			// stairs
 
-			new Entity
+			new EntityRoguelike
 			(
 				"StairsDown",
 				entityDefns["StairsDown"].name,
