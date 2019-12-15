@@ -18,7 +18,7 @@ function Device(chargesMax, consumedWhenAllChargesUsed, effectsToApply)
 			effect.applyToEntity(world, deviceEntity, targetEntity);
 		}
 	};
-	
+
 	Device.prototype.clone = function()
 	{
 		return new Device(this.chargesMax, this.consumedWhenAllChargesUsed, this.effectsToApply);

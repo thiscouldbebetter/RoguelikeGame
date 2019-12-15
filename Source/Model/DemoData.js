@@ -739,6 +739,74 @@ function DemoData(randomizer)
 			}
 		);
 
+		var activityDefnUserInputDemo = new ActivityDefn
+		(
+			"Demo User Input",
+
+			function initialize(universe, world, place, actor, activity)
+			{
+				// do nothing
+			},
+
+			function perform(universe, world, place, actor, activity)
+			{
+				if (actor.moverData.movesThisTurn <= 0)
+				{
+					return;
+				}
+
+				var actorLoc = actor.loc;
+				var venue = actorLoc.venue(world);
+				var emplacements = venue.entitiesByPropertyName[new EmplacementDefn().name()];
+				var stairsDown = emplacements.filter( (x) => { return (x.defnName == "StairsDown"); } );
+
+				if (stairsDown.length > 0)
+				{
+					var stairDown = stairsDown[0];
+
+					var path = new Path
+					(
+						venue.map,
+						actorLoc.posInCells,
+						stairDown.loc.posInCells
+					);
+
+					path.calculate();
+
+					var actionNext = null;
+					var actionsAll = world.defn.actions;
+					var pathNodes = path.nodes;
+
+					if (pathNodes.length <= 1)
+					{
+						actionNext = actionsAll["Use Emplacement"];
+					}
+					else
+					{
+						var pathNode1 = pathNodes[1];
+
+						var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
+						(
+							actor.loc.posInCells
+						).directions();
+
+						var heading = Heading.fromCoords(directionsToPathNode1);
+
+						// hack
+						var actionsMoves = actionsAll._MovesByHeading;
+						var actionMoveInDirection = actionsMoves[heading];
+						actionNext = actionMoveInDirection;
+					}
+
+					if (actionNext != null)
+					{
+						actor.actorData.actions.push(actionNext);
+					}
+				}
+			}
+		);
+
+
 		var returnValues =
 		[
 			activityDefnDoNothing,
@@ -746,6 +814,7 @@ function DemoData(randomizer)
 			activityDefnMoveRandomly,
 			activityDefnMoveTowardPlayer,
 			activityDefnUserInputAccept,
+			activityDefnUserInputDemo
 		];
 
 		returnValues.addLookupsByName();
@@ -2382,18 +2451,22 @@ function DemoData(randomizer)
 
 		var visualForPlayer = new VisualGroup
 		([
-				visualForPlayerBase,
-				visuals["Reticle0"]
+			visualForPlayerBase,
+			visuals["Reticle0"]
 		]);
 
 		var drawableDefnPlayer = new Drawable(visualForPlayer);
+
+		var activityDefnName =
+			activityDefns["Accept User Input"].name;
+			//activityDefns["Demo User Input"].name;
 
 		var entityDefnPlayer = new EntityDefn
 		(
 			"Player",
 			// properties
 			[
-				new ActorDefn(activityDefns["Accept User Input"].name),
+				new ActorDefn(activityDefnName),
 				collidableDefns.Blocking,
 				new ItemHolder(),
 				drawableDefnPlayer,
@@ -3162,11 +3235,12 @@ function DemoData(randomizer)
 			*/
 			new Branch
 			(
-				"DungeonShallow",
-				"Dungeon",
-				true,
-				new Range(0, 0),
-				new Range(5, 6),
+				"DungeonShallow", // name
+				"Dungeon", // venueDefnName
+				true, // startsAfterSibling
+				new Range(0, 0), // startOffsetRangeWithinParent
+				new Range(5, 6), // depthRangeInVenues
+				// children
 				[
 					new Branch
 					(
@@ -3486,12 +3560,59 @@ function DemoData(randomizer)
 		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
 	)
 	{
+		var mapSizeInCells = new Coords(64, 64);
+		var numberOfRooms = 12;
+		var terrains = venueDefn.terrains;
+
+		var mapCellsAsStrings = this.venueGenerateDungeon_1_InitMap
+		(
+			worldDefn, venueDefn, mapSizeInCells
+		);
+		var roomBoundsSet = this.venueGenerateDungeon_2_RoomBounds
+		(
+			venueDefn, randomizer, mapSizeInCells, numberOfRooms
+		);
+		var rooms = this.venueGenerateDungeon_3_Rooms
+		(
+			numberOfRooms, roomBoundsSet, mapCellsAsStrings, terrains
+		);
+		var doorwayPositions = this.venueGenerateDungeon_4_Doors
+		(
+			rooms, terrains, randomizer, mapCellsAsStrings
+		);
+		var entities = this.venueGenerateDungeon_5_Entities
+		(
+			worldDefn, venueDefn, venueIndex, randomizer, rooms, doorwayPositions, mapCellsAsStrings
+		);
+
+		var map = new Map
+		(
+			"Venue" + venueIndex + "Map",
+			venueDefn.terrains,
+			new Coords(16, 16, 1), // hack - cellSizeInPixels
+			mapCellsAsStrings
+		);
+
+		var returnValue = new VenueLevel
+		(
+			"Venue" + venueIndex,
+			venueDepth,
+			venueDefn,
+			new Coords(480, 480, 1), // sizeInPixels
+			map,
+			entities
+		);
+
+		return returnValue;
+	};
+
+	DemoData.prototype.venueGenerateDungeon_1_InitMap = function(worldDefn, venueDefn, mapSizeInCells)
+	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
 		var entityDefns = worldDefn.entityDefns;
 
 		entityDefns.addLookupsByName();
 
-		var mapSizeInCells = new Coords(64, 64);
 		var mapCellsAsStrings = [];
 		var cellPos = new Coords(0, 0);
 		var terrains = venueDefn.terrains;
@@ -3510,12 +3631,16 @@ function DemoData(randomizer)
 			mapCellsAsStrings.push(mapCellRowAsString);
 		}
 
-		var numberOfRooms = 12;
+		return mapCellsAsStrings;
+	}
 
+	DemoData.prototype.venueGenerateDungeon_2_RoomBounds = function(venueDefn, randomizer, mapSizeInCells, numberOfRooms)
+	{
 		var roomSizeMin = new Coords(4, 4, 1);
 		var roomSizeMax = new Coords(13, 13, 1);
 		var roomSizeRange = roomSizeMax.clone().subtract(roomSizeMin);
 
+		var terrains = venueDefn.terrains;
 		terrainCodeChar = terrains.Floor.codeChar;
 
 		var roomBoundsSetSoFar = [];
@@ -3573,6 +3698,14 @@ function DemoData(randomizer)
 			roomBoundsSetSoFar.push(roomBounds);
 		}
 
+		return roomBoundsSetSoFar;
+	}
+
+	DemoData.prototype.venueGenerateDungeon_3_Rooms = function
+	(
+		numberOfRooms, roomBoundsSetSoFar, mapCellsAsStrings, terrains
+	)
+	{
 		var rooms = [];
 
 		for (var r = 0; r < numberOfRooms; r++)
@@ -3629,52 +3762,31 @@ function DemoData(randomizer)
 			}
 		}
 
+		return rooms;
+	}
+
+	DemoData.prototype.venueGenerateDungeon_4_Doors = function(rooms, terrains, randomizer, mapCellsAsStrings)
+	{
 		var roomsConnected = [ rooms[0] ];
 		var roomsToConnect = [];
 
-		for (var r = 1; r < numberOfRooms; r++)
+		for (var r = 1; r < rooms.length; r++)
 		{
 			roomsToConnect.push(rooms[r]);
 		}
+
+		var zeroes = Coords.Instances().Zeroes;
+		var oneOne = Coords.Instances().OneOneZero;
+		var twoTwo = Coords.Instances().TwoTwoZero;
 
 		var doorwayPositions = [];
 
 		while (roomsToConnect.length > 0)
 		{
-			var nearestRoomsSoFar = null;
-			var distanceBetweenNearestRoomsSoFar = null;
-
-			for (var r = 0; r < roomsConnected.length; r++)
-			{
-				var roomConnected = roomsConnected[r];
-				var roomConnectedCenter = roomConnected.bounds.center;
-
-				for (var s = 0; s < roomsToConnect.length; s++)
-				{
-					var roomToConnect = roomsToConnect[s];
-					var roomToConnectCenter = roomToConnect.bounds.center;
-
-					var distance = roomToConnectCenter.clone().subtract
-					(
-						roomConnectedCenter
-					).absolute().clearZ().sumOfDimensions();
-
-					if
-					(
-						nearestRoomsSoFar == null
-						|| distance < distanceBetweenNearestRoomsSoFar
-					)
-					{
-						nearestRoomsSoFar =
-						[
-							roomConnected,
-							roomToConnect,
-						];
-
-						distanceBetweenNearestRoomsSoFar = distance;
-					}
-				}
-			}
+			var nearestRoomsSoFar = this.venueGenerateDungeon_4_Doors_1_NearestRooms
+			(
+				roomsToConnect, roomsConnected
+			);
 
 			var roomConnected = nearestRoomsSoFar[0];
 			var roomToConnect = nearestRoomsSoFar[1];
@@ -3688,12 +3800,12 @@ function DemoData(randomizer)
 				(
 					roomConnectedBounds.size.clone().subtract
 					(
-						Coords.Instances().TwoTwoZero
+						twoTwo
 					)
 				).floor()
 			).add
 			(
-				Coords.Instances().OneOneZero
+				oneOne
 			);
 
 			var toPos = roomToConnectBounds.min().clone().add
@@ -3702,12 +3814,12 @@ function DemoData(randomizer)
 				(
 					roomToConnectBounds.size.clone().subtract
 					(
-						Coords.Instances().TwoTwoZero
+						twoTwo
 					)
 				).floor()
 			).add
 			(
-				Coords.Instances().OneOneZero
+				oneOne
 			);
 
 			var displacementToRoomToConnect = toPos.clone().subtract
@@ -3769,7 +3881,7 @@ function DemoData(randomizer)
 				terrains.WallEastWest.codeChar +
 				terrains.WallNorthSouth.codeChar;
 
-			while (displacementToRoomToConnect.equals(Coords.Instances().Zeroes) == false)
+			while (displacementToRoomToConnect.equals(zeroes) == false)
 			{
 				var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
@@ -3821,6 +3933,57 @@ function DemoData(randomizer)
 			mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
 		}
 
+		return doorwayPositions;
+	}
+
+	DemoData.prototype.venueGenerateDungeon_4_Doors_1_NearestRooms = function(roomsToConnect, roomsConnected)
+	{
+		var nearestRoomsSoFar = null;
+		var distanceBetweenNearestRoomsSoFar = null;
+
+		for (var r = 0; r < roomsConnected.length; r++)
+		{
+			var roomConnected = roomsConnected[r];
+			var roomConnectedCenter = roomConnected.bounds.center;
+
+			for (var s = 0; s < roomsToConnect.length; s++)
+			{
+				var roomToConnect = roomsToConnect[s];
+				var roomToConnectCenter = roomToConnect.bounds.center;
+
+				var distance = roomToConnectCenter.clone().subtract
+				(
+					roomConnectedCenter
+				).absolute().clearZ().sumOfDimensions();
+
+				if
+				(
+					nearestRoomsSoFar == null
+					|| distance < distanceBetweenNearestRoomsSoFar
+				)
+				{
+					nearestRoomsSoFar =
+					[
+						roomConnected,
+						roomToConnect,
+					];
+
+					distanceBetweenNearestRoomsSoFar = distance;
+				}
+			}
+		}
+
+		return nearestRoomsSoFar;
+	}
+
+	DemoData.prototype.venueGenerateDungeon_5_Entities = function
+	(
+		worldDefn, venueDefn, venueIndex, randomizer, rooms, doorwayPositions, mapCellsAsStrings
+	)
+	{
+		var entityDefns = worldDefn.entityDefns;
+		var entityDefnGroups = worldDefn.entityDefnGroups;
+
 		var entities = [];
 
 		if (venueIndex == 0)
@@ -3870,7 +4033,7 @@ function DemoData(randomizer)
 			)
 		);
 
-		if (venueIndex < numberOfVenues - 1)
+		//if (venueIndex < numberOfVenues - 1)
 		{
 			var stairsDown = new Entity
 			(
@@ -3928,7 +4091,7 @@ function DemoData(randomizer)
 
 		var oneOneZero = Coords.Instances().OneOneZero;
 
-		for (var r = 0; r < numberOfRooms; r++)
+		for (var r = 0; r < rooms.length; r++)
 		{
 			var room = rooms[r];
 
@@ -3998,25 +4161,7 @@ function DemoData(randomizer)
 			}
 		}
 
-		var map = new Map
-		(
-			"Venue" + venueIndex + "Map",
-			venueDefn.terrains,
-			new Coords(16, 16, 1), // hack - cellSizeInPixels
-			mapCellsAsStrings
-		);
-
-		var returnValue = new VenueLevel
-		(
-			"Venue" + venueIndex,
-			venueDepth,
-			venueDefn,
-			new Coords(480, 480, 1), // sizeInPixels
-			map,
-			entities
-		);
-
-		return returnValue;
+		return entities;
 	};
 
 	DemoData.prototype.venueGenerateFortress = function

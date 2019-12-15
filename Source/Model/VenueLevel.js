@@ -109,13 +109,11 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		{
 			var entity = this.entities[b];
 
-			var entityDefnProperties = entity.defn(world).properties;
+			var entityDefn = entity.defn(world);
+			var entityDefnProperties = entityDefn.properties;
 			for (var c = 0; c < entityDefnProperties.length; c++)
 			{
 				var entityProperty = entityDefnProperties[c];
-				var entityPropertyName =
-					( entityProperty.name == null ? entityProperty.constructor.name : entityProperty.name() );
-
 				if (entityProperty.initializeEntityForVenue != null)
 				{
 					entityProperty.initializeEntityForVenue(null, world, this, entity);
@@ -168,7 +166,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var b = 0; b < entitiesWithProperty.length; b++)
 			{
 				var entity = entitiesWithProperty[b];
-				var entityDefnProperty = entity.defn(world).properties[propertyName];
+				var entityDefn = entity.defn(world);
+				var entityDefnProperty = entityDefn.properties[propertyName];
 				if (entityDefnProperty.updateEntityForVenue != null)
 				{
 					entityDefnProperty.updateEntityForVenue(universe, world, this, entity);
