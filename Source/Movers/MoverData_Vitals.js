@@ -67,7 +67,7 @@ function MoverData_Vitals(defn)
 								return "Satiety: " + c.satiety + "/" + c.defn.satietyMax;
 							}
 						)
-					),
+					)
 				]
 			);
 		}

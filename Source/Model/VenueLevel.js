@@ -346,7 +346,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		{
 			this.turnLastDrawn = turnsSoFar;
 			display.childSelectByName("Map");
-			display.drawBackground();
+			display.drawBackground("Black");
 			this.map.draw(universe, world, display, this);
 		}
 

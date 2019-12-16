@@ -24,9 +24,12 @@ function MoverData_Locus()
 							this,
 							function get(c)
 							{
-								var floor = entity.loc.venue(world).depth;
+								var loc = entity.loc;
+								var floor = loc.venue(world).depth;
 								var turn = world.turnsSoFar;
-								return "Floor: " + floor + " Turn: " + turn;
+								var pos = loc.posInCells.toStringXY();
+								var returnValue = "Turn: " + turn + " Floor: " + floor + " Pos: " + pos;
+								return returnValue;
 							}
 						)
 					)

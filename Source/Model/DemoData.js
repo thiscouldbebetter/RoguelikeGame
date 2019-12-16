@@ -53,9 +53,19 @@ function DemoData(randomizer)
 				var destinationEntity = entities[destinationEntityName];
 				if (destinationEntity != null)
 				{
-					actor.loc.venue(world).entitiesToRemove.push(actor);
+					// todo
+					// Moving entities between venues like this causes problems,
+					// because the current venue keeps processing the entity
+					// for the rest of the current tick.
+					// Maybe instead, spawn a specialized Transfer entity?
+					var actorLoc = actor.loc;
+					
+					var venueToDepart = actorLoc.venue(world);
+					venueToDepart.entitiesToRemove.push(actor);
+					
 					destinationVenue.entitiesToSpawn.push(actor);
-					actor.loc.posInCells.overwriteWithXY
+					actorLoc.venueName = destinationVenueName;
+					actorLoc.posInCells.overwriteWithXY
 					(
 						destinationEntity.loc.posInCells
 					);
@@ -234,6 +244,11 @@ function DemoData(randomizer)
 			);
 
 			var cellDestination = venue.map.cellAtPos(posInCellsDestination);
+
+			if (cellDestination == null)
+			{
+				return;
+			}
 
 			var entitiesInCellDestination = cellDestination.entitiesPresent;
 
@@ -927,6 +942,7 @@ function DemoData(randomizer)
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsUp"]),
 					new EmplacementDefn(),
+					new PortalDefn(),
 				]
 			),
 
@@ -3222,17 +3238,15 @@ function DemoData(randomizer)
 
 		var branchesMain =
 		[
-			/*
 			new Branch
 			(
-				"Tutorial",
-				"Tutorial",
-				false,
+				"Surface",
+				"Surface",
+				true,
 				new Range(0, 0),
 				new Range(1, 1),
 				[]
 			),
-			*/
 			new Branch
 			(
 				"DungeonShallow", // name
@@ -3412,18 +3426,18 @@ function DemoData(randomizer)
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
 		[
-			"Actor",
-			"Collidable",
-			"Device",
-			"Drawable",
+			Actor.name,
+			Collidable.name,
+			Device.name,
+			Drawable.name,
 			"Dynamic",
 			"Emplacement",
 			"Enemy",
-			"Ephemeral",
+			Ephemeral.name,
 			"Equippable",
-			"Item",
-			"ItemHolder",
-			"Killable",
+			Item.name,
+			ItemHolder.name,
+			Killable.name,
 			"Mover",
 			"Player",
 			"Portal",
@@ -3449,10 +3463,10 @@ function DemoData(randomizer)
 
 			new VenueDefn
 			(
-				"GameOver",
+				"Surface",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateGameOver
+				this.venueGenerateSurface
 			),
 
 			new VenueDefn
@@ -3986,7 +4000,7 @@ function DemoData(randomizer)
 
 		var entities = [];
 
-		if (venueIndex == 0)
+		if (venueIndex == 0) // hack - Won't happen.
 		{
 			var stairsExit = new EntityRoguelike
 			(
@@ -3996,7 +4010,7 @@ function DemoData(randomizer)
 				[
 					new PortalData
 					(
-						"VenueGameOver", "Start"
+						"Venue0", "StairsDown"
 					),
 				] // propertyValues
 			);
@@ -4172,11 +4186,18 @@ function DemoData(randomizer)
 		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateGameOver = function
+	DemoData.prototype.venueGenerateSurface = function
 	(
 		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
 	)
 	{
+		var mapSizeInCells = new Coords(16, 16, 1);
+		var mapCellsAsStrings = [];
+		var mapRowAsString = "".padLeft(mapSizeInCells.x, ".");
+		for (var y = 0; y < mapSizeInCells.y; y++)
+		{
+			mapCellsAsStrings.push(mapRowAsString);
+		}
 		var map = new Map
 		(
 			"Venue" + venueIndex + "Map",
@@ -4185,24 +4206,26 @@ function DemoData(randomizer)
 			mapCellsAsStrings
 		);
 
-		var entityDefnName = "Start"; // todo
+		var entityDefnName = "StairsDown"; // todo
 
-		var entityStart = new EntityRoguelike
+		var stairsDownPos = mapSizeInCells.clone().half().round();
+
+		var entityStairsDown = new EntityRoguelike
 		(
 			entityDefnName,
 			entityDefnName,
-			new Coords(0, 0), // pos
+			stairsDownPos, // pos
+			[
+				new PortalData("Venue" + (venueIndex + 1), "StairsUp") // todo
+			]
 		);
 
-		var entities =
-		[
-			entityStart
-		];
+		var entities = [ entityStairsDown ];
 
 		var returnValue = new VenueLevel
 		(
-			"VenueGameOver",
-			-1, //venueDepth,
+			"Venue" + venueIndex,
+			venueDepth,
 			venueDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,

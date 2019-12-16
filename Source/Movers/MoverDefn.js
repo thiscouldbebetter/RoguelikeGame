@@ -36,9 +36,10 @@ function MoverDefn
 		}
 	};
 
-	MoverDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
+	MoverDefn.prototype.updateEntityForVenue = function(universe, world, venueIgnored, entity)
 	{
 		var entityLoc = entity.loc;
+		venue = entityLoc.venue(world);
 
 		entityLoc.posInCells.trimToRangeMax
 		(
