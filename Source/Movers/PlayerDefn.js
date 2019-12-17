@@ -5,19 +5,17 @@ function PlayerDefn()
 }
 
 {
-	PlayerDefn.prototype.name = function() { return "Player"; }
-
 	PlayerDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
-		if (entity.playerData == null)
+		if (entity.PlayerData == null)
 		{
-			entity.playerData = new PlayerData();
-			entity.loc.posInCells.z = 2;
+			entity.PlayerData = new PlayerData();
+			entity.LocatableRoguelike.pos.z = 2;
 		}
 
-		entity.moverData.movesThisTurn = 0;
+		entity.MoverData.movesThisTurn = 0;
 
-		var venueKnownLookup = entity.playerData.venueKnownLookup;
+		var venueKnownLookup = entity.PlayerData.venueKnownLookup;
 		var venueKnown = venueKnownLookup[venue.name];
 		if (venueKnown == null)
 		{
@@ -56,7 +54,7 @@ function PlayerDefn()
 				world,
 				venueKnown,
 				venue,
-				entity.loc.posInCells,
+				entity.LocatableRoguelike.pos,
 				8 //sightRange
 			);
 		}
@@ -64,32 +62,33 @@ function PlayerDefn()
 
 	PlayerDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
 	{
-		if (entity.moverData.movesThisTurn <= 0)
+		var moverData = entity.MoverData;
+		if (moverData.movesThisTurn <= 0)
 		{
-			var vitals = entity.moverData.vitals.addSatietyToMover(world, -1, entity);
+			var vitals = moverData.vitals.addSatietyToMover(world, -1, entity);
 
-			var propertyName = "Mover";
+			var propertyName = MoverDefn.name;
 			var moversToRecharge = venue.entitiesByPropertyName[propertyName];
 			for (var i = 0; i < moversToRecharge.length; i++)
 			{
 				var mover = moversToRecharge[i];
-				mover.moverData.movesThisTurn = mover.defn(world).Mover.movesPerTurn;
+				mover.MoverData.movesThisTurn = mover.MoverDefn.movesPerTurn;
 			}
 
 			world.turnsSoFar++;
 
-			var venueKnown = entity.playerData.venueKnownLookup[venue.name];
+			var venueKnown = entity.PlayerData.venueKnownLookup[venue.name];
 
 			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
 				world,
 				venueKnown,
 				venue, // venueComplete
-				entity.loc.posInCells,
+				entity.LocatableRoguelike.pos,
 				8 //sightRange
 			);
 
-			entity.moverData.controlUpdate(world, entity);
+			entity.MoverData.controlUpdate(world, entity);
 		}
 	}
 }

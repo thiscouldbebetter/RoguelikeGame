@@ -18,14 +18,15 @@ function ConstraintDefn(name, apply)
 				var entityConstrained = constraint.entityConstrained;
 
 				// hack
-				var entityToFollow = entityConstrained.loc.venue(world).entitiesByPropertyName
+				var venue = entityConstrained.LocatableRoguelike.venue(world);
+				var entityToFollow = venue.entitiesByPropertyName
 				[
 					"Player"
 				][0];
 
-				entityConstrained.loc.posInCells.overwriteWith
+				entityConstrained.LocatableRoguelike.pos.overwriteWith
 				(
-					entityToFollow.loc.posInCells
+					entityToFollow.LocatableRoguelike.pos
 				);
 			}
 		);

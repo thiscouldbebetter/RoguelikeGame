@@ -27,7 +27,6 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 	for (var i = 0; i < entities.length; i++)
 	{
 		var entity = entities[i];
-		entity.loc.venueName = this.name;
 		this.entitiesToSpawn.push(entity);
 	}
 
@@ -50,7 +49,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var i = 0; i < entitiesWithPropertyName.length; i++)
 			{
 				var entity = entitiesWithPropertyName[i];
-				if (entity.loc.posInCells.equalsXY(cellPosToCheck) == true)
+				if (entity.LocatableRoguelike.pos.equalsXY(cellPosToCheck) == true)
 				{
 					returnEntities.splice(0, 0, entity);
 				}
@@ -62,22 +61,15 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	VenueLevel.prototype.entitySpawn = function(universe, world, entityToSpawn)
 	{
-		entityToSpawn.loc.venueName = this.name;
-
 		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
 
-		var entityDefn = entityToSpawn.defn(world);
+		var entityDefn = entityToSpawn;
 		var entityProperties = entityDefn.properties;
 		for (var c = 0; c < entityProperties.length; c++)
 		{
 			var entityProperty = entityProperties[c];
-			var entityPropertyName =
-			(
-				entityProperty.name == null || entityProperty.name.constructor.name != "Function"
-				? entityProperty.constructor.name
-				: entityProperty.name()
-			);
+			var entityPropertyName = entityProperty.constructor.name;
 
 			var entityListForPropertyName = this.entitiesByPropertyName[entityPropertyName];
 
@@ -105,21 +97,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	VenueLevel.prototype.initialize = function(universe, world)
 	{
-		for (var b = 0; b < this.entities.length; b++)
-		{
-			var entity = this.entities[b];
-
-			var entityDefn = entity.defn(world);
-			var entityDefnProperties = entityDefn.properties;
-			for (var c = 0; c < entityDefnProperties.length; c++)
-			{
-				var entityProperty = entityDefnProperties[c];
-				if (entityProperty.initializeEntityForVenue != null)
-				{
-					entityProperty.initializeEntityForVenue(null, world, this, entity);
-				}
-			}
-		}
+		// Do nothing.
+		// Initialization of entities is handled in entitySpawn().
 	}
 
 	VenueLevel.prototype.update = function(universe, world)
@@ -127,7 +106,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.update_EntitiesToSpawn(universe, world);
 
 		var player = world.entityForPlayer;
-		var venueKnown = player.playerData.venueKnownLookup[this.name];
+		var venueKnown = player.PlayerData.venueKnownLookup[this.name];
 
 		if (venueKnown != null)
 		{
@@ -149,7 +128,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 			display.childSelectByName("Messages");
 			display.clear();
-			var messageLogAsControl = player.playerData.messageLog.controlUpdate(world);
+			var messageLogAsControl = player.PlayerData.messageLog.controlUpdate(world);
 			this._drawLoc.pos.clear();
 			messageLogAsControl.draw(universe, display, this._drawLoc);
 			display.flush();
@@ -166,8 +145,8 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var b = 0; b < entitiesWithProperty.length; b++)
 			{
 				var entity = entitiesWithProperty[b];
-				var entityDefn = entity.defn(world);
-				var entityDefnProperty = entityDefn.properties[propertyName];
+				var entityDefn = entity;
+				var entityDefnProperty = entityDefn[propertyName];
 				if (entityDefnProperty.updateEntityForVenue != null)
 				{
 					entityDefnProperty.updateEntityForVenue(universe, world, this, entity);
@@ -187,9 +166,10 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			var entityToRemove = this.entitiesToRemove[i];
 
 			// hack
-			if (entityToRemove.collidableData != null)
+			var collidableData = entityToRemove.CollidableData;
+			if (collidableData != null)
 			{
-				var entitiesInCell = entityToRemove.collidableData.mapCellOccupied.entitiesPresent;
+				var entitiesInCell = collidableData.mapCellOccupied.entitiesPresent;
 				entitiesInCell.splice
 				(
 					entitiesInCell.indexOf(entityToRemove),
@@ -200,16 +180,11 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			this.entities.splice(this.entities.indexOf(entityToRemove), 1);
 			delete this.entities[entityToRemove.name];
 
-			var entityDefnProperties = entityToRemove.defn(world).properties;
+			var entityDefnProperties = entityToRemove.properties;
 			for (var c = 0; c < entityDefnProperties.length; c++)
 			{
 				var entityDefnProperty = entityDefnProperties[c];
-				var entityDefnPropertyName = 
-				(
-					entityDefnProperty.name == null || entityDefnProperty.name.constructor.name != "Function"
-					? entityDefnProperty.constructor.name
-					: entityDefnProperty.name()
-				);
+				var entityDefnPropertyName = entityDefnProperty.constructor.name;
 				var entitiesWithProperty = this.entitiesByPropertyName[entityDefnPropertyName];
 
 				if (entitiesWithProperty != null) // hack
@@ -239,11 +214,11 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	VenueLevel.prototype.update_Collidables = function(universe, world)
 	{
-		var emplacements = this.entitiesByPropertyName["Emplacement"];
+		var emplacements = this.entitiesByPropertyName[EmplacementDefn.name];
 		var enemies = this.entitiesByPropertyName["Enemy"];
 		var items = this.entitiesByPropertyName["Item"];
-		var players = this.entitiesByPropertyName["Player"]
-		var portals = this.entitiesByPropertyName["Portal"];
+		var players = this.entitiesByPropertyName[PlayerDefn.name]
+		var portals = this.entitiesByPropertyName[PortalDefn.name];
 		var projectiles = this.entitiesByPropertyName["Projectile"];
 
 		var collisionHelper = universe.collisionHelper;
@@ -327,7 +302,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 				new Coords(180, 272), // size
 				// children
 				[
-					entityForPlayer.moverData.controlUpdate(world, entityForPlayer),
+					entityForPlayer.MoverData.controlUpdate(world, entityForPlayer),
 				]
 			);
 		}

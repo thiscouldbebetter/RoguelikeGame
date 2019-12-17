@@ -172,7 +172,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	Map.prototype.draw = function(universe, world, display, venue)
 	{
 		var player = world.entityForPlayer;
-		var playerPos = player.loc.posInCells;
+		var playerPos = player.LocatableRoguelike.pos;
 
 		var cellPos = this._cellPos;
 		var shouldDrawMovers = false;
@@ -246,19 +246,19 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 		var entitiesSortedBottomToTop = this._entitiesSortedBottomToTop;
 
-		// note - Array.sort() fails to order stacks of items correctly.
+		// note - Array.sort() fails to order stacks of items correctly?
 
 		entitiesSortedBottomToTop.length = 0;
 
 		for (var i = 0; i < entitiesInCell.length; i++)
 		{
 			var entityToSort = entitiesInCell[i];
-			var entityToSortZIndex = entityToSort.loc.posInCells.z;
+			var entityToSortZIndex = entityToSort.LocatableRoguelike.pos.z;
 			var j;
 			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
 			{
 				var entitySorted = entitiesSortedBottomToTop[j];
-				var entitySortedZIndex = entitySorted.loc.posInCells.z;
+				var entitySortedZIndex = entitySorted.LocatableRoguelike.pos.z;
 				if (entityToSortZIndex <= entitySortedZIndex)
 				{
 					break;
@@ -270,7 +270,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
-			if (entity.moverData == null || drawMovers)
+			if (entity.MoverData == null || drawMovers)
 			{
 				var visual = entity.Drawable.visual;
 				visual.draw(universe, world, display, null, drawableEntity);
@@ -293,7 +293,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var visual = entity.Drawable.visual;
 		this._drawableEntity.Locatable.loc.pos.overwriteWith
 		(
-			entity.loc.posInCells
+			entity.LocatableRoguelike.pos
 		).multiply
 		(
 			map.cellSizeInPixels

@@ -4,7 +4,7 @@ function CollisionHelper()
 {
 	CollisionHelper.prototype.collideEntities = function(world, collision, entity0, entity1)
 	{
-		var entity0DefnProperties = entity0.defn(world).properties;
+		var entity0DefnProperties = entity0.properties;
 
 		for (var c = 0; c < entity0DefnProperties.length; c++)
 		{
@@ -24,9 +24,9 @@ function CollisionHelper()
 
 	CollisionHelper.prototype.doCollidablesCollide = function(entity0, entity1)
 	{
-		var returnValue = entity0.loc.posInCells.equals
+		var returnValue = entity0.LocatableRoguelike.pos.equals
 		(
-			entity1.loc.posInCells
+			entity1.LocatableRoguelike.pos
 		);
 
 		return returnValue;

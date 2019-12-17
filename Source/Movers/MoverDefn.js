@@ -26,22 +26,20 @@ function MoverDefn
 }
 
 {
-	MoverDefn.prototype.name = function() { return "Mover"; };
-
 	MoverDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
-		if (entity.moverData == null)
+		if (entity.MoverData == null)
 		{
-			entity.moverData = new MoverData(entity.defn(world).Mover);
+			entity.MoverData = new MoverData(entity.MoverDefn);
 		}
 	};
 
 	MoverDefn.prototype.updateEntityForVenue = function(universe, world, venueIgnored, entity)
 	{
-		var entityLoc = entity.loc;
+		var entityLoc = entity.LocatableRoguelike;
 		venue = entityLoc.venue(world);
 
-		entityLoc.posInCells.trimToRangeMax
+		entityLoc.pos.trimToRangeMax
 		(
 			venue.map.sizeInCellsMinusOnes
 		);

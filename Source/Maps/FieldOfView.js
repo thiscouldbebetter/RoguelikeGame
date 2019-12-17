@@ -130,7 +130,8 @@ function FieldOfView()
 								for (var b = 0; b < entitiesPresent.length; b++)
 								{
 									var entityPresent = entitiesPresent[b];
-									if (entityPresent.defn(world).Collidable.blocksView == true)
+									var entityPresentDefn = entityPresent;
+									if (entityPresentDefn.CollidableDefn.blocksView == true)
 									{
 										angleRangeSetNotYetBlocked.subtract(cellSpanAsSet);
 									}

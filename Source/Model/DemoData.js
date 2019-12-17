@@ -13,13 +13,12 @@ function DemoData(randomizer)
 
 		var actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
 		{
-			var loc = actor.loc;
+			var loc = actor.LocatableRoguelike;
 			var venue = loc.venue(world);
-			var posInCells = actor.loc.posInCells;
+			var posInCells = actor.LocatableRoguelike.pos;
 			var usablesPresentInCell = venue.entitiesWithPropertyNamePresentAtCellPos
 			(
-				"Portal",
-				posInCells
+				PortalDefn.name, posInCells // hack
 			);
 
 			if (usablesPresentInCell.length == 0)
@@ -30,12 +29,13 @@ function DemoData(randomizer)
 			var usableToUse = usablesPresentInCell[0];
 			var costToUse = 1;
 
-			if (actor.moverData.movesThisTurn < costToUse)
+			var moverData = actor.MoverData;
+			if (moverData.movesThisTurn < costToUse)
 			{
 				return;
 			}
 
-			actor.moverData.movesThisTurn -= costToUse;
+			moverData.movesThisTurn -= costToUse;
 
 			var portal = usableToUse;
 
@@ -46,7 +46,7 @@ function DemoData(randomizer)
 			var destinationVenue = world.venues[destinationVenueName];
 			if (destinationVenue != null)
 			{
-				destinationVenue.initialize(universe, world);
+				//destinationVenue.initialize(universe, world);
 				destinationVenue.update(universe, world);
 
 				var entities = destinationVenue.entities;
@@ -58,43 +58,43 @@ function DemoData(randomizer)
 					// because the current venue keeps processing the entity
 					// for the rest of the current tick.
 					// Maybe instead, spawn a specialized Transfer entity?
-					var actorLoc = actor.loc;
+					var actorLoc = actor.LocatableRoguelike;
 					
 					var venueToDepart = actorLoc.venue(world);
 					venueToDepart.entitiesToRemove.push(actor);
 					
 					destinationVenue.entitiesToSpawn.push(actor);
 					actorLoc.venueName = destinationVenueName;
-					actorLoc.posInCells.overwriteWithXY
+					actorLoc.pos.overwriteWithXY
 					(
-						destinationEntity.loc.posInCells
+						destinationEntity.LocatableRoguelike.pos
 					);
 
 					world.venueNext = destinationVenue;
 
-					actor.moverData.controlUpdate(world, actor);
+					moverData.controlUpdate(world, actor);
 				}
 			}
 		}
 
 		var actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
 		{
-			var loc = actor.loc;
+			var loc = actor.LocatableRoguelike;
 			var venue = loc.venue(world);
-			var posInCells = loc.posInCells;
+			var posInCells = loc.pos;
 			var itemsPresentInCell = venue.entitiesWithPropertyPresentAtCellPos
 			(
-				"Item",
-				posInCells
+				"Item", posInCells
 			);
 
 			var itemHolder = actor.ItemHolder;
 			var itemToDrop = itemHolder.itemSelected;
 			var costToDrop = 1;
 
-			if (itemToDrop != null && actor.moverData.movesThisTurn >= costToDrop)
+			var moverData = actor.MoverData;
+			if (itemToDrop != null && moverData.movesThisTurn >= costToDrop)
 			{
-				actor.moverData.movesThisTurn -= costToDrop;
+				moverData.movesThisTurn -= costToDrop;
 
 				function removeItem(itemHolder, world, actor, itemToDrop)
 				{
@@ -118,8 +118,8 @@ function DemoData(randomizer)
 
 					removeItem(itemHolder, world, actor, itemToDrop);
 
-					itemToDrop.loc.overwriteWith(actor.loc);
-					itemToDrop.loc.venue(world).entitiesToSpawn.push(itemToDrop);
+					itemToDrop.LocatableRoguelike.overwriteWith(actor.LocatableRoguelike);
+					itemToDrop.LocatableRoguelike.venue(world).entitiesToSpawn.push(itemToDrop);
 				}
 
 				dropItem(actor.ItemHolder, world, actor, itemToDrop);
@@ -128,11 +128,12 @@ function DemoData(randomizer)
 
 		var actionItem_PickUp_Perform = function(universe, world, place, actor, action)
 		{
-			var loc = actor.loc;
+			var loc = actor.LocatableRoguelike;
 			var venue = loc.venue(world);
-			var posInCells = actor.loc.posInCells;
+			var posInCells = actor.LocatableRoguelike.pos;
 
-			var entitiesPresentAtCellPos = venue.map.cellAtPos(posInCells).entitiesPresent;
+			var cell = venue.map.cellAtPos(posInCells);
+			var entitiesPresentAtCellPos = cell.entitiesPresent;
 
 			for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
 			{
@@ -142,14 +143,16 @@ function DemoData(randomizer)
 				{
 					var costToPickUp = 1;
 
-					if (actor.moverData.movesThisTurn >= costToPickUp)
+					var moverData = actor.MoverData;
+					if (moverData.movesThisTurn >= costToPickUp)
 					{
-						actor.moverData.movesThisTurn -= costToPickUp;
+						moverData.movesThisTurn -= costToPickUp;
 
 						function pickUpItem(itemHolder, world, actor, itemToPickUp)
 						{
 							itemHolder.itemEntities.push(itemToPickUp);
-							itemToPickUp.loc.venue(world).entitiesToRemove.push(itemToPickUp);
+							var venue = place; //itemToPickUp.LocatableRoguelike.venue(world);
+							venue.entitiesToRemove.push(itemToPickUp);
 
 							if (itemHolder.itemSelected == null)
 							{
@@ -160,7 +163,7 @@ function DemoData(randomizer)
 						pickUpItem(actor.ItemHolder, world, actor, entityPresent);
 						var itemToPickUpDefn = itemToPickUp.defn(world);
 						var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
-						actor.playerData.messageLog.messageAdd(message);
+						actor.PlayerData.messageLog.messageAdd(message);
 					}
 				}
 			}
@@ -201,14 +204,14 @@ function DemoData(randomizer)
 
 			itemHolder.itemSelected = itemsHeld[indexOfItemSelected];
 
-			actor.moverData.controlUpdate(world, actor);
+			actor.MoverData.controlUpdate(world, actor);
 		}
 
 		var actionItem_TargetSelected_Perform = function(universe, world, place, actor, action)
 		{
 			var itemHolder = actor.ItemHolder;
 			itemHolder.itemTargeted = itemHolder.itemSelected;
-			actor.moverData.controlUpdate(world, actor);
+			actor.MoverData.controlUpdate(world, actor);
 		}
 
 		var actionItem_UseSelected_Perform = function(universe, world, place, actor, action)
@@ -219,9 +222,10 @@ function DemoData(randomizer)
 			{
 				var movesToUse = 1; // todo
 
-				if (actor.moverData.movesThisTurn >= movesToUse)
+				var moverData = actor.MoverData;
+				if (moverData.movesThisTurn >= movesToUse)
 				{
-					actor.moverData.movesThisTurn -= movesToUse;
+					moverData.movesThisTurn -= movesToUse;
 
 					itemToUse.defn.itemDefn.use(world, actor, itemToUse, actor);
 				}
@@ -235,10 +239,10 @@ function DemoData(randomizer)
 				return;
 			}
 
-			var actorLoc = actor.loc;
+			var actorLoc = actor.LocatableRoguelike;
 			var venue = actorLoc.venue(world);
 
-			var posInCellsDestination = actorLoc.posInCells.clone().add
+			var posInCellsDestination = actorLoc.pos.clone().add
 			(
 				directionToMove
 			);
@@ -258,17 +262,17 @@ function DemoData(randomizer)
 			{
 				var entityInCell = entitiesInCellDestination[b];
 
-				if (entityInCell.collidableData.defn.blocksMovement == true)
+				if (entityInCell.CollidableData.defn.blocksMovement == true)
 				{
 					isDestinationAccessible = false;
 				}
 
-				if (entityInCell.defn(world).properties["Mover"] != null)
+				if (entityInCell.MoverDefn != null)
 				{
 					isDestinationAccessible = false;
 
 					var costToAttack = 1; // todo
-					actor.moverData.movesThisTurn -= costToAttack;
+					actor.MoverData.movesThisTurn -= costToAttack;
 
 					// todo - Calculate damage.
 					var damageInflicted = DiceRoll.roll(world.randomizer, "1d6");
@@ -295,7 +299,7 @@ function DemoData(randomizer)
 						{
 							defnsOfEntitiesToSpawn.push
 							(
-								entityInCell.defn(world).Mover.entityDefnCorpse
+								entityInCell.MoverDefn.entityDefnCorpse
 							);
 						}
 						else
@@ -311,11 +315,11 @@ function DemoData(randomizer)
 					{
 						var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
 
-						var entityToSpawn = new EntityRoguelike
+						var entityToSpawn = EntityHelper.new
 						(
 							defnOfEntityToSpawn.name + "_Spawned",
-							defnOfEntityToSpawn.name,
-							posInCellsDestination
+							defnOfEntityToSpawn,
+							[ new LocatableRoguelike(posInCellsDestination) ]
 						);
 
 						venue.entitiesToSpawn.push
@@ -329,11 +333,12 @@ function DemoData(randomizer)
 			if (isDestinationAccessible == true)
 			{
 				var costToTraverse = cellDestination.terrain.costToTraverse;
-				if (costToTraverse <= actor.moverData.movesThisTurn)
+				var moverData = actor.MoverData;
+				if (costToTraverse <= moverData.movesThisTurn)
 				{
-					actor.moverData.movesThisTurn -= costToTraverse;
+					moverData.movesThisTurn -= costToTraverse;
 
-					var cellDeparted = actor.collidableData.mapCellOccupied;
+					var cellDeparted = actor.CollidableData.mapCellOccupied;
 					var entitiesInCellDeparted = cellDeparted.entitiesPresent;
 					entitiesInCellDeparted.splice
 					(
@@ -342,9 +347,9 @@ function DemoData(randomizer)
 					);
 
 					entitiesInCellDestination.push(actor);
-					actor.collidableData.mapCellOccupied = cellDestination;
+					actor.CollidableData.mapCellOccupied = cellDestination;
 
-					actor.loc.posInCells.overwriteWith
+					actor.LocatableRoguelike.pos.overwriteWith
 					(
 						posInCellsDestination
 					);
@@ -355,7 +360,7 @@ function DemoData(randomizer)
 
 		var actionWait_Perform = function(universe, world, place, actor, action)
 		{
-			actor.moverData.movesThisTurn = 0;
+			actor.MoverData.movesThisTurn = 0;
 		}
 
 		// directions
@@ -547,19 +552,16 @@ function DemoData(randomizer)
 		(
 			"Generate Movers",
 
-			// initialize
-			function(universe, world, place, actor, activity)
+			function initialize(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
-			// perform
-			function(universe, world, place, actor, activity)
+			function perform(universe, world, place, actor, activity)
 			{
-				var actorLoc = actor.loc;
-				var venue = actorLoc.venue(world);
+				var venue = place;
 
-				var agentsInVenue = venue.entitiesByPropertyName["Mover"];
+				var agentsInVenue = venue.entitiesByPropertyName[MoverDefn.name];
 
 				var numberOfAgentsDesired = 0; // hack - No monsters yet.
 
@@ -587,11 +589,11 @@ function DemoData(randomizer)
 							venue.map.sizeInCells
 						).floor();
 
-						var entityForAgent = new EntityRoguelike
+						var entityForAgent = EntityHelper.new
 						(
 							entityDefnForAgentToSpawn.name + "0",
-							entityDefnForAgentToSpawn.name,
-							posToSpawnAt
+							entityDefnForAgentToSpawn,
+							[ new LocatableRoguelike(posToSpawnAt) ]
 						);
 
 						venue.entitiesToSpawn.push(entityForAgent);
@@ -625,7 +627,7 @@ function DemoData(randomizer)
 
 				var actionMoveInRandomDirection = actionsMoves[directionIndexRandom];
 
-				actor.actorData.actions.push(actionMoveInRandomDirection);
+				actor.ActorData.actions.push(actionMoveInRandomDirection);
 			}
 		);
 
@@ -642,12 +644,12 @@ function DemoData(randomizer)
 			// perform
 			function(universe, world, place, actor, activity)
 			{
-				if (actor.moverData.movesThisTurn <= 0)
+				if (actor.MoverData.movesThisTurn <= 0)
 				{
 					return;
 				}
 
-				var actorLoc = actor.loc;
+				var actorLoc = actor.LocatableRoguelike;
 				var venue = actorLoc.venue(world);
 				var players = venue.entitiesByPropertyName["Player"];
 
@@ -658,8 +660,8 @@ function DemoData(randomizer)
 					var path = new Path
 					(
 						venue.map,
-						actorLoc.posInCells,
-						player.loc.posInCells
+						actorLoc.pos,
+						player.LocatableRoguelike.pos
 					);
 
 					path.calculate();
@@ -673,7 +675,7 @@ function DemoData(randomizer)
 
 					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
 					(
-						actor.loc.posInCells
+						actor.LocatableRoguelike.pos
 					).directions();
 
 					var heading = Heading.fromCoords(directionsToPathNode1);
@@ -682,7 +684,7 @@ function DemoData(randomizer)
 					var actionsMoves = world.defn.actions._MovesByHeading;
 					var actionMoveInDirection = actionsMoves[heading];
 
-					actor.actorData.actions.push
+					actor.ActorData.actions.push
 					(
 						actionMoveInDirection
 					);
@@ -730,7 +732,7 @@ function DemoData(randomizer)
 				var inputHelper = universe.inputHelper;
 				var inputToActionMappings = activity.target;
 				var inputsActive = inputHelper.inputsPressed;
-				var actionsFromActor = actor.actorData.actions;
+				var actionsFromActor = actor.ActorData.actions;
 
 				for (var i = 0; i < inputsActive.length; i++)
 				{
@@ -765,14 +767,14 @@ function DemoData(randomizer)
 
 			function perform(universe, world, place, actor, activity)
 			{
-				if (actor.moverData.movesThisTurn <= 0)
+				if (actor.MoverData.movesThisTurn <= 0)
 				{
 					return;
 				}
 
-				var actorLoc = actor.loc;
+				var actorLoc = actor.LocatableRoguelike;
 				var venue = actorLoc.venue(world);
-				var emplacements = venue.entitiesByPropertyName[new EmplacementDefn().name()];
+				var emplacements = venue.entitiesByPropertyName[EmplacementDefn.name];
 				var stairsDown = emplacements.filter( (x) => { return (x.defnName == "StairsDown"); } );
 
 				if (stairsDown.length > 0)
@@ -782,8 +784,8 @@ function DemoData(randomizer)
 					var path = new Path
 					(
 						venue.map,
-						actorLoc.posInCells,
-						stairDown.loc.posInCells
+						actorLoc.pos,
+						stairDown.LocatableRoguelike.pos
 					);
 
 					path.calculate();
@@ -802,7 +804,7 @@ function DemoData(randomizer)
 
 						var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
 						(
-							actor.loc.posInCells
+							actor.LocatableRoguelike.pos
 						).directions();
 
 						var heading = Heading.fromCoords(directionsToPathNode1);
@@ -815,7 +817,7 @@ function DemoData(randomizer)
 
 					if (actionNext != null)
 					{
-						actor.actorData.actions.push(actionNext);
+						actor.ActorData.actions.push(actionNext);
 					}
 				}
 			}
@@ -893,7 +895,7 @@ function DemoData(randomizer)
 
 		var entityDefns =
 		[
-			new EntityDefn
+			new Entity
 			(
 				"Blood",
 				[
@@ -904,7 +906,7 @@ function DemoData(randomizer)
 				]
 			),
 
-			new EntityDefn
+			new Entity
 			(
 				"Door",
 				[
@@ -914,7 +916,7 @@ function DemoData(randomizer)
 				]
 			),
 
-			new EntityDefn
+			new Entity
 			(
 				"Gravestone",
 				[
@@ -924,7 +926,7 @@ function DemoData(randomizer)
 				]
 			),
 
-			new EntityDefn
+			new Entity
 			(
 				"StairsDown",
 				[
@@ -935,7 +937,7 @@ function DemoData(randomizer)
 				]
 			),
 
-			new EntityDefn
+			new Entity
 			(
 				"StairsExit",
 				[
@@ -946,7 +948,7 @@ function DemoData(randomizer)
 				]
 			),
 
-			new EntityDefn
+			new Entity
 			(
 				"StairsUp",
 				[
@@ -1072,7 +1074,7 @@ function DemoData(randomizer)
 		entityDefnSets
 	)
 	{
-		var entityDefnChest = new EntityDefn
+		var entityDefnChest = new Entity
 		(
 			"Chest",
 			[
@@ -1134,8 +1136,9 @@ function DemoData(randomizer)
 				"Nourish",
 				function apply(world, targetEntity)
 				{
-					targetEntity.moverData.vitals.addSatietyToMover(world, 1000, targetEntity);
-					targetEntity.moverData.controlUpdate(world, targetEntity);
+					var moverData = targetEntity.MoverData;
+					moverData.vitals.addSatietyToMover(world, 1000, targetEntity);
+					moverData.controlUpdate(world, targetEntity);
 				}
 			)
 		);
@@ -1146,7 +1149,7 @@ function DemoData(randomizer)
 		{
 			var name = namesOfFoods[i];
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
 				name,
 				[
@@ -1204,7 +1207,7 @@ function DemoData(randomizer)
 			"Display Not Implemented Message",
 			function apply(world, actingEntity, targetEntity)
 			{
-				var actingEntityDefnName = actingEntity.defn(world).name;
+				var actingEntityDefnName = actingEntity.name;
 				/*
 				world.font.spawnMessageFloater
 				(
@@ -1221,18 +1224,18 @@ function DemoData(randomizer)
 
 		var namesAndEffectDefnsOfPotions =
 		[
-			[ "Acid" 		, new ED( null, function(w, ae, te) { te.moverData.integrityAdd(-30); te.moverData.controlUpdate(w, te); } ) ],
+			[ "Acid" 		, new ED( null, function(w, ae, te) { te.MoverData.integrityAdd(-30); te.MoverData.controlUpdate(w, te); } ) ],
 			[ "Blindness" 		, effectMessageNotImplemented ],
 			[ "Booze" 		, effectMessageNotImplemented ],
 			[ "Enlightenment" 	, effectMessageNotImplemented ],
 			[ "Confusion" 		, effectMessageNotImplemented ],
-			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.moverData.vitals.addSatietyToMover(w, 100, targetEntity); te.moverData.controlUpdate(targetEntity); } ) ],
-			[ "Gain aeility" 	, new ED( null, function(w, ae, te) { te.moverData.traits.strength += 1; te.moverData.controlUpdate(w, te); } ) ],
-			[ "Gain Energy" 	, new ED( null, function(w, ae, te) { te.moverData.vitals.energy += 100; te.moverData.controlUpdate(te); } ) ],
-			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.moverData.demographics.level += 1; te.moverData.controlUpdate(te); } ) ],
-			[ "Healing" 		, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(10); te.moverData.controlUpdate(w, te); } ) ],
-			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(30); te.moverData.controlUpdate(w, te); } ) ],
-			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(1000); te.moverData.controlUpdate(w, te); } ) ],
+			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.addSatietyToMover(w, 100, targetEntity); te.MoverData.controlUpdate(targetEntity); } ) ],
+			[ "Gain Ability" 	, new ED( null, function(w, ae, te) { te.MoverData.traits.strength += 1; te.MoverData.controlUpdate(w, te); } ) ],
+			[ "Gain Energy" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.energy += 100; te.MoverData.controlUpdate(te); } ) ],
+			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.MoverData.demographics.level += 1; te.MoverData.controlUpdate(te); } ) ],
+			[ "Healing" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(10); te.MoverData.controlUpdate(w, te); } ) ],
+			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(30); te.MoverData.controlUpdate(w, te); } ) ],
+			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(1000); te.MoverData.controlUpdate(w, te); } ) ],
 			[ "Invisibility" 	, effectMessageNotImplemented ],
 			[ "Levitation" 		, effectMessageNotImplemented ],
 			[ "Monster Detection" 	, effectMessageNotImplemented ],
@@ -1242,7 +1245,7 @@ function DemoData(randomizer)
 			[ "Polymorph" 		, effectMessageNotImplemented ],
 			[ "Restore aeility" 	, effectMessageNotImplemented ],
 			[ "See Invisible" 	, effectMessageNotImplemented ],
-			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.killaeleData.integrityAdd(-20); te.moverData.controlUpdate(w, te); } ) ],
+			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(-20); te.MoverData.controlUpdate(w, te); } ) ],
 			[ "Sleeping" 		, effectMessageNotImplemented ],
 			[ "Speed" 		, effectMessageNotImplemented ],
 			[ "Water" 		, effectMessageNotImplemented ],
@@ -1276,7 +1279,7 @@ function DemoData(randomizer)
 			var effectDefn = potionData[1];
 			effectDefn.name = name;
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
 				"Potion of " + name,
 				[
@@ -1383,7 +1386,7 @@ function DemoData(randomizer)
 
 			entityDefnSetRings.push
 			(
-				new EntityDefn
+				new Entity
 				(
 					"Ring of " + namesOfRings[i],
 					[
@@ -1465,6 +1468,8 @@ function DemoData(randomizer)
 
 		for (var i = 0; i < namesOfScrolls.length; i++)
 		{
+			var name = "Scroll of " + namesOfScrolls[i];
+
 			var appearanceIndex = Math.floor
 			(
 				this.randomizer.getNextRandom()
@@ -1473,9 +1478,9 @@ function DemoData(randomizer)
 			var appearance = "Scroll Titled '" + appearances[appearanceIndex] + "'";
 			appearances.splice(appearanceIndex, 1);
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
-				"Scroll of " + namesOfScrolls[i],
+				name,
 				[
 					collidableDefns.Clear,
 					new Device
@@ -1490,7 +1495,7 @@ function DemoData(randomizer)
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
-						appearance,
+						name,
 						appearance,
 						1, // mass
 						1, // stackSizeMax
@@ -1623,7 +1628,7 @@ function DemoData(randomizer)
 					function apply(world, targetEntity)
 					{
 						var spellToAdd = new SpellDefn("[Spell]");
-						var spellsKnown = targetEntity.moverData.spells.spells;
+						var spellsKnown = targetEntity.MoverData.spells.spells;
 
 						var isSpellAlreadyKnown = false;
 						for (var i = 0; i < spellsKnown.length; i++)
@@ -1643,7 +1648,7 @@ function DemoData(randomizer)
 				)
 			);
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
 				"Spellbook of " + nameOfSpellbook,
 				[
@@ -1693,7 +1698,7 @@ function DemoData(randomizer)
 				"Display a Message",
 				function apply(world, actingEntity, targetEntity)
 				{
-					var actingEntityDefnName = actingEntity.defn(world).name;
+					var actingEntityDefnName = actingEntity.name;
 					/*
 					world.font.spawnMessageFloater
 					(
@@ -1716,14 +1721,14 @@ function DemoData(randomizer)
 				"Spawn Projectile",
 				function apply(world, actingEntity, targetEntity)
 				{
-					var loc = targetEntity.loc;
+					var loc = targetEntity.LocatableRoguelike;
 					var venue = loc.venue(world);
 
 					var entityForProjectile = new Entity
 					(
 						"Projectile0",
 						world.defn.entityDefns["Rock"].name,
-						loc.posInCells.clone()
+						loc.pos.clone()
 					);
 
 					venue.entitiesToSpawn.push(entityForProjectile);
@@ -1740,7 +1745,7 @@ function DemoData(randomizer)
 				"Teleport",
 				function apply(world, actingEntity, targetEntity)
 				{
-					var loc = targetEntity.loc;
+					var loc = targetEntity.LocatableRoguelike;
 
 					var teleportPos = null;
 					while (teleportPos == null)
@@ -1757,10 +1762,10 @@ function DemoData(randomizer)
 							teleportPos = null;
 						}
 					}
-					loc.posInCells.overwriteWith(teleportPos);
+					loc.pos.overwriteWith(teleportPos);
 
 					targetEntity.controlUpdate(world);
-					targetEntity.moverData.controlUpdate(world, targetEntity);
+					targetEntity.MoverData.controlUpdate(world, targetEntity);
 				}
 			)
 		);
@@ -1821,7 +1826,7 @@ function DemoData(randomizer)
 			appearances.splice(appearanceIndex, 1);
 
 			var wandName = "Wand of " + name;
-			var entityDefnWand = new EntityDefn
+			var entityDefnWand = new Entity
 			(
 				wandName,
 				[
@@ -1915,7 +1920,7 @@ function DemoData(randomizer)
 			var name = nameAndAppearance[0];
 			var appearance = nameAndAppearance[1];
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
 				name,
 				[
@@ -2033,7 +2038,7 @@ function DemoData(randomizer)
 			var appearance = name; // hack
 			var category = nameAndCategory[1];
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
 				name,
 				[
@@ -2129,7 +2134,7 @@ function DemoData(randomizer)
 			var name = nameAndAppearance[0];
 			var appearance = nameAndAppearance[0]; // hack
 
-			var entityDefn = new EntityDefn
+			var entityDefn = new Entity
 			(
 				name,
 				[
@@ -2236,20 +2241,21 @@ function DemoData(randomizer)
 
 		for (var i = 0; i < namesOfStones.length; i++)
 		{
+			var name = namesOfStones[i];
 			var appearance = appearancesOfStones[i];
 
 			entityDefnSetStones.push
 			(
-				new EntityDefn
+				new Entity
 				(
-					namesOfStones[i],
+					name,
 					[
 						collidableDefns.Clear,
 
 						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
-							appearance,
+							name,
 							appearance,
 							1, // mass
 							1, // stackSizeMax
@@ -2270,7 +2276,7 @@ function DemoData(randomizer)
 
 		entityDefnSetValuables.push
 		(
-			new EntityDefn
+			new Entity
 			(
 				"Coins",
 				[
@@ -2316,7 +2322,7 @@ function DemoData(randomizer)
 
 		var sizeInPixels = visuals["Floor"].size;
 
-		var entityDefnCorpse = new EntityDefn
+		var entityDefnCorpse = new Entity
 		(
 			"Corpse",
 			[
@@ -2356,7 +2362,7 @@ function DemoData(randomizer)
 			var agentName = agentData[0];
 			var difficulty = agentData[1];
 
-			var entityDefnForAgent = new EntityDefn
+			var entityDefnForAgent = new Entity
 			(
 				agentName,
 				// properties
@@ -2405,7 +2411,7 @@ function DemoData(randomizer)
 		for (var i = 0; i < returnValues.length; i++)
 		{
 			var entityDefnForAgent = returnValues[i];
-			var difficulty = (entityDefnForAgent.Mover == null ? null : entityDefnForAgent.Mover.difficulty);
+			var difficulty = (entityDefnForAgent.MoverDefn == null ? null : entityDefnForAgent.MoverDefn.difficulty);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty[difficulty];
@@ -2477,7 +2483,7 @@ function DemoData(randomizer)
 			activityDefns["Accept User Input"].name;
 			//activityDefns["Demo User Input"].name;
 
-		var entityDefnPlayer = new EntityDefn
+		var entityDefnPlayer = new Entity
 		(
 			"Player",
 			// properties
@@ -3426,21 +3432,21 @@ function DemoData(randomizer)
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
 		[
-			Actor.name,
-			Collidable.name,
+			ActorDefn.name,
+			CollidableDefn.name,
 			Device.name,
 			Drawable.name,
 			"Dynamic",
-			"Emplacement",
+			EmplacementDefn.name,
 			"Enemy",
 			Ephemeral.name,
-			"Equippable",
+			EquippableDefn.name,
 			Item.name,
 			ItemHolder.name,
 			Killable.name,
-			"Mover",
-			"Player",
-			"Portal",
+			MoverDefn.name,
+			PlayerDefn.name,
+			PortalDefn.name,
 		];
 
 		var returnValues =
@@ -4000,14 +4006,16 @@ function DemoData(randomizer)
 
 		var entities = [];
 
+		var room0Center = rooms[0].bounds.center.clone().floor();
+
 		if (venueIndex == 0) // hack - Won't happen.
 		{
-			var stairsExit = new EntityRoguelike
+			var stairsExit = EntityHelper.new
 			(
 				"StairsExit",
-				entityDefns["StairsExit"].name,
-				rooms[0].bounds.center.clone().floor(),
+				entityDefns["StairsExit"],
 				[
+					new LocatableRoguelike(room0Center),
 					new PortalData
 					(
 						"Venue0", "StairsDown"
@@ -4019,13 +4027,12 @@ function DemoData(randomizer)
 		}
 		else
 		{
-			var stairsUp = new EntityRoguelike
+			var stairsUp = EntityHelper.new
 			(
 				"StairsUp",
-				entityDefns["StairsUp"].name,
-				rooms[0].bounds.center.clone().floor(),
-				// propertyValues
+				entityDefns["StairsUp"],
 				[
+					new LocatableRoguelike(room0Center),
 					new PortalData
 					(
 						"Venue" + (venueIndex - 1),
@@ -4039,23 +4046,24 @@ function DemoData(randomizer)
 
 		entities.push
 		(
-			EntityRoguelike.fromDefn
+			EntityHelper.new
 			(
 				"Mover Generator",
 				MoverGenerator.EntityDefn(),
-				null // pos
+				[] // properties
 			)
 		);
 
 		//if (venueIndex < numberOfVenues - 1)
 		{
-			var stairsDown = new EntityRoguelike
+			var room1Center = rooms[1].bounds.center.clone().floor();
+
+			var stairsDown = EntityHelper.new
 			(
 				"StairsDown",
-				entityDefns["StairsDown"].name,
-				rooms[1].bounds.center.clone().floor(),
-				// propertyValues
+				entityDefns["StairsDown"],
 				[
+					new LocatableRoguelike(room1Center),
 					new PortalData
 					(
 						"Venue" + (venueIndex + 1),
@@ -4069,11 +4077,11 @@ function DemoData(randomizer)
 
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{
-			var entityForDoor = new EntityRoguelike
+			var entityForDoor = EntityHelper.new
 			(
 				"Door" + i,
-				entityDefns["Door"].name,
-				doorwayPositions[i]
+				entityDefns["Door"],
+				[ new LocatableRoguelike(doorwayPositions[i]) ]
 			);
 
 			entities.push(entityForDoor);
@@ -4160,12 +4168,12 @@ function DemoData(randomizer)
 						oneOneZero
 					)
 
-					var entityForItem = new EntityRoguelike
+					var entityForItem = EntityHelper.new
 					(
 						entityDefnForItem.name,
-						entityDefnForItem.name,
-						pos,
+						entityDefnForItem,
 						[
+							new LocatableRoguelike(pos),
 							new Item(entityDefnForItem.name, 1)
 						]
 					);
@@ -4210,12 +4218,12 @@ function DemoData(randomizer)
 
 		var stairsDownPos = mapSizeInCells.clone().half().round();
 
-		var entityStairsDown = new EntityRoguelike
+		var entityStairsDown = EntityHelper.new
 		(
 			entityDefnName,
-			entityDefnName,
-			stairsDownPos, // pos
+			worldDefn.entityDefns[entityDefnName],
 			[
+				new LocatableRoguelike(stairsDownPos), // pos
 				new PortalData("Venue" + (venueIndex + 1), "StairsUp") // todo
 			]
 		);
@@ -4351,13 +4359,12 @@ function DemoData(randomizer)
 		[
 			// stairs
 
-			new EntityRoguelike
+			EntityHelper.new
 			(
 				"StairsDown",
-				entityDefns["StairsDown"].name,
-				sizeInCells.clone().subtract(Coords.Instances().Ones),
-				// propertyValues
+				entityDefns["StairsDown"],
 				[
+					new LocatableRoguelike(sizeInCells.clone().subtract(Coords.Instances().Ones)),
 					new PortalData
 					(
 						"Venue" + (venueIndex + 1),

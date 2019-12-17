@@ -15,7 +15,7 @@ function MoverData_Vitals(defn)
 		{
 			moverEntity.Killable.integrity = 0;
 		}
-		else if (this.satiety >= moverEntity.defn(world).Mover.vitals.satietyMax)
+		else if (this.satiety >= moverEntity.MoverDefn.vitals.satietyMax)
 		{
 			// todo
 		}

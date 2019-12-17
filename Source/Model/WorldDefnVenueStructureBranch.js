@@ -67,16 +67,18 @@ function WorldDefnVenueStructureBranch
 			);
 			var venueToBranchFrom = this.parent.venues[venueIndexToBranchFrom];
 
-			var entityPortalToParentBranch = new EntityRoguelike
+			var entityPortalToParentBranch = EntityHelper.new
 			(
 				"StairsUp",
-				worldDefn.entityDefns["StairsUp"].name,
-				new Coords().randomize(randomizer).multiply
-				(
-					venueFirstInBranch.map.sizeInCells
-				).floor(),
-				// propertyValues
+				worldDefn.entityDefns["StairsUp"],
 				[
+					new LocatableRoguelike
+					(
+						new Coords().randomize(randomizer).multiply
+						(
+							venueFirstInBranch.map.sizeInCells
+						).floor()
+					),
 					new PortalData
 					(
 						venueToBranchFrom.name,

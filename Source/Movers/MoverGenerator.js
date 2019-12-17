@@ -9,7 +9,7 @@ function MoverGenerator()
 	{
 		if (MoverGenerator._entityDefn == null)
 		{
-			MoverGenerator._entityDefn = new EntityDefn
+			MoverGenerator._entityDefn = new Entity
 			(
 				"MoverGenerator",
 				// properties

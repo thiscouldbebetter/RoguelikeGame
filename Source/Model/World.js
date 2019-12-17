@@ -11,24 +11,25 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 	{
 		var venue0 = this.venues[0];
 		var portal0 = venue0.entitiesToSpawn[0]; // hack
+		var portal0Pos = portal0.LocatableRoguelike.pos.clone();
 
-		this.entityForPlayer = new EntityRoguelike
+		this.entityForPlayer = EntityHelper.new
 		(
 			"Player",
-			this.defn.entityDefns["Player"].name,
-			portal0.loc.posInCells.clone()
+			this.defn.entityDefns["Player"],
+			[ new LocatableRoguelike(portal0Pos) ]
 		);
 
-		this.entityForPlayer.loc.venueName = venue0.name;
+		this.entityForPlayer.LocatableRoguelike.venueName = venue0.name;
 
 		venue0.entitiesToSpawn.splice(0, 0, this.entityForPlayer);
 	}
 
-	this.venueNext = this.venues[this.entityForPlayer.loc.venueName];
+	this.venueNext = this.venues[this.entityForPlayer.LocatableRoguelike.venueName];
 
 	this.turnsSoFar = 0;
 
-	this.idHelper = new IDHelper();
+	this.idHelper = IDHelper.Instance();
 	this.sightHelper = new SightHelper();
 	this.timerTicksSoFar = 0;
 

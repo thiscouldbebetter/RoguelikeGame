@@ -22,22 +22,20 @@ function CollidableDefn(blocksMovement, blocksView)
 		return CollidableDefn._instances;
 	};
 
-	CollidableDefn.prototype.name = function() { return "Collidable"; };
-
 	CollidableDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
 		var collidableData = new CollidableData
 		(
-			entity.defn(world).Collidable
+			entity.CollidableDefn
 		);
 
 		var map = venue.map;
-		var entityPosInCells = entity.loc.posInCells;
+		var entityPosInCells = entity.LocatableRoguelike.pos;
 		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
 		collidableData.mapCellOccupied = mapCellOccupied;
 
-		entity.collidableData = collidableData;
+		entity.CollidableData = collidableData;
 	};
 
 	CollidableDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
@@ -47,7 +45,7 @@ function CollidableDefn(blocksMovement, blocksView)
 
 	CollidableDefn.prototype.finalizeEntityForVenue = function(universe, world, venue, entity)
 	{
-		var collidableData = entity.collidableData;
+		var collidableData = entity.CollidableData;
 		var entitiesPresentInCellOccupied = collidableData.mapCellOccupied;
 		entitiesPresentInCellOccupied.splice
 		(
