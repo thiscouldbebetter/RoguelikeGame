@@ -18,7 +18,7 @@ function DemoData(randomizer)
 			var posInCells = actor.LocatableRoguelike.pos;
 			var usablesPresentInCell = venue.entitiesWithPropertyNamePresentAtCellPos
 			(
-				PortalDefn.name, posInCells // hack
+				Portal.name, posInCells // hack
 			);
 
 			if (usablesPresentInCell.length == 0)
@@ -39,7 +39,7 @@ function DemoData(randomizer)
 
 			var portal = usableToUse;
 
-			var portalData = portal.PortalData;
+			var portalData = portal.Portal;
 			var destinationVenueName = portalData.destinationVenueName;
 			var destinationEntityName = portalData.destinationEntityName;
 
@@ -262,7 +262,7 @@ function DemoData(randomizer)
 			{
 				var entityInCell = entitiesInCellDestination[b];
 
-				if (entityInCell.CollidableData.defn.blocksMovement == true)
+				if (entityInCell.Collidable.defn.blocksMovement == true)
 				{
 					isDestinationAccessible = false;
 				}
@@ -338,7 +338,7 @@ function DemoData(randomizer)
 				{
 					moverData.movesThisTurn -= costToTraverse;
 
-					var cellDeparted = actor.CollidableData.mapCellOccupied;
+					var cellDeparted = actor.Collidable.mapCellOccupied;
 					var entitiesInCellDeparted = cellDeparted.entitiesPresent;
 					entitiesInCellDeparted.splice
 					(
@@ -347,7 +347,7 @@ function DemoData(randomizer)
 					);
 
 					entitiesInCellDestination.push(actor);
-					actor.CollidableData.mapCellOccupied = cellDestination;
+					actor.Collidable.mapCellOccupied = cellDestination;
 
 					actor.LocatableRoguelike.pos.overwriteWith
 					(
@@ -933,7 +933,6 @@ function DemoData(randomizer)
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsDown"]),
 					new EmplacementDefn(),
-					new PortalDefn(),
 				]
 			),
 
@@ -944,7 +943,6 @@ function DemoData(randomizer)
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsUp"]),
 					new EmplacementDefn(),
-					new PortalDefn(),
 				]
 			),
 
@@ -955,7 +953,6 @@ function DemoData(randomizer)
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsUp"]),
 					new EmplacementDefn(),
-					new PortalDefn(),
 				]
 			),
 
@@ -3446,7 +3443,7 @@ function DemoData(randomizer)
 			Killable.name,
 			MoverDefn.name,
 			PlayerDefn.name,
-			PortalDefn.name,
+			Portal.name,
 		];
 
 		var returnValues =
@@ -4016,7 +4013,7 @@ function DemoData(randomizer)
 				entityDefns["StairsExit"],
 				[
 					new LocatableRoguelike(room0Center),
-					new PortalData
+					new Portal
 					(
 						"Venue0", "StairsDown"
 					),
@@ -4033,7 +4030,7 @@ function DemoData(randomizer)
 				entityDefns["StairsUp"],
 				[
 					new LocatableRoguelike(room0Center),
-					new PortalData
+					new Portal
 					(
 						"Venue" + (venueIndex - 1),
 						"StairsDown"
@@ -4064,7 +4061,7 @@ function DemoData(randomizer)
 				entityDefns["StairsDown"],
 				[
 					new LocatableRoguelike(room1Center),
-					new PortalData
+					new Portal
 					(
 						"Venue" + (venueIndex + 1),
 						"StairsUp"
@@ -4224,7 +4221,7 @@ function DemoData(randomizer)
 			worldDefn.entityDefns[entityDefnName],
 			[
 				new LocatableRoguelike(stairsDownPos), // pos
-				new PortalData("Venue" + (venueIndex + 1), "StairsUp") // todo
+				new Portal("Venue" + (venueIndex + 1), "StairsUp") // todo
 			]
 		);
 
@@ -4365,7 +4362,7 @@ function DemoData(randomizer)
 				entityDefns["StairsDown"],
 				[
 					new LocatableRoguelike(sizeInCells.clone().subtract(Coords.Instances().Ones)),
-					new PortalData
+					new Portal
 					(
 						"Venue" + (venueIndex + 1),
 						"StairsUp"

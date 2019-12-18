@@ -79,7 +79,7 @@ function WorldDefnVenueStructureBranch
 							venueFirstInBranch.map.sizeInCells
 						).floor()
 					),
-					new PortalData
+					new Portal
 					(
 						venueToBranchFrom.name,
 						"StairsDown" // portalName

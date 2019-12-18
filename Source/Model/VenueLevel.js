@@ -166,10 +166,10 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			var entityToRemove = this.entitiesToRemove[i];
 
 			// hack
-			var collidableData = entityToRemove.CollidableData;
-			if (collidableData != null)
+			var collidable = entityToRemove.Collidable;
+			if (collidable != null)
 			{
-				var entitiesInCell = collidableData.mapCellOccupied.entitiesPresent;
+				var entitiesInCell = collidable.mapCellOccupied.entitiesPresent;
 				entitiesInCell.splice
 				(
 					entitiesInCell.indexOf(entityToRemove),
@@ -218,38 +218,38 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		var enemies = this.entitiesByPropertyName["Enemy"];
 		var items = this.entitiesByPropertyName["Item"];
 		var players = this.entitiesByPropertyName[PlayerDefn.name]
-		var portals = this.entitiesByPropertyName[PortalDefn.name];
+		var portals = this.entitiesByPropertyName[Portal.name];
 		var projectiles = this.entitiesByPropertyName["Projectile"];
 
 		var collisionHelper = universe.collisionHelper;
 
 		var collisionSets =
 		[
-			collisionHelper.collisionsOfCollidablesInSets
+			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
 				players,
 				emplacements
 			),
 
-			collisionHelper.collisionsOfCollidablesInSets
+			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
 				players,
 				enemies
 			),
 
-			collisionHelper.collisionsOfCollidablesInSets
+			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
 				players,
 				items
 			),
 
-			collisionHelper.collisionsOfCollidablesInSets
+			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
 				players,
 				portals
 			),
 
-			collisionHelper.collisionsOfCollidablesInSets
+			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
 				enemies,
 				projectiles

@@ -1,5 +1,0 @@
-
-function PortalDefn()
-{
-	// do nothing
-}

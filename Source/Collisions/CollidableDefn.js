@@ -24,7 +24,7 @@ function CollidableDefn(blocksMovement, blocksView)
 
 	CollidableDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
-		var collidableData = new CollidableData
+		var collidable = new Collidable
 		(
 			entity.CollidableDefn
 		);
@@ -33,9 +33,9 @@ function CollidableDefn(blocksMovement, blocksView)
 		var entityPosInCells = entity.LocatableRoguelike.pos;
 		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
-		collidableData.mapCellOccupied = mapCellOccupied;
+		collidable.mapCellOccupied = mapCellOccupied;
 
-		entity.CollidableData = collidableData;
+		entity.Collidable = collidable;
 	};
 
 	CollidableDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
@@ -45,8 +45,8 @@ function CollidableDefn(blocksMovement, blocksView)
 
 	CollidableDefn.prototype.finalizeEntityForVenue = function(universe, world, venue, entity)
 	{
-		var collidableData = entity.CollidableData;
-		var entitiesPresentInCellOccupied = collidableData.mapCellOccupied;
+		var collidable = entity.Collidable;
+		var entitiesPresentInCellOccupied = collidable.mapCellOccupied;
 		entitiesPresentInCellOccupied.splice
 		(
 			entitiesPresentInCellOccupied.indexOf(entity),
