@@ -53,26 +53,15 @@ function DemoData(randomizer)
 				var destinationEntity = entities[destinationEntityName];
 				if (destinationEntity != null)
 				{
-					// todo
-					// Moving entities between venues like this causes problems,
-					// because the current venue keeps processing the entity
-					// for the rest of the current tick.
-					// Maybe instead, spawn a specialized Transfer entity?
-					var actorLoc = actor.LocatableRoguelike;
-					
-					var venueToDepart = actorLoc.venue(world);
-					venueToDepart.entitiesToRemove.push(actor);
-					
-					destinationVenue.entitiesToSpawn.push(actor);
-					actorLoc.venueName = destinationVenueName;
-					actorLoc.pos.overwriteWithXY
+					var destinationLoc = destinationEntity.LocatableRoguelike;
+					destinationLoc.venueName = destinationVenueName; // hack - Set on spawn, not spawned until venue visited.
+					var transport = new MoverTransport(actor, destinationLoc);
+					var entityForTransport = new Entity
 					(
-						destinationEntity.LocatableRoguelike.pos
+						actor.name + "_Transport", [ transport ] 
 					);
-
+					destinationVenue.entitiesToSpawn.push(entityForTransport);
 					world.venueNext = destinationVenue;
-
-					moverData.controlUpdate(world, actor);
 				}
 			}
 		}
@@ -247,7 +236,8 @@ function DemoData(randomizer)
 				directionToMove
 			);
 
-			var cellDestination = venue.map.cellAtPos(posInCellsDestination);
+			var map = venue.map;
+			var cellDestination = map.cellAtPos(posInCellsDestination);
 
 			if (cellDestination == null)
 			{
@@ -330,9 +320,10 @@ function DemoData(randomizer)
 				}
 			}
 
-			if (isDestinationAccessible == true)
+			if (isDestinationAccessible)
 			{
-				var costToTraverse = cellDestination.terrain.costToTraverse;
+				var cellTerrain = cellDestination.terrain(map);
+				var costToTraverse = cellTerrain.costToTraverse;
 				var moverData = actor.MoverData;
 				if (costToTraverse <= moverData.movesThisTurn)
 				{
@@ -1754,7 +1745,8 @@ function DemoData(randomizer)
 						).floor();
 
 						var cellToTeleportTo = map.cellAtPos(teleportPos);
-						if (cellToTeleportTo.terrain.costToTraverse > 1)
+						var cellTerrain = cellToTeleportTo.terrain(map);
+						if (cellTerrain.costToTraverse > 1)
 						{
 							teleportPos = null;
 						}
@@ -3442,6 +3434,7 @@ function DemoData(randomizer)
 			ItemHolder.name,
 			Killable.name,
 			MoverDefn.name,
+			MoverTransport.name,
 			PlayerDefn.name,
 			Portal.name,
 		];

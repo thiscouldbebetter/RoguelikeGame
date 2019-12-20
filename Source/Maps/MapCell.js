@@ -1,6 +1,12 @@
 
-function MapCell(terrain)
+function MapCell(terrainCode, entitiesPresent)
 {
-	this.terrain = terrain;
-	this.entitiesPresent = [];
+	this.terrainCode = terrainCode;
+	this.entitiesPresent = entitiesPresent || [];
+}
+{
+	MapCell.prototype.terrain = function(map)
+	{
+		return map.terrains[this.terrainCode];
+	};
 }

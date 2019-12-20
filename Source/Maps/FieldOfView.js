@@ -113,7 +113,8 @@ function FieldOfView()
 							this.numberOfCellsVisible++;
 
 							var cellAtPos = map.cellAtPos(cellPos);
-							if (cellAtPos.terrain.blocksVision == true)
+							var cellTerrain = cellAtPos.terrain(map);
+							if (cellTerrain.blocksVision)
 							{
 								angleRangeSetNotYetBlocked.subtract
 								(

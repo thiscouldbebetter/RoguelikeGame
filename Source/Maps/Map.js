@@ -2,7 +2,7 @@
 function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 {
 	this.name = name;
-	this.terrains = terrains;
+	this.terrains = terrains.addLookups(x => x.codeChar);
 	this.cellSizeInPixels = cellSizeInPixels;
 
 	this.sizeInCells = new Coords
@@ -30,9 +30,8 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			cellPos.x = x;
 
 			var cellAsChar = cellsAsStrings[cellPos.y][cellPos.x];
-			var cellTerrain = this.terrains[cellAsChar];
 
-			var cell = new MapCell(cellTerrain);
+			var cell = new MapCell(cellAsChar);
 			this.cells.push(cell);
 		}
 	}
@@ -92,13 +91,13 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	Map.prototype.cellAtPos = function(cellPos)
 	{
-		var returnValue = null;
+		var returnValue;
 
 		if (cellPos.isInRangeMax(this.sizeInCellsMinusOnes))
 		{
 			var cellIndex = this.indexOfCellAtPos(cellPos);
-
-			returnValue = this.cells[cellIndex];
+			var cell = this.cells[cellIndex];
+			returnValue = cell;
 		}
 
 		return returnValue;
@@ -221,7 +220,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var map = this;
 
 		var cell = map.cellAtPos(cellPos);
-		var cellTerrain = cell.terrain;
+		var cellTerrain = cell.terrain(this);
 		var terrainVisual = cellTerrain.visual;
 		var drawableEntity = this._drawableEntity;
 		var drawPos = drawableEntity.Locatable.loc.pos;

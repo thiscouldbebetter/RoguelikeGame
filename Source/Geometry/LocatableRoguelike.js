@@ -15,7 +15,7 @@ function LocatableRoguelike(pos, venueName)
 	LocatableRoguelike.prototype.overwriteWith = function(other)
 	{
 		this.venueName = other.venueName;
-		this.pos.overwriteWith(other.pos);
+		this.pos.overwriteWithXY(other.pos);
 		this.heading = other.heading;
 	};
 

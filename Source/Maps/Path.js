@@ -140,7 +140,7 @@ function Path(map, startPos, goalPos)
 			var costToTraverse = map.cellAtPos
 			(
 				neighborPos
-			).terrain.costToTraverse;
+			).terrain(map).costToTraverse;
 
 			costToTraverse *= tempPos.overwriteWith
 			(
