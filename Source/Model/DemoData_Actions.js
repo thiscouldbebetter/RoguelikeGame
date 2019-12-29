@@ -1,9 +1,7 @@
-function DemoData_Actions()
+
+// partial class DemoData
 {
-	// Do nothing.
-}
-{
-	DemoData_Actions.prototype.actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
 		var venue = loc.place(world);
@@ -35,7 +33,7 @@ function DemoData_Actions()
 		);
 	};
 
-	DemoData_Actions.prototype.actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
 		var venue = loc.place(world);
@@ -85,7 +83,7 @@ function DemoData_Actions()
 		}
 	};
 
-	DemoData_Actions.prototype.actionItem_PickUp_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionItem_PickUp_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
 		var venue = loc.place(world);
@@ -128,7 +126,7 @@ function DemoData_Actions()
 		}
 	}
 
-	DemoData_Actions.prototype.actionItem_SelectAtOffset_Perform = function(universe, world, place, actor, action, indexOffset)
+	DemoData.prototype.actionItem_SelectAtOffset_Perform = function(universe, world, place, actor, action, indexOffset)
 	{
 		var itemHolder = actor.ItemHolder;
 		var itemsHeld = itemHolder.items;
@@ -166,14 +164,14 @@ function DemoData_Actions()
 		actor.MoverData.controlUpdate(world, actor);
 	};
 
-	DemoData_Actions.prototype.actionItem_TargetSelected_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionItem_TargetSelected_Perform = function(universe, world, place, actor, action)
 	{
 		var itemHolder = actor.ItemHolder;
 		itemHolder.itemTargeted = itemHolder.itemSelected;
 		actor.MoverData.controlUpdate(world, actor);
 	};
 
-	DemoData_Actions.prototype.actionItem_UseSelected_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionItem_UseSelected_Perform = function(universe, world, place, actor, action)
 	{
 		var itemToUse = actor.ItemHolder.itemSelected;
 
@@ -191,7 +189,7 @@ function DemoData_Actions()
 		}
 	};
 
-	DemoData_Actions.prototype.actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
+	DemoData.prototype.actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
 	{
 		if (directionToMove.magnitude() == 0)
 		{
@@ -327,12 +325,12 @@ function DemoData_Actions()
 		}
 	};
 
-	DemoData_Actions.prototype.actionWait_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionWait_Perform = function(universe, world, place, actor, action)
 	{
 		actor.MoverData.movesThisTurn = 0;
 	};
 
-	DemoData_Actions.prototype.actionsBuild = function()
+	DemoData.prototype.actionsBuild = function()
 	{
 		// directions
 
@@ -493,6 +491,340 @@ function DemoData_Actions()
 			actionMoveNW,
 			actionMoveN,
 			actionMoveNE,
+		];
+
+		returnValues.addLookupsByName();
+
+		return returnValues;
+	};
+
+	DemoData.prototype.buildActivityDefns = function()
+	{
+		var activityDefnDoNothing = new ActivityDefn
+		(
+			"Do Nothing",
+
+			// initialize
+			function(universe, world, place, actor, activity)
+			{
+				// do nothing
+			},
+
+			// perform
+			function(universe, world, place, actor, activity)
+			{
+				// do nothing
+			}
+		);
+
+		var activityDefnGenerateMovers = new ActivityDefn
+		(
+			"Generate Movers",
+
+			function initialize(universe, world, place, actor, activity)
+			{
+				// do nothing
+			},
+
+			function perform(universe, world, place, actor, activity)
+			{
+				var venue = place;
+
+				var agentsInVenue = venue.entitiesByPropertyName[MoverDefn.name];
+
+				var numberOfAgentsDesired = 0; // hack - No monsters yet.
+
+				if (agentsInVenue.length < numberOfAgentsDesired)
+				{
+					var chanceOfSpawnPerTurn = 1; // hack - actually per tick
+
+					if (universe.randomizer().getNextRandom() < chanceOfSpawnPerTurn)
+					{
+						var difficulty = 1; // hack
+
+						var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
+						var entityDefnsForAgentsOfDifficulty =
+							world.defn.entityDefnGroups[entityDefnGroupName].entityDefns;
+						var numberOfEntityDefns = entityDefnsForAgentsOfDifficulty.length;
+						var entityDefnIndex = Math.floor(this.randomizer.getNextRandom() * numberOfEntityDefns);
+						var entityDefnForAgentToSpawn = entityDefnsForAgentsOfDifficulty[entityDefnIndex];
+
+						var randomizer = world.randomizer;
+						var posToSpawnAt = new Coords().randomize
+						(
+							randomizer
+						).multiply
+						(
+							venue.map.sizeInCells
+						).floor();
+
+						var entityForAgent = EntityHelper.new
+						(
+							entityDefnForAgentToSpawn.name + "0",
+							entityDefnForAgentToSpawn,
+							[
+								new Locatable(new Location(posToSpawnAt))
+							]
+						);
+
+						venue.entitiesToSpawn.push(entityForAgent);
+					}
+				}
+			}
+		);
+
+		var activityDefnMoveRandomly = new ActivityDefn
+		(
+			"Move Randomly",
+
+			// initialize
+			function(universe, world, place, actor, activity)
+			{
+				// do nothing
+			},
+
+			// perform
+			function(universe, world, place, actor, activity)
+			{
+				// hack
+				var actionsMoves = world.defn.actions._MovesByHeading;
+
+				var numberOfDirectionsAvailable = actionsMoves.length;
+				var directionIndexRandom = Math.floor
+				(
+					numberOfDirectionsAvailable
+					* this.randomizer.getNextRandom()
+				);
+
+				var actionMoveInRandomDirection = actionsMoves[directionIndexRandom];
+
+				actor.ActorData.actions.push(actionMoveInRandomDirection);
+			}
+		);
+
+		var activityDefnMoveTowardPlayer = new ActivityDefn
+		(
+			"Move Toward Player",
+
+			// initialize
+			function(universe, world, place, actor, activity)
+			{
+				// do nothing
+			},
+
+			// perform
+			function(universe, world, place, actor, activity)
+			{
+				if (actor.MoverData.movesThisTurn <= 0)
+				{
+					return;
+				}
+
+				var actorLoc = actor.Locatable.loc;
+				var venue = actorLoc.place(world);
+				var players = venue.entitiesByPropertyName[Player.name];
+
+				if (players != null && players.length > 0)
+				{
+					var player = players[0];
+
+					var path = new Path
+					(
+						venue.map,
+						actorLoc.pos,
+						player.Locatable.loc.pos
+					);
+
+					path.calculate();
+
+					if (path.nodes.length < 2)
+					{
+						return;
+					}
+
+					var pathNode1 = path.nodes[1];
+
+					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
+					(
+						actor.Locatable.loc.pos
+					).directions();
+
+					var heading = Heading.fromCoords(directionsToPathNode1);
+
+					// hack
+					var actionsMoves = world.defn.actions._MovesByHeading;
+					var actionMoveInDirection = actionsMoves[heading];
+
+					actor.ActorData.actions.push
+					(
+						actionMoveInDirection
+					);
+				}
+			}
+		);
+
+		var activityDefnUserInputAccept = new ActivityDefn
+		(
+			"Accept User Input",
+
+			// initialize
+			function(universe, world, place, actor, activity)
+			{
+				activity.target =
+				[
+					new ActionToInputsMapping("Use Selected Item", [ "f" ]),
+					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
+					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),
+					new ActionToInputsMapping("Target Selected Item", [ "t" ], ),
+					new ActionToInputsMapping("Use Emplacement", [ "u" ] ),
+
+					new ActionToInputsMapping("Move Southwest", [ "_1" ]),
+					new ActionToInputsMapping("Move South", [ "_2" ]),
+					new ActionToInputsMapping("Move Southeast", [ "_3" ]),
+					new ActionToInputsMapping("Move West", [ "_4" ]),
+					new ActionToInputsMapping("Move East", [ "_6" ]),
+					new ActionToInputsMapping("Move Northwest", [ "_7" ]),
+					new ActionToInputsMapping("Move North", [ "_8" ]),
+					new ActionToInputsMapping("Move Northeast", [ "_9" ]),
+
+					new ActionToInputsMapping("ShowItems", [ "Tab" ]),
+					new ActionToInputsMapping("Select Next Item", [ "]" ]),
+					new ActionToInputsMapping("Select Previous Item", [ "[" ]),
+
+					new ActionToInputsMapping("Wait", [ "." ]),
+
+					new ActionToInputsMapping("ShowMenu", [ "Escape" ]),
+
+				].addLookups( function(element) { return element.inputNames[0]; } );
+			},
+
+			function perform(universe, world, place, actor, activity)
+			{
+				var inputHelper = universe.inputHelper;
+				var inputToActionMappings = activity.target;
+				var inputsActive = inputHelper.inputsPressed;
+				var actionsFromActor = actor.ActorData.actions;
+
+				for (var i = 0; i < inputsActive.length; i++)
+				{
+					var input = inputsActive[i];
+					var inputMapping = inputToActionMappings[input.name];
+					if (inputMapping != null)
+					{
+						var actionName = inputMapping.actionName;
+						var action = world.defn.actions[actionName];
+
+						var ticksToHold = 1; // hack
+
+						if (action.ticksSoFar <= ticksToHold)
+						{
+							actionsFromActor.push(action);
+						}
+
+						actionsFromActor.push(action);
+					}
+				}
+			}
+		);
+
+		var activityDefnUserInputDemo = new ActivityDefn
+		(
+			"Demo User Input",
+
+			function initialize(universe, world, place, actor, activity)
+			{
+				// do nothing
+			},
+
+			function perform(universe, world, place, actor, activity)
+			{
+				if (actor.MoverData.movesThisTurn <= 0)
+				{
+					return;
+				}
+
+				var actorLoc = actor.Locatable.loc;
+				var actorPos = actorLoc.pos;
+				var venue = actorLoc.place(world);
+
+				var items = venue.entitiesByPropertyName[Item.name];
+				var itemsNearby = items.filter
+				(
+					x => x.Locatable.loc.pos.clone().subtract(actorPos).magnitude() < 4
+				);
+
+				var target = null;
+				if (itemsNearby.length > 0)
+				{
+					target = itemsNearby[0];
+				}
+				else
+				{
+					var emplacements = venue.entitiesByPropertyName[Emplacement.name];
+					var stairsDown = emplacements.filter( (x) => { return (x.name == "StairsDown"); } );
+
+					if (stairsDown.length > 0)
+					{
+						var stairDown = stairsDown[0];
+						target = stairDown;
+					}
+				}
+
+				var targetPos = target.Locatable.loc.pos;
+				var path = new Path
+				(
+					venue.map,
+					actorPos,
+					targetPos
+				);
+				path.calculate();
+				var pathNodes = path.nodes;
+
+				var actionNext = null;
+				var actionsAll = world.defn.actions;
+				if (pathNodes.length <= 1)
+				{
+					if (target.Item != null)
+					{
+						actionNext = actionsAll["Pick Up Item"];
+					}
+					else
+					{
+						actionNext = actionsAll["Use Emplacement"];
+					}
+				}
+				else
+				{
+					var pathNode1 = pathNodes[1];
+
+					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
+					(
+						actor.Locatable.loc.pos
+					).directions();
+
+					var heading = Heading.fromCoords(directionsToPathNode1);
+
+					// hack
+					var actionsMoves = actionsAll._MovesByHeading;
+					var actionMoveInDirection = actionsMoves[heading];
+					actionNext = actionMoveInDirection;
+				}
+
+				if (actionNext != null)
+				{
+					actor.ActorData.actions.push(actionNext);
+				}
+			}
+		);
+
+		var returnValues =
+		[
+			activityDefnDoNothing,
+			activityDefnGenerateMovers,
+			activityDefnMoveRandomly,
+			activityDefnMoveTowardPlayer,
+			activityDefnUserInputAccept,
+			activityDefnUserInputDemo
 		];
 
 		returnValues.addLookupsByName();
