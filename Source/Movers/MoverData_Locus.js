@@ -25,7 +25,8 @@ function MoverData_Locus()
 							function get(c)
 							{
 								var loc = entity.Locatable.loc;
-								var floor = loc.place(world).depth;
+								var place = loc.place(world);
+								var floor = place.name;
 								var turn = world.turnsSoFar;
 								var pos = loc.pos.toStringXY();
 								var returnValue = "Turn: " + turn + " Floor: " + floor + " Pos: " + pos;

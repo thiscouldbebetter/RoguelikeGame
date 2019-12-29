@@ -59,10 +59,10 @@ function systemTest()
 	(
 		"RoguelikeGame", version, timerHelper, display, mediaLibrary, null
 	);
-	universe.initialize();
-
-	// hack
-	setTimeout(systemTest_2.bind(this, universe), 3000);
+	universe.initialize
+	(
+		systemTest_2
+	);
 }
 
 function systemTest_2(universe)

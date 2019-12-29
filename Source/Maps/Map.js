@@ -105,6 +105,35 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		this.cells[cellIndex] = cellToSet;
 	};
 
+	Map.prototype.cellsAsString = function()
+	{
+		return this.cellsAsStrings().join("\n");
+	};
+
+	Map.prototype.cellsAsStrings = function()
+	{
+		// For debugging.
+
+		var rowsAsStrings = [];
+
+		var cellPos = this._cellPos;
+		for (var y = 0; y < this.sizeInCells.y; y++)
+		{
+			var rowAsString = "";
+			cellPos.y = y;
+			for (var x = 0; x < this.sizeInCells.x; x++)
+			{
+				cellPos.x = x;
+				var cellAtPos = this.cellAtPos(cellPos);
+				var cellTerrain = cellAtPos.terrain(this);
+				rowAsString += cellTerrain.codeChar;
+			}
+			rowsAsStrings.push(rowAsString);
+		}
+
+		return rowsAsStrings;
+	};
+
 	Map.prototype.clone = function()
 	{
 		var cellsAsStrings = [];
