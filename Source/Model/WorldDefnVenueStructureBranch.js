@@ -72,12 +72,15 @@ function WorldDefnVenueStructureBranch
 				"StairsUp",
 				worldDefn.entityDefns["StairsUp"],
 				[
-					new LocatableRoguelike
+					new Locatable
 					(
-						new Coords().randomize(randomizer).multiply
+						new Location
 						(
-							venueFirstInBranch.map.sizeInCells
-						).floor()
+							new Coords().randomize(randomizer).multiply
+							(
+								venueFirstInBranch.map.sizeInCells
+							).floor()
+						)
 					),
 					new Portal
 					(

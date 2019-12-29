@@ -7,519 +7,6 @@ function DemoData(randomizer)
 {
 	var collidableDefns = CollidableDefn.Instances();
 
-	DemoData.prototype.buildActions = function()
-	{
-		// Action.perform() declarations
-
-		var actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
-		{
-			var loc = actor.LocatableRoguelike;
-			var venue = loc.venue(world);
-			var posInCells = actor.LocatableRoguelike.pos;
-			var usablesPresentInCell = venue.entitiesWithPropertyNamePresentAtCellPos
-			(
-				Portal.name, posInCells // hack
-			);
-
-			if (usablesPresentInCell.length == 0)
-			{
-				return;
-			}
-
-			var usableToUse = usablesPresentInCell[0];
-			var costToUse = 1;
-
-			var moverData = actor.MoverData;
-			if (moverData.movesThisTurn < costToUse)
-			{
-				return;
-			}
-
-			moverData.movesThisTurn -= costToUse;
-
-			var portal = usableToUse;
-
-			var portalData = portal.Portal;
-			var destinationVenueName = portalData.destinationVenueName;
-			var destinationEntityName = portalData.destinationEntityName;
-
-			var destinationVenue = world.venues[destinationVenueName];
-			if (destinationVenue != null)
-			{
-				//destinationVenue.initialize(universe, world);
-				destinationVenue.update(universe, world);
-
-				var entities = destinationVenue.entities;
-				var destinationEntity = entities[destinationEntityName];
-				if (destinationEntity != null)
-				{
-					var destinationLoc = destinationEntity.LocatableRoguelike;
-					destinationLoc.venueName = destinationVenueName; // hack - Set on spawn, not spawned until venue visited.
-					var transport = new MoverTransport(actor, destinationLoc);
-					var entityForTransport = new Entity
-					(
-						actor.name + "_Transport", [ transport ] 
-					);
-					destinationVenue.entitiesToSpawn.push(entityForTransport);
-					world.venueNext = destinationVenue;
-				}
-			}
-		}
-
-		var actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
-		{
-			var loc = actor.LocatableRoguelike;
-			var venue = loc.venue(world);
-			var posInCells = loc.pos;
-			var itemsPresentInCell = venue.entitiesWithPropertyPresentAtCellPos
-			(
-				"Item", posInCells
-			);
-
-			var itemHolder = actor.ItemHolder;
-			var itemToDrop = itemHolder.itemSelected;
-			var costToDrop = 1;
-
-			var moverData = actor.MoverData;
-			if (itemToDrop != null && moverData.movesThisTurn >= costToDrop)
-			{
-				moverData.movesThisTurn -= costToDrop;
-
-				function removeItem(itemHolder, world, actor, itemToDrop)
-				{
-					var itemsHeld = itemHolder.itemEntities;
-
-					var actionSelectNext = world.defn.actions["Item_SelectNext"];
-					actionSelectNext.perform(null, world, "[place]", actor);
-
-					var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
-					itemsHeld.splice(indexOfItemToDrop, 1);
-
-					if (itemsHeld.length == 0)
-					{
-						itemHolder.itemSelected = null;
-					}
-				}
-
-				function dropItem(itemHolder, world, actor, itemToDrop)
-				{
-					var itemsHeld = itemHolder.itemEntities;
-
-					removeItem(itemHolder, world, actor, itemToDrop);
-
-					itemToDrop.LocatableRoguelike.overwriteWith(actor.LocatableRoguelike);
-					itemToDrop.LocatableRoguelike.venue(world).entitiesToSpawn.push(itemToDrop);
-				}
-
-				dropItem(actor.ItemHolder, world, actor, itemToDrop);
-			}
-		}
-
-		var actionItem_PickUp_Perform = function(universe, world, place, actor, action)
-		{
-			var loc = actor.LocatableRoguelike;
-			var venue = loc.venue(world);
-			var posInCells = actor.LocatableRoguelike.pos;
-
-			var cell = venue.map.cellAtPos(posInCells);
-			var entitiesPresentAtCellPos = cell.entitiesPresent;
-
-			for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
-			{
-				var entityPresent = entitiesPresentAtCellPos[i];
-				var itemToPickUp = entityPresent.Item;
-				if (itemToPickUp != null)
-				{
-					var costToPickUp = 1;
-
-					var moverData = actor.MoverData;
-					if (moverData.movesThisTurn >= costToPickUp)
-					{
-						moverData.movesThisTurn -= costToPickUp;
-
-						function pickUpItem(itemHolder, world, actor, itemToPickUp)
-						{
-							itemHolder.itemEntities.push(itemToPickUp);
-							var venue = place; //itemToPickUp.LocatableRoguelike.venue(world);
-							venue.entitiesToRemove.push(itemToPickUp);
-
-							if (itemHolder.itemSelected == null)
-							{
-								itemHolder.itemSelected = itemToPickUp;
-							}
-						}
-
-						pickUpItem(actor.ItemHolder, world, actor, entityPresent);
-						var itemToPickUpDefn = itemToPickUp.defn(world);
-						var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
-						actor.PlayerData.messageLog.messageAdd(message);
-					}
-				}
-			}
-		}
-
-		var actionItem_SelectAtOffset_Perform = function(universe, world, place, actor, action, indexOffset)
-		{
-			var itemHolder = actor.ItemHolder;
-			var itemsHeld = itemHolder.items;
-
-			if (itemsHeld.length == 0)
-			{
-				return;
-			}
-
-			var itemSelected = itemHolder.itemSelected;
-
-			var indexOfItemSelected;
-
-			if (itemSelected == null)
-			{
-				indexOfItemSelected = 0;
-			}
-			else
-			{
-				var indexOfItemSelected = itemsHeld.indexOf
-				(
-					itemSelected
-				);
-
-				indexOfItemSelected += indexOffset;
-
-				indexOfItemSelected = indexOfItemSelected.wrapToRangeMinMax
-				(
-					0, itemsHeld.length
-				);
-			}
-
-			itemHolder.itemSelected = itemsHeld[indexOfItemSelected];
-
-			actor.MoverData.controlUpdate(world, actor);
-		}
-
-		var actionItem_TargetSelected_Perform = function(universe, world, place, actor, action)
-		{
-			var itemHolder = actor.ItemHolder;
-			itemHolder.itemTargeted = itemHolder.itemSelected;
-			actor.MoverData.controlUpdate(world, actor);
-		}
-
-		var actionItem_UseSelected_Perform = function(universe, world, place, actor, action)
-		{
-			var itemToUse = actor.ItemHolder.itemSelected;
-
-			if (itemToUse != null)
-			{
-				var movesToUse = 1; // todo
-
-				var moverData = actor.MoverData;
-				if (moverData.movesThisTurn >= movesToUse)
-				{
-					moverData.movesThisTurn -= movesToUse;
-
-					itemToUse.defn.itemDefn.use(world, actor, itemToUse, actor);
-				}
-			}
-		}
-
-		var actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
-		{
-			if (directionToMove.magnitude() == 0)
-			{
-				return;
-			}
-
-			var actorLoc = actor.LocatableRoguelike;
-			var venue = actorLoc.venue(world);
-
-			var posInCellsDestination = actorLoc.pos.clone().add
-			(
-				directionToMove
-			);
-
-			var map = venue.map;
-			var cellDestination = map.cellAtPos(posInCellsDestination);
-
-			if (cellDestination == null)
-			{
-				return;
-			}
-
-			var entitiesInCellDestination = cellDestination.entitiesPresent;
-
-			var isDestinationAccessible = true;
-
-			for (var b = 0; b < entitiesInCellDestination.length; b++)
-			{
-				var entityInCell = entitiesInCellDestination[b];
-
-				if (entityInCell.Collidable.defn.blocksMovement == true)
-				{
-					isDestinationAccessible = false;
-				}
-
-				if (entityInCell.MoverDefn != null)
-				{
-					isDestinationAccessible = false;
-
-					var costToAttack = 1; // todo
-					actor.MoverData.movesThisTurn -= costToAttack;
-
-					// todo - Calculate damage.
-					var damageInflicted = DiceRoll.roll(world.randomizer, "1d6");
-
-					var entityDefns = world.defn.entityDefns;
-					var defnsOfEntitiesToSpawn = [];
-
-					/*
-					world.font.spawnMessageFloater
-					(
-						world, "Dagger", "-" + damageInflicted, actorLoc
-					);
-					*/
-
-					if (damageInflicted > 0)
-					{
-						var killable = entityInCell.Killable;
-						killable.integrityAdd
-						(
-							0 - damageInflicted
-						);
-
-						if (killable.integrity <= 0)
-						{
-							defnsOfEntitiesToSpawn.push
-							(
-								entityInCell.MoverDefn.entityDefnCorpse
-							);
-						}
-						else
-						{
-							defnsOfEntitiesToSpawn.push
-							(
-								entityDefns["Blood"]
-							);
-						}
-					}
-
-					for (var i = 0; i < defnsOfEntitiesToSpawn.length; i++)
-					{
-						var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
-
-						var entityToSpawn = EntityHelper.new
-						(
-							defnOfEntityToSpawn.name + "_Spawned",
-							defnOfEntityToSpawn,
-							[ new LocatableRoguelike(posInCellsDestination) ]
-						);
-
-						venue.entitiesToSpawn.push
-						(
-							entityToSpawn
-						);
-					}
-				}
-			}
-
-			if (isDestinationAccessible)
-			{
-				var cellTerrain = cellDestination.terrain(map);
-				var costToTraverse = cellTerrain.costToTraverse;
-				var moverData = actor.MoverData;
-				if (costToTraverse <= moverData.movesThisTurn)
-				{
-					moverData.movesThisTurn -= costToTraverse;
-
-					var cellDeparted = actor.Collidable.mapCellOccupied;
-					var entitiesInCellDeparted = cellDeparted.entitiesPresent;
-					entitiesInCellDeparted.splice
-					(
-						entitiesInCellDeparted.indexOf(actor),
-						1
-					);
-
-					entitiesInCellDestination.push(actor);
-					actor.Collidable.mapCellOccupied = cellDestination;
-
-					actor.LocatableRoguelike.pos.overwriteWith
-					(
-						posInCellsDestination
-					);
-				}
-			}
-
-		}
-
-		var actionWait_Perform = function(universe, world, place, actor, action)
-		{
-			actor.MoverData.movesThisTurn = 0;
-		}
-
-		// directions
-
-		var directions = new Direction_Instances()._ByHeading;
-
-		// actions
-
-		var actionEmplacement_Use = new Action
-		(
-			"Use Emplacement",
-			actionEmplacement_Use_Perform
-		);
-
-		var actionItem_DropSelected = new Action
-		(
-			"Drop Selected Item",
-			actionItem_DropSelected_Perform
-		);
-
-		var actionItem_PickUp = new Action
-		(
-			"Pick Up Item", 
-			actionItem_PickUp_Perform
-		);
-
-		var actionItem_SelectNext = new Action
-		(
-			"Select Next Item",
-			function perform(universe, world, actor, action)
-			{
-				actionItem_SelectAtOffset_Perform(universe, world, actor, action, 1);
-			}
-		);
-
-		var actionItem_SelectPrev = new Action
-		(
-			"Select Previous Item",
-			function perform(universe, world, place, actor, action)
-			{
-				actionItem_SelectAtOffset_Perform(universe, world, actor, action, -1);
-			}
-		);
-
-		var actionItem_TargetSelected= new Action
-		(
-			"Target Selected Item", actionItem_TargetSelected_Perform
-		);
-
-		var actionItem_UseSelected 	= new Action
-		(
-			"Use Selected Item", actionItem_UseSelected_Perform
-		);
-
-		var actionMoveE = new Action
-		(
-			"Move East",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[0]);
-			}
-		);
-
-		var actionMoveSE = new Action
-		(
-			"Move Southeast",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[1]);
-			}
-		);
-
-		var actionMoveS = new Action
-		(
-			"Move South",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[2]);
-			}
-		);
-
-		var actionMoveSW = new Action
-		(
-			"Move Southwest",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[3]);
-			}
-		);
-
-		var actionMoveW = new Action
-		(
-			"Move West",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[4]);
-			}
-		);
-
-		var actionMoveNW = new Action
-		(
-			"Move Northwest",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[5]);
-			}
-		);
-
-		var actionMoveN = new Action
-		(
-			"Move North",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[6]);
-			}
-		);
-
-		var actionMoveNE = new Action
-		(
-			"Move Northeast",
-			function perform(universe, world, place, actor, action)
-			{
-				actionMove_Perform(universe, world, place, actor, action, directions[7]);
-			}
-		);
-
-		var actionWait = new Action("Wait", actionWait_Perform);
-
-		var returnValues =
-		[
-			actionEmplacement_Use,
-			actionItem_DropSelected,
-			actionItem_PickUp,
-			actionItem_SelectNext,
-			actionItem_SelectPrev,
-			actionItem_TargetSelected,
-			actionItem_UseSelected,
-			actionMoveE,
-			actionMoveSE,
-			actionMoveS,
-			actionMoveSW,
-			actionMoveW,
-			actionMoveNW,
-			actionMoveN,
-			actionMoveNE,
-			actionWait,
-			Action.Instances().ShowMenu,
-			Action.Instances().ShowItems,
-		];
-
-		// hack
-		returnValues._MovesByHeading =
-		[
-			actionMoveE,
-			actionMoveSE,
-			actionMoveS,
-			actionMoveSW,
-			actionMoveW,
-			actionMoveNW,
-			actionMoveN,
-			actionMoveNE,
-		];
-
-		returnValues.addLookupsByName();
-
-		return returnValues;
-	}
-
 	DemoData.prototype.buildActivityDefns = function()
 	{
 		var activityDefnDoNothing = new ActivityDefn
@@ -584,7 +71,9 @@ function DemoData(randomizer)
 						(
 							entityDefnForAgentToSpawn.name + "0",
 							entityDefnForAgentToSpawn,
-							[ new LocatableRoguelike(posToSpawnAt) ]
+							[
+								new Locatable(new Location(posToSpawnAt))
+							]
 						);
 
 						venue.entitiesToSpawn.push(entityForAgent);
@@ -640,9 +129,9 @@ function DemoData(randomizer)
 					return;
 				}
 
-				var actorLoc = actor.LocatableRoguelike;
-				var venue = actorLoc.venue(world);
-				var players = venue.entitiesByPropertyName["Player"];
+				var actorLoc = actor.Locatable.loc;
+				var venue = actorLoc.place(world);
+				var players = venue.entitiesByPropertyName[Player.name];
 
 				if (players != null && players.length > 0)
 				{
@@ -652,7 +141,7 @@ function DemoData(randomizer)
 					(
 						venue.map,
 						actorLoc.pos,
-						player.LocatableRoguelike.pos
+						player.Locatable.loc.pos
 					);
 
 					path.calculate();
@@ -666,7 +155,7 @@ function DemoData(randomizer)
 
 					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
 					(
-						actor.LocatableRoguelike.pos
+						actor.Locatable.loc.pos
 					).directions();
 
 					var heading = Heading.fromCoords(directionsToPathNode1);
@@ -763,57 +252,79 @@ function DemoData(randomizer)
 					return;
 				}
 
-				var actorLoc = actor.LocatableRoguelike;
-				var venue = actorLoc.venue(world);
-				var emplacements = venue.entitiesByPropertyName[EmplacementDefn.name];
-				var stairsDown = emplacements.filter( (x) => { return (x.defnName == "StairsDown"); } );
+				var actorLoc = actor.Locatable.loc;
+				var actorPos = actorLoc.pos;
+				var venue = actorLoc.place(world);
 
-				if (stairsDown.length > 0)
+				var items = venue.entitiesByPropertyName[Item.name];
+				var itemsNearby = items.filter
+				(
+					x => x.Locatable.loc.pos.clone().subtract(actorPos).magnitude() < 4
+				);
+
+				var target = null;
+				if (itemsNearby.length > 0)
 				{
-					var stairDown = stairsDown[0];
+					target = itemsNearby[0];
+				}
+				else
+				{
+					var emplacements = venue.entitiesByPropertyName[Emplacement.name];
+					var stairsDown = emplacements.filter( (x) => { return (x.name == "StairsDown"); } );
 
-					var path = new Path
-					(
-						venue.map,
-						actorLoc.pos,
-						stairDown.LocatableRoguelike.pos
-					);
-
-					path.calculate();
-
-					var actionNext = null;
-					var actionsAll = world.defn.actions;
-					var pathNodes = path.nodes;
-
-					if (pathNodes.length <= 1)
+					if (stairsDown.length > 0)
 					{
-						actionNext = actionsAll["Use Emplacement"];
+						var stairDown = stairsDown[0];
+						target = stairDown;
+					}
+				}
+
+				var targetPos = target.Locatable.loc.pos;
+				var path = new Path
+				(
+					venue.map,
+					actorPos,
+					targetPos
+				);
+				path.calculate();
+				var pathNodes = path.nodes;
+
+				var actionNext = null;
+				var actionsAll = world.defn.actions;
+				if (pathNodes.length <= 1)
+				{
+					if (target.Item != null)
+					{
+						actionNext = actionsAll["Pick Up Item"];
 					}
 					else
 					{
-						var pathNode1 = pathNodes[1];
-
-						var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
-						(
-							actor.LocatableRoguelike.pos
-						).directions();
-
-						var heading = Heading.fromCoords(directionsToPathNode1);
-
-						// hack
-						var actionsMoves = actionsAll._MovesByHeading;
-						var actionMoveInDirection = actionsMoves[heading];
-						actionNext = actionMoveInDirection;
+						actionNext = actionsAll["Use Emplacement"];
 					}
+				}
+				else
+				{
+					var pathNode1 = pathNodes[1];
 
-					if (actionNext != null)
-					{
-						actor.ActorData.actions.push(actionNext);
-					}
+					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
+					(
+						actor.Locatable.loc.pos
+					).directions();
+
+					var heading = Heading.fromCoords(directionsToPathNode1);
+
+					// hack
+					var actionsMoves = actionsAll._MovesByHeading;
+					var actionMoveInDirection = actionsMoves[heading];
+					actionNext = actionMoveInDirection;
+				}
+
+				if (actionNext != null)
+				{
+					actor.ActorData.actions.push(actionNext);
 				}
 			}
 		);
-
 
 		var returnValues =
 		[
@@ -884,6 +395,13 @@ function DemoData(randomizer)
 	{
 		var sizeInPixels = visuals["Floor"].size;
 
+		var useEmplacementPortal = function(universe, world, place, entityUsing, entityUsed)
+		{
+			var message = "You use the " + entityUsed.Emplacement.appearance + ".";
+			entityUsing.Player.messageLog.messageAdd(message);
+			entityUsed.Portal.use(universe, world, place, entityUsing, entityUsed);
+		}
+
 		var entityDefns =
 		[
 			new Entity
@@ -892,7 +410,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new Drawable(visuals["Blood"]),
-					new EmplacementDefn(),
+					new Emplacement("pool of blood"),
 					new Ephemeral(30),
 				]
 			),
@@ -903,7 +421,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Concealing,
 					new Drawable(visuals["Door"]),
-					new EmplacementDefn(),
+					new Emplacement("door"),
 				]
 			),
 
@@ -913,7 +431,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new Drawable(visuals["Gravestone"]),
-					new EmplacementDefn(),
+					new Emplacement("gravestone"),
 				]
 			),
 
@@ -923,7 +441,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsDown"]),
-					new EmplacementDefn(),
+					new Emplacement("stairway down", useEmplacementPortal),
 				]
 			),
 
@@ -933,7 +451,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsUp"]),
-					new EmplacementDefn(),
+					new Emplacement("stairway up", useEmplacementPortal),
 				]
 			),
 
@@ -943,7 +461,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Clear,
 					new Drawable(visuals["StairsUp"]),
-					new EmplacementDefn(),
+					new Emplacement("stairway up", useEmplacementPortal),
 				]
 			),
 
@@ -1254,6 +772,8 @@ function DemoData(randomizer)
 
 		for (var i = 0; i < namesAndEffectDefnsOfPotions.length; i++)
 		{
+			var itemDefnName = "Potion of " + name;
+
 			var appearanceIndex = Math.floor
 			(
 				this.randomizer.getNextRandom()
@@ -1269,7 +789,7 @@ function DemoData(randomizer)
 
 			var entityDefn = new Entity
 			(
-				"Potion of " + name,
+				itemDefnName,
 				[
 					collidableDefns.Clear,
 					new Device
@@ -1284,7 +804,7 @@ function DemoData(randomizer)
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
-						appearance,
+						itemDefnName,
 						appearance,
 						1, // mass
 						1, // stackSizeMax,
@@ -1599,6 +1119,7 @@ function DemoData(randomizer)
 		for (var i = 0; i < namesOfSpellbooks.length; i++)
 		{
 			var nameOfSpellbook = namesOfSpellbooks[i];
+			var itemDefnName = "Spellbook of " + nameOfSpellbook;
 
 			var appearanceIndex = Math.floor
 			(
@@ -1638,14 +1159,14 @@ function DemoData(randomizer)
 
 			var entityDefn = new Entity
 			(
-				"Spellbook of " + nameOfSpellbook,
+				itemDefnName,
 				[
 					collidableDefns.Clear,
 					new Device(10, true, [ effectLearnSpell ]),
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
-						appearance,
+						itemDefnName,
 						appearance,
 						1, // mass
 						1, // stackSizeMax
@@ -1709,8 +1230,8 @@ function DemoData(randomizer)
 				"Spawn Projectile",
 				function apply(world, actingEntity, targetEntity)
 				{
-					var loc = targetEntity.LocatableRoguelike;
-					var venue = loc.venue(world);
+					var loc = targetEntity.Locatable.loc;
+					var venue = loc.place(world);
 
 					var entityForProjectile = new Entity
 					(
@@ -1733,12 +1254,12 @@ function DemoData(randomizer)
 				"Teleport",
 				function apply(world, actingEntity, targetEntity)
 				{
-					var loc = targetEntity.LocatableRoguelike;
+					var loc = targetEntity.Locatable.loc;
 
 					var teleportPos = null;
 					while (teleportPos == null)
 					{
-						var map = loc.venue(world).map;
+						var map = loc.place(world).map;
 						teleportPos = new Coords().randomize(randomizer).multiply
 						(
 							map.sizeInCells
@@ -2460,10 +1981,26 @@ function DemoData(randomizer)
 
 		var visualForPlayerBase = visuals["Rogue"];
 
+		var visualReticleDirectional = new VisualDirectional
+		(
+			new VisualNone(), // visualForNoDirection
+			[
+				visuals["Reticle0"],
+				visuals["Reticle1"],
+				visuals["Reticle2"],
+				visuals["Reticle3"],
+				visuals["Reticle4"],
+				visuals["Reticle5"],
+				visuals["Reticle6"],
+				visuals["Reticle7"],
+			]
+		);
+
 		var visualForPlayer = new VisualGroup
 		([
 			visualForPlayerBase,
-			visuals["Reticle0"]
+			//visuals["Reticle0"]
+			visualReticleDirectional
 		]);
 
 		var drawableDefnPlayer = new Drawable(visualForPlayer);
@@ -2472,9 +2009,10 @@ function DemoData(randomizer)
 			activityDefns["Accept User Input"].name;
 			//activityDefns["Demo User Input"].name;
 
+		var entityName = "Player";
 		var entityDefnPlayer = new Entity
 		(
-			"Player",
+			entityName,
 			// properties
 			[
 				new ActorDefn(activityDefnName),
@@ -2484,12 +2022,15 @@ function DemoData(randomizer)
 				new EquippableDefn(equipmentSocketDefnSetBiped),
 				new Killable(160, null),
 				moverDefnPlayer,
-				new PlayerDefn(),
+				new Player
+				(
+					8 // sightRange
+				),
 			]
 		);
 
 		returnValues.push(entityDefnPlayer);
-		returnValues["Player"] = entityDefnPlayer;
+		returnValues[entityName] = entityDefnPlayer;
 	};
 
 	DemoData.prototype.buildAgentDatas = function()
@@ -3172,12 +2713,12 @@ function DemoData(randomizer)
 
 	DemoData.prototype.buildMapTerrainsDungeon = function(visualsForTiles)
 	{
-		this.Floor 		= new MapTerrain("Floor", 		".", 1, 	false, "#00aa00", visualsForTiles["Floor"]);
-		this.Stone 		= new MapTerrain("Stone", 		"x", 1000000, 	true, "#000000", visualsForTiles["Stone"]);
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", 	"+", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonCornerNorth"]);
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", 	"*", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonCornerSouth"]);
-		this.WallEastWest 	= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonEastWest"]);
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "#0000aa", visualsForTiles["WallDungeonNorthSouth"]);
+		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
+		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallDungeonCornerNorth"]);
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallDungeonCornerSouth"]);
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualsForTiles["WallDungeonEastWest"]);
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualsForTiles["WallDungeonNorthSouth"]);
 
 		var terrains =
 		[
@@ -3219,7 +2760,7 @@ function DemoData(randomizer)
 	{
 		var visualsOpaque = this.buildVisualLookup(visualsForTiles);
 
-		var actions = this.buildActions();
+		var actions = new DemoData_Actions().actionsBuild();
 
 		var activityDefns = this.buildActivityDefns();
 
@@ -3426,7 +2967,7 @@ function DemoData(randomizer)
 			Device.name,
 			Drawable.name,
 			"Dynamic",
-			EmplacementDefn.name,
+			Emplacement.name,
 			"Enemy",
 			Ephemeral.name,
 			EquippableDefn.name,
@@ -3435,7 +2976,7 @@ function DemoData(randomizer)
 			Killable.name,
 			MoverDefn.name,
 			MoverTransport.name,
-			PlayerDefn.name,
+			Player.name,
 			Portal.name,
 		];
 
@@ -3526,7 +3067,7 @@ function DemoData(randomizer)
 				"Oracle",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateLimbo
+				this.venueGenerateOracle
 			),
 
 			new VenueDefn
@@ -3694,16 +3235,16 @@ function DemoData(randomizer)
 				);
 
 				var roomBoundsWithWalls =
-					Bounds.fromMinAndSize(roomPos, roomSizePlusOnes);
+					Box.fromMinAndSize(roomPos, roomSizePlusOnes);
 
-				doesRoomOverlapAnother = Bounds.doBoundsInSetsOverlap
+				doesRoomOverlapAnother = Box.doBoxesInSetsOverlap
 				(
 					[ roomBoundsWithWalls ],
 					roomBoundsSetSoFar
 				);
 			}
 
-			var roomBounds = Bounds.fromMinAndSize(roomPos, roomSize);
+			var roomBounds = Box.fromMinAndSize(roomPos, roomSize);
 
 			roomBoundsSetSoFar.push(roomBounds);
 		}
@@ -4005,7 +3546,7 @@ function DemoData(randomizer)
 				"StairsExit",
 				entityDefns["StairsExit"],
 				[
-					new LocatableRoguelike(room0Center),
+					new Locatable(new Location(room0Center)),
 					new Portal
 					(
 						"Venue0", "StairsDown"
@@ -4022,7 +3563,7 @@ function DemoData(randomizer)
 				"StairsUp",
 				entityDefns["StairsUp"],
 				[
-					new LocatableRoguelike(room0Center),
+					new Locatable(new Location(room0Center)),
 					new Portal
 					(
 						"Venue" + (venueIndex - 1),
@@ -4053,7 +3594,7 @@ function DemoData(randomizer)
 				"StairsDown",
 				entityDefns["StairsDown"],
 				[
-					new LocatableRoguelike(room1Center),
+					new Locatable(new Location(room1Center)),
 					new Portal
 					(
 						"Venue" + (venueIndex + 1),
@@ -4071,7 +3612,12 @@ function DemoData(randomizer)
 			(
 				"Door" + i,
 				entityDefns["Door"],
-				[ new LocatableRoguelike(doorwayPositions[i]) ]
+				[
+					new Locatable
+					(
+						new Location(doorwayPositions[i])
+					)
+				]
 			);
 
 			entities.push(entityForDoor);
@@ -4163,7 +3709,7 @@ function DemoData(randomizer)
 						entityDefnForItem.name,
 						entityDefnForItem,
 						[
-							new LocatableRoguelike(pos),
+							new Locatable(new Location(pos)),
 							new Item(entityDefnForItem.name, 1)
 						]
 					);
@@ -4213,7 +3759,7 @@ function DemoData(randomizer)
 			entityDefnName,
 			worldDefn.entityDefns[entityDefnName],
 			[
-				new LocatableRoguelike(stairsDownPos), // pos
+				new Locatable(new Location(stairsDownPos)), // pos
 				new Portal("Venue" + (venueIndex + 1), "StairsUp") // todo
 			]
 		);
@@ -4354,7 +3900,16 @@ function DemoData(randomizer)
 				"StairsDown",
 				entityDefns["StairsDown"],
 				[
-					new LocatableRoguelike(sizeInCells.clone().subtract(Coords.Instances().Ones)),
+					new Locatable
+					(
+						new Location
+						(
+							sizeInCells.clone().subtract
+							(
+								Coords.Instances().Ones
+							)
+						)
+					),
 					new Portal
 					(
 						"Venue" + (venueIndex + 1),
@@ -4895,11 +4450,49 @@ function DemoData(randomizer)
 				"................",
 				"................",
 				"................",
+				"...............w",
+				"..............ww",
+				".............w.w",
+				"............w..w",
+				"...........wwwww",
+			],
+
+			[
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
 				"................",
 				".....wwwwwww....",
 				"......w...w.....",
 				".......w.w......",
 				"........w.......",
+			],
+
+			[
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"w...............",
+				"ww..............",
+				"w.w.............",
+				"w..w............",
+				"wwwww...........",
 			],
 
 			[
@@ -4922,6 +4515,25 @@ function DemoData(randomizer)
 			],
 
 			[
+				"wwwww...........",
+				"w..w............",
+				"w.w.............",
+				"ww..............",
+				"w...............",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+			],
+
+			[
 				"........w.......",
 				".......w.w......",
 				"......w...w.....",
@@ -4939,6 +4551,26 @@ function DemoData(randomizer)
 				"................",
 				"................",
 			],
+
+			[
+				"...........wwwww",
+				"............w..w",
+				".............w.w",
+				"..............ww",
+				"...............w",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+				"................",
+			],
+
 		];
 
 		for (var i = 0; i < reticlePixelSetsAsStringArrays.length; i++)

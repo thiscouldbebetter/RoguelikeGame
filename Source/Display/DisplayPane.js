@@ -3,6 +3,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	this.name = name;
 	this.pos = pos;
 	this.sizeInPixels = size;
+	this.sizeInPixelsHalf = this.sizeInPixels.clone().half();
 	this.sizesAvailable = [ size ];
 	this.children = children.addLookupsByName();
 
@@ -18,11 +19,16 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	DisplayPane.prototype.childSelectByName = function(paneName)
 	{
 		this.childSelected = (paneName == null ? null : this.children[paneName]);
+		this._displayToUse = null;
 	};
 
 	DisplayPane.prototype.displayToUse = function()
 	{
-		return (this.childSelected == null ? this.displayInner : this.childSelected);
+		if (this._displayToUse == null)
+		{
+			this._displayToUse = (this.childSelected == null ? this.displayInner : this.childSelected);
+		}
+		return this._displayToUse;
 	};
 
 	DisplayPane.prototype.flush = function()
@@ -49,6 +55,11 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		return this.displayInner.toDomElement(platformHelper);
 	};
 
+	DisplayPane.prototype.textWidthForFontHeight = function(textToMeasure, fontHeightInPixels)
+	{
+		return this._displayInner.textWidthForFontHeight(textToMeasure, fontHeightInPixels);
+	};
+
 	DisplayPane.prototype.toImage = function()
 	{
 		return this.displayInner.toImage();
@@ -61,7 +72,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		this.displayToUse().clear();
 	};
 
-	DisplayPane.prototype.drawBackground = function(colorBorder, colorBack)
+	DisplayPane.prototype.drawBackground = function(colorBack, colorBorder)
 	{
 		this.displayToUse().drawBackground(colorBorder, colorBack);
 	};

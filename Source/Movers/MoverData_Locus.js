@@ -24,8 +24,8 @@ function MoverData_Locus()
 							this,
 							function get(c)
 							{
-								var loc = entity.LocatableRoguelike;
-								var floor = loc.venue(world).depth;
+								var loc = entity.Locatable.loc;
+								var floor = loc.place(world).depth;
 								var turn = world.turnsSoFar;
 								var pos = loc.pos.toStringXY();
 								var returnValue = "Turn: " + turn + " Floor: " + floor + " Pos: " + pos;

@@ -17,8 +17,6 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	this.sizeInPixels = this.sizeInCells.clone().multiply(this.cellSizeInPixels);
 
-	this.cellIndicesModified = [];
-
 	this.cells = [];
 
 	var cellPos = new Coords(0, 0, 0);
@@ -37,11 +35,10 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	}
 
 	// Helper variables.
-	this._boundsVisible =
-		Bounds.fromMinAndSize(new Coords(0, 0), this.sizeInCells.clone());
+	this._boundsVisible = new Box();//.fromMinAndSize(new Coords(0, 0), this.sizeInCells.clone());
 	this._cellPos = new Coords();
 	this._drawPos = new Coords();
-	this._drawLoc = { pos: this._drawPos };
+	this._drawLoc = new Location( this._drawPos );
 	this._drawableEntity = new Entity( "_drawableEntity", [ new Locatable(this._drawLoc) ] );
 	this._entitiesSortedBottomToTop = [];
 }
@@ -96,8 +93,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		if (cellPos.isInRangeMax(this.sizeInCellsMinusOnes))
 		{
 			var cellIndex = this.indexOfCellAtPos(cellPos);
-			var cell = this.cells[cellIndex];
-			returnValue = cell;
+			returnValue = this.cells[cellIndex];
 		}
 
 		return returnValue;
@@ -107,8 +103,6 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	{
 		var cellIndex = this.indexOfCellAtPos(cellPos);
 		this.cells[cellIndex] = cellToSet;
-
-		this.cellIndicesModified.push(cellIndex);
 	};
 
 	Map.prototype.clone = function()
@@ -171,14 +165,16 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	Map.prototype.draw = function(universe, world, display, venue)
 	{
 		var player = world.entityForPlayer;
-		var playerPos = player.LocatableRoguelike.pos;
+		var playerPos = player.Locatable.loc.pos;
 
 		var cellPos = this._cellPos;
 		var shouldDrawMovers = false;
 
 		var boundsVisible = this._boundsVisible;
-		var cellPosVisibleMin = boundsVisible.min();
-		var cellPosVisibleMax = boundsVisible.max();
+		boundsVisible.center.overwriteWith(playerPos);
+		boundsVisible.sizeOverwriteWith(new Coords(1, 1).multiplyScalar(36)); // todo
+		var cellPosVisibleMin = boundsVisible.min().trimToRangeMax(this.sizeInCells);
+		var cellPosVisibleMax = boundsVisible.max().trimToRangeMax(this.sizeInCells);
 
 		for (var y = cellPosVisibleMin.y; y < cellPosVisibleMax.y; y++)
 		{
@@ -223,7 +219,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var cellTerrain = cell.terrain(this);
 		var terrainVisual = cellTerrain.visual;
 		var drawableEntity = this._drawableEntity;
-		var drawPos = drawableEntity.Locatable.loc.pos;
+		var drawPos = this._drawPos;
 
 		drawPos.overwriteWith
 		(
@@ -236,7 +232,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			map.cellSizeInPixels
 		).add
 		(
-			display.displayToUse().sizeInPixels.clone().half()
+			display.displayToUse().sizeInPixelsHalf
 		);
 
 		terrainVisual.draw(universe, world, display, null, drawableEntity);
@@ -252,12 +248,12 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entitiesInCell.length; i++)
 		{
 			var entityToSort = entitiesInCell[i];
-			var entityToSortZIndex = entityToSort.LocatableRoguelike.pos.z;
+			var entityToSortZIndex = entityToSort.Locatable.loc.pos.z;
 			var j;
 			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
 			{
 				var entitySorted = entitiesSortedBottomToTop[j];
-				var entitySortedZIndex = entitySorted.LocatableRoguelike.pos.z;
+				var entitySortedZIndex = entitySorted.Locatable.loc.pos.z;
 				if (entityToSortZIndex <= entitySortedZIndex)
 				{
 					break;
@@ -271,6 +267,8 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			var entity = entitiesSortedBottomToTop[i];
 			if (entity.MoverData == null || drawMovers)
 			{
+				var entityLoc = entity.Locatable.loc;
+				drawableEntity.Locatable.loc.orientation.forward.overwriteWith(entityLoc.orientation.forward);
 				var visual = entity.Drawable.visual;
 				visual.draw(universe, world, display, null, drawableEntity);
 			}
@@ -292,7 +290,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var visual = entity.Drawable.visual;
 		this._drawableEntity.Locatable.loc.pos.overwriteWith
 		(
-			entity.LocatableRoguelike.pos
+			entity.Locatable.loc.pos
 		).multiply
 		(
 			map.cellSizeInPixels

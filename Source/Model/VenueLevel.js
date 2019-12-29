@@ -49,7 +49,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			for (var i = 0; i < entitiesWithPropertyName.length; i++)
 			{
 				var entity = entitiesWithPropertyName[i];
-				if (entity.LocatableRoguelike.pos.equalsXY(cellPosToCheck) == true)
+				if (entity.Locatable.loc.pos.equalsXY(cellPosToCheck) == true)
 				{
 					returnEntities.splice(0, 0, entity);
 				}
@@ -106,7 +106,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.update_EntitiesToSpawn(universe, world);
 
 		var player = world.entityForPlayer;
-		var venueKnown = player.PlayerData.venueKnownLookup[this.name];
+		var venueKnown = player.Player.venueKnownLookup[this.name];
 
 		if (venueKnown != null)
 		{
@@ -118,22 +118,6 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			(
 				universe, world, display, this.ephemerals() // hack
 			);
-
-			display.childSelectByName("Status");
-			display.clear();
-			var venueKnownAsControl = venueKnown.controlUpdate(world);
-			this._drawLoc.pos.clear();
-			venueKnownAsControl.draw(universe, display, this._drawLoc);
-			display.flush();
-
-			display.childSelectByName("Messages");
-			display.clear();
-			var messageLogAsControl = player.PlayerData.messageLog.controlUpdate(world);
-			this._drawLoc.pos.clear();
-			messageLogAsControl.draw(universe, display, this._drawLoc);
-			display.flush();
-
-			display.childSelectByName(null);
 		}
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
@@ -214,10 +198,10 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	VenueLevel.prototype.update_Collidables = function(universe, world)
 	{
-		var emplacements = this.entitiesByPropertyName[EmplacementDefn.name];
+		var emplacements = this.entitiesByPropertyName[Emplacement.name];
 		var enemies = this.entitiesByPropertyName["Enemy"];
 		var items = this.entitiesByPropertyName["Item"];
-		var players = this.entitiesByPropertyName[PlayerDefn.name]
+		var players = this.entitiesByPropertyName[Player.name]
 		var portals = this.entitiesByPropertyName[Portal.name];
 		var projectiles = this.entitiesByPropertyName["Projectile"];
 
@@ -323,9 +307,21 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			display.childSelectByName("Map");
 			display.drawBackground("Black");
 			this.map.draw(universe, world, display, this);
-		}
 
-		//display.childrenDraw();
+			display.childSelectByName("Status");
+			display.clear();
+			var venueAsControl = this.controlUpdate(world);
+			this._drawLoc.pos.clear();
+			venueAsControl.draw(universe, display, this._drawLoc);
+			display.flush();
+
+			display.childSelectByName("Messages");
+			display.clear();
+			var messageLogAsControl = world.entityForPlayer.Player.messageLog.controlUpdate(world);
+			this._drawLoc.pos.clear();
+			messageLogAsControl.draw(universe, display, this._drawLoc);
+			display.flush();
+		}
 
 		display.childSelectByName(null);
 		display.drawRectangle
@@ -340,11 +336,11 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	VenueLevel.prototype.ephemerals = function()
 	{
-		return this.entitiesByPropertyName["Ephemeral"];
+		return this.entitiesByPropertyName[Ephemeral.name];
 	}
 
 	VenueLevel.prototype.player = function()
 	{
-		return this.entitiesByPropertyName["Player"][0];
+		return this.entitiesByPropertyName[Player.name][0];
 	}
 }

@@ -1,21 +1,18 @@
 
-function PlayerDefn()
+function Player(sightRange)
 {
-	// todo
+	this.sightRange = sightRange;
+	this.messageLog = new MessageLog();
+	this.venueKnownLookup = [];
 }
-
 {
-	PlayerDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
+	Player.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
 	{
-		if (entity.PlayerData == null)
-		{
-			entity.PlayerData = new PlayerData();
-			entity.LocatableRoguelike.pos.z = 2;
-		}
+		entity.Locatable.loc.pos.z = 2;
 
 		entity.MoverData.movesThisTurn = 0;
 
-		var venueKnownLookup = entity.PlayerData.venueKnownLookup;
+		var venueKnownLookup = entity.Player.venueKnownLookup;
 		var venueKnown = venueKnownLookup[venue.name];
 		if (venueKnown == null)
 		{
@@ -54,13 +51,13 @@ function PlayerDefn()
 				world,
 				venueKnown,
 				venue,
-				entity.LocatableRoguelike.pos,
-				8 //sightRange
+				entity.Locatable.loc.pos,
+				entity.Player.sightRange
 			);
 		}
 	}
 
-	PlayerDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
+	Player.prototype.updateEntityForVenue = function(universe, world, venue, entity)
 	{
 		var moverData = entity.MoverData;
 		if (moverData.movesThisTurn <= 0)
@@ -77,18 +74,18 @@ function PlayerDefn()
 
 			world.turnsSoFar++;
 
-			var venueKnown = entity.PlayerData.venueKnownLookup[venue.name];
+			var venueKnown = entity.Player.venueKnownLookup[venue.name];
 
 			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
 				world,
 				venueKnown,
 				venue, // venueComplete
-				entity.LocatableRoguelike.pos,
-				8 //sightRange
+				entity.Locatable.loc.pos,
+				entity.Player.sightRange
 			);
 
 			entity.MoverData.controlUpdate(world, entity);
 		}
-	}
+	};
 }

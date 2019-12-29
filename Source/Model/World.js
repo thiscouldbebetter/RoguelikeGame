@@ -1,31 +1,35 @@
 
-function World(name, defn, venues, entityForPlayer, randomizer)
+function World(name, defn, places, entityForPlayer, randomizer)
 {
 	this.name = name;
 	this.defn = defn;
-	this.venues = venues.addLookupsByName();
+	this.places = places.addLookupsByName();
 	this.entityForPlayer = entityForPlayer;
 	this.randomizer = randomizer;
 
 	if (this.entityForPlayer == null)
 	{
-		var venue0 = this.venues[0];
-		var portal0 = venue0.entitiesToSpawn[0]; // hack
-		var portal0Pos = portal0.LocatableRoguelike.pos.clone();
+		var place0 = this.places[0];
+		var portal0 = place0.entitiesToSpawn[0]; // hack
+		var portal0Pos = portal0.Locatable.loc.pos.clone();
 
+		var entityDefnPlayer = this.defn.entityDefns["Player"];
 		this.entityForPlayer = EntityHelper.new
 		(
-			"Player",
-			this.defn.entityDefns["Player"],
-			[ new LocatableRoguelike(portal0Pos) ]
+			entityDefnPlayer.name,
+			entityDefnPlayer,
+			[
+				new Locatable
+				(
+					new Location(portal0Pos, null, place0.name)
+				)
+			]
 		);
 
-		this.entityForPlayer.LocatableRoguelike.venueName = venue0.name;
-
-		venue0.entitiesToSpawn.splice(0, 0, this.entityForPlayer);
+		place0.entitiesToSpawn.splice(0, 0, this.entityForPlayer);
 	}
 
-	this.venueNext = this.venues[this.entityForPlayer.LocatableRoguelike.venueName];
+	this.placeNext = this.places[this.entityForPlayer.Locatable.loc.placeName];
 
 	this.turnsSoFar = 0;
 
@@ -41,7 +45,7 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 		(x) => x != null
 	).addLookupsByName();
 
-	this.defns = 
+	this.defns =
 	{
 		"itemDefns" : itemDefns
 	};
@@ -83,7 +87,7 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 			visualsForTiles
 		);
 
-		var venues = worldDefn.buildVenues
+		var places = worldDefn.buildVenues
 		(
 			worldDefn,
 			worldDefn.venueDefns,
@@ -95,7 +99,7 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 		(
 			"World0",
 			worldDefn,
-			venues,
+			places,
 			null, // entityForPlayer
 			randomizer
 		);
@@ -115,20 +119,18 @@ function World(name, defn, venues, entityForPlayer, randomizer)
 
 	World.prototype.updateForTimerTick = function(universe)
 	{
-		if (this.venueNext != null)
+		if (this.placeNext != null)
 		{
-			this.venueNext.initialize(universe, this);
+			this.placeNext.initialize(universe, this);
 
-			this.venueCurrent = this.venueNext;
+			this.placeCurrent = this.placeNext;
 
-			this.venueNext = null;
+			this.placeNext = null;
 		}
 
-		this.venueCurrent.update(universe, this);
+		this.placeCurrent.update(universe, this);
 
 		this.timerTicksSoFar++;
-
-//this.logTicksPerSecond();
 	}
 
 	// debugging

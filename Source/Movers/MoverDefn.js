@@ -34,14 +34,14 @@ function MoverDefn
 		}
 	};
 
-	MoverDefn.prototype.updateEntityForVenue = function(universe, world, venueIgnored, entity)
+	MoverDefn.prototype.updateEntityForVenue = function(universe, world, placeIgnored, entity)
 	{
-		var entityLoc = entity.LocatableRoguelike;
-		venue = entityLoc.venue(world);
+		var entityLoc = entity.Locatable.loc;
+		var place = entityLoc.place(world);
 
 		entityLoc.pos.trimToRangeMax
 		(
-			venue.map.sizeInCellsMinusOnes
+			place.map.sizeInCellsMinusOnes
 		);
 	};
 }

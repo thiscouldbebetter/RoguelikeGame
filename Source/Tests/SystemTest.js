@@ -1,6 +1,17 @@
 
-function main()
+function systemTest()
 {
+	var mediaLibrary = new MediaLibrary.fromFileNames
+	(
+		"../Content/",
+		[ "Title.png", "Tiles.png" ],
+		[ "Sound.wav" ],
+		[ "Music.mp3" ],
+		[ "Movie.webm" ],
+		[ "Font.ttf" ],
+		[ "Conversation.json", "Instructions.txt" ]
+	);
+
 	var displaySize = new Coords(800, 600);
 	var zeroes = Coords.Instances().Zeroes;
 
@@ -40,19 +51,6 @@ function main()
 		]
 	);
 
-	//localStorage.clear();
-
-	var mediaLibrary = new MediaLibrary.fromFileNames
-	(
-		"../Content/",
-		[ "Title.png", "Tiles.png" ],
-		[ "Sound.wav" ],
-		[ "Music.mp3" ],
-		[ "Movie.webm" ],
-		[ "Font.ttf" ],
-		[ "Conversation.json", "Instructions.txt" ]
-	);
-
 	var timerHelper = new TimerHelper(20);
 
 	var version = "0.0.0-20191130-1545";
@@ -61,11 +59,18 @@ function main()
 	(
 		"RoguelikeGame", version, timerHelper, display, mediaLibrary, null
 	);
-	universe.initialize
-	(
-		function()
-		{
-			universe.start();
-		}
-	);
+	universe.initialize();
+
+	// hack
+	setTimeout(systemTest_2.bind(this, universe), 3000);
+}
+
+function systemTest_2(universe)
+{
+	var world = World.new(universe);
+	world.entityForPlayer.ActorDefn.activityDefnNameInitial = "Demo User Input";
+	var venue = new VenueWorld(world);
+	universe.venueNext = venue;
+
+	universe.start();
 }

@@ -7,9 +7,9 @@ function MoverTransport(entityMover, locDestination)
 {
 	MoverTransport.prototype.initializeEntityForVenue = function(universe, world, venue, entityTransport)
 	{
-		var moverLoc = this.entityMover.LocatableRoguelike;
+		var moverLoc = this.entityMover.Locatable.loc;
 
-		var venueToDepart = moverLoc.venue(world);
+		var venueToDepart = moverLoc.place(world);
 		venueToDepart.entitiesToRemove.push(this.entityMover);
 
 		// hack
