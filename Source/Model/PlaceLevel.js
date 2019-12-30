@@ -1,5 +1,5 @@
 
-function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
+function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 {
 	this.name = name;
 	this.depth = depth;
@@ -38,7 +38,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 {
 	// instance methods
 
-	VenueLevel.prototype.entitiesWithPropertyNamePresentAtCellPos = function(propertyName, cellPosToCheck)
+	PlaceLevel.prototype.entitiesWithPropertyNamePresentAtCellPos = function(propertyName, cellPosToCheck)
 	{
 		var returnEntities = [];
 
@@ -51,7 +51,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 				var entity = entitiesWithPropertyName[i];
 				if (entity.Locatable.loc.pos.equalsXY(cellPosToCheck) == true)
 				{
-					returnEntities.splice(0, 0, entity);
+					returnEntities.insertElementAt(entity, 0);
 				}
 			}
 		}
@@ -59,17 +59,17 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		return returnEntities;
 	}
 
-	VenueLevel.prototype.entitySpawn = function(universe, world, entityToSpawn)
+	PlaceLevel.prototype.entitySpawn = function(universe, world, entityToSpawn)
 	{
 		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
 
 		var entityDefn = entityToSpawn;
-		var entityProperties = entityDefn.properties;
-		for (var c = 0; c < entityProperties.length; c++)
+		var entityDefnProperties = entityDefn.properties;
+		for (var c = 0; c < entityDefnProperties.length; c++)
 		{
-			var entityProperty = entityProperties[c];
-			var entityPropertyName = entityProperty.constructor.name;
+			var entityDefnProperty = entityDefnProperties[c];
+			var entityPropertyName = entityDefnProperty.constructor.name;
 
 			var entityListForPropertyName = this.entitiesByPropertyName[entityPropertyName];
 
@@ -77,16 +77,18 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			{
 				entityListForPropertyName.push(entityToSpawn);
 
-				if (entityProperty.initializeEntityForVenue == null)
+				var entityProperty = entityToSpawn[entityPropertyName];
+
+				if (entityDefnProperty.initializeEntityForVenue == null)
 				{
-					if (entityProperty.clone != null)
+					if (entityProperty == null && entityDefnProperty.clone != null)
 					{
-						entityToSpawn[entityPropertyName] = entityProperty.clone();
+						entityToSpawn[entityPropertyName] = entityDefnProperty.clone();
 					}
 				}
 				else
 				{
-					entityProperty.initializeEntityForVenue
+					entityDefnProperty.initializeEntityForVenue
 					(
 						universe, world, this, entityToSpawn
 					);
@@ -95,30 +97,15 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		}
 	}
 
-	VenueLevel.prototype.initialize = function(universe, world)
+	PlaceLevel.prototype.initialize = function(universe, world)
 	{
 		// Do nothing.
 		// Initialization of entities is handled in entitySpawn().
 	}
 
-	VenueLevel.prototype.update = function(universe, world)
+	PlaceLevel.prototype.update = function(universe, world)
 	{
 		this.update_EntitiesToSpawn(universe, world);
-
-		var player = world.entityForPlayer;
-		var venueKnown = player.Player.venueKnownLookup[this.name];
-
-		if (venueKnown != null)
-		{
-			var display = universe.display;
-
-			venueKnown.draw(universe, world, display);
-
-			this.map.drawEntities
-			(
-				universe, world, display, this.ephemerals() // hack
-			);
-		}
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
@@ -141,9 +128,24 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.update_Collidables(universe, world);
 
 		this.update_EntitiesToRemove(universe, world);
+
+		var player = world.entityForPlayer;
+		var venueKnown = player.Player.venueKnownLookup[this.name];
+
+		if (venueKnown != null)
+		{
+			var display = universe.display;
+
+			venueKnown.draw(universe, world, display);
+
+			this.map.drawEntities
+			(
+				universe, world, display, this.ephemerals() // hack
+			);
+		}
 	}
 
-	VenueLevel.prototype.update_EntitiesToRemove = function(universe, world)
+	PlaceLevel.prototype.update_EntitiesToRemove = function(universe, world)
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -154,14 +156,10 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 			if (collidable != null)
 			{
 				var entitiesInCell = collidable.mapCellOccupied.entitiesPresent;
-				entitiesInCell.splice
-				(
-					entitiesInCell.indexOf(entityToRemove),
-					1
-				);
+				entitiesInCell.remove(entityToRemove);
 			}
 
-			this.entities.splice(this.entities.indexOf(entityToRemove), 1);
+			this.entities.remove(entityToRemove);
 			delete this.entities[entityToRemove.name];
 
 			var entityDefnProperties = entityToRemove.properties;
@@ -173,11 +171,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 				if (entitiesWithProperty != null) // hack
 				{
-					var entityIndex = entitiesWithProperty.indexOf(entityToRemove);
-					if (entityIndex >= 0) // hack
-					{
-						entitiesWithProperty.splice(entityIndex, 1);
-					}
+					entitiesWithProperty.remove(entityToRemove);
 				}
 			}
 		}
@@ -185,7 +179,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.entitiesToRemove.length = 0;
 	}
 
-	VenueLevel.prototype.update_EntitiesToSpawn = function(universe, world)
+	PlaceLevel.prototype.update_EntitiesToSpawn = function(universe, world)
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
@@ -196,7 +190,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.entitiesToSpawn.length = 0;
 	}
 
-	VenueLevel.prototype.update_Collidables = function(universe, world)
+	PlaceLevel.prototype.update_Collidables = function(universe, world)
 	{
 		var emplacements = this.entitiesByPropertyName[Emplacement.name];
 		var enemies = this.entitiesByPropertyName["Enemy"];
@@ -274,7 +268,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	// controls
 
-	VenueLevel.prototype.controlUpdate = function(world)
+	PlaceLevel.prototype.controlUpdate = function(world)
 	{
 		if (this.control == null)
 		{
@@ -296,7 +290,7 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	// drawable
 
-	VenueLevel.prototype.draw = function(universe, world, display)
+	PlaceLevel.prototype.draw = function(universe, world, display)
 	{
 		display.childSelectByName(null);
 
@@ -334,12 +328,12 @@ function VenueLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	// entities
 
-	VenueLevel.prototype.ephemerals = function()
+	PlaceLevel.prototype.ephemerals = function()
 	{
 		return this.entitiesByPropertyName[Ephemeral.name];
 	}
 
-	VenueLevel.prototype.player = function()
+	PlaceLevel.prototype.player = function()
 	{
 		return this.entitiesByPropertyName[Player.name][0];
 	}

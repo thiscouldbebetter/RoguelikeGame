@@ -20,7 +20,10 @@ function SightHelper()
 
 		fieldOfView.calculateCellPositionsVisible(world, venueComplete);
 
-		venueComplete.map.copyNCellsAtPositionsToOther
+		var mapComplete = venueComplete.map;
+		var mapKnown = venueKnown.map;
+
+		mapComplete.copyNCellsAtPositionsToOther
 		(
 			fieldOfView.numberOfCellsVisible,
 			fieldOfView.cellPositionsVisible,

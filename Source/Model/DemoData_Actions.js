@@ -59,8 +59,7 @@
 				var actionSelectNext = world.defn.actions["Item_SelectNext"];
 				actionSelectNext.perform(null, world, "[place]", actor);
 
-				var indexOfItemToDrop = itemsHeld.indexOf(itemToDrop);
-				itemsHeld.splice(indexOfItemToDrop, 1);
+				itemsHeld.remove(itemToDrop);
 
 				if (itemsHeld.length == 0)
 				{
@@ -745,45 +744,80 @@
 
 				var actorLoc = actor.Locatable.loc;
 				var actorPos = actorLoc.pos;
-				var venue = actorLoc.place(world);
+				var place = actorLoc.place(world);
 
-				var items = venue.entitiesByPropertyName[Item.name];
-				var itemsNearby = items.filter
-				(
-					x => x.Locatable.loc.pos.clone().subtract(actorPos).magnitude() < 4
-				);
-
-				var target = null;
-				if (itemsNearby.length > 0)
+				var target = actor.ActorData.target;
+				if (target == null)
 				{
-					target = itemsNearby[0];
-				}
-				else
-				{
-					var emplacements = venue.entitiesByPropertyName[Emplacement.name];
-					var stairsDown = emplacements.filter( (x) => { return (x.name == "StairsDown"); } );
+					var itemsHeld = actor.ItemHolder.itemEntities;
+					var hasItemGoal = itemsHeld.some(x => x.name == "Amulet of Yendor");
 
-					if (stairsDown.length > 0)
+					var itemsOnLevel = place.entitiesByPropertyName[Item.name];
+					var itemsNearby = itemsOnLevel.filter
+					(
+						x => x.Locatable.loc.pos.clone().subtract(actorPos).magnitude() < 4
+					);
+
+					var target = null;
+					if (hasItemGoal)
 					{
-						var stairDown = stairsDown[0];
-						target = stairDown;
+						var emplacements = place.entitiesByPropertyName[Emplacement.name];
+						var stairsUp = emplacements.filter
+						(
+							x => x.name == "StairsUp"
+						);
+
+						if (stairsUp.length > 0)
+						{
+							target = stairsUp[0];
+						}
+						else
+						{
+							var altar = emplacements.filter(x => x.name == "Altar")[0];
+							target = altar;
+						}
+					}
+					else if (itemsNearby.length > 0)
+					{
+						target = itemsNearby[0];
+						actor.ActorData.target = target;
+					}
+					else
+					{
+						var emplacements = place.entitiesByPropertyName[Emplacement.name];
+						var stairsDown = emplacements.filter
+						(
+							x => x.name == "StairsDownToNextLevel"
+						);
+
+						if (stairsDown.length == 0)
+						{
+							target = itemsOnLevel.filter(x => x.name == "Amulet of Yendor")[0];
+						}
+						else
+						{
+							var stairDown = stairsDown[0];
+							target = stairDown;
+						}
 					}
 				}
 
 				var targetPos = target.Locatable.loc.pos;
-				var path = new Path
+				var pathToTarget = new Path
 				(
-					venue.map,
+					place.map,
 					actorPos,
 					targetPos
 				);
-				path.calculate();
-				var pathNodes = path.nodes;
+				pathToTarget.calculate();
+				var pathNodes = pathToTarget.nodes;
 
 				var actionNext = null;
 				var actionsAll = world.defn.actions;
-				if (pathNodes.length <= 1)
+				var pathToTargetLength = pathNodes.length;
+				if (pathToTargetLength <= 1)
 				{
+					actor.ActorData.target = null;
 					if (target.Item != null)
 					{
 						actionNext = actionsAll["Pick Up Item"];

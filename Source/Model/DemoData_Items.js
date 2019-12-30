@@ -52,17 +52,18 @@
 
 		var methodsToRun =
 		[
+			this.buildEntityDefns_Items_Amulets,
+			this.buildEntityDefns_Items_Armor,
 			this.buildEntityDefns_Items_Containers,
 			this.buildEntityDefns_Items_Food,
 			this.buildEntityDefns_Items_Potions,
 			this.buildEntityDefns_Items_Rings,
 			this.buildEntityDefns_Items_Scrolls,
 			this.buildEntityDefns_Items_Spellbooks,
+			this.buildEntityDefns_Items_Stones,
+			this.buildEntityDefns_Items_Tools,
 			this.buildEntityDefns_Items_Wands,
 			this.buildEntityDefns_Items_Weapons,
-			this.buildEntityDefns_Items_Armor,
-			this.buildEntityDefns_Items_Tools,
-			this.buildEntityDefns_Items_Stones,
 		];
 
 		var itemDefnGroups = [];
@@ -89,7 +90,96 @@
 		}
 
 		return itemDefnGroups;
-	}
+	};
+
+	DemoData.prototype.buildEntityDefns_Items_Amulets = function
+	(
+		visuals,
+		categories,
+		categoriesCommon,
+		sizeInPixels,
+		itemPropertiesNoStack,
+		itemPropertiesStandard,
+		effectDoNothing,
+		entityDefnSets
+	)
+	{
+		var namesOfAmulets =
+		[
+			"Change", "ESP", "Life Saving", "Magical Breathing",
+			"Reflection", "Restful Sleep", "Strangulation",
+			"Unchanging", "Poision Resistance"
+		];
+
+		var appearances =
+		[
+			"Circular", "Concave", "Hexagonal", "Octagonal",
+			"Oval", "Pyramidal", "Square", "Spherical", "Triangular",
+		];
+
+		var entityDefnSetAmulets = [];
+
+		for (var i = 0; i < namesOfAmulets.length; i++)
+		{
+			var name = "Amulet of " + namesOfAmulets[i];
+
+			var appearanceIndex = Math.floor
+			(
+				this.randomizer.getNextRandom() * appearances.length
+			);
+			var appearance = appearances[appearanceIndex] + " Amulet";
+			appearances.removeAt(appearanceIndex);
+
+			var entityDefn = new Entity
+			(
+				name,
+				[
+					collidableDefns.Clear,
+					new Drawable(visuals[appearance]),
+					new ItemDefn
+					(
+						name,
+						appearance,
+						1, // mass
+						1, // stackSizeMax
+						1, // relativeFrequency
+						[ "Amulet" ], // categoryNames
+						ItemDefn.InitializeDoNothing,
+						ItemDefn.UseEquip
+					),
+				]
+			);
+
+			entityDefnSetAmulets.push(entityDefn);
+		}
+
+		var name = "Amulet of Yendor";
+		var entityDefnAmuletOfYendor = new Entity
+		(
+			name,
+			[
+				collidableDefns.Clear,
+				new Drawable(visuals[name]),
+				new ItemDefn
+				(
+					name,
+					name,
+					1, // mass
+					1, // stackSizeMax
+					0, // relativeFrequency
+					[ "Amulet" ], // categoryNames
+					ItemDefn.InitializeDoNothing,
+					ItemDefn.UseEquip
+				),
+			]
+		);
+
+		entityDefnSetAmulets.push(entityDefnAmuletOfYendor);
+
+		entityDefnSets.push(entityDefnSetAmulets);
+
+		return new EntityDefnGroup("Amulets", 1, entityDefnSets[0]);
+	};
 
 	DemoData.prototype.buildEntityDefns_Items_Containers = function
 	(
@@ -303,7 +393,7 @@
 				* appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Potion";
-			appearances.splice(appearanceIndex, 1);
+			appearances.removeAt(appearanceIndex);
 
 			var potionData = namesAndEffectDefnsOfPotions[i];
 			var name = potionData[0];
@@ -345,7 +435,7 @@
 		entityDefnSets.push(entityDefnSetPotions);
 
 		return new EntityDefnGroup("Potions", 1, entityDefnSets[0]);
-	}
+	};
 
 	DemoData.prototype.buildEntityDefns_Items_Rings = function
 	(
@@ -408,24 +498,26 @@
 
 		for (var i = 0; i < namesOfRings.length; i++)
 		{
+			var name = "Ring of " + namesOfRings[i];
+
 			var appearanceIndex = Math.floor
 			(
 				this.randomizer.getNextRandom() * appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Ring";
-			appearances.splice(appearanceIndex, 1);
+			appearances.removeAt(appearanceIndex);
 
 			entityDefnSetRings.push
 			(
 				new Entity
 				(
-					"Ring of " + namesOfRings[i],
+					name,
 					[
 						collidableDefns.Clear,
 						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
-							appearance,
+							name,
 							appearance,
 							1, // mass
 							1, // stackSizeMax
@@ -442,7 +534,7 @@
 		entityDefnSets.push(entityDefnSetRings);
 
 		return new EntityDefnGroup("Rings", 1, entityDefnSets[0]);
-	}
+	};
 
 	DemoData.prototype.buildEntityDefns_Items_Scrolls = function
 	(
@@ -507,7 +599,7 @@
 				* appearances.length
 			);
 			var appearance = "Scroll Titled '" + appearances[appearanceIndex] + "'";
-			appearances.splice(appearanceIndex, 1);
+			appearances.removeAt(appearanceIndex);
 
 			var entityDefn = new Entity
 			(
@@ -650,7 +742,7 @@
 				* appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Spellbook";
-			appearances.splice(appearanceIndex, 1);
+			appearances.removeAt(appearanceIndex);
 
 			var effectLearnSpell = new Effect
 			(
@@ -856,7 +948,7 @@
 				appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Wand";
-			appearances.splice(appearanceIndex, 1);
+			appearances.removeAt(appearanceIndex);
 
 			var wandName = "Wand of " + name;
 			var entityDefnWand = new Entity
@@ -961,7 +1053,7 @@
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
-						appearance,
+						name,
 						appearance,
 						1, // mass
 						1, // stackSizeMax

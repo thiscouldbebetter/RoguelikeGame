@@ -26,7 +26,7 @@ function Player(sightRange)
 				mapComplete.sizeInCells
 			);
 
-			venueKnown = new VenueLevel
+			venueKnown = new PlaceLevel
 			(
 				venue.name + "_Known",
 				venue.depth,

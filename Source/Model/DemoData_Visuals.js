@@ -33,6 +33,7 @@
 
 			// emplacements
 
+			[ "Altar", new Coords(15, 21) ],
 			[ "Blood", new Coords(3, 4) ],
 			[ "Door", new Coords(4, 21) ],
 			[ "Gravestone", new Coords(16, 21) ],
@@ -44,6 +45,20 @@
 			[ "Chest", new Coords(34, 9) ],
 			[ "Coins", new Coords(29, 19) ],
 			[ "Corpse", new Coords(36, 15) ],
+
+			// items - amulets
+
+			[ "Circular Amulet", new Coords(14, 14) ],
+			[ "Spherical Amulet", new Coords(15, 14) ],
+			[ "Oval Amulet", new Coords(16, 14) ],
+			[ "Triangular Amulet", new Coords(17, 14) ],
+			[ "Pyramidal Amulet", new Coords(18, 14) ],
+			[ "Square Amulet", new Coords(19, 14) ],
+			[ "Concave Amulet", new Coords(20, 14) ],
+			[ "Hexagonal Amulet", new Coords(21, 14) ],
+			[ "Octagonal Amulet", new Coords(22, 14) ],
+			[ "Plastic Imitation Amulet of Yendor", new Coords(23, 14) ],
+			[ "Amulet of Yendor", new Coords(24, 14) ],
 
 			// items - foods
 
@@ -209,8 +224,9 @@
 			[ "Opal Ring", new Coords(32, 13) ],
 			[ "Tiger Eye Ring", new Coords(33, 13) ],
 			[ "Emerald Ring", new Coords(34, 13) ],
-			[ "Engagement Ring", new Coords(36, 13) ],
-			[ "Bronze Ring", new Coords(37, 13) ],
+			[ "Bronze Ring", new Coords(35, 13) ],
+			[ "Topaz Ring", new Coords(36, 13) ],
+			[ "Agate Ring", new Coords(37, 13) ],
 			[ "Sapphire Ring", new Coords(38, 13) ],
 			[ "Ruby Ring", new Coords(39, 13) ],
 			[ "Diamond Ring", new Coords(0, 14) ],
@@ -220,14 +236,13 @@
 			[ "Copper Ring", new Coords(4, 14) ],
 			[ "Twisted Ring", new Coords(5, 14) ],
 			[ "Steel Ring", new Coords(6, 14) ],
-			[ "Agate Ring", new Coords(7, 14) ],
-			[ "Silver Ring", new Coords(8, 14) ],
-			[ "Gold Ring", new Coords(9, 14) ],
-			[ "Topaz Ring", new Coords(10, 14) ],
-			[ "Ivory Ring", new Coords(11, 14) ],
-			[ "Wire Ring", new Coords(12, 14) ],
-			[ "Jade Ring", new Coords(13, 14) ],
-			[ "Coral Ring", new Coords(14, 14) ],
+			[ "Silver Ring", new Coords(7, 14) ],
+			[ "Gold Ring", new Coords(8, 14) ],
+			[ "Ivory Ring", new Coords(9, 14) ],
+			[ "Jade Ring", new Coords(10, 14) ],
+			[ "Wire Ring", new Coords(11, 14) ],
+			[ "Engagement Ring", new Coords(12, 14) ],
+			[ "Coral Ring", new Coords(13, 14) ],
 
 			// items - scrolls
 
@@ -417,8 +432,8 @@
 
 			// items - weapons
 
-			[ "Arrow", new Coords(10, 10) ],
-			[ "Silver Arrow", new Coords(10, 10) ],
+			[ "Arrow", new Coords(35, 9) ],
+			[ "Silver Arrow", new Coords(38, 9) ],
 			[ "Battle Axe", new Coords(22, 10) ],
 			[ "Hand Axe", new Coords(21, 10) ],
 			[ "Bow", new Coords(19, 11) ],

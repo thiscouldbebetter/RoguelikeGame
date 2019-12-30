@@ -1,10 +1,5 @@
 // partial class DemoData
 {
-	DemoData.prototype.buildMapTerrainsMines = function(visualsForTiles)
-	{
-		return this.buildMapTerrainsDungeon(visualsForTiles);
-	};
-
 	DemoData.prototype.buildMapTerrainsDungeon = function(visualsForTiles)
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
@@ -32,7 +27,52 @@
 
 	DemoData.prototype.buildMapTerrainsHades = function(visualsForTiles)
 	{
-		return this.buildMapTerrainsDungeon(visualsForTiles);
+		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
+		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallHadesCornerNorth"]);
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallHadesCornerSouth"]);
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualsForTiles["WallHadesEastWest"]);
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualsForTiles["WallHadesNorthSouth"]);
+
+		var terrains =
+		[
+			this.Stone,
+			this.Floor,
+			this.WallCornerNorth,
+			this.WallCornerSouth,
+			this.WallEastWest,
+			this.WallNorthSouth,
+		];
+
+		terrains.addLookupsByName();
+		terrains.addLookups( function(element) { return element["codeChar"]; } );
+
+		return terrains;
+	};
+
+	DemoData.prototype.buildMapTerrainsMines = function(visualsForTiles)
+	{
+		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
+		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallCaveCornerNorth"]);
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallCaveCornerSouth"]);
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualsForTiles["WallCaveEastWest"]);
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualsForTiles["WallCaveNorthSouth"]);
+
+		var terrains =
+		[
+			this.Stone,
+			this.Floor,
+			this.WallCornerNorth,
+			this.WallCornerSouth,
+			this.WallEastWest,
+			this.WallNorthSouth,
+		];
+
+		terrains.addLookupsByName();
+		terrains.addLookups( function(element) { return element["codeChar"]; } );
+
+		return terrains;
 	};
 
 	DemoData.prototype.buildMapTerrainsLabyrinth = function(visualsForTiles)
@@ -50,9 +90,11 @@
 		return this.buildMapTerrainsDungeon(visualsForTiles);
 	};
 
-	DemoData.prototype.buildVenueDefns = function(visuals, actions)
+	DemoData.prototype.buildPlaceDefns = function(visuals, actions)
 	{
 		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visuals);
+		var mapTerrainsHades = this.buildMapTerrainsHades(visuals);
+		var mapTerrainsMines = this.buildMapTerrainsMines(visuals);
 
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
@@ -77,7 +119,16 @@
 
 		var returnValues =
 		[
-			new VenueDefn
+
+			new PlaceDefn
+			(
+				"Depths",
+				propertyNamesKnown,
+				mapTerrainsHades,
+				this.venueGenerateDepths
+			),
+
+			new PlaceDefn
 			(
 				"Dungeon",
 				propertyNamesKnown,
@@ -85,7 +136,7 @@
 				this.venueGenerateDungeon
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Fortress",
 				propertyNamesKnown,
@@ -93,47 +144,39 @@
 				this.venueGenerateFortress
 			),
 
-			new VenueDefn
-			(
-				"Surface",
-				propertyNamesKnown,
-				mapTerrainsDungeon,
-				this.venueGenerateSurface
-			),
-
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Hades",
 				propertyNamesKnown,
-				this.buildMapTerrainsHades(visuals),
+				mapTerrainsHades,
 				this.venueGenerateHades
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Mines",
 				propertyNamesKnown,
-				this.buildMapTerrainsMines(visuals),
+				mapTerrainsMines,
 				this.venueGenerateMines
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"MinesTown",
 				propertyNamesKnown,
-				this.buildMapTerrainsMines(visuals),
+				mapTerrainsMines,
 				this.venueGenerateMines
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"MinesBottom",
 				propertyNamesKnown,
-				this.buildMapTerrainsMines(visuals),
+				mapTerrainsMines,
 				this.venueGenerateMines
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Island",
 				propertyNamesKnown,
@@ -141,7 +184,7 @@
 				this.venueGenerateIsland
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Labyrinth",
 				propertyNamesKnown,
@@ -149,15 +192,15 @@
 				this.venueGenerateLabyrinth
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Limbo",
 				propertyNamesKnown,
-				mapTerrainsDungeon,
+				mapTerrainsHades,
 				this.venueGenerateLimbo
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Oracle",
 				propertyNamesKnown,
@@ -165,7 +208,7 @@
 				this.venueGenerateOracle
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"Puzzle",
 				propertyNamesKnown,
@@ -173,7 +216,7 @@
 				this.venueGeneratePuzzle
 			),
 
-			new VenueDefn
+			new PlaceDefn
 			(
 				"SingleChamber",
 				propertyNamesKnown,
@@ -181,29 +224,29 @@
 				this.venueGenerateSingleChamber
 			),
 
-			new VenueDefn
+			new PlaceDefn
+			(
+				"Surface",
+				propertyNamesKnown,
+				mapTerrainsDungeon,
+				this.venueGenerateSurface
+			),
+
+			new PlaceDefn
 			(
 				"Throwback",
 				propertyNamesKnown,
 				this.buildMapTerrainsThrowback(visuals),
 				this.venueGenerateThrowback
-			),
-
-			new VenueDefn
-			(
-				"Tutorial",
-				propertyNamesKnown,
-				mapTerrainsDungeon,
-				this.venueGenerateTutorial
-			),
+			)
 		];
 
 		return returnValues;
 	};
 
-	DemoData.prototype.buildVenueStructure = function()
+	DemoData.prototype.buildPlaceStructure = function()
 	{
-		var Branch = WorldDefnVenueStructureBranch;
+		var Branch = PlaceStructureBranch;
 
 		var branchesMain =
 		[
@@ -211,17 +254,15 @@
 			(
 				"Surface",
 				"Surface",
-				true,
-				new Range(0, 0),
-				new Range(1, 1),
+				null, // startOffsetRange
+				new Range(1, 1), // depth
 				[]
 			),
 			new Branch
 			(
 				"DungeonShallow", // name
-				"Dungeon", // venueDefnName
-				true, // startsAfterSibling
-				new Range(0, 0), // startOffsetRangeWithinParent
+				"Dungeon", // placeDefnName
+				null, // startOffsetRange
 				new Range(5, 6), // depthRangeInVenues
 				// children
 				[
@@ -229,8 +270,7 @@
 					(
 						"MinesShallow",
 						"Mines",
-						false,
-						new Range(1, 4),
+						new Range(1, 4), // startOffset
 						new Range(2, 4),
 						[]
 					),
@@ -238,8 +278,7 @@
 					(
 						"MinesTown",
 						"MinesTown",
-						true,
-						new Range(0, 0),
+						null, // startOffsetRange
 						new Range(1, 1),
 						[]
 					),
@@ -247,8 +286,7 @@
 					(
 						"MinesDeep",
 						"Mines",
-						true,
-						new Range(0, 0),
+						null, // startOffsetRange
 						new Range(2, 4),
 						[]
 					),
@@ -256,8 +294,7 @@
 					(
 						"MinesBottom",
 						"MinesBottom",
-						true,
-						new Range(0, 0),
+						null, // startOffsetRange
 						new Range(1, 1),
 						[]
 					),
@@ -267,8 +304,7 @@
 			(
 				"Oracle",
 				"Oracle",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(1, 1),
 				[]
 			),
@@ -276,16 +312,14 @@
 			(
 				"DungeonDeep",
 				"Dungeon",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(5, 6),
 				[
 					new Branch
 					(
 						"Puzzle",
 						"Puzzle",
-						false,
-						new Range(1, 4),
+						new Range(1, 4), // startOffset
 						new Range(2, 4),
 						[]
 					),
@@ -295,8 +329,7 @@
 			(
 				"Labyrinth",
 				"Labyrinth",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(3, 5),
 				[]
 			),
@@ -304,8 +337,7 @@
 			(
 				"Island",
 				"Island",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(1, 1),
 				[]
 			),
@@ -313,8 +345,7 @@
 			(
 				"Fortress",
 				"Fortress",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(1, 1),
 				[]
 			),
@@ -322,8 +353,7 @@
 			(
 				"Limbo",
 				"Limbo",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(1, 1),
 				[]
 			),
@@ -331,30 +361,27 @@
 			(
 				"Hades",
 				"Hades",
-				true,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(10, 20),
 				[]
 			),
 			new Branch
 			(
 				"Depths",
-				"Dungeon", // todo
-				true,
-				new Range(0, 0),
-				new Range(10, 20),
+				"Depths",
+				null, // startOffsetRange
+				new Range(1, 1),
 				[]
 			),
 		];
 
-		var venueStructure = new WorldDefnVenueStructure
+		var venueStructure = new PlaceStructure
 		(
 			new Branch
 			(
 				"Root",
 				"Dungeon", // hack
-				false,
-				new Range(0, 0),
+				null, // startOffsetRange
 				new Range(0, 0),
 				branchesMain
 			)
@@ -362,23 +389,51 @@
 
 		return venueStructure;
 	};
-	
-	DemoData.prototype.venueGenerateDungeon = function
+
+	DemoData.prototype.venueGenerateDepths = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
+		var place = this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		var placeEntities = place.entitiesToSpawn;
+		var stairDown = placeEntities.filter(x => x.name == "StairsDownToChildBranch")[0];
+
+		var itemDefns = worldDefn.entityDefns;
+		var itemDefnGoalName = "Amulet of Yendor";
+		var itemDefnGoal = itemDefns[itemDefnGoalName];
+		var entityGoal = EntityHelper.new
+		(
+			itemDefnGoal.name,
+			itemDefnGoal,
+			[
+				new Locatable(stairDown.Locatable.loc.clone()),
+				new Item(itemDefnGoal.name, 1)
+			]
+		);
+		placeEntities.push(entityGoal);
+
+		return place;
+	};
+
+	DemoData.prototype.venueGenerateDungeon = function
+	(
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
+	)
+	{
+		var venueName = branchName + venueIndex;
+
 		var mapSizeInCells = new Coords(64, 64);
 		var numberOfRooms = 12;
-		var terrains = venueDefn.terrains;
+		var terrains = placeDefn.terrains;
 
 		var mapCellsAsStrings = this.venueGenerateDungeon_1_InitMap
 		(
-			worldDefn, venueDefn, mapSizeInCells
+			worldDefn, terrains, mapSizeInCells
 		);
 		var roomBoundsSet = this.venueGenerateDungeon_2_RoomBounds
 		(
-			venueDefn, randomizer, mapSizeInCells, numberOfRooms
+			terrains, randomizer, mapSizeInCells, numberOfRooms
 		);
 		var rooms = this.venueGenerateDungeon_3_Rooms
 		(
@@ -390,22 +445,22 @@
 		);
 		var entities = this.venueGenerateDungeon_5_Entities
 		(
-			worldDefn, venueDefn, venueIndex, randomizer, rooms, doorwayPositions, mapCellsAsStrings
+			worldDefn, branchName, placeDefn, venueName, randomizer, rooms, doorwayPositions, mapCellsAsStrings
 		);
 
 		var map = new Map
 		(
-			"Venue" + venueIndex + "Map",
-			venueDefn.terrains,
+			venueName + "Map",
+			terrains,
 			new Coords(16, 16, 1), // hack - cellSizeInPixels
 			mapCellsAsStrings
 		);
 
-		var returnValue = new VenueLevel
+		var returnValue = new PlaceLevel
 		(
-			"Venue" + venueIndex,
-			venueDepth,
-			venueDefn,
+			venueName,
+			0, //venueDepth,
+			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,
 			entities
@@ -414,7 +469,7 @@
 		return returnValue;
 	};
 
-	DemoData.prototype.venueGenerateDungeon_1_InitMap = function(worldDefn, venueDefn, mapSizeInCells)
+	DemoData.prototype.venueGenerateDungeon_1_InitMap = function(worldDefn, terrains, mapSizeInCells)
 	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
 		var entityDefns = worldDefn.entityDefns;
@@ -423,7 +478,6 @@
 
 		var mapCellsAsStrings = [];
 		var cellPos = new Coords(0, 0);
-		var terrains = venueDefn.terrains;
 
 		terrainCodeChar = terrains.Stone.codeChar;
 
@@ -442,13 +496,12 @@
 		return mapCellsAsStrings;
 	}
 
-	DemoData.prototype.venueGenerateDungeon_2_RoomBounds = function(venueDefn, randomizer, mapSizeInCells, numberOfRooms)
+	DemoData.prototype.venueGenerateDungeon_2_RoomBounds = function(terrains, randomizer, mapSizeInCells, numberOfRooms)
 	{
 		var roomSizeMin = new Coords(4, 4, 1);
 		var roomSizeMax = new Coords(13, 13, 1);
 		var roomSizeRange = roomSizeMax.clone().subtract(roomSizeMin);
 
-		var terrains = venueDefn.terrains;
 		terrainCodeChar = terrains.Floor.codeChar;
 
 		var roomBoundsSetSoFar = [];
@@ -723,7 +776,7 @@
 				cellPos.add(directionToRoomToConnect);
 			}
 
-			roomsToConnect.splice(roomsToConnect.indexOf(roomToConnect), 1);
+			roomsToConnect.remove(roomToConnect);
 			roomsConnected.push(roomToConnect);
 		}
 
@@ -786,7 +839,7 @@
 
 	DemoData.prototype.venueGenerateDungeon_5_Entities = function
 	(
-		worldDefn, venueDefn, venueIndex, randomizer, rooms, doorwayPositions, mapCellsAsStrings
+		worldDefn, branchName, placeDefn, venueName, randomizer, rooms, doorwayPositions, mapCellsAsStrings
 	)
 	{
 		var entityDefns = worldDefn.entityDefns;
@@ -804,8 +857,8 @@
 				new Locatable(new Location(room0Center)),
 				new Portal
 				(
-					"Venue" + (venueIndex - 1),
-					"StairsDown"
+					null, // placeName
+					null, // destinationPortalName
 				),
 			]
 		);
@@ -822,23 +875,28 @@
 			)
 		);
 
-		var room1Center = rooms[1].bounds.center.clone().floor();
+		var stairsDownCount = 4; // hack - Placeholders.
+		for (var i = 0; i < stairsDownCount; i++)
+		{
+			var room = rooms[i + 1];
+			var roomCenter = room.bounds.center.clone().floor();
 
-		var stairsDown = EntityHelper.new
-		(
-			"StairsDown",
-			entityDefns["StairsDown"],
-			[
-				new Locatable(new Location(room1Center)),
-				new Portal
-				(
-					"Venue" + (venueIndex + 1),
-					"StairsUp"
-				),
-			]
-		);
+			var stairsDown = EntityHelper.new
+			(
+				"StairsDown" + (i == 0 ? "ToNextLevel" : "ToChildBranch"),
+				entityDefns["StairsDown"],
+				[
+					new Locatable(new Location(roomCenter)),
+					new Portal
+					(
+						null, // placeName
+						"StairsUp"
+					)
+				]
+			);
 
-		entities.push(stairsDown);
+			entities.push(stairsDown);
+		}
 
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{
@@ -958,17 +1016,19 @@
 
 	DemoData.prototype.venueGenerateFortress = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateSurface = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
+		var venueName = branchName + venueIndex;
+
 		var mapSizeInCells = new Coords(16, 16, 1);
 		var mapCellsAsStrings = [];
 		var mapRowAsString = "".padLeft(mapSizeInCells.x, ".");
@@ -976,35 +1036,43 @@
 		{
 			mapCellsAsStrings.push(mapRowAsString);
 		}
+
 		var map = new Map
 		(
-			"Venue" + venueIndex + "Map",
-			venueDefn.terrains,
+			venueName + "Map",
+			placeDefn.terrains,
 			new Coords(16, 16, 1), // hack - cellSizeInPixels
 			mapCellsAsStrings
 		);
 
-		var entityDefnName = "StairsDown"; // todo
-
 		var stairsDownPos = mapSizeInCells.clone().half().round();
-
 		var entityStairsDown = EntityHelper.new
 		(
-			entityDefnName,
-			worldDefn.entityDefns[entityDefnName],
+			"StairsDownToNextLevel",
+			worldDefn.entityDefns["StairsDown"],
 			[
-				new Locatable(new Location(stairsDownPos)), // pos
-				new Portal("Venue" + (venueIndex + 1), "StairsUp") // todo
+				new Locatable(new Location(stairsDownPos)),
+				new Portal(null, "StairsUp") 
+			]
+		);
+		
+		var altarPos = new Coords(mapSizeInCells.x / 2, 0).floor();
+		var entityAltar = EntityHelper.new
+		(
+			"Altar",
+			worldDefn.entityDefns["Altar"],
+			[
+				new Locatable(new Location(altarPos)),
 			]
 		);
 
-		var entities = [ entityStairsDown ];
+		var entities = [ entityStairsDown, entityAltar ];
 
-		var returnValue = new VenueLevel
+		var returnValue = new PlaceLevel
 		(
-			"Venue" + venueIndex,
-			venueDepth,
-			venueDefn,
+			venueName,
+			0, // venueDepth,
+			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,
 			entities
@@ -1015,155 +1083,73 @@
 
 	DemoData.prototype.venueGenerateHades = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateIsland = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateMines = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateOracle = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateLabyrinth = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateLimbo = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGeneratePuzzle = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateSingleChamber = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer);
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
 	DemoData.prototype.venueGenerateThrowback = function
 	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
+		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, venueDefn, venueIndex, venueDepth, randomizer);
-	};
-
-	DemoData.prototype.venueGenerateTutorial = function
-	(
-		worldDefn, venueDefn, venueIndex, numberOfVenues, venueDepth, randomizer
-	)
-	{
-		var sizeInCells = new Coords(16, 16);
-
-		var stringForTopAndBottomRows = "x";
-		var stringForOtherRows = "x";
-
-		for (var x = 1; x < sizeInCells.x - 1; x++)
-		{
-			stringForTopAndBottomRows += "x";
-			stringForOtherRows += ".";
-		}
-
-		stringForTopAndBottomRows += "x";
-		stringForOtherRows += "x";
-
-		var mapCellsAsStrings = [];
-
-		mapCellsAsStrings.push(stringForTopAndBottomRows);
-
-		for (var y = 1; y < sizeInCells.y - 1; y++)
-		{
-			mapCellsAsStrings.push(stringForOtherRows);
-		}
-
-		mapCellsAsStrings.push(stringForTopAndBottomRows);
-
-		var map = new Map
-		(
-			"Venue" + venueIndex + "Map",
-			venueDefn.terrains,
-			new Coords(16, 16), // hack - cellSizeInPixels
-			mapCellsAsStrings
-		);
-
-		var entityDefns = worldDefn.entityDefns;
-
-		var entities =
-		[
-			// stairs
-
-			EntityHelper.new
-			(
-				"StairsDown",
-				entityDefns["StairsDown"],
-				[
-					new Locatable
-					(
-						new Location
-						(
-							sizeInCells.clone().subtract
-							(
-								Coords.Instances().Ones
-							)
-						)
-					),
-					new Portal
-					(
-						"Venue" + (venueIndex + 1),
-						"StairsUp"
-					),
-				]
-			),
-
-		];
-
-		var returnValue = new VenueLevel
-		(
-			"Venue" + venueIndex,
-			venueDepth,
-			venueDefn,
-			new Coords(480, 480), // sizeInPixels
-			map,
-			entities
-		);
-
-		return returnValue;
+		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 }

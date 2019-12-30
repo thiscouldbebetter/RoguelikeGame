@@ -26,7 +26,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 			]
 		);
 
-		place0.entitiesToSpawn.splice(0, 0, this.entityForPlayer);
+		place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
 	}
 
 	this.placeNext = this.places[this.entityForPlayer.Locatable.loc.placeName];
@@ -87,10 +87,10 @@ function World(name, defn, places, entityForPlayer, randomizer)
 			visualsForTiles
 		);
 
-		var places = worldDefn.buildVenues
+		var places = worldDefn.buildPlaces
 		(
 			worldDefn,
-			worldDefn.venueDefns,
+			worldDefn.placeDefns,
 			worldDefn.entityDefnGroups,
 			[]
 		);

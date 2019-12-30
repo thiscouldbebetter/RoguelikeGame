@@ -45,14 +45,7 @@ function CollidableDefn(blocksMovement, blocksView)
 
 	CollidableDefn.prototype.finalizeEntityForVenue = function(universe, world, venue, entity)
 	{
-		var collidable = entity.Collidable;
-		var cellOccupied = collidable.mapCellOccupied;
-		var entitiesPresentInCellOccupied = cellOccupied.entitiesPresent;
-		entitiesPresentInCellOccupied.splice
-		(
-			entitiesPresentInCellOccupied.indexOf(entity),
-			1
-		);
+		// todo
 	};
 
 }

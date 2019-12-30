@@ -31,15 +31,78 @@ function DemoData(randomizer)
 	{
 		var sizeInPixels = visuals["Floor"].size;
 
+		var useEmplacementAltar = function(universe, world, place, entityUsing, entityUsed)
+		{
+			var itemsHeld = entityUsing.ItemHolder.itemEntities;
+			var isItemGoalHeld = itemsHeld.some(x => x.name == "Amulet of Yendor");
+			var messageLog = entityUsing.Player.messageLog;
+			if (isItemGoalHeld == false)
+			{
+				var message = "You do not have the Amulet of Yendor!"
+				messageLog.messageAdd(message);
+				var message = "You are punished with death."
+				messageLog.messageAdd(message);
+
+				var venueMessage = new VenueMessage
+				(
+					"You lose!",
+					universe.venueCurrent, // venuePrev
+					universe.display.sizeDefault().clone().half(),
+					function acknowledge(universe)
+					{
+						universe.venueNext = new VenueFader
+						(
+							new VenueControls(universe.controlBuilder.title(universe))
+						);
+					}
+				);
+				universe.venueNext = venueMessage;
+
+			}
+			else
+			{
+				var message = "You sacrifice the Amulet of Yendor,"
+				messageLog.messageAdd(message);
+				message = "and are rewarded with eternal life."
+				messageLog.messageAdd(message);
+
+				var venueMessage = new VenueMessage
+				(
+					"You win!",
+					universe.venueCurrent, // venuePrev
+					universe.display.sizeDefault().clone().half(),
+					function acknowledge(universe)
+					{
+						universe.venueNext = new VenueFader
+						(
+							new VenueControls(universe.controlBuilder.title(universe))
+						);
+					}
+				);
+				universe.venueNext = venueMessage;
+
+			}
+		}
+
 		var useEmplacementPortal = function(universe, world, place, entityUsing, entityUsed)
 		{
 			var message = "You use the " + entityUsed.Emplacement.appearance + ".";
 			entityUsing.Player.messageLog.messageAdd(message);
 			entityUsed.Portal.use(universe, world, place, entityUsing, entityUsed);
-		}
+		};
 
 		var entityDefns =
 		[
+			new Entity
+			(
+				"Altar",
+				[
+					collidableDefns.Clear,
+					new Drawable(visuals["Altar"]),
+					new Emplacement("altar", useEmplacementAltar),
+				]
+			),
+
 			new Entity
 			(
 				"Blood",
@@ -125,9 +188,9 @@ function DemoData(randomizer)
 
 		var entityDefnGroups = this.buildEntityDefnGroups(visualsOpaque, activityDefns, itemCategories);
 
-		var venueDefns = this.buildVenueDefns(visualsOpaque, actions);
+		var placeDefns = this.buildPlaceDefns(visualsOpaque, actions);
 
-		var venueStructure = this.buildVenueStructure();
+		var placeStructure = this.buildPlaceStructure();
 
 		var randomizer = this.randomizer;
 
@@ -138,18 +201,16 @@ function DemoData(randomizer)
 			activityDefns,
 			itemCategories,
 			entityDefnGroups,
-			venueDefns,
-			venueStructure,
-			function buildVenues()
+			placeDefns,
+			placeStructure,
+			function buildPlaces()
 			{
-				var returnValues = this.venueStructure.branchRoot.buildVenuesAndAddToList
+				var root = this.venueStructure.branchRoot;
+				var returnValues = root.buildPlaces
 				(
 					this, // worldDefn
-					[], // venuesSoFar
-					0, // venueDepth
 					randomizer
 				);
-
 				return returnValues;
 			}
 		);

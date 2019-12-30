@@ -6,9 +6,9 @@ function WorldDefn
 	activityDefns,
 	itemCategories,
 	entityDefnGroups,
-	venueDefns,
+	placeDefns,
 	venueStructure,
-	buildVenues
+	buildPlaces
 )
 {
 	this.name = name;
@@ -16,9 +16,9 @@ function WorldDefn
 	this.activityDefns = activityDefns;
 	this.itemCategories = itemCategories;
 	this.entityDefnGroups = entityDefnGroups;
-	this.venueDefns = venueDefns;
+	this.placeDefns = placeDefns;
 	this.venueStructure = venueStructure;
-	this.buildVenues = buildVenues;
+	this.buildPlaces = buildPlaces;
 
 	var entityDefnSets = this.entityDefnGroups.select
 	(
@@ -29,7 +29,7 @@ function WorldDefn
 
 	this.actions.addLookupsByName();
 	this.activityDefns.addLookupsByName();
-	this.venueDefns.addLookupsByName();
+	this.placeDefns.addLookupsByName();
 	this.entityDefnGroups.addLookupsByName();
 	this.entityDefns.addLookupsByName();
 }

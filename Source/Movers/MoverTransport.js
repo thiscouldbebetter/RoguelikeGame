@@ -16,11 +16,7 @@ function MoverTransport(entityMover, locDestination)
 		var collidable = this.entityMover.Collidable;
 		var cellOccupied = collidable.mapCellOccupied;
 		var entitiesPresentInCellOccupied = cellOccupied.entitiesPresent;
-		entitiesPresentInCellOccupied.splice
-		(
-			entitiesPresentInCellOccupied.indexOf(this.entityMover),
-			1
-		);
+		entitiesPresentInCellOccupied.remove(this.entityMover);
 
 		moverLoc.overwriteWith(this.locDestination);
 
