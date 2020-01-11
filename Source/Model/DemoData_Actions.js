@@ -121,9 +121,9 @@ function DemoData_Actions()
 					}
 				}
 
-				for (var i = 0; i < defnsOfEntitiesToSpawn.length; i++)
+				for (var j = 0; j < defnsOfEntitiesToSpawn.length; j++)
 				{
-					var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
+					var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[j];
 
 					var entityToSpawn = EntityHelper.new
 					(
