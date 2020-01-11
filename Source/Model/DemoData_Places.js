@@ -870,8 +870,8 @@
 			"MoverGenerator",
 			[
 				new ActorDefn("Generate Movers"),
-				//new MoverGenerator(1/3, 1/70, zones)
-				new MoverGenerator(0, 1, zones) // test
+				new MoverGenerator(1/3, 1/70, zones)
+				//new MoverGenerator(0, 1, zones) // test
 			]
 		);
 		entities.push(entityMoverGenerator);

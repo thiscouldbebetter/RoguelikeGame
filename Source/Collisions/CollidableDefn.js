@@ -10,7 +10,8 @@ function CollidableDefn(blocksMovement, blocksView)
 	{
 		this.Blocking = new CollidableDefn(true, true);
 		this.Concealing = new CollidableDefn(false, true);
-		this.Clear = new CollidableDefn(false, false);
+		this.Open = new CollidableDefn(false, false);
+		this.Transparent = new CollidableDefn(true, false);
 	}
 
 	CollidableDefn.Instances = function()

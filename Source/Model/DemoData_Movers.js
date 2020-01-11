@@ -13,7 +13,7 @@
 		(
 			corpse,
 			[
-				collidableDefns.Clear,
+				collidableDefns.Open,
 				new Drawable(visuals[corpse]),
 				new ItemDefn
 				(
@@ -55,7 +55,7 @@
 				// properties
 				[
 					new ActorDefn(activityDefns["Move Toward Player"].name),
-					collidableDefns.Blocking,
+					collidableDefns.Transparent,
 					itemHolder,
 					//new EquippableDefn(equipmentSocketDefnSetBiped),
 					new EnemyDefn(),
@@ -195,7 +195,7 @@
 			// properties
 			[
 				new ActorDefn(activityDefnName),
-				collidableDefns.Blocking,
+				collidableDefns.Transparent,
 				new ItemHolder(),
 				drawableDefnPlayer,
 				new EquippableDefn(equipmentSocketDefnSetBiped),

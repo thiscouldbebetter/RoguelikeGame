@@ -1,38 +1,49 @@
 
-function Path(map, startPos, goalPos)
+function Path(map, startPos, goalPos, lengthMax)
 {
 	this.map = map;
 	this.startPos = startPos;
 	this.goalPos = goalPos;
+	this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
 
-	this.tempPos = new Coords();
+	// Helper variables.
+	this._tempPos = new Coords();
 }
 
 {
+	function PathNode(cellPos, costFromStart, costToGoalEstimated, prev)
+	{
+		this.cellPos = cellPos;
+		this.costFromStart = costFromStart;
+		this.costToGoalEstimated = costToGoalEstimated;
+		this.prev = prev;
+	}
+
 	Path.prototype.calculate = function()
 	{
 		var map = this.map;
 		var startPos = this.startPos.clone();
 		var goalPos = this.goalPos.clone();
+		var tempPos = this._tempPos;
 
 		var openList = [];
 		var openLookup = [];
 		var closedLookup = [];
 
-		var tempPos = this.tempPos;
+		var costToGoalEstimated = tempPos.overwriteWith
+		(
+			goalPos
+		).subtract
+		(
+			startPos
+		).absolute().clearZ().sumOfDimensions();
 
 		var startNode = new PathNode
 		(
-			startPos,
-			0,
-			tempPos.overwriteWith
-			(
-				goalPos
-			).subtract
-			(
-				startPos
-			).absolute().clearZ().sumOfDimensions(),
-			null
+			startPos, // cellPos
+			0, // costFromStart
+			costToGoalEstimated,
+			null // prev
 		);
 
 		openList.push(startNode);
@@ -46,19 +57,12 @@ function Path(map, startPos, goalPos)
 
 		openLookup[startIndex] = startNode;
 
-		while (openList.length > 0)
+		while (openList.length > 0)// && openList.length < this.lengthMax)
 		{
 			var current = openList[0];
 
-			if (current.cellPos.equalsXY(goalPos) == true)
+			if (current.cellPos.equalsXY(goalPos))
 			{
-				this.nodes = [];
-
-				while (current != null)
-				{
-					this.nodes.splice(0, 0, current);
-					current = current.prev;
-				}
 				break;
 			}
 
@@ -107,7 +111,24 @@ function Path(map, startPos, goalPos)
 				}
 			}
 		}
-	}
+
+		var best = openList[0];
+		if (best == null)
+		{
+			// todo
+			throw "No path found!";
+		}
+		else
+		{
+			this.nodes = [];
+			var current = best;
+			while (current != null)
+			{
+				this.nodes.splice(0, 0, current);
+				current = current.prev;
+			}
+		}
+	};
 
 	Path.prototype.getNeighborsForNode = function(map, node, goalPos)
 	{
@@ -131,7 +152,7 @@ function Path(map, startPos, goalPos)
 			}
 		}
 
-		var tempPos = this.tempPos;
+		var tempPos = this._tempPos;
 
 		for (var i = 0; i < neighborPositions.length; i++)
 		{
@@ -140,7 +161,7 @@ function Path(map, startPos, goalPos)
 			var costToTraverse = map.cellAtPos
 			(
 				neighborPos
-			).terrain(map).costToTraverse;
+			).costToTraverse(map);
 
 			costToTraverse *= tempPos.overwriteWith
 			(

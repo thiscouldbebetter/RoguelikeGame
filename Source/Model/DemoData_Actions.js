@@ -81,6 +81,7 @@ function DemoData_Actions()
 					if (killable.integrity <= 0)
 					{
 						var entityDefnCorpse = moverDefn.entityDefnCorpse;
+						entityInCell.Locatable.loc.pos.z = PlaceLevel.ZLayers.Items
 						var entityCorpse = EntityHelper.new
 						(
 							entityDefnCorpse.name + universe.idHelper.idNext(),
@@ -704,7 +705,8 @@ function DemoData_Actions()
 					(
 						place.map,
 						actorLoc.pos,
-						player.Locatable.loc.pos
+						player.Locatable.loc.pos,
+						256 // hack - lengthMax
 					);
 
 					path.calculate();

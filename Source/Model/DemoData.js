@@ -97,7 +97,7 @@ function DemoData(randomizer)
 			(
 				"Altar",
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals["Altar"]),
 					new Emplacement("altar", useEmplacementAltar),
 				]
@@ -107,7 +107,7 @@ function DemoData(randomizer)
 			(
 				"Blood",
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals["Blood"]),
 					new Emplacement("pool of blood"),
 					new Ephemeral(30),
@@ -128,7 +128,7 @@ function DemoData(randomizer)
 			(
 				"Gravestone",
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals["Gravestone"]),
 					new Emplacement("gravestone"),
 				]
@@ -138,7 +138,7 @@ function DemoData(randomizer)
 			(
 				"StairsDown",
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals["StairsDown"]),
 					new Emplacement("stairway down", useEmplacementPortal),
 				]
@@ -148,7 +148,7 @@ function DemoData(randomizer)
 			(
 				"StairsExit",
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals["StairsUp"]),
 					new Emplacement("stairway up", useEmplacementPortal),
 				]
@@ -158,7 +158,7 @@ function DemoData(randomizer)
 			(
 				"StairsUp",
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals["StairsUp"]),
 					new Emplacement("stairway up", useEmplacementPortal),
 				]

@@ -134,7 +134,7 @@
 			(
 				name,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
@@ -158,7 +158,7 @@
 		(
 			name,
 			[
-				collidableDefns.Clear,
+				collidableDefns.Open,
 				new Drawable(visuals[name]),
 				new ItemDefn
 				(
@@ -272,7 +272,7 @@
 			(
 				name,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Device
 					(
 						1, // chargesMax
@@ -404,7 +404,7 @@
 			(
 				itemDefnName,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Device
 					(
 						1, // chargesMax
@@ -513,7 +513,7 @@
 				(
 					name,
 					[
-						collidableDefns.Clear,
+						collidableDefns.Open,
 						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
@@ -605,7 +605,7 @@
 			(
 				name,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Device
 					(
 						1, // chargesMax
@@ -776,7 +776,7 @@
 			(
 				itemDefnName,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Device(10, true, [ effectLearnSpell ]),
 					new Drawable(visuals[appearance]),
 					new ItemDefn
@@ -955,7 +955,7 @@
 			(
 				wandName,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Device
 					(
 						10, // chargesMax
@@ -1049,7 +1049,7 @@
 			(
 				name,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1167,7 +1167,7 @@
 			(
 				name,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1263,7 +1263,7 @@
 			(
 				name,
 				[
-					collidableDefns.Clear,
+					collidableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1375,7 +1375,7 @@
 				(
 					name,
 					[
-						collidableDefns.Clear,
+						collidableDefns.Open,
 
 						new Drawable(visuals[appearance]),
 						new ItemDefn

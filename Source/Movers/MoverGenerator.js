@@ -29,7 +29,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 
 			var agentsInPlace = place.entitiesByPropertyName[MoverDefn.name];
 
-			var numberOfAgentsMax = 2; // hack 
+			var numberOfAgentsMax = 100; // hack
 
 			if (agentsInPlace.length < numberOfAgentsMax)
 			{
