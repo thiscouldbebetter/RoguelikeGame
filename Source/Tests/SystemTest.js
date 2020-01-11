@@ -29,8 +29,8 @@ function systemTest()
 				"Map",
 				zeroes, // pos
 				new Coords(1, 1).multiplyScalar(displaySize.y), // size
-				colorFore, colorBack,
-				[]
+				colorFore, colorBack
+				[] // children
 			),
 			new DisplayPane
 			(

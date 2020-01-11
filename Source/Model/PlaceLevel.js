@@ -118,9 +118,9 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 				var entity = entitiesWithProperty[b];
 				var entityDefn = entity;
 				var entityDefnProperty = entityDefn[propertyName];
-				if (entityDefnProperty.updateEntityForVenue != null)
+				if (entityDefnProperty.updateForTimerTick != null)
 				{
-					entityDefnProperty.updateEntityForVenue(universe, world, this, entity);
+					entityDefnProperty.updateForTimerTick(universe, world, this, entity);
 				}
 			}
 		}

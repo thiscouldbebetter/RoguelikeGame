@@ -1,6 +1,7 @@
 
 function MoverDefn
 (
+	name,
 	difficulty,
 	movesPerTurn,
 	demographics,
@@ -12,6 +13,7 @@ function MoverDefn
 	attributeGroups
 )
 {
+	this.name = name;
 	this.difficulty = difficulty;
 	this.movesPerTurn = movesPerTurn;
 	this.demographics = demographics;
@@ -34,10 +36,9 @@ function MoverDefn
 		}
 	};
 
-	MoverDefn.prototype.updateEntityForVenue = function(universe, world, placeIgnored, entity)
+	MoverDefn.prototype.updateForTimerTick = function(universe, world, place, entity)
 	{
 		var entityLoc = entity.Locatable.loc;
-		var place = entityLoc.place(world);
 
 		entityLoc.pos.trimToRangeMax
 		(

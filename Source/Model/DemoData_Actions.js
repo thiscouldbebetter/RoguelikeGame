@@ -1,12 +1,131 @@
 
-// partial class DemoData
+function DemoData_Actions()
 {
+	// partial class DemoData
+}
+
+{
+	DemoData.prototype.actionAttack_Perform = function(universe, world, place, actor, action)
+	{
+		if (actor.MoverData.movesThisTurn <= 0)
+		{
+			return;
+		}
+
+		var actorLoc = actor.Locatable.loc;
+		var directionFacing = actorLoc.orientation.forward;
+		var posInCellsDestination = actorLoc.pos.clone().add
+		(
+			directionFacing
+		);
+
+		var map = place.map;
+		var cellDestination = map.cellAtPos(posInCellsDestination);
+
+		if (cellDestination == null)
+		{
+			return;
+		}
+
+		var entitiesInCellDestination = cellDestination.entitiesPresent;
+		var entityInCell = entitiesInCellDestination[0];
+
+		if (entityInCell != null)
+		{
+			var moverDefn = entityInCell.MoverDefn;
+			if (moverDefn != null)
+			{
+				var costToAttack = 1; // todo
+				actor.MoverData.movesThisTurn -= costToAttack;
+
+				// todo - Calculate damage.
+				// hack - Only the player can inflict damage for now.
+				var damageInflicted = ( actor.Player == null ? 0 : DiceRoll.roll(world.randomizer, "1d6") );
+
+				var entityDefns = world.defn.entityDefns;
+				var defnsOfEntitiesToSpawn = [];
+
+				if (damageInflicted == 0)
+				{
+					if (actor.Player != null)
+					{
+						var message = "You miss the " + moverDefn.name + ".";
+						actor.Player.messageLog.messageAdd(message);
+					}
+					else if (entityInCell.Player != null)
+					{
+						var message = "The " + actor.MoverDefn.name + " misses you.";
+						entityInCell.Player.messageLog.messageAdd(message);
+					}
+
+				}
+				else
+				{
+					var killable = entityInCell.Killable;
+					killable.damageApply
+					(
+						universe, world, place, actor, entityInCell, damageInflicted
+					);
+
+					if (actor.Player != null)
+					{
+						var message = "You hit the " + moverDefn.name + ".";
+						actor.Player.messageLog.messageAdd(message);
+					}
+					else if (entityInCell.Player != null)
+					{
+						var message = "The " + moverDefn.name + " hits you.";
+						actor.Player.messageLog.messageAdd(message);
+					}
+
+					if (killable.integrity <= 0)
+					{
+						var entityDefnCorpse = moverDefn.entityDefnCorpse;
+						var entityCorpse = EntityHelper.new
+						(
+							entityDefnCorpse.name + universe.idHelper.idNext(),
+							entityDefnCorpse,
+							[
+								entityInCell.Locatable,
+								new Item(entityDefnCorpse.ItemDefn.name, 1)
+							]
+						);
+
+						defnsOfEntitiesToSpawn.push(entityCorpse);
+
+						if (actor.Player != null)
+						{
+							var message = "You kill the " + moverDefn.name + "!";
+							actor.Player.messageLog.messageAdd(message);
+						}
+
+					}
+				}
+
+				for (var i = 0; i < defnsOfEntitiesToSpawn.length; i++)
+				{
+					var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
+
+					var entityToSpawn = EntityHelper.new
+					(
+						defnOfEntityToSpawn.name + "_Spawned",
+						defnOfEntityToSpawn,
+						[ new Locatable(new Location(posInCellsDestination)) ]
+					);
+
+					place.entitiesToSpawn.push(entityToSpawn);
+				}
+
+			} // end if (moverDefn != null)
+
+		} // end if (entityInCell != null)
+	};
+
 	DemoData.prototype.actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
-		var venue = loc.place(world);
 		var posInCells = loc.pos;
-		var emplacementsInCell = venue.entitiesWithPropertyNamePresentAtCellPos
+		var emplacementsInCell = place.entitiesWithPropertyNamePresentAtCellPos
 		(
 			Emplacement.name, posInCells // hack
 		);
@@ -36,9 +155,8 @@
 	DemoData.prototype.actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
-		var venue = loc.place(world);
 		var posInCells = loc.pos;
-		var itemsPresentInCell = venue.entitiesWithPropertyPresentAtCellPos
+		var itemsPresentInCell = place.entitiesWithPropertyPresentAtCellPos
 		(
 			"Item", posInCells
 		);
@@ -75,7 +193,7 @@
 
 				var itemLoc = itemToDrop.Locatable.loc;
 				itemLoc.overwriteWith(actor.Locatable.loc);
-				itemLoc.place(world).entitiesToSpawn.push(itemToDrop);
+				place.entitiesToSpawn.push(itemToDrop);
 			}
 
 			dropItem(actor.ItemHolder, world, actor, itemToDrop);
@@ -85,10 +203,9 @@
 	DemoData.prototype.actionItem_PickUp_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
-		var venue = loc.place(world);
 		var posInCells = loc.pos;
 
-		var cell = venue.map.cellAtPos(posInCells);
+		var cell = place.map.cellAtPos(posInCells);
 		var entitiesPresentAtCellPos = cell.entitiesPresent;
 
 		for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
@@ -107,8 +224,7 @@
 					function pickUpItem(itemHolder, world, actor, itemToPickUp)
 					{
 						itemHolder.itemEntities.push(itemToPickUp);
-						var venue = place;
-						venue.entitiesToRemove.push(itemToPickUp);
+						place.entitiesToRemove.push(itemToPickUp);
 
 						if (itemHolder.itemSelected == null)
 						{
@@ -190,20 +306,25 @@
 
 	DemoData.prototype.actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
 	{
+		if (actor.MoverData.movesThisTurn <= 0)
+		{
+			return;
+		}
+
 		if (directionToMove.magnitude() == 0)
 		{
 			return;
 		}
 
 		var actorLoc = actor.Locatable.loc;
-		var venue = actorLoc.place(world);
+		actorLoc.orientation.forwardSet(directionToMove);
 
 		var posInCellsDestination = actorLoc.pos.clone().add
 		(
 			directionToMove
 		);
 
-		var map = venue.map;
+		var map = place.map;
 		var cellDestination = map.cellAtPos(posInCellsDestination);
 
 		if (cellDestination == null)
@@ -219,63 +340,22 @@
 		{
 			var entityInCell = entitiesInCellDestination[b];
 
-			if (entityInCell.Collidable.defn.blocksMovement == true)
-			{
-				isDestinationAccessible = false;
-			}
-
-			if (entityInCell.MoverDefn != null)
+			if (entityInCell.Collidable.defn.blocksMovement)
 			{
 				isDestinationAccessible = false;
 
-				var costToAttack = 1; // todo
-				actor.MoverData.movesThisTurn -= costToAttack;
-
-				// todo - Calculate damage.
-				var damageInflicted = DiceRoll.roll(world.randomizer, "1d6");
-
-				var entityDefns = world.defn.entityDefns;
-				var defnsOfEntitiesToSpawn = [];
-
-				if (damageInflicted > 0)
+				var moverDefn = entityInCell.MoverDefn;
+				if (moverDefn != null)
 				{
-					var killable = entityInCell.Killable;
-					killable.damageApply
-					(
-						universe, world, place, actor, entityInCell, damageInflicted
-					);
-
-					if (killable.integrity <= 0)
+					if (actor.Player != null)
 					{
-						defnsOfEntitiesToSpawn.push
-						(
-							entityInCell.MoverDefn.entityDefnCorpse
-						);
+						var message = "A " + moverDefn.name + " blocks your path.";
+						actor.Player.messageLog.messageAdd(message);
 					}
 					else
 					{
-						defnsOfEntitiesToSpawn.push
-						(
-							entityDefns["Blood"]
-						);
+						this.actionAttack_Perform(universe, world, place, actor, action);
 					}
-				}
-
-				for (var i = 0; i < defnsOfEntitiesToSpawn.length; i++)
-				{
-					var defnOfEntityToSpawn = defnsOfEntitiesToSpawn[i];
-
-					var entityToSpawn = EntityHelper.new
-					(
-						defnOfEntityToSpawn.name + "_Spawned",
-						defnOfEntityToSpawn,
-						[ new Locatable(new Location(posInCellsDestination)) ]
-					);
-
-					venue.entitiesToSpawn.push
-					(
-						entityToSpawn
-					);
 				}
 			}
 		}
@@ -293,33 +373,34 @@
 				var entitiesInCellDeparted = cellDeparted.entitiesPresent;
 				entitiesInCellDeparted.remove(actor);
 
-				for (var i = 0; i < entitiesInCellDestination.length; i++)
+				if (actor.Player != null)
 				{
-					var entity = entitiesInCellDestination[i];
-					if (entity.Item != null)
+					for (var i = 0; i < entitiesInCellDestination.length; i++)
 					{
-						var item = entity.Item;
-						var itemDefn = item.defn(world);
-						var message = "There is a " + itemDefn.appearance + " here.";
-						actor.Player.messageLog.messageAdd(message);
-					}
-					else if (entity.Emplacement != null)
-					{
-						var emplacement = entity.Emplacement;
-						var message = "There is a " + emplacement.appearance + " here.";
-						actor.Player.messageLog.messageAdd(message);
+						var entity = entitiesInCellDestination[i];
+						if (entity.Item != null)
+						{
+							var item = entity.Item;
+							var itemDefn = item.defn(world);
+							var message = "There is a " + itemDefn.appearance + " here.";
+							actor.Player.messageLog.messageAdd(message);
+						}
+						else if (entity.Emplacement != null)
+						{
+							var emplacement = entity.Emplacement;
+							var message = "There is a " + emplacement.appearance + " here.";
+							actor.Player.messageLog.messageAdd(message);
+						}
 					}
 				}
 
 				entitiesInCellDestination.push(actor);
 				actor.Collidable.mapCellOccupied = cellDestination;
 
-				var actorLoc = actor.Locatable.loc;
 				actorLoc.pos.overwriteWith
 				(
 					posInCellsDestination
 				);
-				actorLoc.orientation.forwardSet(directionToMove);
 			}
 		}
 	};
@@ -336,6 +417,15 @@
 		var directions = new Direction_Instances()._ByHeading;
 
 		var actions = this;
+
+		var actionAttack = new Action
+		(
+			"Attack",
+			function perform(universe, world, place, actor, action)
+			{
+				actions.actionMove_Attack(universe, world, place, actor, action);
+			}
+		);
 
 		var actionEmplacement_Use = new Action
 		(
@@ -503,14 +593,12 @@
 		(
 			"Do Nothing",
 
-			// initialize
-			function(universe, world, place, actor, activity)
+			function initialize(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
-			// perform
-			function(universe, world, place, actor, activity)
+			function perform(universe, world, place, actor, activity)
 			{
 				// do nothing
 			}
@@ -527,48 +615,8 @@
 
 			function perform(universe, world, place, actor, activity)
 			{
-				var venue = place;
-
-				var agentsInVenue = venue.entitiesByPropertyName[MoverDefn.name];
-
-				var numberOfAgentsDesired = 0; // hack - No monsters yet.
-
-				if (agentsInVenue.length < numberOfAgentsDesired)
-				{
-					var chanceOfSpawnPerTurn = 1; // hack - actually per tick
-
-					if (universe.randomizer().getNextRandom() < chanceOfSpawnPerTurn)
-					{
-						var difficulty = 1; // hack
-
-						var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
-						var entityDefnsForAgentsOfDifficulty =
-							world.defn.entityDefnGroups[entityDefnGroupName].entityDefns;
-						var numberOfEntityDefns = entityDefnsForAgentsOfDifficulty.length;
-						var entityDefnIndex = Math.floor(this.randomizer.getNextRandom() * numberOfEntityDefns);
-						var entityDefnForAgentToSpawn = entityDefnsForAgentsOfDifficulty[entityDefnIndex];
-
-						var randomizer = world.randomizer;
-						var posToSpawnAt = new Coords().randomize
-						(
-							randomizer
-						).multiply
-						(
-							venue.map.sizeInCells
-						).floor();
-
-						var entityForAgent = EntityHelper.new
-						(
-							entityDefnForAgentToSpawn.name + "0",
-							entityDefnForAgentToSpawn,
-							[
-								new Locatable(new Location(posToSpawnAt))
-							]
-						);
-
-						venue.entitiesToSpawn.push(entityForAgent);
-					}
-				}
+				var moverGenerator = actor.MoverGenerator;
+				moverGenerator.activityPerform(universe, world, place, actor, activity);
 			}
 		);
 
@@ -620,8 +668,7 @@
 				}
 
 				var actorLoc = actor.Locatable.loc;
-				var venue = actorLoc.place(world);
-				var players = venue.entitiesByPropertyName[Player.name];
+				var players = place.entitiesByPropertyName[Player.name];
 
 				if (players != null && players.length > 0)
 				{
@@ -629,7 +676,7 @@
 
 					var path = new Path
 					(
-						venue.map,
+						place.map,
 						actorLoc.pos,
 						player.Locatable.loc.pos
 					);
@@ -744,7 +791,6 @@
 
 				var actorLoc = actor.Locatable.loc;
 				var actorPos = actorLoc.pos;
-				var place = actorLoc.place(world);
 
 				var target = actor.ActorData.target;
 				if (target == null)

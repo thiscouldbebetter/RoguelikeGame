@@ -38,7 +38,7 @@ function CollidableDefn(blocksMovement, blocksView)
 		entity.Collidable = collidable;
 	};
 
-	CollidableDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
+	CollidableDefn.prototype.updateForTimerTick = function(universe, world, venue, entity)
 	{
 		// todo
 	};

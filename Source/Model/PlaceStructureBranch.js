@@ -37,7 +37,7 @@ function PlaceStructureBranch
 
 		for (var i = 0; i < numberOfVenuesInBranch; i++)
 		{
-			var place = placeDefn.venueGenerate.call
+			var place = placeDefn.placeGenerate.call
 			(
 				new DemoData(randomizer), // hack
 				worldDefn,

@@ -38,6 +38,7 @@ function Player(sightRange)
 
 			venueKnownLookup[venue.name] = venueKnown;
 
+			/*
 			var propertyName = "Drawable";
 			var entitiesNotYetVisible = venue.entitiesByPropertyName[propertyName];
 			for (var i = 0; i < entitiesNotYetVisible.length; i++)
@@ -45,6 +46,7 @@ function Player(sightRange)
 				var entity = entitiesNotYetVisible[i];
 				entity.Drawable.isVisible = false;
 			}
+			*/
 
 			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
 			(
@@ -57,7 +59,7 @@ function Player(sightRange)
 		}
 	}
 
-	Player.prototype.updateEntityForVenue = function(universe, world, venue, entity)
+	Player.prototype.updateForTimerTick = function(universe, world, venue, entity)
 	{
 		var moverData = entity.MoverData;
 		if (moverData.movesThisTurn <= 0)

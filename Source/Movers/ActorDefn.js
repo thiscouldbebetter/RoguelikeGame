@@ -21,7 +21,7 @@ function ActorDefn(activityDefnNameInitial)
 		actorData.activity_Set(universe, world, entity, activity);
 	}
 
-	ActorDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
+	ActorDefn.prototype.updateForTimerTick = function(universe, world, venue, entity)
 	{
 		var actorData = entity.ActorData;
 		actorData.activity_Get().perform(universe, world, venue, entity);

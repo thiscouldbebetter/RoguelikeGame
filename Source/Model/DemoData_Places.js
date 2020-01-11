@@ -102,7 +102,7 @@
 			ActorDefn.name,
 			CollidableDefn.name,
 			Device.name,
-			Drawable.name,
+			//Drawable.name,
 			"Dynamic",
 			Emplacement.name,
 			"Enemy",
@@ -125,7 +125,7 @@
 				"Depths",
 				propertyNamesKnown,
 				mapTerrainsHades,
-				this.venueGenerateDepths
+				this.placeGenerateDepths
 			),
 
 			new PlaceDefn
@@ -133,7 +133,7 @@
 				"Dungeon",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateDungeon
+				this.placeGenerateDungeon
 			),
 
 			new PlaceDefn
@@ -141,7 +141,7 @@
 				"Fortress",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateFortress
+				this.placeGenerateFortress
 			),
 
 			new PlaceDefn
@@ -149,7 +149,7 @@
 				"Hades",
 				propertyNamesKnown,
 				mapTerrainsHades,
-				this.venueGenerateHades
+				this.placeGenerateHades
 			),
 
 			new PlaceDefn
@@ -157,7 +157,7 @@
 				"Mines",
 				propertyNamesKnown,
 				mapTerrainsMines,
-				this.venueGenerateMines
+				this.placeGenerateMines
 			),
 
 			new PlaceDefn
@@ -165,7 +165,7 @@
 				"MinesTown",
 				propertyNamesKnown,
 				mapTerrainsMines,
-				this.venueGenerateMines
+				this.placeGenerateMines
 			),
 
 			new PlaceDefn
@@ -173,7 +173,7 @@
 				"MinesBottom",
 				propertyNamesKnown,
 				mapTerrainsMines,
-				this.venueGenerateMines
+				this.placeGenerateMines
 			),
 
 			new PlaceDefn
@@ -181,7 +181,7 @@
 				"Island",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateIsland
+				this.placeGenerateIsland
 			),
 
 			new PlaceDefn
@@ -189,7 +189,7 @@
 				"Labyrinth",
 				propertyNamesKnown,
 				this.buildMapTerrainsLabyrinth(visuals),
-				this.venueGenerateLabyrinth
+				this.placeGenerateLabyrinth
 			),
 
 			new PlaceDefn
@@ -197,7 +197,7 @@
 				"Limbo",
 				propertyNamesKnown,
 				mapTerrainsHades,
-				this.venueGenerateLimbo
+				this.placeGenerateLimbo
 			),
 
 			new PlaceDefn
@@ -205,7 +205,7 @@
 				"Oracle",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateOracle
+				this.placeGenerateOracle
 			),
 
 			new PlaceDefn
@@ -213,7 +213,7 @@
 				"Puzzle",
 				propertyNamesKnown,
 				this.buildMapTerrainsPuzzle(visuals),
-				this.venueGeneratePuzzle
+				this.placeGeneratePuzzle
 			),
 
 			new PlaceDefn
@@ -221,7 +221,7 @@
 				"SingleChamber",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateSingleChamber
+				this.placeGenerateSingleChamber
 			),
 
 			new PlaceDefn
@@ -229,7 +229,7 @@
 				"Surface",
 				propertyNamesKnown,
 				mapTerrainsDungeon,
-				this.venueGenerateSurface
+				this.placeGenerateSurface
 			),
 
 			new PlaceDefn
@@ -237,7 +237,7 @@
 				"Throwback",
 				propertyNamesKnown,
 				this.buildMapTerrainsThrowback(visuals),
-				this.venueGenerateThrowback
+				this.placeGenerateThrowback
 			)
 		];
 
@@ -390,12 +390,12 @@
 		return venueStructure;
 	};
 
-	DemoData.prototype.venueGenerateDepths = function
+	DemoData.prototype.placeGenerateDepths = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		var place = this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		var place = this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 		var placeEntities = place.entitiesToSpawn;
 		var stairDown = placeEntities.filter(x => x.name == "StairsDownToChildBranch")[0];
 
@@ -416,7 +416,7 @@
 		return place;
 	};
 
-	DemoData.prototype.venueGenerateDungeon = function
+	DemoData.prototype.placeGenerateDungeon = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
@@ -424,28 +424,28 @@
 		var venueName = branchName + venueIndex;
 
 		var mapSizeInCells = new Coords(64, 64);
-		var numberOfRooms = 12;
+		var numberOfZones = 12;
 		var terrains = placeDefn.terrains;
 
-		var mapCellsAsStrings = this.venueGenerateDungeon_1_InitMap
+		var mapCellsAsStrings = this.placeGenerateDungeon_1_InitMap
 		(
 			worldDefn, terrains, mapSizeInCells
 		);
-		var roomBoundsSet = this.venueGenerateDungeon_2_RoomBounds
+		var zoneBoundsSet = this.placeGenerateDungeon_2_ZoneBounds
 		(
-			terrains, randomizer, mapSizeInCells, numberOfRooms
+			terrains, randomizer, mapSizeInCells, numberOfZones
 		);
-		var rooms = this.venueGenerateDungeon_3_Rooms
+		var zones = this.placeGenerateDungeon_3_Zones
 		(
-			numberOfRooms, roomBoundsSet, mapCellsAsStrings, terrains
+			numberOfZones, zoneBoundsSet, mapCellsAsStrings, terrains
 		);
-		var doorwayPositions = this.venueGenerateDungeon_4_Doors
+		var doorwayPositions = this.placeGenerateDungeon_4_Doors
 		(
-			rooms, terrains, randomizer, mapCellsAsStrings
+			zones, terrains, randomizer, mapCellsAsStrings
 		);
-		var entities = this.venueGenerateDungeon_5_Entities
+		var entities = this.placeGenerateDungeon_5_Entities
 		(
-			worldDefn, branchName, placeDefn, venueName, randomizer, rooms, doorwayPositions, mapCellsAsStrings
+			worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings
 		);
 
 		var map = new Map
@@ -469,7 +469,7 @@
 		return returnValue;
 	};
 
-	DemoData.prototype.venueGenerateDungeon_1_InitMap = function(worldDefn, terrains, mapSizeInCells)
+	DemoData.prototype.placeGenerateDungeon_1_InitMap = function(worldDefn, terrains, mapSizeInCells)
 	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
 		var entityDefns = worldDefn.entityDefns;
@@ -496,106 +496,106 @@
 		return mapCellsAsStrings;
 	}
 
-	DemoData.prototype.venueGenerateDungeon_2_RoomBounds = function(terrains, randomizer, mapSizeInCells, numberOfRooms)
+	DemoData.prototype.placeGenerateDungeon_2_ZoneBounds = function(terrains, randomizer, mapSizeInCells, numberOfZones)
 	{
-		var roomSizeMin = new Coords(4, 4, 1);
-		var roomSizeMax = new Coords(13, 13, 1);
-		var roomSizeRange = roomSizeMax.clone().subtract(roomSizeMin);
+		var zoneSizeMin = new Coords(4, 4, 1);
+		var zoneSizeMax = new Coords(13, 13, 1);
+		var zoneSizeRange = zoneSizeMax.clone().subtract(zoneSizeMin);
 
 		terrainCodeChar = terrains.Floor.codeChar;
 
-		var roomBoundsSetSoFar = [];
+		var zoneBoundsSetSoFar = [];
 
 		var ones = Coords.Instances().Ones;
 		var twoTwoZero = Coords.Instances().TwoTwoZero;
 
-		while (roomBoundsSetSoFar.length < numberOfRooms)
+		while (zoneBoundsSetSoFar.length < numberOfZones)
 		{
-			var doesRoomOverlapAnother = true;
+			var doesZoneOverlapAnother = true;
 
-			while (doesRoomOverlapAnother)
+			while (doesZoneOverlapAnother)
 			{
-				var roomSize = new Coords().randomize(randomizer).multiply
+				var zoneSize = new Coords().randomize(randomizer).multiply
 				(
-					roomSizeRange
+					zoneSizeRange
 				).floor().add
 				(
-					roomSizeMin
+					zoneSizeMin
 				);
 
-				var roomSizePlusOnes = roomSize.clone().add
+				var zoneSizePlusOnes = zoneSize.clone().add
 				(
 					ones
 				);
 
-				var roomPosRange = mapSizeInCells.clone().subtract
+				var zonePosRange = mapSizeInCells.clone().subtract
 				(
-					roomSize
+					zoneSize
 				).subtract
 				(
 					twoTwoZero
 				);
 
-				var roomPos = new Coords().randomize(randomizer).multiply
+				var zonePos = new Coords().randomize(randomizer).multiply
 				(
-					roomPosRange
+					zonePosRange
 				).floor().add
 				(
 					ones
 				);
 
-				var roomBoundsWithWalls =
-					Box.fromMinAndSize(roomPos, roomSizePlusOnes);
+				var zoneBoundsWithWalls =
+					Box.fromMinAndSize(zonePos, zoneSizePlusOnes);
 
-				doesRoomOverlapAnother = Box.doBoxesInSetsOverlap
+				doesZoneOverlapAnother = Box.doBoxesInSetsOverlap
 				(
-					[ roomBoundsWithWalls ],
-					roomBoundsSetSoFar
+					[ zoneBoundsWithWalls ],
+					zoneBoundsSetSoFar
 				);
 			}
 
-			var roomBounds = Box.fromMinAndSize(roomPos, roomSize);
+			var zoneBounds = Box.fromMinAndSize(zonePos, zoneSize);
 
-			roomBoundsSetSoFar.push(roomBounds);
+			zoneBoundsSetSoFar.push(zoneBounds);
 		}
 
-		return roomBoundsSetSoFar;
+		return zoneBoundsSetSoFar;
 	}
 
-	DemoData.prototype.venueGenerateDungeon_3_Rooms = function
+	DemoData.prototype.placeGenerateDungeon_3_Zones = function
 	(
-		numberOfRooms, roomBoundsSetSoFar, mapCellsAsStrings, terrains
+		numberOfZones, zoneBoundsSetSoFar, mapCellsAsStrings, terrains
 	)
 	{
-		var rooms = [];
+		var zones = [];
 
-		for (var r = 0; r < numberOfRooms; r++)
+		for (var r = 0; r < numberOfZones; r++)
 		{
-			var roomBounds = roomBoundsSetSoFar[r];
-			var room = new RoomData(roomBounds);
-			rooms.push(room);
+			var zoneBounds = zoneBoundsSetSoFar[r];
+			var zone = new Zone(zoneBounds);
+			zones.push(zone);
 		}
 
-		for (var r = 0; r < numberOfRooms; r++)
+		for (var r = 0; r < numberOfZones; r++)
 		{
-			var room = rooms[r];
-			var roomBounds = room.bounds;
-			var roomPos = roomBounds.min();
-			var roomMax = roomBounds.max();
+			var zone = zones[r];
+			var zoneBounds = zone.bounds;
+			var zonePos = zoneBounds.min();
+			var zoneMax = zoneBounds.max();
 
-			for (var y = roomPos.y; y < roomMax.y; y++)
+			for (var y = zonePos.y; y < zoneMax.y; y++)
 			{
 				var mapCellRowAsString = mapCellsAsStrings[y];
 
-				for (var x = roomPos.x; x < roomMax.x; x++)
+				for (var x = zonePos.x; x < zoneMax.x; x++)
 				{
-					if (x == roomPos.x || x == roomMax.x - 1)
+					if (x == zonePos.x || x == zoneMax.x - 1)
 					{
-						if (y == roomPos.y)
+						if (y == zonePos.y)
 						{
 							terrainCodeChar = terrains.WallCornerNorth.codeChar;
 						}
-						else if (y == roomMax.y - 1)
+						else if (y == zoneMax.y - 1)
 						{
 							terrainCodeChar = terrains.WallCornerSouth.codeChar;
 						}
@@ -604,7 +604,7 @@
 							terrainCodeChar = terrains.WallNorthSouth.codeChar;
 						}
 					}
-					else if (y == roomPos.y || y == roomMax.y - 1)
+					else if (y == zonePos.y || y == zoneMax.y - 1)
 					{
 						terrainCodeChar = terrains.WallEastWest.codeChar;
 					}
@@ -623,17 +623,17 @@
 			}
 		}
 
-		return rooms;
+		return zones;
 	}
 
-	DemoData.prototype.venueGenerateDungeon_4_Doors = function(rooms, terrains, randomizer, mapCellsAsStrings)
+	DemoData.prototype.placeGenerateDungeon_4_Doors = function(zones, terrains, randomizer, mapCellsAsStrings)
 	{
-		var roomsConnected = [ rooms[0] ];
-		var roomsToConnect = [];
+		var zonesConnected = [ zones[0] ];
+		var zonesToConnect = [];
 
-		for (var r = 1; r < rooms.length; r++)
+		for (var r = 1; r < zones.length; r++)
 		{
-			roomsToConnect.push(rooms[r]);
+			zonesToConnect.push(zones[r]);
 		}
 
 		var zeroes = Coords.Instances().Zeroes;
@@ -642,24 +642,24 @@
 
 		var doorwayPositions = [];
 
-		while (roomsToConnect.length > 0)
+		while (zonesToConnect.length > 0)
 		{
-			var nearestRoomsSoFar = this.venueGenerateDungeon_4_Doors_1_NearestRooms
+			var nearestZonesSoFar = this.placeGenerateDungeon_4_Doors_1_NearestZones
 			(
-				roomsToConnect, roomsConnected
+				zonesToConnect, zonesConnected
 			);
 
-			var roomConnected = nearestRoomsSoFar[0];
-			var roomToConnect = nearestRoomsSoFar[1];
+			var zoneConnected = nearestZonesSoFar[0];
+			var zoneToConnect = nearestZonesSoFar[1];
 
-			var roomConnectedBounds = roomConnected.bounds;
-			var roomToConnectBounds = roomToConnect.bounds;
+			var zoneConnectedBounds = zoneConnected.bounds;
+			var zoneToConnectBounds = zoneToConnect.bounds;
 
-			var fromPos = roomConnectedBounds.min().clone().add
+			var fromPos = zoneConnectedBounds.min().clone().add
 			(
 				new Coords().randomize(randomizer).multiply
 				(
-					roomConnectedBounds.size.clone().subtract
+					zoneConnectedBounds.size.clone().subtract
 					(
 						twoTwo
 					)
@@ -669,11 +669,11 @@
 				oneOne
 			);
 
-			var toPos = roomToConnectBounds.min().clone().add
+			var toPos = zoneToConnectBounds.min().clone().add
 			(
 				new Coords().randomize(randomizer).multiply
 				(
-					roomToConnectBounds.size.clone().subtract
+					zoneToConnectBounds.size.clone().subtract
 					(
 						twoTwo
 					)
@@ -683,54 +683,54 @@
 				oneOne
 			);
 
-			var displacementToRoomToConnect = toPos.clone().subtract
+			var displacementToZoneToConnect = toPos.clone().subtract
 			(
 				fromPos
 			);
 
-			var directionToRoomToConnect = displacementToRoomToConnect.clone();
+			var directionToZoneToConnect = displacementToZoneToConnect.clone();
 
-			var dimensionIndexToClear = directionToRoomToConnect.dimensionIndexOfSmallest(0);
+			var dimensionIndexToClear = directionToZoneToConnect.dimensionIndexOfSmallest(0);
 
-			if (roomConnectedBounds.overlapsWithOtherInDimension(roomToConnectBounds, 0))
+			if (zoneConnectedBounds.overlapsWithOtherInDimension(zoneToConnectBounds, 0))
 			{
 				dimensionIndexToClear = 0;
 			}
-			else if (roomConnectedBounds.overlapsWithOtherInDimension(roomToConnectBounds, 1))
+			else if (zoneConnectedBounds.overlapsWithOtherInDimension(zoneToConnectBounds, 1))
 			{
 				dimensionIndexToClear = 1;
 			}
 
-			directionToRoomToConnect.dimension
+			directionToZoneToConnect.dimension
 			(
 				dimensionIndexToClear,
 				0 // valueToSet
 			);
-			directionToRoomToConnect.directions();
+			directionToZoneToConnect.directions();
 
-			if (directionToRoomToConnect.x > 0)
+			if (directionToZoneToConnect.x > 0)
 			{
-				fromPos.x = roomConnectedBounds.max().x;
-				toPos.x = roomToConnectBounds.min().x - 1;
+				fromPos.x = zoneConnectedBounds.max().x;
+				toPos.x = zoneToConnectBounds.min().x - 1;
 			}
-			else if (directionToRoomToConnect.x < 0)
+			else if (directionToZoneToConnect.x < 0)
 			{
-				fromPos.x = roomConnectedBounds.min().x - 1;
-				toPos.x = roomToConnectBounds.max().x;
+				fromPos.x = zoneConnectedBounds.min().x - 1;
+				toPos.x = zoneToConnectBounds.max().x;
 			}
-			else if (directionToRoomToConnect.y > 0)
+			else if (directionToZoneToConnect.y > 0)
 			{
-				fromPos.y = roomConnectedBounds.max().y;
-				toPos.y = roomToConnectBounds.min().y - 1;
+				fromPos.y = zoneConnectedBounds.max().y;
+				toPos.y = zoneToConnectBounds.min().y - 1;
 			}
-			else if (directionToRoomToConnect.y < 0)
+			else if (directionToZoneToConnect.y < 0)
 			{
-				fromPos.y = roomConnectedBounds.min().y - 1;
-				toPos.y = roomToConnectBounds.max().y;
+				fromPos.y = zoneConnectedBounds.min().y - 1;
+				toPos.y = zoneToConnectBounds.max().y;
 			}
 
-			doorwayPositions.push(fromPos.clone().subtract(directionToRoomToConnect));
-			doorwayPositions.push(toPos.clone().add(directionToRoomToConnect));
+			doorwayPositions.push(fromPos.clone().subtract(directionToZoneToConnect));
+			doorwayPositions.push(toPos.clone().add(directionToZoneToConnect));
 
 			var cellPos = fromPos.clone();
 
@@ -742,7 +742,7 @@
 				terrains.WallEastWest.codeChar +
 				terrains.WallNorthSouth.codeChar;
 
-			while (displacementToRoomToConnect.equals(zeroes) == false)
+			while (displacementToZoneToConnect.equals(zeroes) == false)
 			{
 				var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
@@ -755,7 +755,7 @@
 
 				mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
 
-				displacementToRoomToConnect.overwriteWith
+				displacementToZoneToConnect.overwriteWith
 				(
 					toPos
 				).subtract
@@ -763,21 +763,21 @@
 					cellPos
 				);
 
-				directionToRoomToConnect.overwriteWith
+				directionToZoneToConnect.overwriteWith
 				(
-					displacementToRoomToConnect
+					displacementToZoneToConnect
 				).dimension
 				(
-					directionToRoomToConnect.dimensionIndexOfSmallest(0),
+					directionToZoneToConnect.dimensionIndexOfSmallest(0),
 					0 // valueToSet
 				)
-				directionToRoomToConnect.directions();
+				directionToZoneToConnect.directions();
 
-				cellPos.add(directionToRoomToConnect);
+				cellPos.add(directionToZoneToConnect);
 			}
 
-			roomsToConnect.remove(roomToConnect);
-			roomsConnected.push(roomToConnect);
+			zonesToConnect.remove(zoneToConnect);
+			zonesConnected.push(zoneToConnect);
 		}
 
 		for (var i = 0; i < doorwayPositions.length; i++)
@@ -797,49 +797,49 @@
 		return doorwayPositions;
 	}
 
-	DemoData.prototype.venueGenerateDungeon_4_Doors_1_NearestRooms = function(roomsToConnect, roomsConnected)
+	DemoData.prototype.placeGenerateDungeon_4_Doors_1_NearestZones = function(zonesToConnect, zonesConnected)
 	{
-		var nearestRoomsSoFar = null;
-		var distanceBetweenNearestRoomsSoFar = null;
+		var nearestZonesSoFar = null;
+		var distanceBetweenNearestZonesSoFar = null;
 
-		for (var r = 0; r < roomsConnected.length; r++)
+		for (var r = 0; r < zonesConnected.length; r++)
 		{
-			var roomConnected = roomsConnected[r];
-			var roomConnectedCenter = roomConnected.bounds.center;
+			var zoneConnected = zonesConnected[r];
+			var zoneConnectedCenter = zoneConnected.bounds.center;
 
-			for (var s = 0; s < roomsToConnect.length; s++)
+			for (var s = 0; s < zonesToConnect.length; s++)
 			{
-				var roomToConnect = roomsToConnect[s];
-				var roomToConnectCenter = roomToConnect.bounds.center;
+				var zoneToConnect = zonesToConnect[s];
+				var zoneToConnectCenter = zoneToConnect.bounds.center;
 
-				var distance = roomToConnectCenter.clone().subtract
+				var distance = zoneToConnectCenter.clone().subtract
 				(
-					roomConnectedCenter
+					zoneConnectedCenter
 				).absolute().clearZ().sumOfDimensions();
 
 				if
 				(
-					nearestRoomsSoFar == null
-					|| distance < distanceBetweenNearestRoomsSoFar
+					nearestZonesSoFar == null
+					|| distance < distanceBetweenNearestZonesSoFar
 				)
 				{
-					nearestRoomsSoFar =
+					nearestZonesSoFar =
 					[
-						roomConnected,
-						roomToConnect,
+						zoneConnected,
+						zoneToConnect,
 					];
 
-					distanceBetweenNearestRoomsSoFar = distance;
+					distanceBetweenNearestZonesSoFar = distance;
 				}
 			}
 		}
 
-		return nearestRoomsSoFar;
+		return nearestZonesSoFar;
 	}
 
-	DemoData.prototype.venueGenerateDungeon_5_Entities = function
+	DemoData.prototype.placeGenerateDungeon_5_Entities = function
 	(
-		worldDefn, branchName, placeDefn, venueName, randomizer, rooms, doorwayPositions, mapCellsAsStrings
+		worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings
 	)
 	{
 		var entityDefns = worldDefn.entityDefns;
@@ -847,14 +847,14 @@
 
 		var entities = [];
 
-		var room0Center = rooms[0].bounds.center.clone().floor();
+		var zone0Center = zones[0].bounds.center.clone().floor();
 
 		var stairsUp = EntityHelper.new
 		(
 			"StairsUp",
 			entityDefns["StairsUp"],
 			[
-				new Locatable(new Location(room0Center)),
+				new Locatable(new Location(zone0Center)),
 				new Portal
 				(
 					null, // placeName
@@ -865,28 +865,29 @@
 
 		entities.push(stairsUp);
 
-		entities.push
+		var entityMoverGenerator = new Entity
 		(
-			EntityHelper.new
-			(
-				"Mover Generator",
-				MoverGenerator.EntityDefn(),
-				[] // properties
-			)
+			"MoverGenerator",
+			[
+				new ActorDefn("Generate Movers"),
+				//new MoverGenerator(1/3, 1/70, zones)
+				new MoverGenerator(0, 1, zones) // test
+			]
 		);
+		entities.push(entityMoverGenerator);
 
 		var stairsDownCount = 4; // hack - Placeholders.
 		for (var i = 0; i < stairsDownCount; i++)
 		{
-			var room = rooms[i + 1];
-			var roomCenter = room.bounds.center.clone().floor();
+			var zone = zones[i + 1];
+			var zoneCenter = zone.bounds.center.clone().floor();
 
 			var stairsDown = EntityHelper.new
 			(
 				"StairsDown" + (i == 0 ? "ToNextLevel" : "ToChildBranch"),
 				entityDefns["StairsDown"],
 				[
-					new Locatable(new Location(roomCenter)),
+					new Locatable(new Location(zoneCenter)),
 					new Portal
 					(
 						null, // placeName
@@ -915,7 +916,7 @@
 			entities.push(entityForDoor);
 		}
 
-		var chancesForItemPerRoom = 2;
+		var chancesForItemPerZone = 2;
 		var probabilityOfItemPerChance = 1;
 
 		var entityDefnGroupsForItems =
@@ -941,11 +942,11 @@
 
 		var oneOneZero = Coords.Instances().OneOneZero;
 
-		for (var r = 0; r < rooms.length; r++)
+		for (var r = 0; r < zones.length; r++)
 		{
-			var room = rooms[r];
+			var zone = zones[r];
 
-			for (var c = 0; c < chancesForItemPerRoom; c++)
+			for (var c = 0; c < chancesForItemPerZone; c++)
 			{
 				var randomValue = randomizer.getNextRandom();
 
@@ -974,23 +975,17 @@
 					var entityDefnGroup = entityDefnGroupsForItems[entityDefnGroupIndex];
 					var entityDefns = entityDefnGroup.entityDefns;
 
-					var entityDefnIndex = Math.floor
-					(
-						this.randomizer.getNextRandom()
-						* entityDefns.length
-					);
-
-					var entityDefnForItem = entityDefns[entityDefnIndex];
+					var entityDefnForItem = entityDefns.random(randomizer);
 
 					var pos = new Coords().randomize(randomizer).multiply
 					(
-						room.bounds.size.clone().subtract
+						zone.bounds.size.clone().subtract
 						(
 							Coords.Instances().TwoTwoZero
 						)
 					).floor().add
 					(
-						room.bounds.min()
+						zone.bounds.min()
 					).add
 					(
 						oneOneZero
@@ -1014,15 +1009,15 @@
 		return entities;
 	};
 
-	DemoData.prototype.venueGenerateFortress = function
+	DemoData.prototype.placeGenerateFortress = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateSurface = function
+	DemoData.prototype.placeGenerateSurface = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
@@ -1081,75 +1076,75 @@
 		return returnValue;
 	};
 
-	DemoData.prototype.venueGenerateHades = function
+	DemoData.prototype.placeGenerateHades = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateIsland = function
+	DemoData.prototype.placeGenerateIsland = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateMines = function
+	DemoData.prototype.placeGenerateMines = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateOracle = function
+	DemoData.prototype.placeGenerateOracle = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateLabyrinth = function
+	DemoData.prototype.placeGenerateLabyrinth = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateLimbo = function
+	DemoData.prototype.placeGenerateLimbo = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGeneratePuzzle = function
+	DemoData.prototype.placeGeneratePuzzle = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateSingleChamber = function
+	DemoData.prototype.placeGenerateSingleChamber = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 
-	DemoData.prototype.venueGenerateThrowback = function
+	DemoData.prototype.placeGenerateThrowback = function
 	(
 		worldDefn, branchName, placeDefn, venueIndex, randomizer
 	)
 	{
-		return this.venueGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
 	};
 }

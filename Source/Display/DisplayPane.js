@@ -12,7 +12,8 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	(
 		[ this.sizeInPixels ],
 		"Font", 10, // fontName, fontHeightInPixels,
-		colorFore, colorBack
+		colorFore, colorBack,
+		(children.length == 0 ? true : false) // isInvisible
 	);
 }
 {
@@ -40,13 +41,13 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		}
 	};
 
-	DisplayPane.prototype.initialize = function()
+	DisplayPane.prototype.initialize = function(universe)
 	{
-		this.displayInner.initialize();
+		this.displayInner.initialize(universe);
 		for (var i = 0; i < this.children.length; i++)
 		{
 			var child = this.children[i];
-			child.initialize();
+			child.initialize(universe);
 		}
 	};
 

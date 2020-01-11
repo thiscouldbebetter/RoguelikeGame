@@ -10,7 +10,7 @@ function EffectableDefn()
 		entity.EffectData = new EffectData();
 	}
 
-	EffectableDefn.prototype.updateEntityForVenue = function(universe, world, venue, entity)
+	EffectableDefn.prototype.updateForTimerTick = function(universe, world, venue, entity)
 	{
 		// todo
 	}

@@ -7,16 +7,18 @@
 
 		var sizeInPixels = visuals["Floor"].size;
 
+		var corpse = "Corpse";
+
 		var entityDefnCorpse = new Entity
 		(
-			"Corpse",
+			corpse,
 			[
 				collidableDefns.Clear,
-				new Drawable(visuals["Corpse"]),
+				new Drawable(visuals[corpse]),
 				new ItemDefn
 				(
-					"Corpse",
-					"Corpse",
+					corpse, // name
+					corpse, // appearance?
 					1, // mass
 					1, // stackSizeMax,
 					1, // relativeFrequency
@@ -60,6 +62,7 @@
 					new Killable(5, null),
 					new MoverDefn
 					(
+						agentName,
 						difficulty,
 						1, // movesPerTurn
 						new MoverData_Demographics(null, null),
@@ -136,6 +139,7 @@
 
 		var moverDefnPlayer = new MoverDefn
 		(
+			"Player",
 			999, // difficulty
 			1, // movesPerTurn
 			new MoverData_Demographics("Human", "Rogue", 1),

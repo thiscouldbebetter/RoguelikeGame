@@ -1,8 +1,8 @@
 
-function PlaceDefn(name, propertyNamesKnown, terrains, venueGenerate)
+function PlaceDefn(name, propertyNamesKnown, terrains, placeGenerate)
 {
 	this.name = name;
 	this.propertyNamesKnown = propertyNamesKnown;
 	this.terrains = terrains;
-	this.venueGenerate = venueGenerate;
+	this.placeGenerate = placeGenerate;
 }
