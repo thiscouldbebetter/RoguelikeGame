@@ -13,7 +13,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 		var portal0 = place0.entitiesToSpawn[0]; // hack
 		var portal0Pos = portal0.Locatable.loc.pos.clone();
 
-		var entityDefnPlayer = this.defn.entityDefns["Player"];
+		var entityDefnPlayer = this.defn.entityDefns.Player;
 		this.entityForPlayer = EntityHelper.new
 		(
 			entityDefnPlayer.name,

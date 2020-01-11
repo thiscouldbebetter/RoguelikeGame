@@ -188,7 +188,7 @@
 			activityDefns["Accept User Input"].name;
 			//activityDefns["Demo User Input"].name;
 
-		var entityName = "Player";
+		var entityName = Player.name;
 		var entityDefnPlayer = new Entity
 		(
 			entityName,

@@ -28,11 +28,22 @@ function MoverDefn
 }
 
 {
-	MoverDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
+	MoverDefn.prototype.initializeEntityForPlace = function(universe, world, place, entity)
 	{
 		if (entity.MoverData == null)
 		{
 			entity.MoverData = new MoverData(entity.MoverDefn);
+		}
+
+		if (entity.Turnable == null)
+		{
+			entity.Turnable = new Turnable
+			(
+				function updateForTurn(universe, world, place, entity)
+				{
+					entity.MoverData.movesThisTurn = entity.MoverDefn.movesPerTurn;
+				}
+			);
 		}
 	};
 

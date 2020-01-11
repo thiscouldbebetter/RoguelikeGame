@@ -5,12 +5,12 @@ function MoverTransport(entityMover, locDestination)
 	this.locDestination = locDestination;
 }
 {
-	MoverTransport.prototype.initializeEntityForVenue = function(universe, world, venue, entityTransport)
+	MoverTransport.prototype.initializeEntityForPlace = function(universe, world, place, entityTransport)
 	{
 		var moverLoc = this.entityMover.Locatable.loc;
 
-		var venueToDepart = moverLoc.place(world);
-		venueToDepart.entitiesToRemove.push(this.entityMover);
+		var placeToDepart = moverLoc.place(world);
+		placeToDepart.entitiesToRemove.push(this.entityMover);
 
 		// hack
 		var collidable = this.entityMover.Collidable;
@@ -20,7 +20,7 @@ function MoverTransport(entityMover, locDestination)
 
 		moverLoc.overwriteWith(this.locDestination);
 
-		venue.entitiesToSpawn.push(this.entityMover);
-		venue.entitiesToRemove.push(entityTransport);
+		place.entitiesToSpawn.push(this.entityMover);
+		place.entitiesToRemove.push(entityTransport);
 	};
 }

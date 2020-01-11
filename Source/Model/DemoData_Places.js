@@ -392,10 +392,10 @@
 
 	DemoData.prototype.placeGenerateDepths = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		var place = this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		var place = this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 		var placeEntities = place.entitiesToSpawn;
 		var stairDown = placeEntities.filter(x => x.name == "StairsDownToChildBranch")[0];
 
@@ -418,10 +418,10 @@
 
 	DemoData.prototype.placeGenerateDungeon = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		var venueName = branchName + venueIndex;
+		var venueName = branchName + placeIndex;
 
 		var mapSizeInCells = new Coords(64, 64);
 		var numberOfZones = 12;
@@ -1011,18 +1011,18 @@
 
 	DemoData.prototype.placeGenerateFortress = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateSurface = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		var venueName = branchName + venueIndex;
+		var venueName = branchName + placeIndex;
 
 		var mapSizeInCells = new Coords(16, 16, 1);
 		var mapCellsAsStrings = [];
@@ -1078,73 +1078,73 @@
 
 	DemoData.prototype.placeGenerateHades = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateIsland = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateMines = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateOracle = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateLabyrinth = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateLimbo = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGeneratePuzzle = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateSingleChamber = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateThrowback = function
 	(
-		worldDefn, branchName, placeDefn, venueIndex, randomizer
+		worldDefn, branchName, placeDefn, placeIndex, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, venueIndex, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, randomizer);
 	};
 }

@@ -14,7 +14,7 @@ function FieldOfView()
 		this.eyePos = eyePos;
 	}
 
-	FieldOfView.prototype.calculateCellPositionsVisible = function(world, venue)
+	FieldOfView.prototype.calculateCellPositionsVisible = function(world, place)
 	{
 		var numberOfCellPositionsMax =
 			4
@@ -67,7 +67,7 @@ function FieldOfView()
 		this.cellPositionsVisible[0] = this.eyePos.clone();
 		this.numberOfCellsVisible = 1;
 
-		var map = venue.map;
+		var map = place.map;
 
 		for (var r = 1; r <= this.distanceFromEyeMax; r++)
 		{

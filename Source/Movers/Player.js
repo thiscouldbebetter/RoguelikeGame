@@ -3,20 +3,20 @@ function Player(sightRange)
 {
 	this.sightRange = sightRange;
 	this.messageLog = new MessageLog();
-	this.venueKnownLookup = [];
+	this.placeKnownLookup = [];
 }
 {
-	Player.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
+	Player.prototype.initializeEntityForPlace = function(universe, world, place, entity)
 	{
-		entity.Locatable.loc.pos.z = 2;
+		entity.Locatable.loc.pos.z = PlaceLevel.ZLayers.Movers;
 
 		entity.MoverData.movesThisTurn = 0;
 
-		var venueKnownLookup = entity.Player.venueKnownLookup;
-		var venueKnown = venueKnownLookup[venue.name];
-		if (venueKnown == null)
+		var placeKnownLookup = entity.Player.placeKnownLookup;
+		var placeKnown = placeKnownLookup[place.name];
+		if (placeKnown == null)
 		{
-			var mapComplete = venue.map;
+			var mapComplete = place.map;
 
 			mapKnown = Map.buildBlank
 			(
@@ -26,63 +26,54 @@ function Player(sightRange)
 				mapComplete.sizeInCells
 			);
 
-			venueKnown = new PlaceLevel
+			placeKnown = new PlaceLevel
 			(
-				venue.name + "_Known",
-				venue.depth,
-				venue.defn,
-				venue.sizeInPixels,
+				place.name + "_Known",
+				place.depth,
+				place.defn,
+				place.sizeInPixels,
 				mapKnown,
 				[] // entities
 			);
 
-			venueKnownLookup[venue.name] = venueKnown;
+			placeKnownLookup[place.name] = placeKnown;
 
-			/*
-			var propertyName = "Drawable";
-			var entitiesNotYetVisible = venue.entitiesByPropertyName[propertyName];
-			for (var i = 0; i < entitiesNotYetVisible.length; i++)
-			{
-				var entity = entitiesNotYetVisible[i];
-				entity.Drawable.isVisible = false;
-			}
-			*/
-
-			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
+			world.sightHelper.updatePlaceFromCompleteForViewerPosAndRange
 			(
 				world,
-				venueKnown,
-				venue,
+				placeKnown,
+				place,
 				entity.Locatable.loc.pos,
 				entity.Player.sightRange
 			);
 		}
 	}
 
-	Player.prototype.updateForTimerTick = function(universe, world, venue, entity)
+	Player.prototype.updateForTimerTick = function(universe, world, place, entity)
 	{
 		var moverData = entity.MoverData;
 		if (moverData.movesThisTurn <= 0)
 		{
 			var vitals = moverData.vitals.addSatietyToMover(world, -1, entity);
 
-			var propertyName = MoverDefn.name;
-			var moversToRecharge = venue.entitiesByPropertyName[propertyName];
-			for (var i = 0; i < moversToRecharge.length; i++)
+			var propertyName = Turnable.name;
+			var turnables = place.entities.filter(x => x.Turnable != null); // hack
+			for (var i = 0; i < turnables.length; i++)
 			{
-				var mover = moversToRecharge[i];
-				mover.MoverData.movesThisTurn = mover.MoverDefn.movesPerTurn;
+				var entityTurnable = turnables[i];
+				var turnable = entityTurnable.Turnable;
+				turnable.updateForTurn(universe, world, place, entityTurnable);
 			}
 
 			world.turnsSoFar++;
 
-			var venueKnown = entity.Player.venueKnownLookup[venue.name];
+			var placeKnown = entity.Player.placeKnownLookup[place.name];
 
-			world.sightHelper.updateVenueFromCompleteForViewerPosAndRange
+			world.sightHelper.updatePlaceFromCompleteForViewerPosAndRange
 			(
 				world,
-				venueKnown,
-				venue, // venueComplete
+				placeKnown,
+				place, // placeComplete
 				entity.Locatable.loc.pos,
 				entity.Player.sightRange
 			);

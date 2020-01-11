@@ -22,14 +22,14 @@ function CollidableDefn(blocksMovement, blocksView)
 		return CollidableDefn._instances;
 	};
 
-	CollidableDefn.prototype.initializeEntityForVenue = function(universe, world, venue, entity)
+	CollidableDefn.prototype.initializeEntityForPlace = function(universe, world, place, entity)
 	{
 		var collidable = new Collidable
 		(
 			entity.CollidableDefn
 		);
 
-		var map = venue.map;
+		var map = place.map;
 		var entityPosInCells = entity.Locatable.loc.pos;
 		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
@@ -38,14 +38,8 @@ function CollidableDefn(blocksMovement, blocksView)
 		entity.Collidable = collidable;
 	};
 
-	CollidableDefn.prototype.updateForTimerTick = function(universe, world, venue, entity)
+	CollidableDefn.prototype.updateForTimerTick = function(universe, world, place, entity)
 	{
 		// todo
 	};
-
-	CollidableDefn.prototype.finalizeEntityForVenue = function(universe, world, venue, entity)
-	{
-		// todo
-	};
-
 }

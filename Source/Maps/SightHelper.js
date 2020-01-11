@@ -5,11 +5,11 @@ function SightHelper()
 }
 
 {
-	SightHelper.prototype.updateVenueFromCompleteForViewerPosAndRange = function
+	SightHelper.prototype.updatePlaceFromCompleteForViewerPosAndRange = function
 	(
 		world,
-		venueKnown,
-		venueComplete,
+		placeKnown,
+		placeComplete,
 		viewerPos,
 		sightRange
 	)
@@ -18,10 +18,10 @@ function SightHelper()
 
 		fieldOfView.setRangeAndViewerPos(sightRange, viewerPos);
 
-		fieldOfView.calculateCellPositionsVisible(world, venueComplete);
+		fieldOfView.calculateCellPositionsVisible(world, placeComplete);
 
-		var mapComplete = venueComplete.map;
-		var mapKnown = venueKnown.map;
+		var mapComplete = placeComplete.map;
+		var mapKnown = placeKnown.map;
 
 		mapComplete.copyNCellsAtPositionsToOther
 		(

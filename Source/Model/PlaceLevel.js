@@ -31,11 +31,19 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 	}
 
 	// Helper variables.
-
 	this._drawLoc = new Location(new Coords());
 }
 
 {
+	function PlaceLevel_ZLayers()
+	{
+		this.Emplacements = 1;
+		this.Items = 2;
+		this.Movers = 3;
+	}
+
+	PlaceLevel.ZLayers = new PlaceLevel_ZLayers();
+
 	// instance methods
 
 	PlaceLevel.prototype.entitiesWithPropertyNamePresentAtCellPos = function(propertyName, cellPosToCheck)
@@ -79,7 +87,7 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 
 				var entityProperty = entityToSpawn[entityPropertyName];
 
-				if (entityDefnProperty.initializeEntityForVenue == null)
+				if (entityDefnProperty.initializeEntityForPlace == null)
 				{
 					if (entityProperty == null && entityDefnProperty.clone != null)
 					{
@@ -88,24 +96,39 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 				}
 				else
 				{
-					entityDefnProperty.initializeEntityForVenue
+					entityDefnProperty.initializeEntityForPlace
 					(
 						universe, world, this, entityToSpawn
 					);
 				}
 			}
 		}
-	}
+	};
 
 	PlaceLevel.prototype.initialize = function(universe, world)
 	{
 		// Do nothing.
 		// Initialization of entities is handled in entitySpawn().
-	}
+	};
 
 	PlaceLevel.prototype.update = function(universe, world)
 	{
 		this.update_EntitiesToSpawn(universe, world);
+
+		var player = world.entityForPlayer;
+		var placeKnown = player.Player.placeKnownLookup[this.name];
+
+		if (placeKnown != null)
+		{
+			var display = universe.display;
+
+			placeKnown.draw(universe, world, display);
+
+			this.map.drawEntities
+			(
+				universe, world, display, this.ephemerals() // hack
+			);
+		}
 
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
@@ -128,21 +151,6 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.update_Collidables(universe, world);
 
 		this.update_EntitiesToRemove(universe, world);
-
-		var player = world.entityForPlayer;
-		var venueKnown = player.Player.venueKnownLookup[this.name];
-
-		if (venueKnown != null)
-		{
-			var display = universe.display;
-
-			venueKnown.draw(universe, world, display);
-
-			this.map.drawEntities
-			(
-				universe, world, display, this.ephemerals() // hack
-			);
-		}
 	}
 
 	PlaceLevel.prototype.update_EntitiesToRemove = function(universe, world)

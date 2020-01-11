@@ -13,7 +13,7 @@ function DemoData_Actions()
 		}
 
 		var actorLoc = actor.Locatable.loc;
-		var directionFacing = actorLoc.orientation.forward;
+		var directionFacing = actorLoc.orientation.forward.clone().directions();
 		var posInCellsDestination = actorLoc.pos.clone().add
 		(
 			directionFacing
@@ -28,10 +28,10 @@ function DemoData_Actions()
 		}
 
 		var entitiesInCellDestination = cellDestination.entitiesPresent;
-		var entityInCell = entitiesInCellDestination[0];
-
-		if (entityInCell != null)
+		for (var i = 0; i < entitiesInCellDestination.length; i++)
 		{
+			var entityInCell = entitiesInCellDestination[i];
+
 			var moverDefn = entityInCell.MoverDefn;
 			if (moverDefn != null)
 			{
@@ -87,7 +87,26 @@ function DemoData_Actions()
 							entityDefnCorpse,
 							[
 								entityInCell.Locatable,
-								new Item(entityDefnCorpse.ItemDefn.name, 1)
+								new Item(entityDefnCorpse.ItemDefn.name, 1),
+								new Turnable
+								(
+									function updateForTurn(universe, world, place, entity)
+									{
+										var turnable = entity.Turnable;
+										if (turnable.turnsToLive == null)
+										{
+											turnable.turnsToLive = 30;
+										}
+										else
+										{
+											turnable.turnsToLive--;
+											if (turnable.turnsToLive <= 0)
+											{
+												place.entitiesToRemove.push(entity);
+											}
+										}
+									}
+								)
 							]
 						);
 
@@ -118,7 +137,7 @@ function DemoData_Actions()
 
 			} // end if (moverDefn != null)
 
-		} // end if (entityInCell != null)
+		}
 	};
 
 	DemoData.prototype.actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
@@ -139,17 +158,16 @@ function DemoData_Actions()
 		var costToUse = 1;
 
 		var moverData = actor.MoverData;
-		if (moverData.movesThisTurn < costToUse)
+		if (moverData.movesThisTurn >= costToUse)
 		{
-			return;
+			moverData.movesThisTurn -= costToUse;
+
+			emplacementToUse.Emplacement.use
+			(
+				universe, world, place, actor, emplacementToUse
+			);
 		}
 
-		moverData.movesThisTurn -= costToUse;
-
-		emplacementToUse.Emplacement.use
-		(
-			universe, world, place, actor, emplacementToUse
-		);
 	};
 
 	DemoData.prototype.actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
@@ -316,6 +334,8 @@ function DemoData_Actions()
 			return;
 		}
 
+		var player = actor.Player;
+
 		var actorLoc = actor.Locatable.loc;
 		actorLoc.orientation.forwardSet(directionToMove);
 
@@ -332,77 +352,87 @@ function DemoData_Actions()
 			return;
 		}
 
-		var entitiesInCellDestination = cellDestination.entitiesPresent;
 
 		var isDestinationAccessible = true;
 
-		for (var b = 0; b < entitiesInCellDestination.length; b++)
+		var cellTerrain = cellDestination.terrain(map);
+		var costToTraverse = cellTerrain.costToTraverse;
+		var moverData = actor.MoverData;
+		if (costToTraverse > moverData.movesThisTurn)
 		{
-			var entityInCell = entitiesInCellDestination[b];
-
-			if (entityInCell.Collidable.defn.blocksMovement)
-			{
-				isDestinationAccessible = false;
-
-				var moverDefn = entityInCell.MoverDefn;
-				if (moverDefn != null)
-				{
-					if (actor.Player != null)
-					{
-						var message = "A " + moverDefn.name + " blocks your path.";
-						actor.Player.messageLog.messageAdd(message);
-					}
-					else
-					{
-						this.actionAttack_Perform(universe, world, place, actor, action);
-					}
-				}
-			}
+			isDestinationAccessible = false;
 		}
 
 		if (isDestinationAccessible)
 		{
-			var cellTerrain = cellDestination.terrain(map);
-			var costToTraverse = cellTerrain.costToTraverse;
-			var moverData = actor.MoverData;
-			if (costToTraverse <= moverData.movesThisTurn)
+			var entitiesInCellDestination = cellDestination.entitiesPresent;
+
+			for (var b = 0; b < entitiesInCellDestination.length; b++)
 			{
-				moverData.movesThisTurn -= costToTraverse;
+				var entityInCell = entitiesInCellDestination[b];
 
-				var cellDeparted = actor.Collidable.mapCellOccupied;
-				var entitiesInCellDeparted = cellDeparted.entitiesPresent;
-				entitiesInCellDeparted.remove(actor);
-
-				if (actor.Player != null)
+				if (entityInCell.Collidable.defn.blocksMovement)
 				{
-					for (var i = 0; i < entitiesInCellDestination.length; i++)
+					isDestinationAccessible = false;
+
+					var moverDefn = entityInCell.MoverDefn;
+					if (moverDefn != null)
 					{
-						var entity = entitiesInCellDestination[i];
-						if (entity.Item != null)
+						if (player != null)
 						{
-							var item = entity.Item;
-							var itemDefn = item.defn(world);
-							var message = "There is a " + itemDefn.appearance + " here.";
-							actor.Player.messageLog.messageAdd(message);
+							var message = "A " + moverDefn.name + " blocks your path.";
+							player.messageLog.messageAdd(message);
 						}
-						else if (entity.Emplacement != null)
+						else
 						{
-							var emplacement = entity.Emplacement;
-							var message = "There is a " + emplacement.appearance + " here.";
-							actor.Player.messageLog.messageAdd(message);
+							this.actionAttack_Perform(universe, world, place, actor, action);
 						}
 					}
 				}
-
-				entitiesInCellDestination.push(actor);
-				actor.Collidable.mapCellOccupied = cellDestination;
-
-				actorLoc.pos.overwriteWith
-				(
-					posInCellsDestination
-				);
 			}
 		}
+
+		if (isDestinationAccessible == false)
+		{
+			if (player != null)
+			{
+				var placeKnown = player.placeKnownLookup[place.name];
+				placeKnown.turnLastDrawn = 0; // hack
+			}
+		}
+		else
+		{
+			moverData.movesThisTurn -= costToTraverse;
+
+			var cellDeparted = actor.Collidable.mapCellOccupied;
+			var entitiesInCellDeparted = cellDeparted.entitiesPresent;
+			entitiesInCellDeparted.remove(actor);
+
+			if (player != null)
+			{
+				for (var i = 0; i < entitiesInCellDestination.length; i++)
+				{
+					var entity = entitiesInCellDestination[i];
+					if (entity.Item != null)
+					{
+						var item = entity.Item;
+						var itemDefn = item.defn(world);
+						var message = "There is a " + itemDefn.appearance + " here.";
+						player.messageLog.messageAdd(message);
+					}
+					else if (entity.Emplacement != null)
+					{
+						var emplacement = entity.Emplacement;
+						var message = "There is a " + emplacement.appearance + " here.";
+						player.messageLog.messageAdd(message);
+					}
+				}
+			}
+
+			entitiesInCellDestination.push(actor);
+			actor.Collidable.mapCellOccupied = cellDestination;
+			actorLoc.pos.overwriteWith(posInCellsDestination);
+		} // end if (isDestinationAccessible)
 	};
 
 	DemoData.prototype.actionWait_Perform = function(universe, world, place, actor, action)
@@ -421,10 +451,7 @@ function DemoData_Actions()
 		var actionAttack = new Action
 		(
 			"Attack",
-			function perform(universe, world, place, actor, action)
-			{
-				actions.actionMove_Attack(universe, world, place, actor, action);
-			}
+			actions.actionAttack_Perform
 		);
 
 		var actionEmplacement_Use = new Action
@@ -549,6 +576,7 @@ function DemoData_Actions()
 
 		var returnValues =
 		[
+			actionAttack,
 			actionEmplacement_Use,
 			actionItem_DropSelected,
 			actionItem_PickUp,
@@ -653,14 +681,12 @@ function DemoData_Actions()
 		(
 			"Move Toward Player",
 
-			// initialize
-			function(universe, world, place, actor, activity)
+			function initialize(universe, world, place, actor, activity)
 			{
 				// do nothing
 			},
 
-			// perform
-			function(universe, world, place, actor, activity)
+			function perform(universe, world, place, actor, activity)
 			{
 				if (actor.MoverData.movesThisTurn <= 0)
 				{
@@ -718,6 +744,7 @@ function DemoData_Actions()
 			{
 				activity.target =
 				[
+					new ActionToInputsMapping("Attack", [ "a" ]),
 					new ActionToInputsMapping("Use Selected Item", [ "f" ]),
 					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
 					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),

@@ -29,7 +29,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 
 			var agentsInPlace = place.entitiesByPropertyName[MoverDefn.name];
 
-			var numberOfAgentsMax = 1; // 100; // hack 
+			var numberOfAgentsMax = 2; // hack 
 
 			if (agentsInPlace.length < numberOfAgentsMax)
 			{
@@ -61,7 +61,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 			zoneBounds.sizeHalf.clone().subtract(Coords.Instances().Ones)
 		).clearZ();
 		var posToSpawnAt = offsetWithinZone.add(zoneBounds.center).floor();
-		posToSpawnAt.z = 3; // todo
+		posToSpawnAt.z = PlaceLevel.ZLayers.Movers;
 
 		var entityName =
 			entityDefnForAgentToSpawn.name + universe.idHelper.idNext();
