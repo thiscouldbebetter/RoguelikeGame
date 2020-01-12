@@ -34,15 +34,15 @@ function World(name, defn, places, entityForPlayer, randomizer)
 	this.turnsSoFar = 0;
 
 	this.idHelper = IDHelper.Instance();
-	this.sightHelper = new SightHelper();
+	this.sightHelper = new SightHelper(new FieldOfView(8));
 	this.timerTicksSoFar = 0;
 
-	var itemDefns = this.defn.entityDefns.map
+	var itemDefns = this.defn.entityDefns.filter
 	(
-		(x) => x.ItemDefn
-	).filter
+		x => x.ItemDefn != null
+	).map
 	(
-		(x) => x != null
+		x => x.ItemDefn
 	).addLookupsByName();
 
 	this.defns =

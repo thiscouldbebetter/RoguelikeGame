@@ -11,6 +11,7 @@ function Player(sightRange)
 		entity.Locatable.loc.pos.z = PlaceLevel.ZLayers.Movers;
 
 		entity.MoverData.movesThisTurn = 0;
+		entity.Turnable.hasActedThisTurn = true;
 
 		var placeKnownLookup = entity.Player.placeKnownLookup;
 		var placeKnown = placeKnownLookup[place.name];
@@ -33,6 +34,7 @@ function Player(sightRange)
 				place.defn,
 				place.sizeInPixels,
 				mapKnown,
+				place.zones,
 				[] // entities
 			);
 
@@ -40,7 +42,6 @@ function Player(sightRange)
 
 			world.sightHelper.updatePlaceFromCompleteForViewerPosAndRange
 			(
-				world,
 				placeKnown,
 				place,
 				entity.Locatable.loc.pos,
@@ -49,12 +50,12 @@ function Player(sightRange)
 		}
 	}
 
-	Player.prototype.updateForTimerTick = function(universe, world, place, entity)
+	Player.prototype.updateForTimerTick = function(universe, world, place, entityPlayer)
 	{
-		var moverData = entity.MoverData;
-		if (moverData.movesThisTurn <= 0)
+		if (entityPlayer.Turnable.hasActedThisTurn)
 		{
-			var vitals = moverData.vitals.addSatietyToMover(world, -1, entity);
+			var moverData = entityPlayer.MoverData;
+			var vitals = moverData.vitals.addSatietyToMover(world, -1, entityPlayer);
 
 			var propertyName = Turnable.name;
 			var turnables = place.entities.filter(x => x.Turnable != null); // hack
@@ -67,18 +68,46 @@ function Player(sightRange)
 
 			world.turnsSoFar++;
 
-			var placeKnown = entity.Player.placeKnownLookup[place.name];
+			var player = entityPlayer.Player;
+			var placeKnown = player.placeKnownLookup[place.name];
 
 			world.sightHelper.updatePlaceFromCompleteForViewerPosAndRange
 			(
-				world,
 				placeKnown,
 				place, // placeComplete
-				entity.Locatable.loc.pos,
-				entity.Player.sightRange
+				entityPlayer.Locatable.loc.pos,
+				player.sightRange
 			);
 
-			entity.MoverData.controlUpdate(world, entity);
+			player.controlUpdate(world, entityPlayer);
 		}
+	};
+
+	// controls
+
+	Player.prototype.controlUpdate = function(world, entity)
+	{
+		if (this.control == null)
+		{
+			var moverData = entity.MoverData;
+			this.control = new ControlContainer
+			(
+				"containerMoverData",
+				new Coords(0, 0), // pos
+				new Coords(180, 272), // size
+				[
+					ControlLabel.fromPosAndText(new Coords(10, 16), "Name: " + entity.name),
+					moverData.demographics.controlUpdate(world, entity, new Coords(10, 32)),
+					moverData.traits.controlUpdate(world, entity, new Coords(10, 48)),
+					moverData.vitals.controlUpdate(world, entity, new Coords(10, 64)),
+					moverData.locus.controlUpdate(world, entity, new Coords(10, 112)),
+					moverData.skills.controlUpdate(world, entity, new Coords(10, 128)),
+					moverData.spells.controlUpdate(world, entity, new Coords(10, 144)),
+					//entity.ItemHolder.controlUpdate(world, entity, new Coords(10, 160)),
+				]
+			);
+		}
+
+		return this.control;
 	};
 }

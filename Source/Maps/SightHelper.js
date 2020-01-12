@@ -1,33 +1,28 @@
 
-function SightHelper()
+function SightHelper(fieldOfView)
 {
-	this.fieldOfView = new FieldOfView();
+	this.fieldOfView = fieldOfView;
 }
 
 {
 	SightHelper.prototype.updatePlaceFromCompleteForViewerPosAndRange = function
 	(
-		world,
-		placeKnown,
-		placeComplete,
-		viewerPos,
-		sightRange
+		placeKnown, placeComplete, viewerPos, sightRange
 	)
 	{
-		var fieldOfView = this.fieldOfView;
-
-		fieldOfView.setRangeAndViewerPos(sightRange, viewerPos);
-
-		fieldOfView.calculateCellPositionsVisible(world, placeComplete);
+		var cellPositionsVisible = this.fieldOfView.cellPositionsVisible
+		(
+			viewerPos, sightRange, placeComplete.map
+		);
 
 		var mapComplete = placeComplete.map;
 		var mapKnown = placeKnown.map;
 
 		mapComplete.copyNCellsAtPositionsToOther
 		(
-			fieldOfView.numberOfCellsVisible,
-			fieldOfView.cellPositionsVisible,
+			this.fieldOfView.numberOfCellsVisible,
+			cellPositionsVisible,
 			mapKnown
 		);
-	}
+	};
 }

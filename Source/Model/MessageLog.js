@@ -15,7 +15,9 @@ function MessageLog()
 			var messagesToDelete = this.messages.length - this.messagesMax;
 			this.messages.splice(0, messagesToDelete);
 		}
-	}
+	};
+
+	// controls
 
 	MessageLog.prototype.controlUpdate = function(world)
 	{

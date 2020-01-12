@@ -229,7 +229,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 		var fieldOfView = world.sightHelper.fieldOfView;
 		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
-		var cellPositionsVisible = fieldOfView.cellPositionsVisible;
+		var cellPositionsVisible = fieldOfView._cellPositionsVisible;
 		shouldDrawMovers = true;
 		for (var i = 0; i < numberOfCellsVisible; i++)
 		{

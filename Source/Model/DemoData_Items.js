@@ -257,7 +257,10 @@
 				{
 					var moverData = targetEntity.MoverData;
 					moverData.vitals.addSatietyToMover(world, 1000, targetEntity);
-					moverData.controlUpdate(world, targetEntity);
+					if (targetEntity.Player != null)
+					{
+						player.controlUpdate(world, targetEntity);
+					}
 				}
 			)
 		);
@@ -343,18 +346,18 @@
 
 		var namesAndEffectDefnsOfPotions =
 		[
-			[ "Acid" 		, new ED( null, function(w, ae, te) { te.MoverData.integrityAdd(-30); te.MoverData.controlUpdate(w, te); } ) ],
+			[ "Acid" 		, new ED( null, function(w, ae, te) { te.MoverData.integrityAdd(-30); te.Player.controlUpdate(w, te); } ) ],
 			[ "Blindness" 		, effectMessageNotImplemented ],
 			[ "Booze" 		, effectMessageNotImplemented ],
 			[ "Enlightenment" 	, effectMessageNotImplemented ],
 			[ "Confusion" 		, effectMessageNotImplemented ],
-			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.addSatietyToMover(w, 100, targetEntity); te.MoverData.controlUpdate(targetEntity); } ) ],
-			[ "Gain Ability" 	, new ED( null, function(w, ae, te) { te.MoverData.traits.strength += 1; te.MoverData.controlUpdate(w, te); } ) ],
-			[ "Gain Energy" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.energy += 100; te.MoverData.controlUpdate(te); } ) ],
-			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.MoverData.demographics.level += 1; te.MoverData.controlUpdate(te); } ) ],
-			[ "Healing" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(10); te.MoverData.controlUpdate(w, te); } ) ],
-			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(30); te.MoverData.controlUpdate(w, te); } ) ],
-			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(1000); te.MoverData.controlUpdate(w, te); } ) ],
+			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.addSatietyToMover(w, 100, targetEntity); te.Player.controlUpdate(targetEntity); } ) ],
+			[ "Gain Ability" 	, new ED( null, function(w, ae, te) { te.MoverData.traits.strength += 1; te.Player.controlUpdate(w, te); } ) ],
+			[ "Gain Energy" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.energy += 100; te.Player.controlUpdate(te); } ) ],
+			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.MoverData.demographics.level += 1; te.Player.controlUpdate(te); } ) ],
+			[ "Healing" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(10); te.Player.controlUpdate(w, te); } ) ],
+			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(30); te.Player.controlUpdate(w, te); } ) ],
+			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(1000); te.Player.controlUpdate(w, te); } ) ],
 			[ "Invisibility" 	, effectMessageNotImplemented ],
 			[ "Levitation" 		, effectMessageNotImplemented ],
 			[ "Monster Detection" 	, effectMessageNotImplemented ],
@@ -364,7 +367,7 @@
 			[ "Polymorph" 		, effectMessageNotImplemented ],
 			[ "Restore aeility" 	, effectMessageNotImplemented ],
 			[ "See Invisible" 	, effectMessageNotImplemented ],
-			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(-20); te.MoverData.controlUpdate(w, te); } ) ],
+			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(-20); te.Player.controlUpdate(w, te); } ) ],
 			[ "Sleeping" 		, effectMessageNotImplemented ],
 			[ "Speed" 		, effectMessageNotImplemented ],
 			[ "Water" 		, effectMessageNotImplemented ],
@@ -890,7 +893,7 @@
 					loc.pos.overwriteWith(teleportPos);
 
 					targetEntity.controlUpdate(world);
-					targetEntity.MoverData.controlUpdate(world, targetEntity);
+					targetEntity.Player.controlUpdate(world, targetEntity);
 				}
 			)
 		);

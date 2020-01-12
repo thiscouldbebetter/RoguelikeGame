@@ -7,35 +7,47 @@
 
 		var sizeInPixels = visuals["Floor"].size;
 
-		var corpse = "Corpse";
-
-		var entityDefnCorpse = new Entity
-		(
-			corpse,
-			[
-				collidableDefns.Open,
-				new Drawable(visuals[corpse]),
-				new ItemDefn
-				(
-					corpse, // name
-					corpse, // appearance?
-					1, // mass
-					1, // stackSizeMax,
-					1, // relativeFrequency
-					[], // categoryNames
-					ItemDefn.InitializeDevice,
-					ItemDefn.UseDevice
-				),
-			]
-		);
-
-		returnValues.push(entityDefnCorpse);
-		returnValues[entityDefnCorpse.name] = entityDefnCorpse;
-
 		this.buildEntityDefnGroups_Movers_Player
 		(
-			visuals, activityDefns, itemCategories, entityDefnCorpse, returnValues
+			visuals, activityDefns, itemCategories, returnValues
 		);
+
+		var rot = function(universe, world, place, entityTurnable)
+		{
+			var turnable = entityTurnable.Turnable;
+			if (turnable.turnsToLive == null)
+			{
+				turnable.turnsToLive = 30;
+			}
+			else
+			{
+				turnable.turnsToLive--;
+				if (turnable.turnsToLive <= 0)
+				{
+					place.entitiesToRemove.push(entityTurnable);
+				}
+			}
+		};
+
+		var dieAndDropCorpse = function(universe, world, place, entityDying)
+		{
+			var itemDefnCorpse = entityDying.MoverDefn.itemDefnCorpse;
+			entityDying.Locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
+			var entityCorpse = new Entity
+			(
+				itemDefnCorpse.name + universe.idHelper.idNext(),
+				[
+					entityDying.Locatable,
+					new Item(itemDefnCorpse.name, 1),
+					collidableDefns.Open,
+					new Drawable(visuals["Corpse"]),
+					//itemDefnCorpse
+					new Turnable(rot)
+				]
+			);
+
+			place.entitiesToSpawn.push(entityCorpse);
+		};
 
 		// agents
 
@@ -48,6 +60,19 @@
 			var agentData = agentDatas[i];
 			var agentName = agentData[0];
 			var difficulty = agentData[1];
+			var movesPerTurn = agentData[6];
+
+			var itemDefnCorpse = new ItemDefn
+			(
+				agentName + " Corpse", // name
+				agentName + " Corpse", // appearance?
+				1, // mass
+				1, // stackSizeMax,
+				1, // relativeFrequency
+				[], // categoryNames
+				ItemDefn.InitializeDevice,
+				ItemDefn.UseDevice
+			);
 
 			var entityDefnForAgent = new Entity
 			(
@@ -64,13 +89,14 @@
 					(
 						agentName,
 						difficulty,
-						1, // movesPerTurn
+						10, // movesPerTurn
 						new MoverData_Demographics(null, null),
 						new MoverData_Skills([]),
 						new MoverData_Spells([]),
 						new MoverData_Traits(10, 10, 10, 10, 10),
 						new MoverDefn_Vitals(20, 1000),
-						entityDefnCorpse,
+						itemDefnCorpse,
+						dieAndDropCorpse,
 						// attributeGroups
 						[
 							// todo
@@ -124,7 +150,7 @@
 
 	DemoData.prototype.buildEntityDefnGroups_Movers_Player = function
 	(
-		visuals, activityDefns, itemCategories, entityDefnCorpse, returnValues
+		visuals, activityDefns, itemCategories, returnValues
 	)
 	{
 		var sizeInPixels = visuals["Floor"].size;
@@ -141,7 +167,7 @@
 		(
 			"Player",
 			999, // difficulty
-			1, // movesPerTurn
+			9, // movesPerTurn
 			new MoverData_Demographics("Human", "Rogue", 1),
 			new MoverData_Traits
 			([
@@ -154,7 +180,8 @@
 			new MoverData_Skills(skillDefns),
 			new MoverData_Spells(spellDefns),
 			new MoverDefn_Vitals(20, 1000),
-			entityDefnCorpse,
+			null, // itemDefnCorpse
+			function die() {}, // todo
 			[] // attributeGroups
 		);
 

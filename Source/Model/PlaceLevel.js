@@ -1,11 +1,12 @@
 
-function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
+function PlaceLevel(name, depth, defn, sizeInPixels, map, zones, entities)
 {
 	this.name = name;
 	this.depth = depth;
 	this.defn = defn;
 	this.sizeInPixels = sizeInPixels;
 	this.map = map;
+	this.zones = zones;
 	this.entities = [];
 
 	this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
@@ -29,6 +30,8 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 		var entity = entities[i];
 		this.entitiesToSpawn.push(entity);
 	}
+
+	this.hasBeenUpdatedSinceDrawn = true;
 
 	// Helper variables.
 	this._drawLoc = new Location(new Coords());
@@ -115,21 +118,6 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 	{
 		this.update_EntitiesToSpawn(universe, world);
 
-		var player = world.entityForPlayer;
-		var placeKnown = player.Player.placeKnownLookup[this.name];
-
-		if (placeKnown != null)
-		{
-			var display = universe.display;
-
-			placeKnown.draw(universe, world, display);
-
-			this.map.drawEntities
-			(
-				universe, world, display, this.ephemerals() // hack
-			);
-		}
-
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
 		{
@@ -151,7 +139,9 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 		this.update_Collidables(universe, world);
 
 		this.update_EntitiesToRemove(universe, world);
-	}
+
+		this.draw(universe, world);
+	};
 
 	PlaceLevel.prototype.update_EntitiesToRemove = function(universe, world)
 	{
@@ -288,7 +278,7 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 				new Coords(180, 272), // size
 				// children
 				[
-					entityForPlayer.MoverData.controlUpdate(world, entityForPlayer),
+					entityForPlayer.Player.controlUpdate(world, entityForPlayer),
 				]
 			);
 		}
@@ -298,32 +288,46 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, entities)
 
 	// drawable
 
-	PlaceLevel.prototype.draw = function(universe, world, display)
+	PlaceLevel.prototype.draw = function(universe, world)
 	{
+		if (this.hasBeenUpdatedSinceDrawn == true)
+		{
+			this.hasBeenUpdatedSinceDrawn = false;
+
+			var player = world.entityForPlayer;
+			var placeKnown = player.Player.placeKnownLookup[this.name];
+
+			if (placeKnown != null)
+			{
+				placeKnown.drawAsKnown(universe, world);
+			}
+		}
+	};
+
+	PlaceLevel.prototype.drawAsKnown = function(universe, world)
+	{
+		var display = universe.display;
+
 		display.childSelectByName(null);
 
-		var turnsSoFar = world.turnsSoFar;
-		if (this.turnLastDrawn != turnsSoFar)
-		{
-			this.turnLastDrawn = turnsSoFar;
-			display.childSelectByName("Map");
-			display.drawBackground("Black");
-			this.map.draw(universe, world, display, this);
+		this.hasBeenUpdatedSinceLastDrawn = false;
+		display.childSelectByName("Map");
+		display.drawBackground("Black");
+		this.map.draw(universe, world, display, this);
 
-			display.childSelectByName("Status");
-			display.clear();
-			var venueAsControl = this.controlUpdate(world);
-			this._drawLoc.pos.clear();
-			venueAsControl.draw(universe, display, this._drawLoc);
-			display.flush();
+		display.childSelectByName("Status");
+		display.clear();
+		var venueAsControl = this.controlUpdate(world);
+		this._drawLoc.pos.clear();
+		venueAsControl.draw(universe, display, this._drawLoc);
+		display.flush();
 
-			display.childSelectByName("Messages");
-			display.clear();
-			var messageLogAsControl = world.entityForPlayer.Player.messageLog.controlUpdate(world);
-			this._drawLoc.pos.clear();
-			messageLogAsControl.draw(universe, display, this._drawLoc);
-			display.flush();
-		}
+		display.childSelectByName("Messages");
+		display.clear();
+		var messageLogAsControl = world.entityForPlayer.Player.messageLog.controlUpdate(world);
+		this._drawLoc.pos.clear();
+		messageLogAsControl.draw(universe, display, this._drawLoc);
+		display.flush();
 
 		display.childSelectByName(null);
 		display.drawRectangle

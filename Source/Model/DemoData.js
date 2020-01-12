@@ -13,15 +13,27 @@ function DemoData(randomizer)
 
 		var emplacements = this.buildEntityDefnGroups_Emplacements(images);
 
-		var items = this.buildEntityDefnGroups_Items(images, itemCategories);
+		var itemGroups = this.buildEntityDefnGroups_Items(images, itemCategories);
 
-		var movers = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
+		var moverGroups = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
+		var moverDefnEntities = moverGroups[0].entityDefns;
+		var moverDefns = moverDefnEntities.filter(x => x.MoverDefn != null); // hack
+		var itemDefnsForCorpses = moverDefns.map
+		(
+			x => x.MoverDefn.itemDefnCorpse
+		).filter
+		(
+			x => (x != null)
+		);
+		var entityDefnsForCorpses = itemDefnsForCorpses.map(x => new Entity(x.name, [ x ]) );
+		var entityDefnGroupForCorpses = new EntityDefnGroup("Corpses", 0, entityDefnsForCorpses);
+		itemGroups.push(entityDefnGroupForCorpses);
 
 		var returnValues =
 		[
 			[ emplacements ],
-			items,
-			movers,
+			itemGroups,
+			moverGroups
 		].concatenateAll();
 
 		return returnValues;

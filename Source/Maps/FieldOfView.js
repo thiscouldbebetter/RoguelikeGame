@@ -1,153 +1,164 @@
 
-function FieldOfView()
+function FieldOfView(distanceFromEyeMax)
 {
-	// do nothing
+	this._cellPositionsVisible = [];
+	var numberOfCellPositionsMax =
+		4
+		* distanceFromEyeMax
+		* distanceFromEyeMax;
+
+	for (var i = 0; i < numberOfCellPositionsMax; i++)
+	{
+		this._cellPositionsVisible.push(new Coords(0, 0));
+	}
+
+	this.numberOfCellsVisible = 0;
+
+	// Helper variables.
+
+	this.directionsForSides =
+	[
+		new Coords(-1, 1), new Coords(-1, -1),
+		new Coords(1, -1), new Coords(1, 1)
+	];
+
+	this.cornerAddendsForSides =
+	[
+		new Coords(0, 0), new Coords(0, -1),
+		new Coords(1, 0), new Coords(0, 1)
+	];
+
+	this._cellPos = new Coords();
+	this._cellPosRelative = new Coords();
+	this._eyePosCentered = new Coords();
+	this._vertexPositionsRelative =
+	[
+		new Coords(), new Coords()
+	];
 }
 
 {
-	FieldOfView.prototype.setRangeAndViewerPos = function
-	(
-		distanceFromEyeMax, eyePos
-	)
+	FieldOfView.prototype.cellPositionsVisible = function(eyePos, distanceFromEyeMax, map)
 	{
-		this.distanceFromEyeMax = distanceFromEyeMax;
-		this.eyePos = eyePos;
-	}
+		var rangeInitial = new Range(0, 1);
 
-	FieldOfView.prototype.calculateCellPositionsVisible = function(world, place)
-	{
-		var numberOfCellPositionsMax =
-			4
-			* this.distanceFromEyeMax
-			* this.distanceFromEyeMax;
-
-		if
+		var returnValues = this.cellPositionsVisibleForRange
 		(
-			this.cellPositionsVisible == null
-			|| this.cellPositionsVisible.length < numberOfCellPositionsMax
-		)
-		{
-			this.cellPositionsVisible = [];
+			eyePos, distanceFromEyeMax, map, rangeInitial
+		);
 
-			for (var i = 0; i < numberOfCellPositionsMax; i++)
-			{
-				this.cellPositionsVisible.push(new Coords(0, 0));
-			}
-		}
+		return returnValues;
+	};
 
-		var eyePosCentered = this.eyePos.clone().add(new Coords(.5, .5));
+	FieldOfView.prototype.cellPositionsVisibleForRange = function(eyePos, distanceFromEyeMax, map, rangeInitial)
+	{
+		var coordsInstances = Coords.Instances();
 
-		var angleRangeSetNotYetBlocked = new RangeSet
-		([
-			new Range(0, 1)
-		]);
+		var eyePosCentered = this._eyePosCentered.overwriteWith
+		(
+			eyePos
+		).add
+		(
+			coordsInstances.HalfHalfZero
+		);
 
-		var displacementFromEyeToCell = new Coords(0, 0);
+		var angleRangeSetNotYetBlocked = new RangeSet([ rangeInitial ]);
 
-		var directionsForSides =
-		[
-			new Coords(-1, 1),
-			new Coords(-1, -1),
-			new Coords(1, -1),
-			new Coords(1, 1),
-		];
+		var cellPos = this._cellPos;
+		var cellPosRelative = this._cellPosRelative;
+		var vertexPositionsRelative = this._vertexPositionsRelative;
 
-		var cornerAddendsForSides =
-		[
-			new Coords(0, 0),
-			new Coords(0, -1),
-			new Coords(1, 0),
-			new Coords(0, 1),
-		];
-
-		var cellPos = new Coords(0, 0, 0);
-		var cellPosRelative = new Coords(0, 0, 0);
-		var vertexPositionsRelative = [ new Coords(0, 0, 0), new Coords(0, 0, 0) ];
-
-		this.cellPositionsVisible[0] = this.eyePos.clone();
+		this._cellPositionsVisible[0].overwriteWith(eyePos);
 		this.numberOfCellsVisible = 1;
 
-		var map = place.map;
-
-		for (var r = 1; r <= this.distanceFromEyeMax; r++)
+		for (var r = 1; r <= distanceFromEyeMax; r++)
 		{
 			cellPosRelative.overwriteWithDimensions(r, 0, 0);
+			var vertexPosRelative0 = vertexPositionsRelative[0];
+			var vertexPosRelative1 = vertexPositionsRelative[1];
 
-			vertexPositionsRelative[0].overwriteWith(new Coords(r - .5, -.5));
-			vertexPositionsRelative[1].overwriteWith(new Coords(r - .5, .5));
+			vertexPosRelative0.overwriteWithDimensions(r - .5, -.5, 0);
+			vertexPosRelative1.overwriteWithDimensions(r - .5, .5, 0);
 
-			for (var s = 0; s < directionsForSides.length; s++)
+			for (var s = 0; s < this.directionsForSides.length; s++)
 			{
-				var direction = directionsForSides[s];
+				var direction = this.directionsForSides[s];
+				var cornerAddend = this.cornerAddendsForSides[s];
 
-				vertexPositionsRelative[1].add(cornerAddendsForSides[s]);
+				vertexPosRelative1.add(cornerAddend);
 
 				for (var d = 0; d < r; d++)
 				{
-					cellPos.overwriteWith(this.eyePos).add(cellPosRelative);
+					cellPos.overwriteWith(eyePos).add(cellPosRelative);
 
-					if (cellPos.isInRangeMax(map.sizeInCellsMinusOnes))
+					var isCellInMapBounds =
+						cellPos.isInRangeMax(map.sizeInCellsMinusOnes);
+
+					if (isCellInMapBounds)
 					{
 						var cellSpan = new Range
 						(
-							this.atan3(vertexPositionsRelative[0]),
-							this.atan3(vertexPositionsRelative[1])
+							this.atan3(vertexPosRelative0),
+							this.atan3(vertexPosRelative1)
 						);
 
 						var cellSpanAsSet = new RangeSet( [ cellSpan ] );
 
 						cellSpanAsSet.splitRangesThatSpanPeriod(1);
 
-						if (cellSpanAsSet.overlapsWith(angleRangeSetNotYetBlocked))
+						var doesOverlap = cellSpanAsSet.overlapsWith
+						(
+							angleRangeSetNotYetBlocked
+						);
+
+						if (doesOverlap)
 						{
-							var cellPosVisible = this.cellPositionsVisible
+							var cellPosVisible = this._cellPositionsVisible
 							[
 								this.numberOfCellsVisible
 							];
-
-							cellPosVisible.overwriteWith
-							(
-								cellPos
-							);
-
+							cellPosVisible.overwriteWith(cellPos);
 							this.numberOfCellsVisible++;
 
 							var cellAtPos = map.cellAtPos(cellPos);
-							var cellTerrain = cellAtPos.terrain(map);
-							if (cellTerrain.blocksVision)
+							var doesCellBlockVision = cellAtPos.blocksVision(map);
+
+							if (doesCellBlockVision)
 							{
 								angleRangeSetNotYetBlocked.subtract
 								(
 									cellSpanAsSet
 								);
 							}
-							else
-							{
-								var entitiesPresent = map.cellAtPos
-								(
-									cellPos
-								).entitiesPresent;
-
-								for (var b = 0; b < entitiesPresent.length; b++)
-								{
-									var entityPresent = entitiesPresent[b];
-									var entityPresentDefn = entityPresent;
-									if (entityPresentDefn.CollidableDefn.blocksView == true)
-									{
-										angleRangeSetNotYetBlocked.subtract(cellSpanAsSet);
-									}
-								}
-							}
 						}
 					}
 
 					cellPosRelative.add(direction);
-					vertexPositionsRelative[0].overwriteWith(vertexPositionsRelative[1]);
-					vertexPositionsRelative[1].add(direction);
+					vertexPosRelative0.overwriteWith(vertexPosRelative1);
+					vertexPosRelative1.add(direction);
 				}
 			}
 		}
-	}
+
+		return this._cellPositionsVisible;
+	};
+
+	FieldOfView.prototype.lineOfSightBetweenPointsOnMap = function(point0, point1, map)
+	{
+		// hack - Inefficient.
+		var displacementBetweenPoints = point1.clone().subtract(point0);
+		var distanceBetweenPoints = displacementBetweenPoints.magnitude() + 1;
+		var direction = displacementBetweenPoints.normalize();
+		var directionInTurns = new Polar().fromCoords(direction).azimuthInTurns;
+		var range = new Range(directionInTurns, directionInTurns);
+
+		var pointsVisibleFromPoint0 = this.cellPositionsVisible
+		(
+			point0, distanceBetweenPoints, map
+		);
+		var returnValue = pointsVisibleFromPoint0.some(x => x.equals(point1));
+		return returnValue;
+	};
 
 	// helper methods
 
@@ -165,5 +176,5 @@ function FieldOfView()
 		returnValue /= FieldOfView.RadiansPerTurn;
 
 		return returnValue;
-	}
+	};
 }

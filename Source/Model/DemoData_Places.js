@@ -2,7 +2,7 @@
 {
 	DemoData.prototype.buildMapTerrainsDungeon = function(visualsForTiles)
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles["Floor"]);
 		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
 		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallDungeonCornerNorth"]);
 		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallDungeonCornerSouth"]);
@@ -27,7 +27,7 @@
 
 	DemoData.prototype.buildMapTerrainsHades = function(visualsForTiles)
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles["Floor"]);
 		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
 		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallHadesCornerNorth"]);
 		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallHadesCornerSouth"]);
@@ -52,7 +52,7 @@
 
 	DemoData.prototype.buildMapTerrainsMines = function(visualsForTiles)
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 1, 		false, "Green", visualsForTiles["Floor"]);
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles["Floor"]);
 		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
 		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallCaveCornerNorth"]);
 		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallCaveCornerSouth"]);
@@ -463,6 +463,7 @@
 			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,
+			zones,
 			entities
 		);
 
@@ -901,6 +902,8 @@
 
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{
+			var doorPos = doorwayPositions[i];
+			//doorPos.z = PlaceLevel.ZLayers.Emplacement;
 			var entityForDoor = EntityHelper.new
 			(
 				"Door" + i,
@@ -1047,10 +1050,10 @@
 			worldDefn.entityDefns["StairsDown"],
 			[
 				new Locatable(new Location(stairsDownPos)),
-				new Portal(null, "StairsUp") 
+				new Portal(null, "StairsUp")
 			]
 		);
-		
+
 		var altarPos = new Coords(mapSizeInCells.x / 2, 0).floor();
 		var entityAltar = EntityHelper.new
 		(
@@ -1070,6 +1073,7 @@
 			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,
+			[], //zones
 			entities
 		);
 

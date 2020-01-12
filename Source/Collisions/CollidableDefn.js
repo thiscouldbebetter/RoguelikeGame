@@ -43,4 +43,11 @@ function CollidableDefn(blocksMovement, blocksView)
 	{
 		// todo
 	};
+
+	// Cloneable.
+
+	CollidableDefn.prototype.clone = function()
+	{
+		return this; // hack
+	};
 }

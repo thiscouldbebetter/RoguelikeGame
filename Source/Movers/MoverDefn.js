@@ -9,7 +9,8 @@ function MoverDefn
 	skills,
 	spells,
 	vitals,
-	entityDefnCorpse,
+	itemDefnCorpse,
+	die,
 	attributeGroups
 )
 {
@@ -21,10 +22,9 @@ function MoverDefn
 	this.skills = skills;
 	this.spells = spells;
 	this.vitals = vitals;
-	this.entityDefnCorpse = entityDefnCorpse;
-	this.attributeGroups = attributeGroups;
-
-	this.attributeGroups.addLookupsByName();
+	this.itemDefnCorpse = itemDefnCorpse;
+	this.die = die;
+	this.attributeGroups = attributeGroups.addLookupsByName();
 }
 
 {
@@ -41,7 +41,8 @@ function MoverDefn
 			(
 				function updateForTurn(universe, world, place, entity)
 				{
-					entity.MoverData.movesThisTurn = entity.MoverDefn.movesPerTurn;
+					entity.MoverData.movesThisTurn += entity.MoverDefn.movesPerTurn;
+					entity.Turnable.hasActedThisTurn = false;
 				}
 			);
 		}
