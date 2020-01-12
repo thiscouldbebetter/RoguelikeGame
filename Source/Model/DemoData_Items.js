@@ -223,79 +223,80 @@
 	{
 		// items - foods
 
-		var namesOfFoods =
-		[
-			"Eucalyptus Leaf",
-			"Apple",
-			"Orange",
-			"Pear",
-			"Melon",
-			"Banana",
-			"Carrot",
-			"Sprig of Wolfsbane",
-			"Garlic Clove",
-			"Slime Mold",
-			"Royal Jelly",
-			"Cream Pie",
-			"Candy Bar",
-			"Fortune Cookie",
-			"Pancake",
-			"Lembas Wafer",
-			"Cram Ration",
-			"Food Ration",
-			"K Ration",
-			"C Ration",
-			"Tin",
-		];
+		var satietyDefault = 1;
 
-		var effectNourish = new Effect
-		(
-			new EffectDefn
-			(
-				"Nourish",
-				function apply(world, targetEntity)
-				{
-					var moverData = targetEntity.MoverData;
-					moverData.vitals.addSatietyToMover(world, 1000, targetEntity);
-					if (targetEntity.Player != null)
-					{
-						player.controlUpdate(world, targetEntity);
-					}
-				}
-			)
-		);
+		var foodDatas =
+		[
+			// name, satiety, mass
+			[ "Apple", 			50, 	2 ],
+			[ "Banana", 		80, 	2 ],
+			[ "C Ration", 		300, 	10 ],
+			[ "Candy Bar", 		100, 	2 ],
+			[ "Carrot", 		50, 	2 ],
+			[ "Cram Ration", 	600, 	15 ],
+			[ "Cream Pie", 		100, 	10 ],
+			[ "Egg", 			80, 	1 ],
+			[ "Eucalyptus Leaf", 30, 	1 ],
+			[ "Food Ration", 	800, 	20 ],
+			[ "Fortune Cookie", 40, 	1 ],
+			[ "Garlic Clove", 	40, 	1 ],
+			[ "K Ration", 		400, 	10 ],
+			[ "Lembas Wafer", 	800, 	5 ],
+			[ "Orange", 		80, 	2 ],
+			[ "Melon", 			100, 	5 ],
+			[ "Pancake", 		200, 	2 ],
+			[ "Pear", 			50, 	2 ],
+			[ "Royal Jelly", 	200, 	2 ],
+			[ "Slime Mold", 	80, 	5 ],
+			[ "Tin", 			50, 	10 ],
+			[ "Wolfsbane Sprig", 40, 	1 ]
+		];
 
 		var entityDefnSetFoods = [];
 
-		for (var i = 0; i < namesOfFoods.length; i++)
+		function Food(satiety)
 		{
-			var name = namesOfFoods[i];
+			this.satiety = satiety;
+		}
+
+		var device = new Device
+		(
+			"Food",
+			null, null, // init, update
+			function use(u, w, p, userEntity, deviceEntity)
+			{
+				var moverData = userEntity.MoverData;
+				moverData.vitals.satiety += deviceEntity.Food.satiety;
+				userEntity.ItemHolder.itemEntityRemove(deviceEntity);
+			}
+		);
+
+		for (var i = 0; i < foodDatas.length; i++)
+		{
+			var foodData = foodDatas[i];
+			var name = foodData[0];
+			var satiety = foodData[1];
+			var mass = foodData[2];
 
 			var entityDefn = new Entity
 			(
 				name,
 				[
 					collidableDefns.Open,
-					new Device
-					(
-						1, // chargesMax
-						true, // consumedWhenAllChargesUsed
-						// effectsToApply
-						[
-							effectNourish
-						]
-					),
+					device,
 					new Drawable(visuals[name]),
+					new Food(satiety),
 					new ItemDefn
 					(
 						name,
 						name, // appearance
-						1, // mass
+						name, // description
+						mass, // mass
 						1, // stackSizeMax,
 						1, // relativeFrequency
 						[ "Food" ], // categoryNames
-						ItemDefn.InitializeDevice,
-						ItemDefn.UseDevice
+						null, // init
+						this.itemUseDevice
 					)
 				]
 			);
@@ -386,6 +387,13 @@
 
 		var entityDefnSetPotions = [];
 
+		var device = new Device
+		(
+			name,
+			null, null, // init, update
+			this.itemEffectorApply
+		);
+
 		for (var i = 0; i < namesAndEffectDefnsOfPotions.length; i++)
 		{
 			var itemDefnName = "Potion of " + name;
@@ -408,26 +416,19 @@
 				itemDefnName,
 				[
 					collidableDefns.Open,
-					new Device
-					(
-						1, // chargesMax
-						true, // consumedWhenAllChargesUsed
-						// effectsToApply
-						[
-							new Effect(effectDefn)
-						]
-					),
+					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						itemDefnName,
 						appearance,
+						appearance, // description
 						1, // mass
 						1, // stackSizeMax,
 						1, // relativeFrequency
 						[ "Potion" ], // categoryNames
-						ItemDefn.InitializeDevice,
-						ItemDefn.UseDevice
+						null, // init
+						this.itemUseDevice
 					)
 				]
 			);
@@ -592,6 +593,13 @@
 
 		var entityDefnSetScrolls = [];
 
+		var device = new Device
+		(
+			"Scroll",
+			null, null, // init, update
+			this.itemEffectorApply
+		);
+
 		for (var i = 0; i < namesOfScrolls.length; i++)
 		{
 			var name = "Scroll of " + namesOfScrolls[i];
@@ -609,26 +617,19 @@
 				name,
 				[
 					collidableDefns.Open,
-					new Device
-					(
-						1, // chargesMax
-						true, // consumedWhenAllChargesUsed
-						// effectsToApply
-						[
-							effectDoNothing
-						]
-					),
+					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						name,
 						appearance,
+						appearance, // description
 						1, // mass
 						1, // stackSizeMax
 						1, // relativeFrequency
 						[ "Scroll" ], // categoryNames
-						ItemDefn.InitializeDevice,
-						ItemDefn.UseDevice
+						null, // init
+						this.itemUseDevice
 					),
 				]
 			);
@@ -734,6 +735,13 @@
 
 		var entityDefnSetSpellbooks = [];
 
+		var device = new Device
+		(
+			name,
+			null, null, // init, update
+			this.itemEffectorApply
+		);
+
 		for (var i = 0; i < namesOfSpellbooks.length; i++)
 		{
 			var nameOfSpellbook = namesOfSpellbooks[i];
@@ -747,6 +755,7 @@
 			var appearance = appearances[appearanceIndex] + " Spellbook";
 			appearances.removeAt(appearanceIndex);
 
+			// todo
 			var effectLearnSpell = new Effect
 			(
 				new EffectDefn
@@ -780,18 +789,19 @@
 				itemDefnName,
 				[
 					collidableDefns.Open,
-					new Device(10, true, [ effectLearnSpell ]),
+					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						itemDefnName,
 						appearance,
+						appearance, // description
 						1, // mass
 						1, // stackSizeMax
 						1, // relativeFrequency
 						[ "Spellbook" ], // categoryNames
-						ItemDefn.InitializeDevice,
-						ItemDefn.UseDevice
+						null, // init
+						this.itemUseDevice
 					)
 				]
 			);
@@ -939,6 +949,13 @@
 
 		var entityDefnSetWands = [];
 
+		var device = new Device
+		(
+			name,
+			null, null, // init, update
+			this.itemEffectorApply
+		);
+
 		for (var i = 0; i < wandDatas.length; i++)
 		{
 			var wandData = wandDatas[i];
@@ -959,26 +976,19 @@
 				wandName,
 				[
 					collidableDefns.Open,
-					new Device
-					(
-						10, // chargesMax
-						false, // consumedWhenAllChargesUsed
-						// effectsToApply
-						[
-							effect
-						]
-					),
+					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						wandName,
 						appearance,
+						appearance, // description
 						1, // mass
 						1, // stackSizeMax
 						1, // relativeFrequency
 						[ "Wand" ], // categoryNames
-						ItemDefn.InitializeDevice,
-						ItemDefn.UseDevice
+						null, // init
+						this.itemUseDevice
 					),
 				]
 			);
@@ -1472,5 +1482,29 @@
 		returnValues.addLookupsByName();
 
 		return returnValues;
+	};
+
+	DemoData.prototype.itemUseDevice = function(universe, world, place, userEntity, itemEntity)
+	{
+		var itemAppearance = itemEntity.Item.defn(world).appearance;
+		var itemMessage = "You use the " + itemAppearance + ".";
+
+		var device = itemEntity.Device;
+		var deviceMessage = device.use(universe, world, place, userEntity, itemEntity);
+
+		var player = userEntity.Player;
+		if (player != null)
+		{
+			player.messageLog.messageAdd(itemMessage);
+			player.messageLog.messageAdd(deviceMessage);
+		}
+
+		var message = itemMessage + " " + deviceMessage;
+		return message;
+	};
+
+	DemoData.prototype.itemEffectorApply = function(universe, world, place, userEntity, itemEntity)
+	{
+		// todo
 	};
 }

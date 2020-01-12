@@ -202,7 +202,7 @@ function DemoData(randomizer)
 
 		var placeDefns = this.buildPlaceDefns(visualsOpaque, actions);
 
-		var placeStructure = this.buildPlaceStructure();
+		var placeTree = this.buildPlaceTree();
 
 		var randomizer = this.randomizer;
 
@@ -214,11 +214,10 @@ function DemoData(randomizer)
 			itemCategories,
 			entityDefnGroups,
 			placeDefns,
-			placeStructure,
+			placeTree,
 			function buildPlaces()
 			{
-				var root = this.venueStructure.branchRoot;
-				var returnValues = root.buildPlaces
+				var returnValues = this.placeTree.buildPlaces
 				(
 					this, // worldDefn
 					randomizer

@@ -55,6 +55,11 @@
 
 		var agentDatas = this.buildAgentDatas();
 
+		var useCorpse = function(universe, world, place, entityItem, user)
+		{
+			// todo
+		};
+
 		for (var i = 0; i < agentDatas.length; i++)
 		{
 			var agentData = agentDatas[i];
@@ -65,13 +70,14 @@
 			var itemDefnCorpse = new ItemDefn
 			(
 				agentName + " Corpse", // name
-				agentName + " Corpse", // appearance?
+				agentName + " Corpse", // appearance
+				agentName + " Corpse", // description
 				1, // mass
 				1, // stackSizeMax,
 				1, // relativeFrequency
-				[], // categoryNames
-				ItemDefn.InitializeDevice,
-				ItemDefn.UseDevice
+				[ "Food" ], // categoryNames
+				null, // init
+				useCorpse
 			);
 
 			var entityDefnForAgent = new Entity

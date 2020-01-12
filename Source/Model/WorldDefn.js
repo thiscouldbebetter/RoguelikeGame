@@ -1,15 +1,5 @@
 
-function WorldDefn
-(
-	name,
-	actions,
-	activityDefns,
-	itemCategories,
-	entityDefnGroups,
-	placeDefns,
-	venueStructure,
-	buildPlaces
-)
+function WorldDefn(name, actions, activityDefns, itemCategories, entityDefnGroups, placeDefns, placeTree, buildPlaces)
 {
 	this.name = name;
 	this.actions = actions;
@@ -17,7 +7,7 @@ function WorldDefn
 	this.itemCategories = itemCategories;
 	this.entityDefnGroups = entityDefnGroups;
 	this.placeDefns = placeDefns;
-	this.venueStructure = venueStructure;
+	this.placeTree = placeTree;
 	this.buildPlaces = buildPlaces;
 
 	var entityDefnSets = this.entityDefnGroups.select

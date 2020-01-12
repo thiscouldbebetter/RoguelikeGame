@@ -29,7 +29,7 @@ function MoverData_Locus()
 								var floor = place.name;
 								var turn = world.turnsSoFar;
 								var pos = loc.pos.toStringXY();
-								var returnValue = "Turn: " + turn + " Floor: " + floor + " Pos: " + pos;
+								var returnValue = "Turn: " + turn + " Floor: " + floor;
 								return returnValue;
 							}
 						)

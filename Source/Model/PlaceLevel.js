@@ -110,7 +110,7 @@ function PlaceLevel(name, depth, defn, sizeInPixels, map, zones, entities)
 
 	PlaceLevel.prototype.initialize = function(universe, world)
 	{
-		// Do nothing.
+		this.hasBeenUpdatedSinceDrawn = true;
 		// Initialization of entities is handled in entitySpawn().
 	};
 

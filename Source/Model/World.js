@@ -112,9 +112,12 @@ function World(name, defn, places, entityForPlayer, randomizer)
 		// todo
 	}
 
-	World.prototype.initialize = function()
+	World.prototype.initialize = function(universe)
 	{
-		// Do nothing.
+		if (this.placeCurrent != null)
+		{
+			this.placeCurrent.initialize(universe, this);
+		}
 	}
 
 	World.prototype.updateForTimerTick = function(universe)
