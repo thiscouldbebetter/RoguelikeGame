@@ -69,7 +69,7 @@
 			[ "Melon", new Coords(7, 16) ],
 			[ "Banana", new Coords(8, 16) ],
 			[ "Carrot", new Coords(9, 16) ],
-			[ "Sprig of Wolfsbane", new Coords(10, 16) ],
+			[ "Wolfsbane Sprig", new Coords(10, 16) ],
 			[ "Garlic Clove", new Coords(11, 16) ],
 			[ "Slime Mold", new Coords(12, 16) ],
 			[ "Royal Jelly", new Coords(13, 16) ],
