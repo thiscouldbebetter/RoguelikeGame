@@ -1,17 +1,17 @@
 
-function CollidableDefn(blocksMovement, blocksView)
+function CollidableDefn(blocksMovement, blocksVision)
 {
 	this.blocksMovement = blocksMovement;
-	this.blocksView = blocksView;
+	this.blocksVision = blocksVision;
 }
 
 {
 	function CollidableDefn_Instances()
 	{
-		this.Blocking = new CollidableDefn(true, true);
-		this.Concealing = new CollidableDefn(false, true);
-		this.Open = new CollidableDefn(false, false);
-		this.Transparent = new CollidableDefn(true, false);
+		this.Blocking = new CollidableDefn(() => true, () => true);
+		this.Concealing = new CollidableDefn(() => false, () => true);
+		this.Open = new CollidableDefn(() => false, () => false);
+		this.Transparent = new CollidableDefn(() => true, () => false);
 	}
 
 	CollidableDefn.Instances = function()
@@ -22,6 +22,8 @@ function CollidableDefn(blocksMovement, blocksView)
 		}
 		return CollidableDefn._instances;
 	};
+
+	// entity
 
 	CollidableDefn.prototype.initializeEntityForPlace = function(universe, world, place, entity)
 	{

@@ -130,9 +130,31 @@ function DemoData(randomizer)
 			(
 				"Door",
 				[
-					collidableDefns.Concealing,
-					new Drawable(visuals["Door"]),
+					new CollidableDefn
+					(
+						function blocksMovement(entity)
+						{
+							return (entity.Openable.isOpen == false);
+						},
+						function blocksVision(entity)
+						{
+							return (entity.Openable.isOpen == false);
+						},
+					),
+					new Drawable
+					(
+						new VisualSelect
+						(
+							function selectChildName(universe, world, display, drawable, entity)
+							{
+								return (entity.Openable.isOpen ? "Open" : "Closed");
+							},
+							[ "Closed", "Open" ],
+							[ visuals["DoorClosed"], visuals["DoorOpenLeft"] ]
+						)
+					),
 					new Emplacement("door"),
+					new Openable(false),
 				]
 			),
 

@@ -35,7 +35,9 @@
 
 			[ "Altar", new Coords(15, 21) ],
 			[ "Blood", new Coords(3, 4) ],
-			[ "Door", new Coords(4, 21) ],
+			[ "DoorClosed", new Coords(4, 21) ],
+			[ "DoorOpenLeft", new Coords(3, 21) ],
+			[ "DoorOpenTop", new Coords(2, 21) ],
 			[ "Gravestone", new Coords(16, 21) ],
 			[ "StairsUp", new Coords(11, 21) ],
 			[ "StairsDown", new Coords(12, 21) ],

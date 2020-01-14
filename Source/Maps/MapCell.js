@@ -14,7 +14,7 @@ function MapCell(terrainCode, entitiesPresent)
 			for (var i = 0; i < this.entitiesPresent.length; i++)
 			{
 				var entityPresent = this.entitiesPresent[i];
-				if (entityPresent.CollidableDefn.blocksView)
+				if (entityPresent.CollidableDefn.blocksVision(entityPresent))
 				{
 					returnValue = true;
 					break;
@@ -31,7 +31,7 @@ function MapCell(terrainCode, entitiesPresent)
 		for (var i = 0; i < this.entitiesPresent.length; i++)
 		{
 			var entityPresent = this.entitiesPresent[i];
-			if (entityPresent.CollidableDefn.blocksMovement)
+			if (entityPresent.CollidableDefn.blocksMovement(entityPresent))
 			{
 				returnValue = 10000; // Infinity seems to slow down the math.
 				break;

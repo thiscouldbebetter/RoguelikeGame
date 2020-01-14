@@ -895,7 +895,7 @@
 
 						var cellToTeleportTo = map.cellAtPos(teleportPos);
 						var cellTerrain = cellToTeleportTo.terrain(map);
-						if (cellTerrain.costToTraverse > 1)
+						if (cellTerrain.costToTraverse > 100) // hack
 						{
 							teleportPos = null;
 						}

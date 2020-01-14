@@ -454,7 +454,7 @@
 		var returnValue = new PlaceLevel
 		(
 			venueName,
-			depth, 
+			depth,
 			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,

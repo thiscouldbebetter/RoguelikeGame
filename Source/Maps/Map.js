@@ -38,6 +38,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	this._boundsVisible = new Box();//.fromMinAndSize(new Coords(0, 0), this.sizeInCells.clone());
 	this._cellPos = new Coords();
 	this._drawPos = new Coords();
+	this._drawPosSaved = new Coords();
 	this._drawLoc = new Location( this._drawPos );
 	this._drawableEntity = new Entity( "_drawableEntity", [ new Locatable(this._drawLoc) ] );
 	this._entitiesSortedBottomToTop = [];
@@ -297,9 +298,17 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			if (entity.MoverData == null || drawMovers)
 			{
 				var entityLoc = entity.Locatable.loc;
-				drawableEntity.Locatable.loc.orientation.forward.overwriteWith(entityLoc.orientation.forward);
+				var entityPos = entityLoc.pos;
+
+				this._drawPosSaved.overwriteWith(entityPos);
+
+				//drawableEntity.Locatable.loc.orientation.forward.overwriteWith(entityLoc.orientation.forward);
+				entityPos.overwriteWith(drawPos);
+
 				var visual = entity.Drawable.visual;
-				visual.draw(universe, world, display, null, drawableEntity);
+				visual.draw(universe, world, display, null, entity)//drawableEntity);
+
+				entityPos.overwriteWith(this._drawPosSaved);
 			}
 
 		} // end for entitiesSortedBottomToTop

@@ -97,6 +97,54 @@ function DemoData_Actions()
 		} // end for entitiesInCellDestination
 	};
 
+	DemoData.prototype.actionDoorOpenOrClose_Perform = function(universe, world, place, actor, action)
+	{
+		var costToPerform = actor.MoverDefn.movesPerTurn; // todo
+
+		var actorMoverData = actor.MoverData;
+		if (actorMoverData.movesThisTurn >= costToPerform)
+		{
+			var actorLoc = actor.Locatable.loc;
+			var directionFacing = actorLoc.orientation.forward.clone().directions();
+			var posInCellsDestination = actorLoc.pos.clone().add
+			(
+				directionFacing
+			);
+
+			var map = place.map;
+			var cellDestination = map.cellAtPos(posInCellsDestination);
+
+			if (cellDestination != null)
+			{
+				var entitiesInCellDestination = cellDestination.entitiesPresent;
+				if (entitiesInCellDestination.length == 1)
+				{
+					var entityInCell = entitiesInCellDestination[0];
+
+					var openable = entityInCell.Openable;
+					if (openable != null)
+					{
+						var openOrClose = (openable.isOpen ? "close" : "open");
+						if (actor.Player != null)
+						{
+							var appearance = entityInCell.Emplacement.appearance; // hack
+							var message = "You " + openOrClose + " the " + appearance + ".";
+							actor.Player.messageLog.messageAdd(message);
+						}
+						openable.isOpen = (openable.isOpen == false);
+
+						actorMoverData.movesThisTurn -= costToPerform;
+						actor.Turnable.hasActedThisTurn = true;
+
+					} // end if (openable != null)
+
+				} // end for entitiesInCellDestination
+
+			} // end if cellDestination != null
+
+		} // end if enough moves
+	};
+
 	DemoData.prototype.actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
 	{
 		var loc = actor.Locatable.loc;
@@ -298,7 +346,13 @@ function DemoData_Actions()
 		var player = actor.Player;
 
 		var actorLoc = actor.Locatable.loc;
-		actorLoc.orientation.forwardSet(directionToMove);
+		var actorOrientation = actorLoc.orientation;
+		var isAlreadyFacingInDirection = actorOrientation.forward.clone().directions().equals(directionToMove);
+		if (isAlreadyFacingInDirection == false)
+		{
+			actorOrientation.forwardSet(directionToMove);
+			return;
+		}
 
 		var posInCellsDestination = actorLoc.pos.clone().add
 		(
@@ -312,7 +366,6 @@ function DemoData_Actions()
 		{
 			return;
 		}
-
 
 		var isDestinationAccessible = true;
 
@@ -332,28 +385,52 @@ function DemoData_Actions()
 			{
 				var entityInCell = entitiesInCellDestination[b];
 
-				if (entityInCell.Collidable.defn.blocksMovement)
+				if (entityInCell.Collidable.defn.blocksMovement(entityInCell))
 				{
 					isDestinationAccessible = false;
 
-					var moverDefn = entityInCell.MoverDefn;
-					if (moverDefn != null)
+					var entityDefnName;
+
+					if (entityInCell.Emplacement != null)
 					{
 						if (player != null)
 						{
-							var message = "A " + moverDefn.name + " blocks your path.";
-							player.messageLog.messageAdd(message);
+							entityDefnName = entityInCell.Emplacement.appearance;
+						}
+					}
+					else if (entityInCell.MoverDefn != null)
+					{
+						if (player != null)
+						{
+							entityDefnName = entityInCell.MoverDefn.name;
 						}
 						else
 						{
 							this.actionAttack_Perform(universe, world, place, actor, action);
 						}
 					}
+
+					if (player != null)
+					{
+						var message = "A " + entityDefnName + " blocks your path.";
+						player.messageLog.messageAdd(message);
+					}
+
 				}
 			}
 		}
 
-		if (isDestinationAccessible)
+		if (isDestinationAccessible == false)
+		{
+			if (player == null)
+			{
+				// hack - Otherwise monsters build up moves.
+				// Should probably be handled elsewhere,
+				// perhaps in the "Move Toward Player" activity.
+				moverData.movesThisTurn -= costToTraverse;
+			}
+		}
+		else
 		{
 			moverData.movesThisTurn -= costToTraverse;
 			actor.Turnable.hasActedThisTurn = true;
@@ -407,6 +484,12 @@ function DemoData_Actions()
 		(
 			"Attack",
 			actions.actionAttack_Perform
+		);
+
+		var actionDoorOpenOrClose = new Action
+		(
+			"Open or Close Door",
+			actions.actionDoorOpenOrClose_Perform
 		);
 
 		var actionEmplacement_Use = new Action
@@ -532,6 +615,7 @@ function DemoData_Actions()
 		var returnValues =
 		[
 			actionAttack,
+			actionDoorOpenOrClose,
 			actionEmplacement_Use,
 			actionItem_DropSelected,
 			actionItem_PickUp,
@@ -643,10 +727,15 @@ function DemoData_Actions()
 
 			function perform(universe, world, place, entityActor, activity)
 			{
-				if (entityActor.MoverData.movesThisTurn < entityActor.MoverDefn.movesPerTurn)
+				var moverData = entityActor.MoverData;
+				var moverDefn = entityActor.MoverDefn;
+				var costToTraverse = moverDefn.movesPerTurn; // hack
+				if (moverData.movesThisTurn < costToTraverse)
 				{
 					return;
 				}
+
+				// moverData.movesThisTurn -= costToTraverse;
 
 				var players = place.entitiesByPropertyName[Player.name];
 
@@ -728,6 +817,7 @@ function DemoData_Actions()
 				activity.target =
 				[
 					new ActionToInputsMapping("Attack", [ "a" ]),
+					new ActionToInputsMapping("Open or Close Door", [ "d" ] ),
 					new ActionToInputsMapping("Use Selected Item", [ "f" ]),
 					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
 					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),
