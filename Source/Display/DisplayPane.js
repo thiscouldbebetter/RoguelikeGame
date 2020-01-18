@@ -58,7 +58,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 
 	DisplayPane.prototype.textWidthForFontHeight = function(textToMeasure, fontHeightInPixels)
 	{
-		return this._displayInner.textWidthForFontHeight(textToMeasure, fontHeightInPixels);
+		return this.displayInner.textWidthForFontHeight(textToMeasure, fontHeightInPixels);
 	};
 
 	DisplayPane.prototype.toImage = function()

@@ -2,6 +2,7 @@
 function MoverDefn
 (
 	name,
+	relativeFrequency,
 	movesPerTurn,
 	demographics,
 	traits,
@@ -14,6 +15,7 @@ function MoverDefn
 )
 {
 	this.name = name;
+	this.relativeFrequency = relativeFrequency;
 	this.movesPerTurn = movesPerTurn;
 	this.demographics = demographics;
 	this.traits = traits;

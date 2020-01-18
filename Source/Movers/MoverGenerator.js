@@ -65,8 +65,27 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 		var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
 		var entityDefnGroup = world.defn.entityDefnGroups[entityDefnGroupName];
 		var entityDefnsForAgentsOfDifficulty = entityDefnGroup.entityDefns;
-		var entityDefnForAgentToSpawn =
-			entityDefnsForAgentsOfDifficulty.random(randomizer);
+		var relativeFrequencyTotal = entityDefnsForAgentsOfDifficulty.map
+		(
+			x => x.MoverDefn.relativeFrequency
+		).reduce
+		(
+			(sum, addend) => sum + addend, 0
+		);
+		var randomNumber = randomizer.getNextRandom();
+		var cumulativeFrequencyToStopAt = randomNumber * relativeFrequencyTotal;
+		var cumulativeFrequencySoFar = 0;
+		var entityDefnForAgentToSpawn;
+		for (var i = 0; i < entityDefnsForAgentsOfDifficulty.length; i++)
+		{
+			var entityDefn = entityDefnsForAgentsOfDifficulty[i];
+			cumulativeFrequencySoFar += entityDefn.MoverDefn.relativeFrequency;
+			if (cumulativeFrequencySoFar > cumulativeFrequencyToStopAt)
+			{
+				entityDefnForAgentToSpawn = entityDefn;
+				break;
+			}
+		}
 
 		var zoneBounds = zoneToSpawnInto.bounds;
 		var offsetWithinZone = new Coords().randomize(randomizer).multiply

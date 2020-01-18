@@ -95,7 +95,8 @@
 					new MoverDefn
 					(
 						agentName,
-						10, // movesPerTurn
+						1, // relativeFrequency
+						movesPerTurn,
 						new MoverData_Demographics(null, null, difficulty, experienceToKill),
 						new MoverData_Skills([]),
 						new MoverData_Spells([]),
@@ -172,11 +173,12 @@
 		var moverDefnPlayer = new MoverDefn
 		(
 			"Player",
+			0, // relativeFrequency
 			9, // movesPerTurn
 			new MoverData_Demographics
 			(
 				"Human", "Rogue",
-				1, // rank
+				0, // rank
 				0 // experienceToKill
 			),
 			new MoverData_Traits
