@@ -30,6 +30,7 @@ function Player(sightRange)
 			placeKnown = new PlaceLevel
 			(
 				place.name + "_Known",
+				place.displayName,
 				place.depth,
 				place.defn,
 				place.sizeInPixels,

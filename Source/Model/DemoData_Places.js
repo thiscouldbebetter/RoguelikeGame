@@ -250,8 +250,9 @@
 		[
 			new PlaceBranch
 			(
-				"Surface",
-				"Surface",
+				"Surface", // name
+				"Surface", // displayName
+				"Surface", // placeDefnName
 				null, // startOffsetRange
 				new Range(1, 1), // depth
 				[]
@@ -259,6 +260,7 @@
 			new PlaceBranch
 			(
 				"DungeonShallow", // name
+				"Dungeon", // displayName
 				"Dungeon", // placeDefnName
 				null, // startOffsetRange
 				new Range(5, 6), // depthRangeInVenues
@@ -266,8 +268,9 @@
 				[
 					new PlaceBranch
 					(
-						"MinesShallow",
-						"Mines",
+						"MinesShallow", // name
+						"Mines", // displayName
+						"Mines", // placeDefnName
 						new Range(1, 4), // startOffset
 						new Range(2, 4),
 						[]
@@ -275,6 +278,7 @@
 					new PlaceBranch
 					(
 						"MinesTown",
+						"Mines", // displayName
 						"MinesTown",
 						null, // startOffsetRange
 						new Range(1, 1),
@@ -283,6 +287,7 @@
 					new PlaceBranch
 					(
 						"MinesDeep",
+						"Mines", // displayName
 						"Mines",
 						null, // startOffsetRange
 						new Range(2, 4),
@@ -291,6 +296,7 @@
 					new PlaceBranch
 					(
 						"MinesBottom",
+						"Mines", // displayName
 						"MinesBottom",
 						null, // startOffsetRange
 						new Range(1, 1),
@@ -301,6 +307,7 @@
 			new PlaceBranch
 			(
 				"Oracle",
+				"Dungeon", // displayName
 				"Oracle",
 				null, // startOffsetRange
 				new Range(1, 1),
@@ -309,6 +316,7 @@
 			new PlaceBranch
 			(
 				"DungeonDeep",
+				"Dungeon", // displayName
 				"Dungeon",
 				null, // startOffsetRange
 				new Range(5, 6),
@@ -316,6 +324,7 @@
 					new PlaceBranch
 					(
 						"Puzzle",
+						"Puzzle", // displayName
 						"Puzzle",
 						new Range(1, 4), // startOffset
 						new Range(2, 4),
@@ -326,6 +335,7 @@
 			new PlaceBranch
 			(
 				"Labyrinth",
+				"Dungeon", // displayName
 				"Labyrinth",
 				null, // startOffsetRange
 				new Range(3, 5),
@@ -334,6 +344,7 @@
 			new PlaceBranch
 			(
 				"Island",
+				"Dungeon", // displayName
 				"Island",
 				null, // startOffsetRange
 				new Range(1, 1),
@@ -342,6 +353,7 @@
 			new PlaceBranch
 			(
 				"Fortress",
+				"Dungeon", // displayName
 				"Fortress",
 				null, // startOffsetRange
 				new Range(1, 1),
@@ -350,6 +362,7 @@
 			new PlaceBranch
 			(
 				"Limbo",
+				"Hades", // displayName
 				"Limbo",
 				null, // startOffsetRange
 				new Range(1, 1),
@@ -358,6 +371,7 @@
 			new PlaceBranch
 			(
 				"Hades",
+				"Hades", // displayName
 				"Hades",
 				null, // startOffsetRange
 				new Range(10, 20),
@@ -366,6 +380,7 @@
 			new PlaceBranch
 			(
 				"Depths",
+				"Hades", // displayName
 				"Depths",
 				null, // startOffsetRange
 				new Range(1, 1),
@@ -376,6 +391,7 @@
 		var placeTreeRoot = new PlaceBranch
 		(
 			"Root",
+			null, // displayName
 			"Dungeon", // hack
 			null, // startOffsetRange
 			new Range(0, 0),
@@ -387,10 +403,11 @@
 
 	DemoData.prototype.placeGenerateDepths = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		var place = this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		var branchName = branch.name;
+		var place = this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 		var placeEntities = place.entitiesToSpawn;
 		var stairDown = placeEntities.filter(x => x.name == "StairsDownToChildBranch")[0];
 
@@ -413,9 +430,10 @@
 
 	DemoData.prototype.placeGenerateDungeon = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
+		var branchName = branch.name;
 		var venueName = branchName + placeIndex;
 
 		var mapSizeInCells = new Coords(64, 64);
@@ -451,9 +469,12 @@
 			mapCellsAsStrings
 		);
 
+		var displayName = branch.displayName;
+
 		var returnValue = new PlaceLevel
 		(
 			venueName,
+			displayName,
 			depth,
 			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
@@ -1009,17 +1030,18 @@
 
 	DemoData.prototype.placeGenerateFortress = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateSurface = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
+		var branchName = branch.name;
 		var venueName = branchName + placeIndex;
 
 		var mapSizeInCells = new Coords(16, 16, 1);
@@ -1061,9 +1083,12 @@
 
 		var entities = [ entityStairsDown, entityAltar ];
 
+		var displayName = branch.displayName;
+
 		var returnValue = new PlaceLevel
 		(
 			venueName,
+			displayName,
 			0, // venueDepth,
 			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
@@ -1077,73 +1102,73 @@
 
 	DemoData.prototype.placeGenerateHades = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateIsland = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateMines = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateOracle = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateLabyrinth = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateLimbo = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGeneratePuzzle = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateSingleChamber = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 
 	DemoData.prototype.placeGenerateThrowback = function
 	(
-		worldDefn, branchName, placeDefn, placeIndex, depth, randomizer
+		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
-		return this.placeGenerateDungeon(worldDefn, branchName, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
 	};
 }

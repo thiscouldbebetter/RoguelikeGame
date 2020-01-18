@@ -2,7 +2,6 @@
 function MoverDefn
 (
 	name,
-	difficulty,
 	movesPerTurn,
 	demographics,
 	traits,
@@ -15,7 +14,6 @@ function MoverDefn
 )
 {
 	this.name = name;
-	this.difficulty = difficulty;
 	this.movesPerTurn = movesPerTurn;
 	this.demographics = demographics;
 	this.traits = traits;

@@ -47,7 +47,20 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 	MoverGenerator.prototype.moverSpawn = function(universe, world, place, zoneToSpawnInto)
 	{
 		var randomizer = universe.randomizer;
-		var difficulty = 1; // hack
+
+		var playerRank = world.entityForPlayer.MoverDefn.demographics.rank;
+
+		var difficultyMin = 1; // todo
+		var difficultyMax = Math.ceil((place.depth + playerRank) / 2);
+
+		var difficultyMaxMax = 10; // hack - Haven't added all monsters yet.
+		if (difficultyMax > difficultyMaxMax)
+		{
+			difficultyMax = difficultyMaxMax;
+		}
+
+		var difficultyRange = difficultyMax - difficultyMin + 1;
+		var difficulty = difficultyMin + Math.floor(Math.random() * difficultyRange);
 
 		var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
 		var entityDefnGroup = world.defn.entityDefnGroups[entityDefnGroupName];

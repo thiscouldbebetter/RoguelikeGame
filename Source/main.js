@@ -53,7 +53,7 @@ function main()
 		[ "Conversation.json", "Instructions.txt" ]
 	);
 
-	var timerHelper = new TimerHelper(20);
+	var timerHelper = new TimerHelper(15);
 
 	var version = "0.0.0-20191130-1545";
 

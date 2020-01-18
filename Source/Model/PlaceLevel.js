@@ -1,7 +1,8 @@
 
-function PlaceLevel(name, depth, defn, sizeInPixels, map, zones, entities)
+function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, entities)
 {
 	this.name = name;
+	this.displayName = displayName;
 	this.depth = depth;
 	this.defn = defn;
 	this.sizeInPixels = sizeInPixels;

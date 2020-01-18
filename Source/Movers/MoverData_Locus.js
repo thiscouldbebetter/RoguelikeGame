@@ -26,10 +26,11 @@ function MoverData_Locus()
 							{
 								var loc = entity.Locatable.loc;
 								var place = loc.place(world);
-								var floor = place.name;
+								var zone = place.displayName;
+								var depth = place.depth;
 								var turn = world.turnsSoFar;
 								var pos = loc.pos.toStringXY();
-								var returnValue = "Turn: " + turn + " Floor: " + floor;
+								var returnValue = "Turn: " + turn + " Zone: " + zone + " Depth: " + depth;
 								return returnValue;
 							}
 						)

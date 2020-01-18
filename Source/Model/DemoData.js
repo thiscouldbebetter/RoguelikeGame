@@ -242,7 +242,8 @@ function DemoData(randomizer)
 				var returnValues = this.placeTree.buildPlaces
 				(
 					this, // worldDefn
-					randomizer
+					randomizer,
+					0 // depthFirst
 				);
 				return returnValues;
 			}

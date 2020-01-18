@@ -29,6 +29,8 @@ function DemoData_Actions()
 			return;
 		}
 
+		var player = actor.Player;
+
 		var entitiesInCellDestination = cellDestination.entitiesPresent;
 		for (var i = 0; i < entitiesInCellDestination.length; i++)
 		{
@@ -49,10 +51,10 @@ function DemoData_Actions()
 
 				if (damageInflicted == 0)
 				{
-					if (actor.Player != null)
+					if (player != null)
 					{
 						var message = "You miss the " + moverDefn.name + ".";
-						actor.Player.messageLog.messageAdd(message);
+						player.messageLog.messageAdd(message);
 					}
 					else if (entityInCell.Player != null)
 					{
@@ -68,27 +70,39 @@ function DemoData_Actions()
 						universe, world, place, actor, entityInCell, damageInflicted
 					);
 
-					if (actor.Player != null)
+					if (player != null)
 					{
 						var message = "You hit the " + moverDefn.name + ".";
-						actor.Player.messageLog.messageAdd(message);
+						player.messageLog.messageAdd(message);
+						// todo - Weapon skill improvement.
 					}
 					else if (entityInCell.Player != null)
 					{
 						var message = "The " + moverDefn.name + " hits you.";
-						actor.Player.messageLog.messageAdd(message);
+						entityInCell.Player.messageLog.messageAdd(message);
 					}
 
 					if (killable.isAlive() == false)
 					{
 						moverDefn.die(universe, world, place, entityInCell);
 
-						if (actor.Player != null)
+						if (player != null)
 						{
 							var message = "You kill the " + moverDefn.name + "!";
-							actor.Player.messageLog.messageAdd(message);
-						}
+							player.messageLog.messageAdd(message);
 
+							var actorDemographics = actor.MoverDefn.demographics;
+							var wasRankIncreased = actorDemographics.experienceAdd
+							(
+								moverDefn.demographics.experienceToKill
+							);
+
+							if (wasRankIncreased)
+							{
+								var message = "You have reached rank " + actorDemographics.rank + "!";
+								player.messageLog.messageAdd(message);
+							}
+						}
 					}
 				}
 

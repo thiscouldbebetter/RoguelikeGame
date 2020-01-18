@@ -65,6 +65,7 @@
 			var agentData = agentDatas[i];
 			var agentName = agentData[0];
 			var difficulty = agentData[1];
+			var experienceToKill = agentData[5];
 			var movesPerTurn = agentData[6];
 
 			var itemDefnCorpse = new ItemDefn
@@ -94,9 +95,8 @@
 					new MoverDefn
 					(
 						agentName,
-						difficulty,
 						10, // movesPerTurn
-						new MoverData_Demographics(null, null),
+						new MoverData_Demographics(null, null, difficulty, experienceToKill),
 						new MoverData_Skills([]),
 						new MoverData_Spells([]),
 						new MoverData_Traits(10, 10, 10, 10, 10),
@@ -131,7 +131,7 @@
 		for (var i = 0; i < returnValues.length; i++)
 		{
 			var entityDefnForAgent = returnValues[i];
-			var difficulty = (entityDefnForAgent.MoverDefn == null ? null : entityDefnForAgent.MoverDefn.difficulty);
+			var difficulty = (entityDefnForAgent.MoverDefn == null ? null : entityDefnForAgent.MoverDefn.demographics.rank);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty[difficulty];
@@ -172,9 +172,13 @@
 		var moverDefnPlayer = new MoverDefn
 		(
 			"Player",
-			999, // difficulty
 			9, // movesPerTurn
-			new MoverData_Demographics("Human", "Rogue", 1),
+			new MoverData_Demographics
+			(
+				"Human", "Rogue",
+				1, // rank
+				0 // experienceToKill
+			),
 			new MoverData_Traits
 			([
 				new Trait(traitDefns["Strength"], 10),

@@ -1,7 +1,8 @@
 
-function PlaceBranch(name, placeDefnName, startOffsetRangeWithinParent, depthRangeInVenues, children)
+function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinParent, depthRangeInVenues, children)
 {
 	this.name = name;
+	this.displayName = displayName;
 	this.placeDefnName = placeDefnName;
 	this.startOffsetRangeWithinParent = startOffsetRangeWithinParent;
 	this.depthRangeInVenues = depthRangeInVenues;
@@ -51,7 +52,7 @@ function PlaceBranch(name, placeDefnName, startOffsetRangeWithinParent, depthRan
 			(
 				new DemoData(randomizer), // this
 				worldDefn,
-				this.name,
+				this,
 				placeDefn,
 				i,
 				depthFirst + i,
