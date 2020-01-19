@@ -936,7 +936,7 @@
 		}
 
 		var chancesForItemPerZone = 2;
-		var probabilityOfItemPerChance = 1;
+		var probabilityOfItemPerChance = .33;
 
 		var entityDefnGroupsForItems =
 		[

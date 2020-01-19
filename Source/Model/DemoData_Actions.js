@@ -111,7 +111,7 @@ function DemoData_Actions()
 		} // end for entitiesInCellDestination
 	};
 
-	DemoData.prototype.actionDoorOpenOrClose_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionDoorOpenOrClose_Perform = function(universe, world, place, actor, action, shouldOpenNotClose)
 	{
 		var costToPerform = actor.MoverDefn.movesPerTurn; // todo
 
@@ -138,17 +138,31 @@ function DemoData_Actions()
 					var openable = entityInCell.Openable;
 					if (openable != null)
 					{
-						var openOrClose = (openable.isOpen ? "close" : "open");
-						if (actor.Player != null)
+						var isAlreadyInDesiredState = (shouldOpenNotClose == openable.isOpen);
+						if (isAlreadyInDesiredState)
 						{
-							var appearance = entityInCell.Emplacement.appearance; // hack
-							var message = "You " + openOrClose + " the " + appearance + ".";
-							actor.Player.messageLog.messageAdd(message);
+							if (actor.Player != null)
+							{
+								var openOrClosed = (shouldOpenNotClose ? "open" : "closed");
+								var appearance = entityInCell.Emplacement.appearance; // hack
+								var message = "The " + appearance + " is already " + openOrClosed + ".";
+								actor.Player.messageLog.messageAdd(message);
+							}
 						}
-						openable.isOpen = (openable.isOpen == false);
+						else
+						{
+							var openOrClose = (shouldOpenNotClose ? "open" : "close");
+							if (actor.Player != null)
+							{
+								var appearance = entityInCell.Emplacement.appearance; // hack
+								var message = "You " + openOrClose + " the " + appearance + ".";
+								actor.Player.messageLog.messageAdd(message);
+							}
+							openable.isOpen = (openable.isOpen == false);
 
-						actorMoverData.movesThisTurn -= costToPerform;
-						actor.Turnable.hasActedThisTurn = true;
+							actorMoverData.movesThisTurn -= costToPerform;
+							actor.Turnable.hasActedThisTurn = true;
+						}
 
 					} // end if (openable != null)
 
@@ -500,10 +514,24 @@ function DemoData_Actions()
 			actions.actionAttack_Perform
 		);
 
-		var actionDoorOpenOrClose = new Action
+		var actionDoorClose = new Action
 		(
-			"Open or Close Door",
-			actions.actionDoorOpenOrClose_Perform
+			"Close Door",
+			function perform(universe, world, place, actor, action)
+			{
+				var shouldOpenNotClose = false;
+				actions.actionDoorOpenOrClose_Perform(universe, world, place, actor, action, shouldOpenNotClose);
+			}
+		);
+
+		var actionDoorOpen = new Action
+		(
+			"Open Door",
+			function perform(universe, world, place, actor, action)
+			{
+				var shouldOpenNotClose = true;
+				actions.actionDoorOpenOrClose_Perform(universe, world, place, actor, action, shouldOpenNotClose);
+			}
 		);
 
 		var actionEmplacement_Use = new Action
@@ -629,7 +657,8 @@ function DemoData_Actions()
 		var returnValues =
 		[
 			actionAttack,
-			actionDoorOpenOrClose,
+			actionDoorClose,
+			actionDoorOpen,
 			actionEmplacement_Use,
 			actionItem_DropSelected,
 			actionItem_PickUp,
@@ -831,7 +860,8 @@ function DemoData_Actions()
 				activity.target =
 				[
 					new ActionToInputsMapping("Attack", [ "a" ]),
-					new ActionToInputsMapping("Open or Close Door", [ "d" ] ),
+					new ActionToInputsMapping("Close Door", [ "c" ] ),
+					new ActionToInputsMapping("Open Door", [ "d" ] ),
 					new ActionToInputsMapping("Use Selected Item", [ "f" ]),
 					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
 					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),
