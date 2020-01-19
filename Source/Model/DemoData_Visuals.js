@@ -31,17 +31,6 @@
 			[ "WallPuzzleEastWest", new Coords(7, 26) ],
 			[ "WallPuzzleNorthSouth", new Coords(6, 26) ],
 
-			// emplacements
-
-			[ "Altar", new Coords(15, 21) ],
-			[ "Blood", new Coords(3, 4) ],
-			[ "DoorClosed", new Coords(4, 21) ],
-			[ "DoorOpenLeft", new Coords(3, 21) ],
-			[ "DoorOpenTop", new Coords(2, 21) ],
-			[ "Gravestone", new Coords(16, 21) ],
-			[ "StairsUp", new Coords(11, 21) ],
-			[ "StairsDown", new Coords(12, 21) ],
-
 			// items - unsorted
 
 			[ "Chest", new Coords(34, 9) ],
@@ -456,10 +445,6 @@
 			[ "Rapier2?", new Coords(20, 10) ],
 			[ "Sword", new Coords(23, 10) ],
 			[ "WormTooth", new Coords(19, 10) ],
-
-			// movers
-
-			[ "Goblin", new Coords(32, 1) ],
 		];
 
 		var monsterNamesInTileOrder =
@@ -621,6 +606,47 @@
 		{
 			var monsterName = monsterNamesInTileOrder[i];
 			var tileNameAndPosition = [ monsterName, tilePos.clone() ];
+			tileNamesAndPositions.push(tileNameAndPosition);
+
+			tilePos.x++;
+			if (tilePos.x >= tilePosXMax)
+			{
+				tilePos.x = 0;
+				tilePos.y++;
+			}
+		}
+
+		var emplacementNamesInTileOrder =
+		[
+			// 841-846
+			"Doorway", "DoorOpenTop", "DoorOpenLeft", "DoorClosed", "DoorClosed2", "Bars",
+			"Tree", // 847
+			// 848-850
+			"DotSmall", "DotOpen", "DotLarge",
+			// 851-854
+			"StairsUp", "StairsDown", "LadderUp", "LadderDown",
+			// 855-859
+			"Altar", "Gravestone", "Throne", "Sink", "Fountain",
+			// 860-862
+			"WaterSurface", "Ice", "Lava",
+			// 863-866
+			"BridgeNS", "BridgeEW", "PlanksEW", "PlanksNS",
+			// 867-869
+			"Sky", "Cloud", "WaterDepths",
+			// 870-879
+			"TrapArrow", "TrapDart", "TrapDeadfall", "TrapNoise", "TrapJaws", "TrapMine", "TrapBoulder", "TrapSleep", "TrapWater", "TrapFire",
+			// 880-886
+			"Pit", "PitSpiked", "Hole", "TrapDoor", "TeleporterShort", "TeleporterLong", "MagicPortal",
+			 // 887
+			 "Web", "?", "TrapHex", "TrapDrain", "TrapPolymorph"
+		];
+
+		var tilePos = new Coords(1, 21);
+		var tilePosXMax = 40; //?
+		for (var i = 0; i < emplacementNamesInTileOrder.length; i++)
+		{
+			var tileName = emplacementNamesInTileOrder[i];
+			var tileNameAndPosition = [ tileName, tilePos.clone() ];
 			tileNamesAndPositions.push(tileNameAndPosition);
 
 			tilePos.x++;

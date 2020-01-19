@@ -111,18 +111,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Open,
 					new Drawable(visuals["Altar"]),
-					new Emplacement("altar", useEmplacementAltar),
-				]
-			),
-
-			new Entity
-			(
-				"Blood",
-				[
-					collidableDefns.Open,
-					new Drawable(visuals["Blood"]),
-					new Emplacement("pool of blood"),
-					new Ephemeral(30),
+					new Emplacement("altar", 1, useEmplacementAltar),
 				]
 			),
 
@@ -153,7 +142,7 @@ function DemoData(randomizer)
 							[ visuals["DoorClosed"], visuals["DoorOpenLeft"] ]
 						)
 					),
-					new Emplacement("door"),
+					new Emplacement("door", 0),
 					new Openable(false),
 				]
 			),
@@ -164,9 +153,33 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Open,
 					new Drawable(visuals["Gravestone"]),
-					new Emplacement("gravestone"),
+					new Emplacement("gravestone", 1),
 				]
 			),
+
+			new Entity("Sink", 		[ collidableDefns.Open, new Drawable(visuals["Sink"]), 			new Emplacement("sink", 1), ] ),
+			new Entity("TrapArrow", 	[ collidableDefns.Open, new Drawable(visuals["TrapArrow"]), 	new Emplacement("arrow trap", 1), ] ),
+			new Entity("TrapDart", 		[ collidableDefns.Open, new Drawable(visuals["TrapDart"]), 		new Emplacement("dart trap", 1), ] ),
+			new Entity("TrapDeadfall", 	[ collidableDefns.Open, new Drawable(visuals["TrapDeadfall"]), 	new Emplacement("deadfall", 1), ] ),
+			new Entity("TrapNoise", 	[ collidableDefns.Open, new Drawable(visuals["TrapNoise"]), 	new Emplacement("noise trap", 1), ] ),
+			new Entity("TrapJaws",  	[ collidableDefns.Open, new Drawable(visuals["TrapJaws"]), 		new Emplacement("bear trap", 1), ] ),
+			new Entity("TrapMine",  	[ collidableDefns.Open, new Drawable(visuals["TrapMine"]), 		new Emplacement("landmine", 1), ] ),
+			new Entity("TrapBoulder", 	[ collidableDefns.Open, new Drawable(visuals["TrapBoulder"]), 	new Emplacement("boulder trap", 1), ] ),
+			new Entity("TrapSleep", 	[ collidableDefns.Open, new Drawable(visuals["TrapSleep"]), 	new Emplacement("sleeping gas trap", 1), ] ),
+			new Entity("TrapWater", 	[ collidableDefns.Open, new Drawable(visuals["TrapWater"]), 	new Emplacement("flood trap", 1), ] ),
+			new Entity("TrapFire", 		[ collidableDefns.Open, new Drawable(visuals["TrapFire"]), 		new Emplacement("fire trap", 1), ] ),
+			new Entity("Pit",			[ collidableDefns.Open, new Drawable(visuals["Pit"]), 			new Emplacement("pit", 1), ] ),
+			new Entity("PitSpiked",		[ collidableDefns.Open, new Drawable(visuals["PitSpiked"]), 	new Emplacement("spiked pit", 1), ] ),
+			new Entity("Hole",			[ collidableDefns.Open, new Drawable(visuals["Hole"]), 			new Emplacement("hole", 1), ] ),
+			new Entity("TrapDoor",		[ collidableDefns.Open, new Drawable(visuals["TrapDoor"]), 		new Emplacement("trap door", 1), ] ),
+			new Entity("TeleporterShort",[ collidableDefns.Open, new Drawable(visuals["TeleporterShort"]),new Emplacement("short-range teleporter", 1), ] ),
+			new Entity("TeleporterLong",[ collidableDefns.Open, new Drawable(visuals["TeleporterLong"]),new Emplacement("long-range teleporter", 1), ] ),
+			new Entity("MagicPortal",	[ collidableDefns.Open, new Drawable(visuals["MagicPortal"]), 	new Emplacement("magic portal", 1), ] ),
+			new Entity("Web",			[ collidableDefns.Open, new Drawable(visuals["Web"]), 			new Emplacement("web", 1), ] ),
+			new Entity("TrapHex",		[ collidableDefns.Open, new Drawable(visuals["TrapHex"]), 		new Emplacement("hex trap", 1), ] ),
+			new Entity("TrapDrain",		[ collidableDefns.Open, new Drawable(visuals["TrapDrain"]), 	new Emplacement("drain trap", 1), ] ),
+			new Entity("TrapPolymorph", [ collidableDefns.Open, new Drawable(visuals["TrapPolymorph"]), new Emplacement("polymorph trap", 1), ] ),
+
 
 			new Entity
 			(
@@ -174,7 +187,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Open,
 					new Drawable(visuals["StairsDown"]),
-					new Emplacement("stairway down", useEmplacementPortal),
+					new Emplacement("stairway down", 0, useEmplacementPortal),
 				]
 			),
 
@@ -184,7 +197,7 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Open,
 					new Drawable(visuals["StairsUp"]),
-					new Emplacement("stairway up", useEmplacementPortal),
+					new Emplacement("stairway up", 0, useEmplacementPortal),
 				]
 			),
 
@@ -194,10 +207,9 @@ function DemoData(randomizer)
 				[
 					collidableDefns.Open,
 					new Drawable(visuals["StairsUp"]),
-					new Emplacement("stairway up", useEmplacementPortal),
+					new Emplacement("stairway up", 0, useEmplacementPortal),
 				]
 			),
-
 		];
 
 		var returnValue = new EntityDefnGroup

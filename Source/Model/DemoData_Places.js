@@ -935,20 +935,36 @@
 			entities.push(entityForDoor);
 		}
 
+		// Emplacements.
+
+		var chancesForEmplacementPerZone = 2;
+		var probabilityOfEmplacementPerChance = .33;
+
+		var entityDefnsForEmplacements = entityDefnGroups.Emplacements.entityDefns;
+
+		var sumOfFrequenciesForAllEmplacements = 0;
+
+		for (var g = 0; g < entityDefnsForEmplacements.length; g++)
+		{
+			var entityDefn = entityDefnsForEmplacements[g];
+			var relativeFrequency = entityDefn.Emplacement.relativeFrequency;
+			sumOfFrequenciesForAllEmplacements += relativeFrequency;
+		}
+
 		var chancesForItemPerZone = 2;
 		var probabilityOfItemPerChance = .33;
 
 		var entityDefnGroupsForItems =
 		[
-			entityDefnGroups["Armor"],
-			entityDefnGroups["Food"],
-			entityDefnGroups["Potions"],
-			entityDefnGroups["Scrolls"],
-			entityDefnGroups["Spellbooks"],
-			entityDefnGroups["Stones"],
-			entityDefnGroups["Tools"],
-			entityDefnGroups["Wands"],
-			entityDefnGroups["Weapons"],
+			entityDefnGroups.Armor,
+			entityDefnGroups.Food,
+			entityDefnGroups.Potions,
+			entityDefnGroups.Scrolls,
+			entityDefnGroups.Spellbooks,
+			entityDefnGroups.Stones,
+			entityDefnGroups.Tools,
+			entityDefnGroups.Wands,
+			entityDefnGroups.Weapons,
 		];
 
 		var sumOfFrequenciesForAllGroups = 0;
@@ -1022,7 +1038,63 @@
 
 					entities.push(entityForItem);
 				}
-			}
+			} // end for each zone
+
+			for (var c = 0; c < chancesForEmplacementPerZone; c++)
+			{
+				var randomValue = randomizer.getNextRandom();
+
+				if (randomValue <= probabilityOfEmplacementPerChance)
+				{
+					randomValue =
+						this.randomizer.getNextRandom()
+						* sumOfFrequenciesForAllEmplacements;
+
+					var sumOfFrequenciesForEmplacementsSoFar = 0;
+
+					var entityDefnIndex = 0;
+
+					for (var e = 0; e < entityDefnsForEmplacements.length; e++)
+					{
+						var entityDefn = entityDefnsForEmplacements[e];
+						sumOfFrequenciesForEmplacementsSoFar +=
+							entityDefn.Emplacement.relativeFrequency;
+
+						if (sumOfFrequenciesForEmplacementsSoFar >= randomValue)
+						{
+							entityDefnIndex = e;
+							break;
+						}
+					}
+
+					var entityDefnForEmplacement = entityDefnsForEmplacements[entityDefnIndex];
+
+					var pos = new Coords().randomize(randomizer).multiply
+					(
+						zone.bounds.size.clone().subtract
+						(
+							Coords.Instances().TwoTwoZero
+						)
+					).floor().add
+					(
+						zone.bounds.min()
+					).add
+					(
+						oneOneZero
+					)
+
+					var entity = EntityHelper.new
+					(
+						entityDefn.name,
+						entityDefn,
+						[
+							new Locatable(new Location(pos)),
+						]
+					);
+
+					entities.push(entity);
+				}
+			} // end for each zone
 		}
 
 		return entities;

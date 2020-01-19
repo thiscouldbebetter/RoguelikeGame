@@ -1,7 +1,8 @@
 
-function Emplacement(appearance, use)
+function Emplacement(appearance, relativeFrequency, use)
 {
 	this.appearance = appearance;
+	this.relativeFrequency = relativeFrequency;
 	this._use = use;
 }
 {
