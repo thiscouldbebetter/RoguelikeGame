@@ -134,7 +134,7 @@ function DemoData(randomizer)
 					(
 						new VisualSelect
 						(
-							function selectChildName(universe, world, display, drawable, entity)
+							function selectChildName(universe, world, display, entity)
 							{
 								return (entity.Openable.isOpen ? "Open" : "Closed");
 							},

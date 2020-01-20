@@ -265,7 +265,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			display.displayToUse().sizeInPixelsHalf
 		);
 
-		terrainVisual.draw(universe, world, display, null, drawableEntity);
+		terrainVisual.draw(universe, world, display, drawableEntity);
 
 		var entitiesInCell = cell.entitiesPresent;
 
@@ -302,11 +302,10 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 				this._drawPosSaved.overwriteWith(entityPos);
 
-				//drawableEntity.Locatable.loc.orientation.forward.overwriteWith(entityLoc.orientation.forward);
 				entityPos.overwriteWith(drawPos);
 
 				var visual = entity.Drawable.visual;
-				visual.draw(universe, world, display, null, entity)//drawableEntity);
+				visual.draw(universe, world, display, entity);
 
 				entityPos.overwriteWith(this._drawPosSaved);
 			}
@@ -338,8 +337,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		(
 			null, null, // universe, world
 			display,
-			null, // drawable
-			this._drawableEntity // entity
+			this._drawableEntity
 		);
 	};
 }

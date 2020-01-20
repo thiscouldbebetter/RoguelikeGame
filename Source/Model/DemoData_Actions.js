@@ -29,32 +29,31 @@ function DemoData_Actions()
 			return;
 		}
 
-		var player = actor.Player;
+		var actorPlayer = actor.Player;
 
 		var entitiesInCellDestination = cellDestination.entitiesPresent;
 		for (var i = 0; i < entitiesInCellDestination.length; i++)
 		{
 			var entityInCell = entitiesInCellDestination[i];
 
+			var killable = entityInCell.Killable;
 			var moverDefn = entityInCell.MoverDefn;
-			if (moverDefn != null)
+
+			if (killable != null)
 			{
 				actor.MoverData.movesThisTurn -= costToAttack;
 				actor.Turnable.hasActedThisTurn = true;
 
 				// todo - Calculate damage.
 				// hack - Only the player can inflict damage for now.
-				var damageInflicted = ( actor.Player == null ? 0 : DiceRoll.roll(world.randomizer, "1d6") );
-
-				var entityDefns = world.defn.entityDefns;
-				var defnsOfEntitiesToSpawn = [];
+				var damageInflicted = ( actorPlayer == null ? 0 : DiceRoll.roll(world.randomizer, "1d6") );
 
 				if (damageInflicted == 0)
 				{
-					if (player != null)
+					if (actorPlayer != null)
 					{
 						var message = "You miss the " + moverDefn.name + ".";
-						player.messageLog.messageAdd(message);
+						actorPlayer.messageLog.messageAdd(message);
 					}
 					else if (entityInCell.Player != null)
 					{
@@ -64,16 +63,15 @@ function DemoData_Actions()
 				}
 				else
 				{
-					var killable = entityInCell.Killable;
 					killable.damageApply
 					(
 						universe, world, place, actor, entityInCell, damageInflicted
 					);
 
-					if (player != null)
+					if (actorPlayer != null)
 					{
 						var message = "You hit the " + moverDefn.name + ".";
-						player.messageLog.messageAdd(message);
+						actorPlayer.messageLog.messageAdd(message);
 						// todo - Weapon skill improvement.
 					}
 					else if (entityInCell.Player != null)
@@ -86,10 +84,10 @@ function DemoData_Actions()
 					{
 						moverDefn.die(universe, world, place, entityInCell);
 
-						if (player != null)
+						if (actorPlayer != null)
 						{
 							var message = "You kill the " + moverDefn.name + "!";
-							player.messageLog.messageAdd(message);
+							actorPlayer.messageLog.messageAdd(message);
 
 							var actorDemographics = actor.MoverDefn.demographics;
 							var wasRankIncreased = actorDemographics.experienceAdd
@@ -100,7 +98,7 @@ function DemoData_Actions()
 							if (wasRankIncreased)
 							{
 								var message = "You have reached rank " + actorDemographics.rank + "!";
-								player.messageLog.messageAdd(message);
+								actorPlayer.messageLog.messageAdd(message);
 							}
 						}
 					}

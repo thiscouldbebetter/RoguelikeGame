@@ -562,7 +562,7 @@
 				);
 
 				var zoneBoundsWithWalls =
-					Box.fromMinAndSize(zonePos, zoneSizePlusOnes);
+					new Box().fromMinAndSize(zonePos, zoneSizePlusOnes);
 
 				doesZoneOverlapAnother = Box.doBoxesInSetsOverlap
 				(
@@ -571,7 +571,7 @@
 				);
 			}
 
-			var zoneBounds = Box.fromMinAndSize(zonePos, zoneSize);
+			var zoneBounds = new Box().fromMinAndSize(zonePos, zoneSize);
 
 			zoneBoundsSetSoFar.push(zoneBounds);
 		}
@@ -916,23 +916,34 @@
 			entities.push(stairsDown);
 		}
 
+		var chanceOfDoorPerDoorway = .75;
+		var chanceOfDoorBeingOpen = .25;
+
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{
-			var doorPos = doorwayPositions[i];
-			//doorPos.z = PlaceLevel.ZLayers.Emplacement;
-			var entityForDoor = EntityHelper.new
-			(
-				"Door" + i,
-				entityDefns["Door"],
-				[
-					new Locatable
-					(
-						new Location(doorwayPositions[i])
-					)
-				]
-			);
+			var randomNumber = randomizer.getNextRandom();
+			if (randomNumber <= chanceOfDoorPerDoorway)
+			{
+				var doorPos = doorwayPositions[i];
 
-			entities.push(entityForDoor);
+				var entityForDoor = EntityHelper.new
+				(
+					"Door" + i,
+					entityDefns["Door"],
+					[
+						new Locatable
+						(
+							new Location(doorwayPositions[i])
+						)
+					]
+				);
+
+				randomNumber = randomizer.getNextRandom();
+				var isDoorOpen = (randomNumber <= chanceOfDoorBeingOpen);
+				entityForDoor.Openable.isOpen = isDoorOpen;
+
+				entities.push(entityForDoor);
+			}
 		}
 
 		// Emplacements.
