@@ -46,7 +46,9 @@ function DemoData_Actions()
 
 				// todo - Calculate damage.
 				// hack - Only the player can inflict damage for now.
-				var damageInflicted = ( actorPlayer == null ? 0 : DiceRoll.roll(world.randomizer, "1d6") );
+				var damagePossibleAsDieRoll = "1d6";
+				var damageAmount = DiceRoll.roll(world.randomizer, damagePossibleAsDieRoll);
+				var damageInflicted = ( actorPlayer == null ? 0 : damageAmount);
 
 				if (damageInflicted == 0)
 				{
@@ -652,6 +654,7 @@ function DemoData_Actions()
 
 		var actionWait = new Action("Wait", actions.actionWait_Perform);
 
+		var actionInstances = Action.Instances();
 		var returnValues =
 		[
 			actionAttack,
@@ -673,8 +676,9 @@ function DemoData_Actions()
 			actionMoveN,
 			actionMoveNE,
 			actionWait,
-			Action.Instances().ShowMenu,
-			Action.Instances().ShowItems,
+			actionInstances.ShowEquipment,
+			actionInstances.ShowItems,
+			actionInstances.ShowMenu,
 		];
 
 		// hack
@@ -875,6 +879,7 @@ function DemoData_Actions()
 					new ActionToInputsMapping("Move North", [ "_8" ]),
 					new ActionToInputsMapping("Move Northeast", [ "_9" ]),
 
+					new ActionToInputsMapping("ShowEquipment", [ "`" ]),
 					new ActionToInputsMapping("ShowItems", [ "Tab" ]),
 					new ActionToInputsMapping("Select Next Item", [ "]" ]),
 					new ActionToInputsMapping("Select Previous Item", [ "[" ]),

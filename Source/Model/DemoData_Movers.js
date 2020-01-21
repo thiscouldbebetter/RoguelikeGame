@@ -89,7 +89,6 @@
 					new ActorDefn(activityDefns["Move Toward Player"].name),
 					collidableDefns.Transparent,
 					itemHolder,
-					//new EquippableDefn(equipmentSocketDefnSetBiped),
 					new EnemyDefn(),
 					new Killable(5, null),
 					new MoverDefn
@@ -160,19 +159,16 @@
 		visuals, activityDefns, itemCategories, returnValues
 	)
 	{
+		var entityName = Player.name;
+
 		var sizeInPixels = visuals["Floor"].size;
 		var skillDefns = this.buildSkillDefns();
 		var spellDefns = this.buildSpellDefns();
 		var traitDefns = this.buildTraitDefns();
 
-		var equipmentSocketDefnSetBiped = this.buildEntityDefns_Items_EquipmentSocketDefnSet
-		(
-			itemCategories
-		);
-
 		var moverDefnPlayer = new MoverDefn
 		(
-			"Player",
+			entityName,
 			0, // relativeFrequency
 			9, // movesPerTurn
 			new MoverData_Demographics
@@ -226,7 +222,26 @@
 			activityDefns["Accept User Input"].name;
 			//activityDefns["Demo User Input"].name;
 
-		var entityName = Player.name;
+		var equipmentSocketDefnGroup = new EquipmentSocketDefnGroup
+		(
+			"Equippable",
+			[
+				new EquipmentSocketDefn("Wielding", [ "Weapon" ] ),
+				new EquipmentSocketDefn("Ammunition", [ "Ammunition" ] ),
+				new EquipmentSocketDefn("Head", [ "Headwear" ]),
+				new EquipmentSocketDefn("Neck", [ "Neckwear" ]),
+				new EquipmentSocketDefn("Shirt", [ "Shirt" ]),
+				new EquipmentSocketDefn("Body", [ "BodyArmor" ]),
+				new EquipmentSocketDefn("Cloak", [ "Cloak" ]),
+				new EquipmentSocketDefn("Hands", [ "Glove" ] ),
+				new EquipmentSocketDefn("Feet", [ "Footwear" ] ),
+				new EquipmentSocketDefn("Left Finger", [ "Ring" ] ),
+				new EquipmentSocketDefn("Right Finger", [ "Ring" ] ),
+			]
+		);
+
+		var equippable = new Equippable(equipmentSocketDefnGroup);
+
 		var entityDefnPlayer = new Entity
 		(
 			entityName,
@@ -234,9 +249,9 @@
 			[
 				new ActorDefn(activityDefnName),
 				collidableDefns.Transparent,
-				new ItemHolder(),
 				drawableDefnPlayer,
-				new EquippableDefn(equipmentSocketDefnSetBiped),
+				equippable,
+				new ItemHolder(),
 				new Killable(160, null),
 				moverDefnPlayer,
 				new Player

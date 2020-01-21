@@ -107,7 +107,6 @@
 			Emplacement.name,
 			"Enemy",
 			Ephemeral.name,
-			EquippableDefn.name,
 			Item.name,
 			ItemHolder.name,
 			Killable.name,

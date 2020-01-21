@@ -112,15 +112,11 @@ function Path(map, startPos, goalPos, lengthMax)
 			}
 		}
 
+		this.nodes = [];
+
 		var best = openList[0];
-		if (best == null)
+		if (best != null)
 		{
-			// todo
-			throw "No path found!";
-		}
-		else
-		{
-			this.nodes = [];
 			var current = best;
 			while (current != null)
 			{

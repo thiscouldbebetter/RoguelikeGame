@@ -1429,29 +1429,6 @@
 
 		return new EntityDefnGroup("Stones", 1, entityDefnSets[0]);
 		return new EntityDefnGroup("Valuables", 1, entityDefnSets[1]);
-	}
-
-	DemoData.prototype.buildEntityDefns_Items_EquipmentSocketDefnSet = function(itemCategories)
-	{
-		var biped = new EquipmentSocketDefnSet
-		(
-			"Biped",
-			[
-				new EquipmentSocketDefn("Head", [ itemCategories.Headwear.name ]),
-				new EquipmentSocketDefn("Neck", [ itemCategories.Neckwear.name ]),
-				new EquipmentSocketDefn("Shirt", [ itemCategories.Shirt.name ]),
-				new EquipmentSocketDefn("Entity", [ itemCategories.BodyArmor.name ]),
-				new EquipmentSocketDefn("Cloak", [ itemCategories.Cloak.name ]),
-				new EquipmentSocketDefn("Hands", [ itemCategories.Glove.name ] ),
-				new EquipmentSocketDefn("Feet", [ itemCategories.Footwear.name ] ),
-				new EquipmentSocketDefn("Left Finger", [ itemCategories.Ring.name ] ),
-				new EquipmentSocketDefn("Right Finger", [ itemCategories.Ring.name ] ),
-				new EquipmentSocketDefn("Wielding", [ itemCategories.Weapon.name ] ),
-				new EquipmentSocketDefn("Ammunition", [ itemCategories.Ammunition.name ] ),
-			]
-		);
-
-		return biped;
 	};
 
 	DemoData.prototype.buildItemCategories = function()
