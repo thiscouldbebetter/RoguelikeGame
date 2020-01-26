@@ -10,7 +10,7 @@ function Player(sightRange)
 	{
 		entity.Locatable.loc.pos.z = PlaceLevel.ZLayers.Movers;
 
-		entity.MoverData.movesThisTurn = 0;
+		entity.Mover.movesThisTurn = 0;
 		entity.Turnable.hasActedThisTurn = true;
 
 		var placeKnownLookup = entity.Player.placeKnownLookup;
@@ -55,8 +55,7 @@ function Player(sightRange)
 	{
 		if (entityPlayer.Turnable.hasActedThisTurn)
 		{
-			var moverData = entityPlayer.MoverData;
-			var vitals = moverData.vitals.addSatietyToMover(world, -1, entityPlayer);
+			entityPlayer.Starvable.satietyAdd(world, -1, entityPlayer);
 
 			var propertyName = Turnable.name;
 			var turnables = place.entities.filter(x => x.Turnable != null); // hack
@@ -90,21 +89,45 @@ function Player(sightRange)
 	{
 		if (this.control == null)
 		{
-			var moverData = entity.MoverData;
+			var controlLocus = new ControlContainer
+			(
+				"containerLocus",
+				new Coords(10, 48), // pos
+				new Coords(160, 16), // size
+				[
+					ControlLabel.fromPosAndText
+					(
+						new Coords(10, 5),
+						new DataBinding
+						(
+							this,
+							function get(c)
+							{
+								var loc = entity.Locatable.loc;
+								var place = loc.place(world);
+								var zone = place.displayName;
+								var depth = place.depth;
+								var turn = world.turnsSoFar;
+								var pos = loc.pos.toStringXY();
+								var returnValue = "Turn: " + turn + " Zone: " + zone + " Depth: " + depth;
+								return returnValue;
+							}
+						)
+					)
+				]
+			);
+
+			var mover = entity.Mover;
 			this.control = new ControlContainer
 			(
-				"containerMoverData",
+				"containerMover",
 				new Coords(0, 0), // pos
 				new Coords(180, 272), // size
 				[
 					ControlLabel.fromPosAndText(new Coords(10, 16), "Name: " + entity.name),
-					moverData.demographics.controlUpdate(world, entity, new Coords(10, 32)),
-					moverData.traits.controlUpdate(world, entity, new Coords(10, 48)),
-					moverData.vitals.controlUpdate(world, entity, new Coords(10, 64)),
-					moverData.locus.controlUpdate(world, entity, new Coords(10, 112)),
-					moverData.skills.controlUpdate(world, entity, new Coords(10, 128)),
-					moverData.spells.controlUpdate(world, entity, new Coords(10, 144)),
-					//entity.ItemHolder.controlUpdate(world, entity, new Coords(10, 160)),
+					entity.Demographics.controlUpdate(world, entity, new Coords(10, 32)),
+					entity.Starvable.controlUpdate(world, entity, new Coords(10, 64)),
+					controlLocus,
 				]
 			);
 		}

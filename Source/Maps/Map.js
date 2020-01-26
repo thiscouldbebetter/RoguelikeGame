@@ -295,7 +295,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
-			if (entity.MoverData == null || drawMovers)
+			if (entity.Mover == null || drawMovers)
 			{
 				var entityLoc = entity.Locatable.loc;
 				var entityPos = entityLoc.pos;

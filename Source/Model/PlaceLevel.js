@@ -193,7 +193,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 	{
 		var emplacements = this.entitiesByPropertyName[Emplacement.name];
 		var enemies = this.entitiesByPropertyName["Enemy"];
-		var items = this.entitiesByPropertyName["Item"];
+		var items = this.entitiesByPropertyName[Item.name];
 		var players = this.entitiesByPropertyName[Player.name]
 		var portals = this.entitiesByPropertyName[Portal.name];
 		var projectiles = this.entitiesByPropertyName["Projectile"];
@@ -204,32 +204,12 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 		[
 			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
-				players,
-				emplacements
+				players, emplacements
 			),
 
 			collisionHelper.collisionsOfEntitiesCollidableInSets
 			(
-				players,
-				enemies
-			),
-
-			collisionHelper.collisionsOfEntitiesCollidableInSets
-			(
-				players,
-				items
-			),
-
-			collisionHelper.collisionsOfEntitiesCollidableInSets
-			(
-				players,
-				portals
-			),
-
-			collisionHelper.collisionsOfEntitiesCollidableInSets
-			(
-				enemies,
-				projectiles
+				enemies, projectiles
 			),
 		];
 
@@ -341,13 +321,23 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 	// entities
 
+	PlaceLevel.prototype.awaitables = function()
+	{
+		return this.entitiesByPropertyName[Awaitable.name];
+	};
+
 	PlaceLevel.prototype.ephemerals = function()
 	{
 		return this.entitiesByPropertyName[Ephemeral.name];
-	}
+	};
+
+	PlaceLevel.prototype.movers = function()
+	{
+		return this.entitiesByPropertyName[Mover.name];
+	};
 
 	PlaceLevel.prototype.player = function()
 	{
 		return this.entitiesByPropertyName[Player.name][0];
-	}
+	};
 }

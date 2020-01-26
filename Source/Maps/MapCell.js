@@ -33,7 +33,7 @@ function MapCell(terrainCode, entitiesPresent)
 			var entityPresent = this.entitiesPresent[i];
 			if (entityPresent.CollidableDefn.blocksMovement(entityPresent))
 			{
-				returnValue = 10000; // Infinity seems to slow down the math.
+				returnValue = MapTerrain.AlmostInfinity;
 				break;
 			}
 		}

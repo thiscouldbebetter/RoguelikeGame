@@ -19,7 +19,7 @@ function ActorDefn(activityDefnNameInitial)
 		);
 
 		actorData.activity_Set(universe, world, place, entity, activity);
-	}
+	};
 
 	ActorDefn.prototype.updateForTimerTick = function(universe, world, place, entity)
 	{
@@ -43,5 +43,5 @@ function ActorDefn(activityDefnNameInitial)
 
 			entityActions.length = 0;
 		}
-	}
+	};
 }

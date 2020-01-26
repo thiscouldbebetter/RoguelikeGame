@@ -1,7 +1,5 @@
 
-function Role(name, ranks, skills)
+function Role(name)
 {
 	this.name = name;
-	this.ranks = ranks;
-	this.skills = skills;
 }

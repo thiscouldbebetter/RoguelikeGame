@@ -2,12 +2,12 @@
 {
 	DemoData.prototype.buildMapTerrainsDungeon = function(visualsForTiles)
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles["Floor"]);
-		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallDungeonCornerNorth"]);
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallDungeonCornerSouth"]);
-		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualsForTiles["WallDungeonEastWest"]);
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualsForTiles["WallDungeonNorthSouth"]);
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualsForTiles["Floor"]);
+		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", null, 	true, "Blue", visualsForTiles["WallDungeonCornerNorth"]);
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", null, 	true, "Blue", visualsForTiles["WallDungeonCornerSouth"]);
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", null, 	true, "Blue", visualsForTiles["WallDungeonEastWest"]);
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", null, 	true, "Blue", visualsForTiles["WallDungeonNorthSouth"]);
 
 		var terrains =
 		[
@@ -27,12 +27,12 @@
 
 	DemoData.prototype.buildMapTerrainsHades = function(visualsForTiles)
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles["Floor"]);
-		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles["WallHadesCornerNorth"]);
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles["WallHadesCornerSouth"]);
-		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualsForTiles["WallHadesEastWest"]);
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualsForTiles["WallHadesNorthSouth"]);
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualsForTiles["Floor"]);
+		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", null, 	true, "Blue", visualsForTiles["WallHadesCornerNorth"]);
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", null, 	true, "Blue", visualsForTiles["WallHadesCornerSouth"]);
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", null, 	true, "Blue", visualsForTiles["WallHadesEastWest"]);
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", null, 	true, "Blue", visualsForTiles["WallHadesNorthSouth"]);
 
 		var terrains =
 		[
@@ -100,17 +100,17 @@
 		var propertyNamesKnown =
 		[
 			ActorDefn.name,
+			Awaitable.name,
 			CollidableDefn.name,
 			Device.name,
 			//Drawable.name,
-			"Dynamic",
 			Emplacement.name,
 			"Enemy",
 			Ephemeral.name,
 			Item.name,
 			ItemHolder.name,
 			Killable.name,
-			MoverDefn.name,
+			Mover.name,
 			MoverTransport.name,
 			Player.name,
 			Portal.name,
@@ -118,7 +118,6 @@
 
 		var returnValues =
 		[
-
 			new PlaceDefn
 			(
 				"Depths",
@@ -957,7 +956,7 @@
 		for (var g = 0; g < entityDefnsForEmplacements.length; g++)
 		{
 			var entityDefn = entityDefnsForEmplacements[g];
-			var relativeFrequency = entityDefn.Emplacement.relativeFrequency;
+			var relativeFrequency = entityDefn.Generatable.relativeFrequency;
 			sumOfFrequenciesForAllEmplacements += relativeFrequency;
 		}
 
@@ -1068,7 +1067,7 @@
 					{
 						var entityDefn = entityDefnsForEmplacements[e];
 						sumOfFrequenciesForEmplacementsSoFar +=
-							entityDefn.Emplacement.relativeFrequency;
+							entityDefn.Generatable.relativeFrequency;
 
 						if (sumOfFrequenciesForEmplacementsSoFar >= randomValue)
 						{

@@ -25,7 +25,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 				)
 			]
 		);
-		this.entityForPlayer.MoverDefn.demographics.rank = 1; // hack
+		this.entityForPlayer.Demographics.rank = 1; // hack
 
 		place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
 	}

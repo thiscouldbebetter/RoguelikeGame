@@ -1,7 +1,10 @@
 
 // partial class DemoData
 {
-	DemoData.prototype.buildEntityDefnGroups_Movers = function(visuals, activityDefns, itemCategories)
+	DemoData.prototype.buildEntityDefnGroups_Movers = function
+	(
+		visuals, activityDefns, itemCategories
+	)
 	{
 		var returnValues = [];
 
@@ -29,26 +32,6 @@
 			}
 		};
 
-		var dieAndDropCorpse = function(universe, world, place, entityDying)
-		{
-			var itemDefnCorpse = entityDying.MoverDefn.itemDefnCorpse;
-			entityDying.Locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
-			var entityCorpse = new Entity
-			(
-				itemDefnCorpse.name + universe.idHelper.idNext(),
-				[
-					entityDying.Locatable,
-					new Item(itemDefnCorpse.name, 1),
-					collidableDefns.Open,
-					new Drawable(visuals["Corpse"]),
-					//itemDefnCorpse
-					new Turnable(rot)
-				]
-			);
-
-			place.entitiesToSpawn.push(entityCorpse);
-		};
-
 		// agents
 
 		var itemHolder = new ItemHolder();
@@ -58,6 +41,25 @@
 		var useCorpse = function(universe, world, place, entityItem, user)
 		{
 			// todo
+		};
+
+		var dieAndDropCorpse = function(universe, world, place, entityDying)
+		{
+			var itemDefnCorpse = entityDying.Killable.itemDefnCorpse;
+			entityDying.Locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
+			var entityCorpse = new Entity
+			(
+				itemDefnCorpse.name + universe.idHelper.idNext(),
+				[
+					entityDying.Locatable,
+					new Item(itemDefnCorpse.name, 1),
+					collidableDefns.Open,
+					new Drawable(visuals["Corpse"]),
+					new Turnable(rot)
+				]
+			);
+
+			place.entitiesToSpawn.push(entityCorpse);
 		};
 
 		for (var i = 0; i < agentDatas.length; i++)
@@ -75,7 +77,6 @@
 				agentName + " Corpse", // description
 				1, // mass
 				1, // stackSizeMax,
-				1, // relativeFrequency
 				[ "Food" ], // categoryNames
 				null, // init
 				useCorpse
@@ -89,27 +90,12 @@
 					new ActorDefn(activityDefns["Move Toward Player"].name),
 					collidableDefns.Transparent,
 					itemHolder,
-					new EnemyDefn(),
-					new Killable(5, null),
-					new MoverDefn
-					(
-						agentName,
-						1, // relativeFrequency
-						movesPerTurn,
-						new MoverData_Demographics(null, null, difficulty, experienceToKill),
-						new MoverData_Skills([]),
-						new MoverData_Spells([]),
-						new MoverData_Traits(10, 10, 10, 10, 10),
-						new MoverDefn_Vitals(20, 1000),
-						itemDefnCorpse,
-						dieAndDropCorpse,
-						// attributeGroups
-						[
-							// todo
-						]
-					),
-
-					new Drawable(visuals[agentName], true),
+					new Demographics(null, null, difficulty, experienceToKill),
+					new Drawable(visuals[agentName]),
+					new Generatable(1),
+					new Killable(5, null, dieAndDropCorpse, itemDefnCorpse),
+					new Mover(movesPerTurn),
+					new Namable(agentName),
 				]
 			);
 
@@ -131,7 +117,7 @@
 		for (var i = 0; i < returnValues.length; i++)
 		{
 			var entityDefnForAgent = returnValues[i];
-			var difficulty = (entityDefnForAgent.MoverDefn == null ? null : entityDefnForAgent.MoverDefn.demographics.rank);
+			var difficulty = (entityDefnForAgent.Demographics == null ? null : entityDefnForAgent.Demographics.rank);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty[difficulty];
@@ -162,35 +148,17 @@
 		var entityName = Player.name;
 
 		var sizeInPixels = visuals["Floor"].size;
-		var skillDefns = this.buildSkillDefns();
-		var spellDefns = this.buildSpellDefns();
-		var traitDefns = this.buildTraitDefns();
 
-		var moverDefnPlayer = new MoverDefn
+		var demographics = new Demographics
 		(
-			entityName,
-			0, // relativeFrequency
+			"Human", "Rogue",
+			0, // rank
+			0 // experienceToKill
+		);
+
+		var moverPlayer = new Mover
+		(
 			9, // movesPerTurn
-			new MoverData_Demographics
-			(
-				"Human", "Rogue",
-				0, // rank
-				0 // experienceToKill
-			),
-			new MoverData_Traits
-			([
-				new Trait(traitDefns["Strength"], 10),
-				new Trait(traitDefns["Dexterity"], 10),
-				new Trait(traitDefns["Willpower"], 10),
-				new Trait(traitDefns["Constitution"], 10),
-				new Trait(traitDefns["Charisma"], 10),
-			]),
-			new MoverData_Skills(skillDefns),
-			new MoverData_Spells(spellDefns),
-			new MoverDefn_Vitals(20, 1000),
-			null, // itemDefnCorpse
-			function die() {}, // todo
-			[] // attributeGroups
 		);
 
 		var visualForPlayerBase = visuals["Rogue"];
@@ -249,15 +217,17 @@
 			[
 				new ActorDefn(activityDefnName),
 				collidableDefns.Transparent,
+				demographics,
 				drawableDefnPlayer,
 				equippable,
 				new ItemHolder(),
-				new Killable(160, null),
-				moverDefnPlayer,
+				new Killable(160),
+				moverPlayer,
 				new Player
 				(
 					8 // sightRange
 				),
+				new Starvable(1000)
 			]
 		);
 
@@ -917,67 +887,11 @@
 
 	DemoData.prototype.buildRoles = function()
 	{
-		var skillDefns = this.buildSkillDefns();
-
 		var returnValues =
 		[
-			new Role
-			(
-				"Wizard",
-				// ranks
-				[
-					new Role_Rank("Evoker", 0, null),
-				],
-				// skills
-				[
-					new Role_Skill(skillDefns["Attack Spells"], 4),
-					new Role_Skill(skillDefns["Dagger"], 4),
-					new Role_Skill(skillDefns["Quarterstaff"], 4),
-				]
-			),
+			new Role("Rogue"),
+			new Role("Wizard"),
 		];
-
-		return returnValues;
-	};
-
-	DemoData.prototype.buildSkillDefns = function()
-	{
-		var returnValues =
-		[
-			new SkillDefn("Attack Spells"),
-			new SkillDefn("Dagger"),
-			new SkillDefn("Quarterstaff"),
-		];
-
-		returnValues.addLookupsByName();
-
-		return returnValues;
-	};
-
-	DemoData.prototype.buildSpellDefns = function()
-	{
-		var returnValues =
-		[
-			// todo
-		];
-
-		returnValues.addLookupsByName();
-
-		return returnValues;
-	};
-
-	DemoData.prototype.buildTraitDefns = function()
-	{
-		var returnValues =
-		[
-			new TraitDefn("Strength"),
-			new TraitDefn("Dexterity"),
-			new TraitDefn("Willpower"),
-			new TraitDefn("Constitution"),
-			new TraitDefn("Charisma"),
-		];
-
-		returnValues.addLookupsByName();
 
 		return returnValues;
 	};

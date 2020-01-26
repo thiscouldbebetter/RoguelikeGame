@@ -1,13 +1,12 @@
 
-function MoverData_Vitals(defn)
+function Starvable(satietyMax)
 {
-	this.defn = defn;
-	this.energy = defn.energyMax;
-	this.satiety = defn.satietyMax;
+	this.satietyMax = satietyMax;
+	this.satiety = this.satietyMax;
 }
 
 {
-	MoverData_Vitals.prototype.addSatietyToMover = function(world, amountToAdd, moverEntity)
+	Starvable.prototype.satietyAdd = function(world, amountToAdd, moverEntity)
 	{
 		this.satiety += amountToAdd;
 
@@ -15,9 +14,9 @@ function MoverData_Vitals(defn)
 		{
 			moverEntity.Killable.integrity = 0;
 		}
-		else if (this.satiety >= moverEntity.MoverDefn.vitals.satietyMax)
+		else if (this.satiety >= this.satietyMax)
 		{
-			// todo
+			this.satiety = this.satietyMax;
 		}
 
 		this.controlUpdate(world, moverEntity);
@@ -25,15 +24,15 @@ function MoverData_Vitals(defn)
 
 	// controls
 
-	MoverData_Vitals.prototype.controlUpdate = function(world, entity, pos)
+	Starvable.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null && pos != null) // hack
 		{
 			this.control = new ControlContainer
 			(
-				"containerMoverData_Vitals",
+				"containerMover_Vitals",
 				pos,
-				new Coords(160, 48), // size
+				new Coords(160, 32), // size
 				[
 					ControlLabel.fromPosAndText
 					(
@@ -51,20 +50,14 @@ function MoverData_Vitals(defn)
 
 					ControlLabel.fromPosAndText
 					(
-						//"labelEnergy",
-						new Coords(10, 15),
-						"Power:" + this.energy + "/" + this.defn.energyMax
-					),
-					ControlLabel.fromPosAndText
-					(
 						//"labelSatiety",
-						new Coords(10, 25),
+						new Coords(10, 15),
 						new DataBinding
 						(
 							this,
 							function get(c)
 							{
-								return "Satiety: " + c.satiety + "/" + c.defn.satietyMax;
+								return "Satiety: " + c.satiety + "/" + c.satietyMax;
 							}
 						)
 					)

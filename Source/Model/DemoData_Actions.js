@@ -5,11 +5,11 @@ function DemoData_Actions()
 }
 
 {
-	DemoData.prototype.actionAttack_Perform = function(universe, world, place, actor, action)
+	DemoData.prototype.actionAttack_Melee_Perform = function(universe, world, place, actor, action)
 	{
-		var costToAttack = actor.MoverDefn.movesPerTurn; // todo
+		var costToAttack = actor.Mover.movesPerTurn; // todo
 
-		if (actor.MoverData.movesThisTurn < costToAttack)
+		if (actor.Mover.movesThisTurn < costToAttack)
 		{
 			return;
 		}
@@ -37,11 +37,11 @@ function DemoData_Actions()
 			var entityInCell = entitiesInCellDestination[i];
 
 			var killable = entityInCell.Killable;
-			var moverDefn = entityInCell.MoverDefn;
+			var mover = entityInCell.Mover;
 
 			if (killable != null)
 			{
-				actor.MoverData.movesThisTurn -= costToAttack;
+				actor.Mover.movesThisTurn -= costToAttack;
 				actor.Turnable.hasActedThisTurn = true;
 
 				// todo - Calculate damage.
@@ -54,12 +54,12 @@ function DemoData_Actions()
 				{
 					if (actorPlayer != null)
 					{
-						var message = "You miss the " + moverDefn.name + ".";
+						var message = "You miss the " + entityInCell.Namable.name + ".";
 						actorPlayer.messageLog.messageAdd(message);
 					}
 					else if (entityInCell.Player != null)
 					{
-						var message = "The " + actor.MoverDefn.name + " misses you.";
+						var message = "The " + actor.Namable.name + " misses you.";
 						entityInCell.Player.messageLog.messageAdd(message);
 					}
 				}
@@ -72,29 +72,29 @@ function DemoData_Actions()
 
 					if (actorPlayer != null)
 					{
-						var message = "You hit the " + moverDefn.name + ".";
+						var message = "You hit the " + entityInCell.Namable.name + ".";
 						actorPlayer.messageLog.messageAdd(message);
 						// todo - Weapon skill improvement.
 					}
 					else if (entityInCell.Player != null)
 					{
-						var message = "The " + moverDefn.name + " hits you.";
+						var message = "The " + entityInCell.Namable.name + " hits you.";
 						entityInCell.Player.messageLog.messageAdd(message);
 					}
 
 					if (killable.isAlive() == false)
 					{
-						moverDefn.die(universe, world, place, entityInCell);
+						killable.die(universe, world, place, entityInCell);
 
 						if (actorPlayer != null)
 						{
-							var message = "You kill the " + moverDefn.name + "!";
+							var message = "You kill the " + entityInCell.Namable.name + "!";
 							actorPlayer.messageLog.messageAdd(message);
 
-							var actorDemographics = actor.MoverDefn.demographics;
+							var actorDemographics = actor.Demographics;
 							var wasRankIncreased = actorDemographics.experienceAdd
 							(
-								moverDefn.demographics.experienceToKill
+								entityInCell.Demographics.experienceToKill
 							);
 
 							if (wasRankIncreased)
@@ -106,17 +106,82 @@ function DemoData_Actions()
 					}
 				}
 
-			} // end if (moverDefn != null)
+			} // end if (mover != null)
 
 		} // end for entitiesInCellDestination
 	};
 
+	DemoData.prototype.actionAttack_Projectile_Perform = function
+	(
+		universe, world, place, actor, action
+	)
+	{
+		var costToAttack = actor.Mover.movesPerTurn; // todo
+
+		if (actor.Mover.movesThisTurn < costToAttack)
+		{
+			return;
+		}
+
+		var actorLoc = actor.Locatable.loc;
+		var directionFacing = actorLoc.orientation.forward.clone().directions();
+		var posInCellsInFront = actorLoc.pos.clone().add
+		(
+			directionFacing
+		);
+
+		var map = place.map;
+		var cellInFront = map.cellAtPos(posInCellsInFront);
+
+		if (cellInFront == null)
+		{
+			return;
+		}
+
+		if (cellInFront.terrain(map).costToTraverse >= MapTerrain.AlmostInfinity)
+		{
+			return;
+		}
+
+		var actorPlayer = actor.Player;
+
+		actor.Mover.movesThisTurn -= costToAttack;
+		actor.Turnable.hasActedThisTurn = true;
+
+		var projectileLoc = actor.Locatable.loc.clone();
+		var projectilePos = projectileLoc.pos;
+		//projectilePos.add(directionFacing);
+		projectilePos.z++;
+		var visual =
+			world.defn.entityDefns["Dagger"].Drawable.visual; // todo
+		var projectileEntity = new Entity
+		(
+			"Projectile" + IDHelper.Instance().idNext(),
+			[
+				new ActorDefn("Fly Forward"),
+				new Awaitable(),
+				CollidableDefn.Instances().Open,
+				new Drawable(visual),
+				new Ephemeral(8),
+				new Locatable(projectileLoc),
+				new Mover(1) // hack
+			]
+		);
+
+		place.entitiesToSpawn.push(projectileEntity);
+
+		if (actor.Player != null)
+		{
+			actor.Player.messageLog.messageAdd("You throw a dagger.");
+		}
+	};
+
 	DemoData.prototype.actionDoorOpenOrClose_Perform = function(universe, world, place, actor, action, shouldOpenNotClose)
 	{
-		var costToPerform = actor.MoverDefn.movesPerTurn; // todo
+		var costToPerform = actor.Mover.movesPerTurn; // todo
 
-		var actorMoverData = actor.MoverData;
-		if (actorMoverData.movesThisTurn >= costToPerform)
+		var actorMover = actor.Mover;
+		if (actorMover.movesThisTurn >= costToPerform)
 		{
 			var actorLoc = actor.Locatable.loc;
 			var directionFacing = actorLoc.orientation.forward.clone().directions();
@@ -160,7 +225,7 @@ function DemoData_Actions()
 							}
 							openable.isOpen = (openable.isOpen == false);
 
-							actorMoverData.movesThisTurn -= costToPerform;
+							actorMover.movesThisTurn -= costToPerform;
 							actor.Turnable.hasActedThisTurn = true;
 						}
 
@@ -188,12 +253,12 @@ function DemoData_Actions()
 		}
 
 		var emplacementToUse = emplacementsInCell[0];
-		var costToUse = actor.MoverDefn.movesPerTurn; // hack
+		var costToUse = actor.Mover.movesPerTurn; // hack
 
-		var moverData = actor.MoverData;
-		if (moverData.movesThisTurn >= costToUse)
+		var mover = actor.Mover;
+		if (mover.movesThisTurn >= costToUse)
 		{
-			moverData.movesThisTurn -= costToUse;
+			mover.movesThisTurn -= costToUse;
 			actor.Turnable.hasActedThisTurn = true;
 
 			emplacementToUse.Emplacement.use
@@ -215,12 +280,12 @@ function DemoData_Actions()
 
 		var itemHolder = actor.ItemHolder;
 		var itemToDrop = itemHolder.itemSelected;
-		var costToDrop = actor.MoverDefn.movesPerTurn; // hack
+		var costToDrop = actor.Mover.movesPerTurn; // hack
 
-		var moverData = actor.MoverData;
-		if (itemToDrop != null && moverData.movesThisTurn >= costToDrop)
+		var mover = actor.Mover;
+		if (itemToDrop != null && mover.movesThisTurn >= costToDrop)
 		{
-			moverData.movesThisTurn -= costToDrop;
+			mover.movesThisTurn -= costToDrop;
 			actor.Turnable.hasActedThisTurn = true;
 
 			function removeItem(itemHolder, world, actor, itemToDrop)
@@ -267,12 +332,12 @@ function DemoData_Actions()
 			var itemToPickUp = entityPresent.Item;
 			if (itemToPickUp != null)
 			{
-				var costToPickUp = actor.MoverDefn.movesPerTurn; // hack
+				var costToPickUp = actor.Mover.movesPerTurn; // hack
 
-				var moverData = actor.MoverData;
-				if (moverData.movesThisTurn >= costToPickUp)
+				var mover = actor.Mover;
+				if (mover.movesThisTurn >= costToPickUp)
 				{
-					moverData.movesThisTurn -= costToPickUp;
+					mover.movesThisTurn -= costToPickUp;
 					actor.Turnable.hasActedThisTurn = true;
 
 					function pickUpItem(itemHolder, world, actor, itemToPickUp)
@@ -348,10 +413,10 @@ function DemoData_Actions()
 		{
 			var movesToUse = 1; // todo
 
-			var moverData = actor.MoverData;
-			if (moverData.movesThisTurn >= movesToUse)
+			var mover = actor.Mover;
+			if (mover.movesThisTurn >= movesToUse)
 			{
-				moverData.movesThisTurn -= movesToUse;
+				mover.movesThisTurn -= movesToUse;
 				actor.Turnable.hasActedThisTurn = true;
 
 				itemToUse.defn.itemDefn.use(world, actor, itemToUse, actor);
@@ -361,7 +426,7 @@ function DemoData_Actions()
 
 	DemoData.prototype.actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
 	{
-		if (actor.MoverData.movesThisTurn < actor.MoverDefn.movesPerTurn)
+		if (actor.Mover.movesThisTurn < actor.Mover.movesPerTurn)
 		{
 			return;
 		}
@@ -370,8 +435,6 @@ function DemoData_Actions()
 		{
 			return;
 		}
-
-		var player = actor.Player;
 
 		var actorLoc = actor.Locatable.loc;
 		var actorOrientation = actorLoc.orientation;
@@ -395,15 +458,51 @@ function DemoData_Actions()
 			return;
 		}
 
+		var isDestinationAccessible = this.actionMove_Perform_1
+		(
+			universe, world, place, actor, action, directionToMove,
+			cellDestination
+		);
+
+		isDestinationAccessible = this.actionMove_Perform_2
+		(
+			universe, world, place, actor, action, directionToMove,
+			cellDestination, isDestinationAccessible
+		);
+
+		this.actionMove_Perform_3
+		(
+			universe, world, place, actor, action, directionToMove,
+			cellDestination, isDestinationAccessible, posInCellsDestination
+		);
+
+	};
+
+	DemoData.prototype.actionMove_Perform_1 = function
+	(
+		universe, world, place, actor, action, directionToMove, cellDestination
+	)
+	{
 		var isDestinationAccessible = true;
 
+		var map = place.map;
 		var cellTerrain = cellDestination.terrain(map);
 		var costToTraverse = cellTerrain.costToTraverse;
-		var moverData = actor.MoverData;
-		if (costToTraverse > moverData.movesThisTurn)
+		var mover = actor.Mover;
+		if (costToTraverse > mover.movesThisTurn)
 		{
 			isDestinationAccessible = false;
 		}
+
+		return isDestinationAccessible;
+	}
+
+	DemoData.prototype.actionMove_Perform_2 = function
+	(
+		universe, world, place, actor, action, directionToMove, cellDestination, isDestinationAccessible
+	)
+	{
+		var player = actor.Player;
 
 		if (isDestinationAccessible)
 		{
@@ -426,15 +525,15 @@ function DemoData_Actions()
 							entityDefnName = entityInCell.Emplacement.appearance;
 						}
 					}
-					else if (entityInCell.MoverDefn != null)
+					else if (entityInCell.Mover != null)
 					{
 						if (player != null)
 						{
-							entityDefnName = entityInCell.MoverDefn.name;
+							entityDefnName = entityInCell.Namable.name;
 						}
 						else
 						{
-							this.actionAttack_Perform(universe, world, place, actor, action);
+							this.actionAttack_Melee_Perform(universe, world, place, actor, action);
 						}
 					}
 
@@ -443,10 +542,25 @@ function DemoData_Actions()
 						var message = "A " + entityDefnName + " blocks your path.";
 						player.messageLog.messageAdd(message);
 					}
-
 				}
 			}
 		}
+
+		return isDestinationAccessible;
+	};
+
+	DemoData.prototype.actionMove_Perform_3 = function
+	(
+		universe, world, place, actor, action, directionToMove,
+		cellDestination, isDestinationAccessible, posInCellsDestination
+	)
+	{
+		var player = actor.Player;
+		var mover = actor.Mover;
+		var map = place.map;
+		var cellTerrain = cellDestination.terrain(map);
+		var costToTraverse = cellTerrain.costToTraverse;
+		var entitiesInCellDestination = cellDestination.entitiesPresent;
 
 		if (isDestinationAccessible == false)
 		{
@@ -455,12 +569,13 @@ function DemoData_Actions()
 				// hack - Otherwise monsters build up moves.
 				// Should probably be handled elsewhere,
 				// perhaps in the "Move Toward Player" activity.
-				moverData.movesThisTurn -= costToTraverse;
+				mover.movesThisTurn = 0;
 			}
 		}
 		else
 		{
-			moverData.movesThisTurn -= costToTraverse;
+			var mover = actor.Mover;
+			mover.movesThisTurn -= costToTraverse;
 			actor.Turnable.hasActedThisTurn = true;
 
 			var cellDeparted = actor.Collidable.mapCellOccupied;
@@ -490,13 +605,13 @@ function DemoData_Actions()
 
 			entitiesInCellDestination.push(actor);
 			actor.Collidable.mapCellOccupied = cellDestination;
-			actorLoc.pos.overwriteWith(posInCellsDestination);
+			actor.Locatable.loc.pos.overwriteWith(posInCellsDestination);
 		} // end if (isDestinationAccessible)
 	};
 
 	DemoData.prototype.actionWait_Perform = function(universe, world, place, actor, action)
 	{
-		actor.MoverData.movesThisTurn = 0;
+		actor.Mover.movesThisTurn = 0;
 		actor.Turnable.hasActedThisTurn = true;
 	};
 
@@ -508,10 +623,16 @@ function DemoData_Actions()
 
 		var actions = this;
 
-		var actionAttack = new Action
+		var actionAttack_Melee = new Action
 		(
-			"Attack",
-			actions.actionAttack_Perform
+			"Attack with Melee Weapon",
+			actions.actionAttack_Melee_Perform
+		);
+
+		var actionAttack_Projectile = new Action
+		(
+			"Fire Projectile",
+			actions.actionAttack_Projectile_Perform
 		);
 
 		var actionDoorClose = new Action
@@ -657,7 +778,8 @@ function DemoData_Actions()
 		var actionInstances = Action.Instances();
 		var returnValues =
 		[
-			actionAttack,
+			actionAttack_Melee,
+			actionAttack_Projectile,
 			actionDoorClose,
 			actionDoorOpen,
 			actionEmplacement_Use,
@@ -707,12 +829,41 @@ function DemoData_Actions()
 
 			function initialize(universe, world, place, actor, activity)
 			{
-				// do nothing
+				// Do nothing.
 			},
 
 			function perform(universe, world, place, actor, activity)
 			{
-				// do nothing
+				// Do nothing.
+			}
+		);
+
+		var activityDefnFlyForward = new ActivityDefn
+		(
+			"Fly Forward",
+
+			function initialize(universe, world, place, entityActor, activity)
+			{
+				// Do nothing.
+			},
+
+			function perform(universe, world, place, entityActor, activity)
+			{
+				var actorLoc = entityActor.Locatable.loc;
+				var actorPos = actorLoc.pos;
+				var map = place.map;
+
+				var directionsToMove = actorLoc.orientation.forward.clone().directions(); // hack
+				var headingToMove = Heading.fromCoords(directionsToMove);
+
+				// hack
+				var actionsMoves = world.defn.actions._MovesByHeading;
+				var actionMoveInDirection = actionsMoves[headingToMove];
+
+				entityActor.ActorData.actions.push
+				(
+					actionMoveInDirection
+				);
 			}
 		);
 
@@ -722,7 +873,7 @@ function DemoData_Actions()
 
 			function initialize(universe, world, place, actor, activity)
 			{
-				// do nothing
+				// Do nothing.
 			},
 
 			function perform(universe, world, place, actor, activity)
@@ -772,15 +923,20 @@ function DemoData_Actions()
 
 			function perform(universe, world, place, entityActor, activity)
 			{
-				var moverData = entityActor.MoverData;
-				var moverDefn = entityActor.MoverDefn;
-				var costToTraverse = moverDefn.movesPerTurn; // hack
-				if (moverData.movesThisTurn < costToTraverse)
+				var awaitables = place.awaitables();
+				if (awaitables.length > 0)
 				{
 					return;
 				}
 
-				// moverData.movesThisTurn -= costToTraverse;
+				var mover = entityActor.Mover;
+				var costToTraverse = mover.movesPerTurn; // hack
+				if (mover.movesThisTurn < costToTraverse)
+				{
+					return;
+				}
+
+				// mover.movesThisTurn -= costToTraverse;
 
 				var players = place.entitiesByPropertyName[Player.name];
 
@@ -861,14 +1017,15 @@ function DemoData_Actions()
 			{
 				activity.target =
 				[
-					new ActionToInputsMapping("Attack", [ "a" ]),
+					new ActionToInputsMapping("Attack with Melee Weapon", [ "a" ]),
 					new ActionToInputsMapping("Close Door", [ "c" ] ),
 					new ActionToInputsMapping("Open Door", [ "d" ] ),
-					new ActionToInputsMapping("Use Selected Item", [ "f" ]),
+					new ActionToInputsMapping("Fire Projectile", [ "f" ]),
 					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
 					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),
 					new ActionToInputsMapping("Target Selected Item", [ "t" ], ),
 					new ActionToInputsMapping("Use Emplacement", [ "u" ] ),
+					new ActionToInputsMapping("Use Selected Item", [ "y" ]),
 
 					new ActionToInputsMapping("Move Southwest", [ "_1" ]),
 					new ActionToInputsMapping("Move South", [ "_2" ]),
@@ -893,6 +1050,12 @@ function DemoData_Actions()
 
 			function perform(universe, world, place, actor, activity)
 			{
+				var awaitables = place.awaitables();
+				if (awaitables.length > 0)
+				{
+					return;
+				}
+
 				var inputHelper = universe.inputHelper;
 				var inputToActionMappings = activity.target;
 				var inputsActive = inputHelper.inputsPressed;
@@ -931,7 +1094,7 @@ function DemoData_Actions()
 
 			function perform(universe, world, place, actor, activity)
 			{
-				if (actor.MoverData.movesThisTurn <= actor.MoverDefn.movesPerTurn)
+				if (actor.Mover.movesThisTurn <= actor.Mover.movesPerTurn)
 				{
 					return;
 				}
@@ -1047,6 +1210,7 @@ function DemoData_Actions()
 		var returnValues =
 		[
 			activityDefnDoNothing,
+			activityDefnFlyForward,
 			activityDefnGenerateMovers,
 			activityDefnMoveRandomly,
 			activityDefnMoveTowardPlayer,

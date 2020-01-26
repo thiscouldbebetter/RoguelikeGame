@@ -1,7 +1,0 @@
-
-
-function EnemyDefn()
-{
-	// todo
-}
-

@@ -19,7 +19,6 @@
 			"[Appearance]",
 			1, // mass
 			1, // stackSizeMax
-			1, // relativeFrequency
 			[], // categoryNames
 			null, // initialize
 			null // use
@@ -31,7 +30,6 @@
 			"[Appearance]",
 			1, // mass
 			999, // stackSizeMax
-			1, // relativeFrequency
 			[], // categoryNames
 			null, // initialize
 			null // use
@@ -111,6 +109,11 @@
 			"Unchanging", "Poision Resistance"
 		];
 
+		var relativeFrequencies = 
+		[
+			1, 1, 1, 1, 1, 1, 1, 1, 1
+		];
+
 		var appearances =
 		[
 			"Circular", "Concave", "Hexagonal", "Octagonal",
@@ -122,6 +125,7 @@
 		for (var i = 0; i < namesOfAmulets.length; i++)
 		{
 			var name = "Amulet of " + namesOfAmulets[i];
+			var relativeFrequency = relativeFrequencies[i];
 
 			var appearanceIndex = Math.floor
 			(
@@ -142,11 +146,11 @@
 						appearance,
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Amulet" ], // categoryNames
 						ItemDefn.InitializeDoNothing,
 						ItemDefn.UseEquip
 					),
+					new Generatable(relativeFrequency),
 				]
 			);
 
@@ -166,7 +170,6 @@
 					name,
 					1, // mass
 					1, // stackSizeMax
-					0, // relativeFrequency
 					[ "Amulet" ], // categoryNames
 					ItemDefn.InitializeDoNothing,
 					ItemDefn.UseEquip
@@ -265,8 +268,7 @@
 			null, null, // init, update
 			function use(u, w, p, userEntity, deviceEntity)
 			{
-				var moverData = userEntity.MoverData;
-				moverData.vitals.satiety += deviceEntity.Food.satiety;
+				userEntity.Starvable.satietyAdd(deviceEntity.Food.satiety);
 				userEntity.ItemHolder.itemEntityRemove(deviceEntity);
 			}
 		);
@@ -277,6 +279,7 @@
 			var name = foodData[0];
 			var satiety = foodData[1];
 			var mass = foodData[2];
+			var relativeFrequency = 1; // todo
 
 			var entityDefn = new Entity
 			(
@@ -293,11 +296,11 @@
 						name, // description
 						mass, // mass
 						1, // stackSizeMax,
-						1, // relativeFrequency
 						[ "Food" ], // categoryNames
 						null, // init
 						this.itemUseDevice
-					)
+					),
+					new Generatable(relativeFrequency)
 				]
 			);
 
@@ -347,18 +350,18 @@
 
 		var namesAndEffectDefnsOfPotions =
 		[
-			[ "Acid" 		, new ED( null, function(w, ae, te) { te.MoverData.integrityAdd(-30); te.Player.controlUpdate(w, te); } ) ],
+			[ "Acid" 		, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(-30); te.Player.controlUpdate(w, te); } ) ],
 			[ "Blindness" 		, effectMessageNotImplemented ],
 			[ "Booze" 		, effectMessageNotImplemented ],
 			[ "Enlightenment" 	, effectMessageNotImplemented ],
 			[ "Confusion" 		, effectMessageNotImplemented ],
-			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.addSatietyToMover(w, 100, targetEntity); te.Player.controlUpdate(targetEntity); } ) ],
-			[ "Gain Ability" 	, new ED( null, function(w, ae, te) { te.MoverData.traits.strength += 1; te.Player.controlUpdate(w, te); } ) ],
-			[ "Gain Energy" 	, new ED( null, function(w, ae, te) { te.MoverData.vitals.energy += 100; te.Player.controlUpdate(te); } ) ],
-			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.MoverData.demographics.level += 1; te.Player.controlUpdate(te); } ) ],
-			[ "Healing" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(10); te.Player.controlUpdate(w, te); } ) ],
-			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(30); te.Player.controlUpdate(w, te); } ) ],
-			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(1000); te.Player.controlUpdate(w, te); } ) ],
+			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.Starvable.satietyAdd(w, 100, targetEntity); te.Player.controlUpdate(targetEntity); } ) ],
+			[ "Gain Ability" 	, effectMessageNotImplemented ],
+			[ "Gain Energy" 	, effectMessageNotImplemented ],
+			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.Demographics.level += 1; te.Player.controlUpdate(te); } ) ],
+			[ "Healing" 		, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(10); te.Player.controlUpdate(w, te); } ) ],
+			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(30); te.Player.controlUpdate(w, te); } ) ],
+			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(1000); te.Player.controlUpdate(w, te); } ) ],
 			[ "Invisibility" 	, effectMessageNotImplemented ],
 			[ "Levitation" 		, effectMessageNotImplemented ],
 			[ "Monster Detection" 	, effectMessageNotImplemented ],
@@ -368,7 +371,7 @@
 			[ "Polymorph" 		, effectMessageNotImplemented ],
 			[ "Restore aeility" 	, effectMessageNotImplemented ],
 			[ "See Invisible" 	, effectMessageNotImplemented ],
-			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.killableData.integrityAdd(-20); te.Player.controlUpdate(w, te); } ) ],
+			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(-20); te.Player.controlUpdate(w, te); } ) ],
 			[ "Sleeping" 		, effectMessageNotImplemented ],
 			[ "Speed" 		, effectMessageNotImplemented ],
 			[ "Water" 		, effectMessageNotImplemented ],
@@ -411,6 +414,8 @@
 			var effectDefn = potionData[1];
 			effectDefn.name = name;
 
+			var relativeFrequency = 1; // todo
+
 			var entityDefn = new Entity
 			(
 				itemDefnName,
@@ -425,11 +430,11 @@
 						appearance, // description
 						1, // mass
 						1, // stackSizeMax,
-						1, // relativeFrequency
 						[ "Potion" ], // categoryNames
 						null, // init
 						this.itemUseDevice
-					)
+					),
+					new Generatable(relativeFrequency)
 				]
 			);
 
@@ -525,11 +530,11 @@
 							appearance,
 							1, // mass
 							1, // stackSizeMax
-							1, // relativeFrequency
 							[ "Ring" ], // categoryNames
 							ItemDefn.InitializeDoNothing,
 							ItemDefn.UseEquip
 						),
+						new Generatable(1), // todo
 					]
 				)
 			);
@@ -626,11 +631,11 @@
 						appearance, // description
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Scroll" ], // categoryNames
 						null, // init
 						this.itemUseDevice
 					),
+					new Generatable(1) // todo
 				]
 			);
 
@@ -764,7 +769,7 @@
 					function apply(world, targetEntity)
 					{
 						var spellToAdd = new SpellDefn("[Spell]");
-						var spellsKnown = targetEntity.MoverData.spells.spells;
+						var spellsKnown = targetEntity.Mover.spells.spells;
 
 						var isSpellAlreadyKnown = false;
 						for (var i = 0; i < spellsKnown.length; i++)
@@ -798,11 +803,11 @@
 						appearance, // description
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Spellbook" ], // categoryNames
 						null, // init
 						this.itemUseDevice
-					)
+					),
+					new Generatable(1) // todo
 				]
 			);
 
@@ -985,11 +990,11 @@
 						appearance, // description
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Wand" ], // categoryNames
 						null, // init
 						this.itemUseDevice
 					),
+					new Generatable(1) // todo
 				]
 			);
 
@@ -1070,11 +1075,11 @@
 						appearance,
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Weapon" ], // categoryNames
 						null, // initialize
 						ItemDefn.UseEquip// use
 					),
+					new Generatable(1) // todo
 				]
 			);
 
@@ -1188,11 +1193,11 @@
 						appearance,
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Armor" , category.Name ], // categoryNames
 						null, // initialize
 						ItemDefn.UseEquip // use
-					)
+					),
+					new Generatable(1) // todo
 				]
 			);
 
@@ -1284,12 +1289,11 @@
 						appearance,
 						1, // mass
 						1, // stackSizeMax
-						1, // relativeFrequency
 						[ "Tool" ], // categoryNames
 						null, // initialize
 						ItemDefn.UseEquip // use
 					),
-
+					new Generatable(1) // todo
 				]
 			);
 
@@ -1397,11 +1401,11 @@
 							appearance,
 							1, // mass
 							1, // stackSizeMax
-							1, // relativeFrequency
 							[ "Stone" ], // categoryNames
 							ItemDefn.InitializeDoNothing,
 							ItemDefn.UseDoNothing
 						),
+						new Generatable(1) // todo
 					]
 				)
 			);

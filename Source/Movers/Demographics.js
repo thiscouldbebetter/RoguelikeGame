@@ -1,5 +1,5 @@
 
-function MoverData_Demographics(species, role, rank, experienceToKill)
+function Demographics(species, role, rank, experienceToKill)
 {
 	this.species = species;
 	this.role = role;
@@ -10,7 +10,7 @@ function MoverData_Demographics(species, role, rank, experienceToKill)
 }
 
 {
-	MoverData_Demographics.prototype.experienceAdd = function(experienceToAdd)
+	Demographics.prototype.experienceAdd = function(experienceToAdd)
 	{
 		var wasRankIncreased = false;
 
@@ -27,13 +27,13 @@ function MoverData_Demographics(species, role, rank, experienceToKill)
 
 	// controls
 
-	MoverData_Demographics.prototype.controlUpdate = function(world, entity, pos)
+	Demographics.prototype.controlUpdate = function(world, entity, pos)
 	{
 		if (this.control == null)
 		{
 			this.control = new ControlContainer
 			(
-				"containerMoverData_Demographics",
+				"containerDemographics",
 				pos,
 				new Coords(160, 16), // size
 				[
@@ -51,5 +51,5 @@ function MoverData_Demographics(species, role, rank, experienceToKill)
 		}
 
 		return this.control;
-	}
+	};
 }
