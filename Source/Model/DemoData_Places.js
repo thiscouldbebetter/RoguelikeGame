@@ -417,7 +417,7 @@
 			itemDefnGoal.name,
 			itemDefnGoal,
 			[
-				new Locatable(stairDown.Locatable.loc.clone()),
+				new Locatable(stairDown.locatable.loc.clone()),
 				new Item(itemDefnGoal.name, 1)
 			]
 		);
@@ -899,7 +899,7 @@
 
 			var stairsDown = EntityHelper.new
 			(
-				"StairsDown" + (i == 0 ? "ToNextLevel" : "ToChildBranch"),
+				(i == 0 ? "StairsDownToNextLevel" : "StairsDownToChildBranch"),
 				entityDefns["StairsDown"],
 				[
 					new Locatable(new Location(zoneCenter)),
@@ -938,7 +938,7 @@
 
 				randomNumber = randomizer.getNextRandom();
 				var isDoorOpen = (randomNumber <= chanceOfDoorBeingOpen);
-				entityForDoor.Openable.isOpen = isDoorOpen;
+				entityForDoor.openable.isOpen = isDoorOpen;
 
 				entities.push(entityForDoor);
 			}
@@ -956,12 +956,12 @@
 		for (var g = 0; g < entityDefnsForEmplacements.length; g++)
 		{
 			var entityDefn = entityDefnsForEmplacements[g];
-			var relativeFrequency = entityDefn.Generatable.relativeFrequency;
+			var relativeFrequency = entityDefn.generatable.relativeFrequency;
 			sumOfFrequenciesForAllEmplacements += relativeFrequency;
 		}
 
 		var chancesForItemPerZone = 2;
-		var probabilityOfItemPerChance = .33;
+		var probabilityOfItemPerChance = 1; //.33;
 
 		var entityDefnGroupsForItems =
 		[
@@ -1067,7 +1067,7 @@
 					{
 						var entityDefn = entityDefnsForEmplacements[e];
 						sumOfFrequenciesForEmplacementsSoFar +=
-							entityDefn.Generatable.relativeFrequency;
+							entityDefn.generatable.relativeFrequency;
 
 						if (sumOfFrequenciesForEmplacementsSoFar >= randomValue)
 						{

@@ -61,7 +61,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			for (var i = 0; i < entitiesWithPropertyName.length; i++)
 			{
 				var entity = entitiesWithPropertyName[i];
-				if (entity.Locatable.loc.pos.equalsXY(cellPosToCheck) == true)
+				if (entity.locatable.loc.pos.equalsXY(cellPosToCheck) == true)
 				{
 					returnEntities.insertElementAt(entity, 0);
 				}
@@ -125,6 +125,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			var propertyName = propertyNamesKnown[i];
 			var entitiesWithProperty = this.entitiesByPropertyName[propertyName];
 
+			propertyName = propertyName.lowercaseFirstCharacter();
 			for (var b = 0; b < entitiesWithProperty.length; b++)
 			{
 				var entity = entitiesWithProperty[b];
@@ -151,7 +152,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			var entityToRemove = this.entitiesToRemove[i];
 
 			// hack
-			var collidable = entityToRemove.Collidable;
+			var collidable = entityToRemove.collidable;
 			if (collidable != null)
 			{
 				var entitiesInCell = collidable.mapCellOccupied.entitiesPresent;
@@ -259,7 +260,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 				new Coords(180, 272), // size
 				// children
 				[
-					entityForPlayer.Player.controlUpdate(world, entityForPlayer),
+					entityForPlayer.player.controlUpdate(world, entityForPlayer),
 				]
 			);
 		}
@@ -276,7 +277,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			this.hasBeenUpdatedSinceDrawn = false;
 
 			var player = world.entityForPlayer;
-			var placeKnown = player.Player.placeKnownLookup[this.name];
+			var placeKnown = player.player.placeKnownLookup[this.name];
 
 			if (placeKnown != null)
 			{
@@ -305,7 +306,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 		display.childSelectByName("Messages");
 		display.clear();
-		var messageLogAsControl = world.entityForPlayer.Player.messageLog.controlUpdate(world);
+		var messageLogAsControl = world.entityForPlayer.player.messageLog.controlUpdate(world);
 		this._drawLoc.pos.clear();
 		messageLogAsControl.draw(universe, display, this._drawLoc);
 		display.flush();

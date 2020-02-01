@@ -17,10 +17,10 @@ function DemoData(randomizer)
 
 		var moverGroups = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
 		var moverEntities = moverGroups[0].entityDefns;
-		var killables = moverEntities.filter(x => x.Killable != null); // hack
+		var killables = moverEntities.filter(x => x.killable != null); // hack
 		var itemDefnsForCorpses = killables.map
 		(
-			x => x.Killable.itemDefnCorpse
+			x => x.killable.itemDefnCorpse
 		).filter
 		(
 			x => (x != null)
@@ -45,9 +45,9 @@ function DemoData(randomizer)
 
 		var useEmplacementAltar = function(universe, world, place, entityUsing, entityUsed)
 		{
-			var itemsHeld = entityUsing.ItemHolder.itemEntities;
+			var itemsHeld = entityUsing.itemHolder.itemEntities;
 			var isItemGoalHeld = itemsHeld.some(x => x.name == "Amulet of Yendor");
-			var messageLog = entityUsing.Player.messageLog;
+			var messageLog = entityUsing.player.messageLog;
 			if (isItemGoalHeld == false)
 			{
 				var message = "You do not have the Amulet of Yendor!"
@@ -98,9 +98,9 @@ function DemoData(randomizer)
 
 		var useEmplacementPortal = function(universe, world, place, entityUsing, entityUsed)
 		{
-			var message = "You use the " + entityUsed.Emplacement.appearance + ".";
-			entityUsing.Player.messageLog.messageAdd(message);
-			entityUsed.Portal.use(universe, world, place, entityUsing, entityUsed);
+			var message = "You use the " + entityUsed.emplacement.appearance + ".";
+			entityUsing.player.messageLog.messageAdd(message);
+			entityUsed.portal.use(universe, world, place, entityUsing, entityUsed);
 		};
 
 		var collidableOpen = collidableDefns.Open;
@@ -128,11 +128,11 @@ function DemoData(randomizer)
 					(
 						function blocksMovement(entity)
 						{
-							return (entity.Openable.isOpen == false);
+							return (entity.openable.isOpen == false);
 						},
 						function blocksVision(entity)
 						{
-							return (entity.Openable.isOpen == false);
+							return (entity.openable.isOpen == false);
 						},
 					),
 					new Drawable
@@ -141,7 +141,7 @@ function DemoData(randomizer)
 						(
 							function selectChildName(universe, world, display, entity)
 							{
-								return (entity.Openable.isOpen ? "Open" : "Closed");
+								return (entity.openable.isOpen ? "Open" : "Closed");
 							},
 							[ "Closed", "Open" ],
 							[ visuals["DoorClosed"], visuals["DoorOpenLeft"] ]
@@ -242,7 +242,10 @@ function DemoData(randomizer)
 
 		var itemCategories = this.buildItemCategories();
 
-		var entityDefnGroups = this.buildEntityDefnGroups(visualsOpaque, activityDefns, itemCategories);
+		var entityDefnGroups = this.buildEntityDefnGroups
+		(
+			visualsOpaque, activityDefns, itemCategories
+		);
 
 		var placeDefns = this.buildPlaceDefns(visualsOpaque, actions);
 

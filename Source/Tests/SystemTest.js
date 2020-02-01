@@ -68,7 +68,7 @@ function systemTest()
 function systemTest_2(universe)
 {
 	var world = World.new(universe);
-	world.entityForPlayer.ActorDefn.activityDefnNameInitial = "Demo User Input";
+	world.entityForPlayer.actorDefn.activityDefnNameInitial = "Demo User Input";
 	var venue = new VenueWorld(world);
 	universe.venueNext = venue;
 

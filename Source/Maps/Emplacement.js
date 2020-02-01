@@ -9,7 +9,7 @@ function Emplacement(appearance, use)
 	{
 		if (this._use == null)
 		{
-			entityUsing.Player.messageLog.messageAdd("Nothing happens.");
+			entityUsing.player.messageLog.messageAdd("Nothing happens.");
 		}
 		else
 		{

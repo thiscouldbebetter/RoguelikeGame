@@ -29,16 +29,16 @@ function CollidableDefn(blocksMovement, blocksVision)
 	{
 		var collidable = new Collidable
 		(
-			entity.CollidableDefn
+			entity.collidableDefn
 		);
 
 		var map = place.map;
-		var entityPosInCells = entity.Locatable.loc.pos;
+		var entityPosInCells = entity.locatable.loc.pos;
 		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
 		collidable.mapCellOccupied = mapCellOccupied;
 
-		entity.Collidable = collidable;
+		entity.collidable = collidable;
 	};
 
 	CollidableDefn.prototype.updateForTimerTick = function(universe, world, place, entity)

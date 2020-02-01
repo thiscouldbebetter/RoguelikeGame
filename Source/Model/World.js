@@ -11,7 +11,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 	{
 		var place0 = this.places[0];
 		var portal0 = place0.entitiesToSpawn[0]; // hack
-		var portal0Pos = portal0.Locatable.loc.pos.clone();
+		var portal0Pos = portal0.locatable.loc.pos.clone();
 
 		var entityDefnPlayer = this.defn.entityDefns.Player;
 		this.entityForPlayer = EntityHelper.new
@@ -25,12 +25,12 @@ function World(name, defn, places, entityForPlayer, randomizer)
 				)
 			]
 		);
-		this.entityForPlayer.Demographics.rank = 1; // hack
+		this.entityForPlayer.demographics.rank = 1; // hack
 
 		place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
 	}
 
-	this.placeNext = this.places[this.entityForPlayer.Locatable.loc.placeName];
+	this.placeNext = this.places[this.entityForPlayer.locatable.loc.placeName];
 
 	this.turnsSoFar = 0;
 
@@ -40,10 +40,10 @@ function World(name, defn, places, entityForPlayer, randomizer)
 
 	var itemDefns = this.defn.entityDefns.filter
 	(
-		x => x.ItemDefn != null
+		x => x.itemDefn != null
 	).map
 	(
-		x => x.ItemDefn
+		x => x.itemDefn
 	).addLookupsByName();
 
 	this.defns =

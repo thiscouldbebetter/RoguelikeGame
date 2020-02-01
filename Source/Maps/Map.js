@@ -195,7 +195,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 	Map.prototype.draw = function(universe, world, display, venue)
 	{
 		var player = world.entityForPlayer;
-		var playerPos = player.Locatable.loc.pos;
+		var playerPos = player.locatable.loc.pos;
 
 		var cellPos = this._cellPos;
 		var shouldDrawMovers = false;
@@ -278,12 +278,12 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entitiesInCell.length; i++)
 		{
 			var entityToSort = entitiesInCell[i];
-			var entityToSortZIndex = entityToSort.Locatable.loc.pos.z;
+			var entityToSortZIndex = entityToSort.locatable.loc.pos.z;
 			var j;
 			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
 			{
 				var entitySorted = entitiesSortedBottomToTop[j];
-				var entitySortedZIndex = entitySorted.Locatable.loc.pos.z;
+				var entitySortedZIndex = entitySorted.locatable.loc.pos.z;
 				if (entityToSortZIndex <= entitySortedZIndex)
 				{
 					break;
@@ -295,16 +295,16 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
-			if (entity.Mover == null || drawMovers)
+			if (entity.mover == null || drawMovers)
 			{
-				var entityLoc = entity.Locatable.loc;
+				var entityLoc = entity.locatable.loc;
 				var entityPos = entityLoc.pos;
 
 				this._drawPosSaved.overwriteWith(entityPos);
 
 				entityPos.overwriteWith(drawPos);
 
-				var visual = entity.Drawable.visual;
+				var visual = entity.drawable.visual;
 				visual.draw(universe, world, display, entity);
 
 				entityPos.overwriteWith(this._drawPosSaved);
@@ -324,10 +324,10 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	Map.prototype.drawEntity = function(display, entity)
 	{
-		var visual = entity.Drawable.visual;
-		this._drawableEntity.Locatable.loc.pos.overwriteWith
+		var visual = entity.drawable.visual;
+		this._drawableEntity.locatable.loc.pos.overwriteWith
 		(
-			entity.Locatable.loc.pos
+			entity.locatable.loc.pos
 		).multiply
 		(
 			map.cellSizeInPixels

@@ -20,7 +20,6 @@
 			1, // mass
 			1, // stackSizeMax
 			[], // categoryNames
-			null, // initialize
 			null // use
 		);
 
@@ -31,20 +30,10 @@
 			1, // mass
 			999, // stackSizeMax
 			[], // categoryNames
-			null, // initialize
 			null // use
 		);
 
-		var effectDefnDoNothing = new EffectDefn
-		(
-			"Do Nothing",
-			function apply(world, targetEntity)
-			{
-				// do nothing
-			}
-		);
-
-		var effectDoNothing = new Effect(effectDefnDoNothing);
+		var effectDoNothing = new Effect();
 
 		var entityDefnSets = [];
 
@@ -147,7 +136,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Amulet" ], // categoryNames
-						ItemDefn.InitializeDoNothing,
 						ItemDefn.UseEquip
 					),
 					new Generatable(relativeFrequency),
@@ -171,7 +159,6 @@
 					1, // mass
 					1, // stackSizeMax
 					[ "Amulet" ], // categoryNames
-					ItemDefn.InitializeDoNothing,
 					ItemDefn.UseEquip
 				),
 			]
@@ -268,8 +255,8 @@
 			null, null, // init, update
 			function use(u, w, p, userEntity, deviceEntity)
 			{
-				userEntity.Starvable.satietyAdd(deviceEntity.Food.satiety);
-				userEntity.ItemHolder.itemEntityRemove(deviceEntity);
+				userEntity.starvable.satietyAdd(deviceEntity.Food.satiety);
+				userEntity.itemHolder.itemEntityRemove(deviceEntity);
 			}
 		);
 
@@ -297,7 +284,6 @@
 						mass, // mass
 						1, // stackSizeMax,
 						[ "Food" ], // categoryNames
-						null, // init
 						this.itemUseDevice
 					),
 					new Generatable(relativeFrequency)
@@ -326,55 +312,45 @@
 	{
 		// items - magic - potions
 
-		var ED = EffectDefn;
-
-		var effectMessageNotImplemented = new EffectDefn
+		var effectMessageNotImplemented = new Effect
 		(
-			"Display Not Implemented Message",
-			function apply(world, actingEntity, targetEntity)
+			function start(universe, world, place, entityEffectable)
 			{
-				var actingEntityDefnName = actingEntity.name;
-				/*
-				world.font.spawnMessageFloater
-				(
-					world,
-					actingEntityDefnName,
-					"NOT IMPLEMENTED - " + actingEntityDefnName,
-					targetEntity.loc
-				);
-				*/
-
-				targetEntity.controlUpdate(world);
+				var player = entityEffectable.player;
+				if (player != null)
+				{
+					player.messageLog.messageAdd("Potion effect not yet implemented!");
+				}
 			}
 		);
 
 		var namesAndEffectDefnsOfPotions =
 		[
-			[ "Acid" 		, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(-30); te.Player.controlUpdate(w, te); } ) ],
-			[ "Blindness" 		, effectMessageNotImplemented ],
-			[ "Booze" 		, effectMessageNotImplemented ],
-			[ "Enlightenment" 	, effectMessageNotImplemented ],
-			[ "Confusion" 		, effectMessageNotImplemented ],
-			[ "Fruit Juice" 	, new ED( null, function(w, ae, te) { te.Starvable.satietyAdd(w, 100, targetEntity); te.Player.controlUpdate(targetEntity); } ) ],
-			[ "Gain Ability" 	, effectMessageNotImplemented ],
-			[ "Gain Energy" 	, effectMessageNotImplemented ],
-			[ "Gain Level" 		, new ED( null, function(w, ae, te) { te.Demographics.level += 1; te.Player.controlUpdate(te); } ) ],
-			[ "Healing" 		, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(10); te.Player.controlUpdate(w, te); } ) ],
-			[ "Healing Extra" 	, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(30); te.Player.controlUpdate(w, te); } ) ],
-			[ "Healing Full" 	, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(1000); te.Player.controlUpdate(w, te); } ) ],
-			[ "Invisibility" 	, effectMessageNotImplemented ],
-			[ "Levitation" 		, effectMessageNotImplemented ],
-			[ "Monster Detection" 	, effectMessageNotImplemented ],
-			[ "Paralysis" 		, effectMessageNotImplemented ],
-			[ "Object Detection" 	, effectMessageNotImplemented ],
-			[ "Oil" 		, effectMessageNotImplemented ],
-			[ "Polymorph" 		, effectMessageNotImplemented ],
-			[ "Restore aeility" 	, effectMessageNotImplemented ],
-			[ "See Invisible" 	, effectMessageNotImplemented ],
-			[ "Sickness" 		, new ED( null, function(w, ae, te) { te.Killable.integrityAdd(-20); te.Player.controlUpdate(w, te); } ) ],
-			[ "Sleeping" 		, effectMessageNotImplemented ],
-			[ "Speed" 		, effectMessageNotImplemented ],
-			[ "Water" 		, effectMessageNotImplemented ],
+			[ "Acid", 			new Effect( function start(u, w, p, e) { e.killable.integrityAdd(-30); e.player.controlUpdate(w, te); } ) ],
+			[ "Blindness", 		effectMessageNotImplemented ],
+			[ "Booze", 			effectMessageNotImplemented ],
+			[ "Enlightenment", 	effectMessageNotImplemented ],
+			[ "Confusion", 		effectMessageNotImplemented ],
+			[ "Fruit Juice", 	new Effect( function start(u, w, p, e) { e.starvable.satietyAdd(w, 100, targetEntity); e.player.controlUpdate(targetEntity); } ) ],
+			[ "Gain Ability", 	effectMessageNotImplemented ],
+			[ "Gain Energy", 	effectMessageNotImplemented ],
+			[ "Gain Level", 	new Effect( function start(u, w, p, e) { e.demographics.level += 1; e.player.controlUpdate(te); } ) ],
+			[ "Healing", 		new Effect( function start(u, w, p, e) { e.killable.integrityAdd(10); e.player.controlUpdate(w, te); } ) ],
+			[ "Healing Extra", 	new Effect( function start(u, w, p, e) { e.killable.integrityAdd(30); e.player.controlUpdate(w, te); } ) ],
+			[ "Healing Full", 	new Effect( function start(u, w, p, e) { e.killable.integrityAdd(1000); e.player.controlUpdate(w, te); } ) ],
+			[ "Invisibility", 	effectMessageNotImplemented ],
+			[ "Levitation", 	effectMessageNotImplemented ],
+			[ "Monster Detection", effectMessageNotImplemented ],
+			[ "Paralysis" , 	effectMessageNotImplemented ],
+			[ "Object Detection", effectMessageNotImplemented ],
+			[ "Oil", 			effectMessageNotImplemented ],
+			[ "Polymorph", 		effectMessageNotImplemented ],
+			[ "Restore aeility", effectMessageNotImplemented ],
+			[ "See Invisible", 	effectMessageNotImplemented ],
+			[ "Sickness", 		new Effect( function start(u, w, p, e) { e.killable.integrityAdd(-20); e.player.controlUpdate(w, te); } ) ],
+			[ "Sleeping", 		effectMessageNotImplemented ],
+			[ "Speed", 			effectMessageNotImplemented ],
+			[ "Water", 			effectMessageNotImplemented ],
 		];
 
 		var appearances =
@@ -385,17 +361,29 @@
 			"Milky","Swirly","Bubbly","Smoky",
 			"Cloudy","Effervescent","Black","Golden",
 			"Brown","Fizzy","Dark","White",
-			"Murky", "Clear",
+			"Murky", "Clear"
 		];
 
 		var entityDefnSetPotions = [];
 
-		var device = new Device
-		(
-			name,
-			null, null, // init, update
-			this.itemEffectorApply
-		);
+		var categoryNamesPotion = [ "Potion" ];
+
+		var useItemPotion = function(universe, world, place, entityUsing, entityUsed)
+		{
+			var message = null;
+			var player = entityUsing.player;
+			if (player != null)
+			{
+				var item = entityUsed.item;
+				var itemDefn = item.defn(world);
+				message = "You drink the " + itemDefn.appearance + ".";
+				player.messageLog.messageAdd(message);
+				var effectable = entityUsing.effectable;
+				effectable.effectorApply(entityUsed.effector);
+				effectable.updateForTurn(universe, world, place, entityUsing);
+			}
+			return message;
+		};
 
 		for (var i = 0; i < namesAndEffectDefnsOfPotions.length; i++)
 		{
@@ -411,29 +399,30 @@
 
 			var potionData = namesAndEffectDefnsOfPotions[i];
 			var name = potionData[0];
-			var effectDefn = potionData[1];
-			effectDefn.name = name;
-
+			var effect = potionData[1];
 			var relativeFrequency = 1; // todo
+
+			var itemDefn = new ItemDefn
+			(
+				itemDefnName,
+				appearance,
+				appearance, // description
+				1, // mass
+				1, // stackSizeMax,
+				categoryNamesPotion,
+				useItemPotion
+			);
+
+			var effector = new Effector([effect]);
 
 			var entityDefn = new Entity
 			(
 				itemDefnName,
 				[
 					collidableDefns.Open,
-					device,
 					new Drawable(visuals[appearance]),
-					new ItemDefn
-					(
-						itemDefnName,
-						appearance,
-						appearance, // description
-						1, // mass
-						1, // stackSizeMax,
-						[ "Potion" ], // categoryNames
-						null, // init
-						this.itemUseDevice
-					),
+					effector,
+					itemDefn,
 					new Generatable(relativeFrequency)
 				]
 			);
@@ -460,36 +449,56 @@
 	{
 		// items - magic - rings
 
+		function Ring(name, effect)
+		{
+			this.name = name;
+			this.effect = effect;
+		}
+
+		var effectPreventHunger = new Effect
+		(
+			"Prevent Hunger",
+			function apply(universe, world, place, entityToApplyTo)
+			{
+				entityToApplyTo.starvable.satietyAdd(1);
+			}
+		);
+
+		var equipTodo = function equip(universe, world, place, entityEquippable)
+		{
+			entityEquippable.effectable.effects.push(effectPreventHunger);
+		};
+
 		var namesOfRings =
 		[
-			"Adornment",		// 0
-			"Aggravate Monster",
-			"Conflict",
-			"Free Action",
-			"Gain Constitution",
-			"Gain Strength",	// 5
-			"Hunger",
-			"Increase Accuracy",
-			"Increase Damage",
-			"Invisibility",
-			"Levitation",		// 10
-			"Polymorph",
-			"Polymorph Control",
-			"Protection",
-			"Protection from Shape Changers",
-			"Regeneration",		// 15
-			"Resist Cold",
-			"Resist Shock",
-			"Resist Fire",
-			"Resist Posion",
-			"Searching",		// 20
-			"See Invisible",
-			"Slow Digestion",
-			"Stealth",
-			"Sustain Ability",
-			"Teleport",		// 25
-			"Teleport Control",
-			"Warning",		// 27
+			new Ring("Adornment", 			equipTodo), // 0
+			new Ring("Aggravate Monster", 	equipTodo),
+			new Ring("Conflict", 			equipTodo),
+			new Ring("Free Action", 		equipTodo),
+			new Ring("Gain Constitution", 	equipTodo),
+			new Ring("Gain Strength", 		equipTodo), // 5
+			new Ring("Hunger", 				equipTodo),
+			new Ring("Increase Accuracy", 	equipTodo),
+			new Ring("Increase Damage", 	equipTodo),
+			new Ring("Invisibility", 		equipTodo),
+			new Ring("Levitation", 			equipTodo), // 10
+			new Ring("Polymorph", 			equipTodo),
+			new Ring("Polymorph Control", 	equipTodo),
+			new Ring("Protection", 			equipTodo),
+			new Ring("Protection from Shape Changers", equipTodo),
+			new Ring("Regeneration", 		equipTodo), // 15
+			new Ring("Resist Cold", 		equipTodo),
+			new Ring("Resist Shock", 		equipTodo),
+			new Ring("Resist Fire", 		equipTodo),
+			new Ring("Resist Posion", 		equipTodo),
+			new Ring("Searching", 			equipTodo), // 20
+			new Ring("See Invisible", 		equipTodo),
+			new Ring("Slow Digestion", 		equipTodo),
+			new Ring("Stealth", 			equipTodo),
+			new Ring("Sustain Ability", 	equipTodo),
+			new Ring("Teleport", 			equipTodo), // 25
+			new Ring("Teleport Control", 	equipTodo),
+			new Ring("Warning", 			equipTodo), // 27
 		];
 
 		appearances =
@@ -531,7 +540,6 @@
 							1, // mass
 							1, // stackSizeMax
 							[ "Ring" ], // categoryNames
-							ItemDefn.InitializeDoNothing,
 							ItemDefn.UseEquip
 						),
 						new Generatable(1), // todo
@@ -632,7 +640,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Scroll" ], // categoryNames
-						null, // init
 						this.itemUseDevice
 					),
 					new Generatable(1) // todo
@@ -763,30 +770,27 @@
 			// todo
 			var effectLearnSpell = new Effect
 			(
-				new EffectDefn
-				(
-					"Learn Spell: " + nameOfSpellbook,
-					function apply(world, targetEntity)
+				"Learn Spell: " + nameOfSpellbook,
+				function apply(world, targetEntity)
+				{
+					var spellToAdd = new SpellDefn("[Spell]");
+					var spellsKnown = targetEntity.mover.spells.spells;
+
+					var isSpellAlreadyKnown = false;
+					for (var i = 0; i < spellsKnown.length; i++)
 					{
-						var spellToAdd = new SpellDefn("[Spell]");
-						var spellsKnown = targetEntity.Mover.spells.spells;
-
-						var isSpellAlreadyKnown = false;
-						for (var i = 0; i < spellsKnown.length; i++)
+						if (spellsKnown[i].name == spellToAdd.name)
 						{
-							if (spellsKnown[i].name == spellToAdd.name)
-							{
-								isSpellAlreadyKnown = true;
-								break;
-							}
-						}
-
-						if (isSpellAlreadyKnown == false)
-						{
-							spellsKnown.push(spellToAdd);
+							isSpellAlreadyKnown = true;
+							break;
 						}
 					}
-				)
+
+					if (isSpellAlreadyKnown == false)
+					{
+						spellsKnown.push(spellToAdd);
+					}
+				}
 			);
 
 			var entityDefn = new Entity
@@ -804,7 +808,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Spellbook" ], // categoryNames
-						null, // init
 						this.itemUseDevice
 					),
 					new Generatable(1) // todo
@@ -835,82 +838,64 @@
 	{
 		var effectMessage = new Effect
 		(
-			new EffectDefn
-			(
-				"Display a Message",
-				function apply(world, actingEntity, targetEntity)
-				{
-					var actingEntityDefnName = actingEntity.name;
-					/*
-					world.font.spawnMessageFloater
-					(
-						world,
-						actingEntityDefnName,
-						"NOT IMPLEMENTED - " + actingEntityDefnName,
-						targetEntity.loc
-					);
-					*/
-
-					targetEntity.controlUpdate(world);
-				}
-			)
+			"Display a Message",
+			function apply(world, actingEntity, targetEntity)
+			{
+				var actingEntityDefnName = actingEntity.name;
+				// todo
+				targetEntity.controlUpdate(world);
+			}
 		);
 
 		var effectProjectileSpawn = new Effect
 		(
-			new EffectDefn
-			(
-				"Spawn Projectile",
-				function apply(world, actingEntity, targetEntity)
-				{
-					var loc = targetEntity.Locatable.loc;
-					var venue = loc.place(world);
+			"Spawn Projectile",
+			function apply(world, actingEntity, targetEntity)
+			{
+				var loc = targetEntity.locatable.loc;
+				var venue = loc.place(world);
 
-					var entityForProjectile = new Entity
-					(
-						"Projectile0",
-						world.defn.entityDefns["Rock"].name,
-						loc.pos.clone()
-					);
+				var entityForProjectile = new Entity
+				(
+					"Projectile0",
+					world.defn.entityDefns["Rock"].name,
+					loc.pos.clone()
+				);
 
-					venue.entitiesToSpawn.push(entityForProjectile);
+				venue.entitiesToSpawn.push(entityForProjectile);
 
-					targetEntity.controlUpdate(world);
-				}
-			)
+				targetEntity.controlUpdate(world);
+			}
 		);
 
 		var effectTeleport = new Effect
 		(
-			new EffectDefn
-			(
-				"Teleport",
-				function apply(world, actingEntity, targetEntity)
+			"Teleport",
+			function apply(world, actingEntity, targetEntity)
+			{
+				var loc = targetEntity.locatable.loc;
+
+				var teleportPos = null;
+				while (teleportPos == null)
 				{
-					var loc = targetEntity.Locatable.loc;
+					var map = loc.place(world).map;
+					teleportPos = new Coords().randomize(randomizer).multiply
+					(
+						map.sizeInCells
+					).floor();
 
-					var teleportPos = null;
-					while (teleportPos == null)
+					var cellToTeleportTo = map.cellAtPos(teleportPos);
+					var cellTerrain = cellToTeleportTo.terrain(map);
+					if (cellTerrain.costToTraverse > 100) // hack
 					{
-						var map = loc.place(world).map;
-						teleportPos = new Coords().randomize(randomizer).multiply
-						(
-							map.sizeInCells
-						).floor();
-
-						var cellToTeleportTo = map.cellAtPos(teleportPos);
-						var cellTerrain = cellToTeleportTo.terrain(map);
-						if (cellTerrain.costToTraverse > 100) // hack
-						{
-							teleportPos = null;
-						}
+						teleportPos = null;
 					}
-					loc.pos.overwriteWith(teleportPos);
-
-					targetEntity.controlUpdate(world);
-					targetEntity.Player.controlUpdate(world, targetEntity);
 				}
-			)
+				loc.pos.overwriteWith(teleportPos);
+
+				targetEntity.controlUpdate(world);
+				targetEntity.player.controlUpdate(world, targetEntity);
+			}
 		);
 
 		var wandDatas =
@@ -991,7 +976,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Wand" ], // categoryNames
-						null, // init
 						this.itemUseDevice
 					),
 					new Generatable(1) // todo
@@ -1076,7 +1060,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Weapon" ], // categoryNames
-						null, // initialize
 						ItemDefn.UseEquip// use
 					),
 					new Generatable(1) // todo
@@ -1194,7 +1177,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Armor" , category.Name ], // categoryNames
-						null, // initialize
 						ItemDefn.UseEquip // use
 					),
 					new Generatable(1) // todo
@@ -1290,7 +1272,6 @@
 						1, // mass
 						1, // stackSizeMax
 						[ "Tool" ], // categoryNames
-						null, // initialize
 						ItemDefn.UseEquip // use
 					),
 					new Generatable(1) // todo
@@ -1402,7 +1383,6 @@
 							1, // mass
 							1, // stackSizeMax
 							[ "Stone" ], // categoryNames
-							ItemDefn.InitializeDoNothing,
 							ItemDefn.UseDoNothing
 						),
 						new Generatable(1) // todo
@@ -1467,13 +1447,13 @@
 
 	DemoData.prototype.itemUseDevice = function(universe, world, place, userEntity, itemEntity)
 	{
-		var itemAppearance = itemEntity.Item.defn(world).appearance;
+		var itemAppearance = itemEntity.item.defn(world).appearance;
 		var itemMessage = "You use the " + itemAppearance + ".";
 
 		var device = itemEntity.Device;
 		var deviceMessage = device.use(universe, world, place, userEntity, itemEntity);
 
-		var player = userEntity.Player;
+		var player = userEntity.player;
 		if (player != null)
 		{
 			player.messageLog.messageAdd(itemMessage);
@@ -1482,10 +1462,5 @@
 
 		var message = itemMessage + " " + deviceMessage;
 		return message;
-	};
-
-	DemoData.prototype.itemEffectorApply = function(universe, world, place, userEntity, itemEntity)
-	{
-		// todo
 	};
 }

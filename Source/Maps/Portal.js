@@ -7,7 +7,7 @@ function Portal(destinationPlaceName, destinationEntityName)
 {
 	Portal.prototype.use = function(universe, world, place, entityActor, entityPortal)
 	{
-		var portal = entityPortal.Portal;
+		var portal = entityPortal.portal;
 		var destinationPlaceName = portal.destinationPlaceName;
 		var destinationEntityName = portal.destinationEntityName;
 
@@ -20,7 +20,7 @@ function Portal(destinationPlaceName, destinationEntityName)
 			var destinationEntity = entities[destinationEntityName];
 			if (destinationEntity != null)
 			{
-				var destinationLoc = destinationEntity.Locatable.loc;
+				var destinationLoc = destinationEntity.locatable.loc;
 				destinationLoc.placeName = destinationPlaceName; // hack - Set on spawn, not spawned until venue visited.
 				var transport = new MoverTransport(entityActor, destinationLoc);
 				var entityForTransport = new Entity

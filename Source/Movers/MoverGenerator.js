@@ -48,7 +48,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 	{
 		var randomizer = universe.randomizer;
 
-		var playerRank = world.entityForPlayer.Demographics.rank;
+		var playerRank = world.entityForPlayer.demographics.rank;
 
 		var difficultyMin = 1; // todo
 		var difficultyMax = Math.ceil((place.depth + playerRank) / 2);
@@ -67,7 +67,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 		var entityDefnsForAgentsOfDifficulty = entityDefnGroup.entityDefns;
 		var relativeFrequencyTotal = entityDefnsForAgentsOfDifficulty.map
 		(
-			x => x.Generatable.relativeFrequency
+			x => x.generatable.relativeFrequency
 		).reduce
 		(
 			(sum, addend) => sum + addend, 0
@@ -79,7 +79,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 		for (var i = 0; i < entityDefnsForAgentsOfDifficulty.length; i++)
 		{
 			var entityDefn = entityDefnsForAgentsOfDifficulty[i];
-			cumulativeFrequencySoFar += entityDefn.Generatable.relativeFrequency;
+			cumulativeFrequencySoFar += entityDefn.generatable.relativeFrequency;
 			if (cumulativeFrequencySoFar > cumulativeFrequencyToStopAt)
 			{
 				entityDefnForAgentToSpawn = entityDefn;

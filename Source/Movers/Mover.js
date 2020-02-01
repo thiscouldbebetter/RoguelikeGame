@@ -7,17 +7,21 @@ function Mover(movesPerTurn)
 {
 	Mover.prototype.initializeEntityForPlace = function(universe, world, place, entity)
 	{
-		var mover = entity.Mover;
+		var mover = entity.mover;
 		mover.movesThisTurn = mover.movesPerTurn;
 
-		if (entity.Turnable == null)
+		if (entity.turnable == null)
 		{
-			entity.Turnable = new Turnable
+			entity.turnable = new Turnable
 			(
 				function updateForTurn(universe, world, place, entity)
 				{
-					entity.Mover.movesThisTurn += entity.Mover.movesPerTurn;
-					entity.Turnable.hasActedThisTurn = false;
+					entity.mover.movesThisTurn += entity.mover.movesPerTurn;
+					if (entity.effectable != null)
+					{
+						entity.effectable.updateForTurn(universe, world, place, entity);
+					}
+					entity.turnable.hasActedThisTurn = false;
 				}
 			);
 		}
@@ -25,7 +29,7 @@ function Mover(movesPerTurn)
 
 	Mover.prototype.updateForTimerTick = function(universe, world, place, entity)
 	{
-		var entityLoc = entity.Locatable.loc;
+		var entityLoc = entity.locatable.loc;
 
 		entityLoc.pos.trimToRangeMax
 		(

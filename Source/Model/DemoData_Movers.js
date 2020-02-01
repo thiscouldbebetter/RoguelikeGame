@@ -17,7 +17,7 @@
 
 		var rot = function(universe, world, place, entityTurnable)
 		{
-			var turnable = entityTurnable.Turnable;
+			var turnable = entityTurnable.turnable;
 			if (turnable.turnsToLive == null)
 			{
 				turnable.turnsToLive = 30;
@@ -45,13 +45,13 @@
 
 		var dieAndDropCorpse = function(universe, world, place, entityDying)
 		{
-			var itemDefnCorpse = entityDying.Killable.itemDefnCorpse;
-			entityDying.Locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
+			var itemDefnCorpse = entityDying.killable.itemDefnCorpse;
+			entityDying.locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
 			var entityCorpse = new Entity
 			(
 				itemDefnCorpse.name + universe.idHelper.idNext(),
 				[
-					entityDying.Locatable,
+					entityDying.locatable,
 					new Item(itemDefnCorpse.name, 1),
 					collidableDefns.Open,
 					new Drawable(visuals["Corpse"]),
@@ -78,7 +78,6 @@
 				1, // mass
 				1, // stackSizeMax,
 				[ "Food" ], // categoryNames
-				null, // init
 				useCorpse
 			);
 
@@ -117,7 +116,7 @@
 		for (var i = 0; i < returnValues.length; i++)
 		{
 			var entityDefnForAgent = returnValues[i];
-			var difficulty = (entityDefnForAgent.Demographics == null ? null : entityDefnForAgent.Demographics.rank);
+			var difficulty = (entityDefnForAgent.demographics == null ? null : entityDefnForAgent.demographics.rank);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty[difficulty];
@@ -208,7 +207,7 @@
 			]
 		);
 
-		var equippable = new Equippable(equipmentSocketDefnGroup);
+		var equipmentUser = new EquipmentUser(equipmentSocketDefnGroup);
 
 		var entityDefnPlayer = new Entity
 		(
@@ -219,7 +218,8 @@
 				collidableDefns.Transparent,
 				demographics,
 				drawableDefnPlayer,
-				equippable,
+				new Effectable(),
+				equipmentUser,
 				new ItemHolder(),
 				new Killable(160),
 				moverPlayer,

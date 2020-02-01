@@ -8,12 +8,12 @@ function Player(sightRange)
 {
 	Player.prototype.initializeEntityForPlace = function(universe, world, place, entity)
 	{
-		entity.Locatable.loc.pos.z = PlaceLevel.ZLayers.Movers;
+		entity.locatable.loc.pos.z = PlaceLevel.ZLayers.Movers;
 
-		entity.Mover.movesThisTurn = 0;
-		entity.Turnable.hasActedThisTurn = true;
+		entity.mover.movesThisTurn = 0;
+		entity.turnable.hasActedThisTurn = true;
 
-		var placeKnownLookup = entity.Player.placeKnownLookup;
+		var placeKnownLookup = entity.player.placeKnownLookup;
 		var placeKnown = placeKnownLookup[place.name];
 		if (placeKnown == null)
 		{
@@ -45,37 +45,37 @@ function Player(sightRange)
 			(
 				placeKnown,
 				place,
-				entity.Locatable.loc.pos,
-				entity.Player.sightRange
+				entity.locatable.loc.pos,
+				entity.player.sightRange
 			);
 		}
 	}
 
 	Player.prototype.updateForTimerTick = function(universe, world, place, entityPlayer)
 	{
-		if (entityPlayer.Turnable.hasActedThisTurn)
+		if (entityPlayer.turnable.hasActedThisTurn)
 		{
-			entityPlayer.Starvable.satietyAdd(world, -1, entityPlayer);
+			entityPlayer.starvable.satietyAdd(world, -1, entityPlayer);
 
 			var propertyName = Turnable.name;
-			var turnables = place.entities.filter(x => x.Turnable != null); // hack
+			var turnables = place.entities.filter(x => x.turnable != null); // hack
 			for (var i = 0; i < turnables.length; i++)
 			{
 				var entityTurnable = turnables[i];
-				var turnable = entityTurnable.Turnable;
+				var turnable = entityTurnable.turnable;
 				turnable.updateForTurn(universe, world, place, entityTurnable);
 			}
 
 			world.turnsSoFar++;
 
-			var player = entityPlayer.Player;
+			var player = entityPlayer.player;
 			var placeKnown = player.placeKnownLookup[place.name];
 
 			world.sightHelper.updatePlaceFromCompleteForViewerPosAndRange
 			(
 				placeKnown,
 				place, // placeComplete
-				entityPlayer.Locatable.loc.pos,
+				entityPlayer.locatable.loc.pos,
 				player.sightRange
 			);
 
@@ -103,7 +103,7 @@ function Player(sightRange)
 							this,
 							function get(c)
 							{
-								var loc = entity.Locatable.loc;
+								var loc = entity.locatable.loc;
 								var place = loc.place(world);
 								var zone = place.displayName;
 								var depth = place.depth;
@@ -117,7 +117,7 @@ function Player(sightRange)
 				]
 			);
 
-			var mover = entity.Mover;
+			var mover = entity.mover;
 			this.control = new ControlContainer
 			(
 				"containerMover",
@@ -125,8 +125,8 @@ function Player(sightRange)
 				new Coords(180, 272), // size
 				[
 					ControlLabel.fromPosAndText(new Coords(10, 16), "Name: " + entity.name),
-					entity.Demographics.controlUpdate(world, entity, new Coords(10, 32)),
-					entity.Starvable.controlUpdate(world, entity, new Coords(10, 64)),
+					entity.demographics.controlUpdate(world, entity, new Coords(10, 32)),
+					entity.starvable.controlUpdate(world, entity, new Coords(10, 64)),
 					controlLocus,
 				]
 			);
