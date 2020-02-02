@@ -160,7 +160,7 @@ function DemoData_Actions()
 			[
 				new ActorDefn("Fly Forward"),
 				new Awaitable(),
-				CollidableDefn.Instances().Open,
+				MappableDefn.Instances().Open,
 				new Drawable(visual),
 				new Ephemeral(8),
 				new Locatable(projectileLoc),
@@ -512,7 +512,7 @@ function DemoData_Actions()
 			{
 				var entityInCell = entitiesInCellDestination[b];
 
-				if (entityInCell.collidable.defn.blocksMovement(entityInCell))
+				if (entityInCell.mappable.defn.blocksMovement(entityInCell))
 				{
 					isDestinationAccessible = false;
 
@@ -578,7 +578,7 @@ function DemoData_Actions()
 			mover.movesThisTurn -= costToTraverse;
 			actor.turnable.hasActedThisTurn = true;
 
-			var cellDeparted = actor.collidable.mapCellOccupied;
+			var cellDeparted = actor.mappable.mapCellOccupied;
 			var entitiesInCellDeparted = cellDeparted.entitiesPresent;
 			entitiesInCellDeparted.remove(actor);
 
@@ -597,6 +597,7 @@ function DemoData_Actions()
 					else if (entity.emplacement != null)
 					{
 						var emplacement = entity.emplacement;
+						entity.drawable.isVisible = true;
 						var message = "There is a " + emplacement.appearance + " here.";
 						player.messageLog.messageAdd(message);
 					}
@@ -604,9 +605,63 @@ function DemoData_Actions()
 			}
 
 			entitiesInCellDestination.push(actor);
-			actor.collidable.mapCellOccupied = cellDestination;
+			actor.mappable.mapCellOccupied = cellDestination;
 			actor.locatable.loc.pos.overwriteWith(posInCellsDestination);
 		} // end if (isDestinationAccessible)
+	};
+
+	DemoData.prototype.actionSearch_Perform = function(universe, world, place, actor, action)
+	{
+		var costToSearch = actor.mover.movesPerTurn; // todo
+
+		if (actor.mover.movesThisTurn < costToSearch)
+		{
+			return;
+		}
+
+		var player = actor.player;
+		var actorLoc = actor.locatable.loc;
+		var map = place.map;
+		var offsetsToNeighboringCells =
+		[
+			new Coords(1, 0), new Coords(1, 1), new Coords(0, 1),
+			new Coords(-1, 1), new Coords(-1, 0), new Coords(-1, -1),
+			new Coords(0, -1), new Coords(1, -1)
+		]; // hack
+		
+		for (var n = 0; n < offsetsToNeighboringCells.length; n++)
+		{
+			var direction = offsetsToNeighboringCells[n];
+			var posInCellsToSearch = actorLoc.pos.clone().add(direction);
+
+			var cellToSearch = map.cellAtPos(posInCellsToSearch);
+
+			if (cellToSearch != null)
+			{
+				var entitiesInCellToSearch = cellToSearch.entitiesPresent;
+
+				for (var i = 0; i < entitiesInCellToSearch.length; i++)
+				{
+					var entityInCell = entitiesInCellToSearch[i];
+
+					var searchable = entityInCell.searchable;
+					if (searchable != null)
+					{
+						var randomNumber = world.randomizer.getNextRandom();
+						if (randomNumber <= searchable.chanceOfDiscoveryPerSearch)
+						{
+							searchable.isDiscovered = true;
+							entityInCell.drawable.isVisible = true;
+							var message = "You find a " + entityInCell.emplacement.appearance + ".";
+							player.messageLog.messageAdd(message);
+						}
+					}
+
+				} // end for each entity in cell
+
+			} // end if cell at offset exists
+
+		} // end for each neighboring cell
 	};
 
 	DemoData.prototype.actionWait_Perform = function(universe, world, place, actor, action)
@@ -773,6 +828,8 @@ function DemoData_Actions()
 			}
 		);
 
+		var actionSearch = new Action("Search", actions.actionSearch_Perform);
+
 		var actionWait = new Action("Wait", actions.actionWait_Perform);
 
 		var actionInstances = Action.Instances();
@@ -797,6 +854,7 @@ function DemoData_Actions()
 			actionMoveNW,
 			actionMoveN,
 			actionMoveNE,
+			actionSearch,
 			actionWait,
 			actionInstances.ShowEquipment,
 			actionInstances.ShowItems,
@@ -1023,6 +1081,7 @@ function DemoData_Actions()
 					new ActionToInputsMapping("Fire Projectile", [ "f" ]),
 					new ActionToInputsMapping("Pick Up Item", [ "g" ]),
 					new ActionToInputsMapping("Drop Selected Item", [ "r" ]),
+					new ActionToInputsMapping("Search", [ "s" ] ),
 					new ActionToInputsMapping("Target Selected Item", [ "t" ], ),
 					new ActionToInputsMapping("Use Emplacement", [ "u" ] ),
 					new ActionToInputsMapping("Use Selected Item", [ "y" ]),

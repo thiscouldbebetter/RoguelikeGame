@@ -14,7 +14,7 @@ function MapCell(terrainCode, entitiesPresent)
 			for (var i = 0; i < this.entitiesPresent.length; i++)
 			{
 				var entityPresent = this.entitiesPresent[i];
-				if (entityPresent.collidableDefn.blocksVision(entityPresent))
+				if (entityPresent.mappableDefn.blocksVision(entityPresent))
 				{
 					returnValue = true;
 					break;
@@ -31,7 +31,7 @@ function MapCell(terrainCode, entitiesPresent)
 		for (var i = 0; i < this.entitiesPresent.length; i++)
 		{
 			var entityPresent = this.entitiesPresent[i];
-			if (entityPresent.collidableDefn.blocksMovement(entityPresent))
+			if (entityPresent.mappableDefn.blocksMovement(entityPresent))
 			{
 				returnValue = MapTerrain.AlmostInfinity;
 				break;

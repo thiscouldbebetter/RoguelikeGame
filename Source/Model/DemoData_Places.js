@@ -101,7 +101,7 @@
 		[
 			ActorDefn.name,
 			Awaitable.name,
-			CollidableDefn.name,
+			MappableDefn.name,
 			Device.name,
 			//Drawable.name,
 			Emplacement.name,

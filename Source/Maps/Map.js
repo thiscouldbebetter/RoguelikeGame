@@ -297,17 +297,21 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			var entity = entitiesSortedBottomToTop[i];
 			if (entity.mover == null || drawMovers)
 			{
-				var entityLoc = entity.locatable.loc;
-				var entityPos = entityLoc.pos;
+				var drawable = entity.drawable;
+				if (drawable.isVisible)
+				{
+					var entityLoc = entity.locatable.loc;
+					var entityPos = entityLoc.pos;
 
-				this._drawPosSaved.overwriteWith(entityPos);
+					this._drawPosSaved.overwriteWith(entityPos);
 
-				entityPos.overwriteWith(drawPos);
+					entityPos.overwriteWith(drawPos);
 
-				var visual = entity.drawable.visual;
-				visual.draw(universe, world, display, entity);
+					var visual = drawable.visual;
+					visual.draw(universe, world, display, entity);
 
-				entityPos.overwriteWith(this._drawPosSaved);
+					entityPos.overwriteWith(this._drawPosSaved);
+				}
 			}
 
 		} // end for entitiesSortedBottomToTop
@@ -324,20 +328,25 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	Map.prototype.drawEntity = function(display, entity)
 	{
-		var visual = entity.drawable.visual;
-		this._drawableEntity.locatable.loc.pos.overwriteWith
-		(
-			entity.locatable.loc.pos
-		).multiply
-		(
-			map.cellSizeInPixels
-		);
+		var drawable = entity.drawable;
+		if (drawable.isVisible)
+		{
+			var visual = drawable.visual;
 
-		visual.draw
-		(
-			null, null, // universe, world
-			display,
-			this._drawableEntity
-		);
+			this._drawableEntity.locatable.loc.pos.overwriteWith
+			(
+				entity.locatable.loc.pos
+			).multiply
+			(
+				map.cellSizeInPixels
+			);
+
+			visual.draw
+			(
+				null, null, // universe, world
+				display,
+				this._drawableEntity
+			);
+		}
 	};
 }

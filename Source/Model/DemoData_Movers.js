@@ -53,7 +53,7 @@
 				[
 					entityDying.locatable,
 					new Item(itemDefnCorpse.name, 1),
-					collidableDefns.Open,
+					mappableDefns.Open,
 					new Drawable(visuals["Corpse"]),
 					new Turnable(rot)
 				]
@@ -87,7 +87,7 @@
 				// properties
 				[
 					new ActorDefn(activityDefns["Move Toward Player"].name),
-					collidableDefns.Transparent,
+					mappableDefns.Transparent,
 					itemHolder,
 					new Demographics(null, null, difficulty, experienceToKill),
 					new Drawable(visuals[agentName]),
@@ -195,6 +195,7 @@
 			[
 				new EquipmentSocketDefn("Wielding", [ "Weapon" ] ),
 				new EquipmentSocketDefn("Ammunition", [ "Ammunition" ] ),
+				new EquipmentSocketDefn("Ready", [ "Wand", "Tool" ] ),
 				new EquipmentSocketDefn("Head", [ "Headwear" ]),
 				new EquipmentSocketDefn("Neck", [ "Neckwear" ]),
 				new EquipmentSocketDefn("Shirt", [ "Shirt" ]),
@@ -215,7 +216,7 @@
 			// properties
 			[
 				new ActorDefn(activityDefnName),
-				collidableDefns.Transparent,
+				mappableDefns.Transparent,
 				demographics,
 				drawableDefnPlayer,
 				new Effectable(),

@@ -138,7 +138,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			}
 		}
 
-		this.update_Collidables(universe, world);
+		this.update_Mappables(universe, world);
 
 		this.update_EntitiesToRemove(universe, world);
 
@@ -152,10 +152,10 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			var entityToRemove = this.entitiesToRemove[i];
 
 			// hack
-			var collidable = entityToRemove.collidable;
-			if (collidable != null)
+			var mappable = entityToRemove.mappable;
+			if (mappable != null)
 			{
-				var entitiesInCell = collidable.mapCellOccupied.entitiesPresent;
+				var entitiesInCell = mappable.mapCellOccupied.entitiesPresent;
 				entitiesInCell.remove(entityToRemove);
 			}
 
@@ -190,7 +190,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 		this.entitiesToSpawn.length = 0;
 	}
 
-	PlaceLevel.prototype.update_Collidables = function(universe, world)
+	PlaceLevel.prototype.update_Mappables = function(universe, world)
 	{
 		var emplacements = this.entitiesByPropertyName[Emplacement.name];
 		var enemies = this.entitiesByPropertyName["Enemy"];
@@ -222,15 +222,15 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			{
 				var collision = collisions[c];
 
-				var collidables = collision.collidables;
+				var mappables = collision.mappables;
 
-				for (var i = 0; i < collidables.length; i++)
+				for (var i = 0; i < mappables.length; i++)
 				{
-					var entityThis = collidables[i];
+					var entityThis = mappables[i];
 
-					for (var j = i + 1; j < collidables.length; j++)
+					for (var j = i + 1; j < mappables.length; j++)
 					{
-						var entityOther = collidables[j];
+						var entityOther = mappables[j];
 
 						collisionHelper.collideEntities
 						(

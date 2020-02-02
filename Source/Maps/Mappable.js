@@ -1,11 +1,11 @@
 
-function Collidable(defn)
+function Mappable(defn)
 {
 	this.defn = defn;
 	this.mapCellOccupied = null;
 }
 {
-	Collidable.prototype.collider = function()
+	Mappable.prototype.collider = function()
 	{
 		return new Sphere(0, 0);
 	}

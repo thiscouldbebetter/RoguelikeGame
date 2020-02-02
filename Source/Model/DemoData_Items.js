@@ -98,7 +98,7 @@
 			"Unchanging", "Poision Resistance"
 		];
 
-		var relativeFrequencies = 
+		var relativeFrequencies =
 		[
 			1, 1, 1, 1, 1, 1, 1, 1, 1
 		];
@@ -127,7 +127,7 @@
 			(
 				name,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
@@ -150,7 +150,7 @@
 		(
 			name,
 			[
-				collidableDefns.Open,
+				mappableDefns.Open,
 				new Drawable(visuals[name]),
 				new ItemDefn
 				(
@@ -211,80 +211,72 @@
 		entityDefnSets
 	)
 	{
-		// items - foods
+		function Food(name, satiety, weight)
+		{
+			// todo
+			this.name = name;
+			this.satiety = satiety;
+			this.weight = weight;
+		}
 
-		var satietyDefault = 1;
-
-		var foodDatas =
+		var foods =
 		[
 			// name, satiety, mass
-			[ "Apple", 			50, 	2 ],
-			[ "Banana", 		80, 	2 ],
-			[ "C Ration", 		300, 	10 ],
-			[ "Candy Bar", 		100, 	2 ],
-			[ "Carrot", 		50, 	2 ],
-			[ "Cram Ration", 	600, 	15 ],
-			[ "Cream Pie", 		100, 	10 ],
-			[ "Egg", 			80, 	1 ],
-			[ "Eucalyptus Leaf", 30, 	1 ],
-			[ "Food Ration", 	800, 	20 ],
-			[ "Fortune Cookie", 40, 	1 ],
-			[ "Garlic Clove", 	40, 	1 ],
-			[ "K Ration", 		400, 	10 ],
-			[ "Lembas Wafer", 	800, 	5 ],
-			[ "Orange", 		80, 	2 ],
-			[ "Melon", 			100, 	5 ],
-			[ "Pancake", 		200, 	2 ],
-			[ "Pear", 			50, 	2 ],
-			[ "Royal Jelly", 	200, 	2 ],
-			[ "Slime Mold", 	80, 	5 ],
-			[ "Tin", 			50, 	10 ],
-			[ "Wolfsbane Sprig", 40, 	1 ]
+			new Food("Apple", 			50, 	2 ),
+			new Food("Banana", 			80, 	2 ),
+			new Food("C Ration", 		300, 	10 ),
+			new Food("Candy Bar", 		100, 	2 ),
+			new Food("Carrot", 			50, 	2 ),
+			new Food("Cram Ration", 	600, 	15 ),
+			new Food("Cream Pie", 		100, 	10 ),
+			new Food("Egg", 			80, 	1 ),
+			new Food("Eucalyptus Leaf", 30, 	1 ),
+			new Food("Food Ration", 	800, 	20 ),
+			new Food("Fortune Cookie", 	40, 	1 ),
+			new Food("Garlic Clove", 	40, 	1 ),
+			new Food("K Ration", 		400, 	10 ),
+			new Food("Lembas Wafer", 	800, 	5 ),
+			new Food("Orange", 			80, 	2 ),
+			new Food("Melon", 			100, 	5 ),
+			new Food("Pancake", 		200, 	2 ),
+			new Food("Pear", 			50, 	2 ),
+			new Food("Royal Jelly", 	200, 	2 ),
+			new Food("Slime Mold", 		80, 	5 ),
+			new Food("Tin", 			50, 	10 ),
+			new Food("Wolfsbane Sprig", 40, 	1 )
 		];
 
 		var entityDefnSetFoods = [];
 
-		function Food(satiety)
+		var useFood = function(universe, world, place, userEntity, usedEntity)
 		{
-			this.satiety = satiety;
+			userEntity.starvable.satietyAdd(usedEntity.food.satiety);
+			userEntity.itemHolder.itemEntityRemove(usedEntity);
 		}
 
-		var device = new Device
-		(
-			"Food",
-			null, null, // init, update
-			function use(u, w, p, userEntity, deviceEntity)
-			{
-				userEntity.starvable.satietyAdd(deviceEntity.Food.satiety);
-				userEntity.itemHolder.itemEntityRemove(deviceEntity);
-			}
-		);
+		var categoryNamesFood = [ "Food" ];
 
-		for (var i = 0; i < foodDatas.length; i++)
+		for (var i = 0; i < foods.length; i++)
 		{
-			var foodData = foodDatas[i];
-			var name = foodData[0];
-			var satiety = foodData[1];
-			var mass = foodData[2];
+			var food = foods[i];
 			var relativeFrequency = 1; // todo
 
 			var entityDefn = new Entity
 			(
 				name,
 				[
-					collidableDefns.Open,
-					device,
+					mappableDefns.Open,
 					new Drawable(visuals[name]),
-					new Food(satiety),
+					food,
 					new ItemDefn
 					(
 						name,
 						name, // appearance
 						name, // description
-						mass, // mass
+						food.weight, // mass
 						1, // stackSizeMax,
-						[ "Food" ], // categoryNames
-						this.itemUseDevice
+						categoryNamesFood,
+						useFood
 					),
 					new Generatable(relativeFrequency)
 				]
@@ -310,8 +302,6 @@
 		entityDefnSets
 	)
 	{
-		// items - magic - potions
-
 		var effectMessageNotImplemented = new Effect
 		(
 			function start(universe, world, place, entityEffectable)
@@ -345,7 +335,7 @@
 			[ "Object Detection", effectMessageNotImplemented ],
 			[ "Oil", 			effectMessageNotImplemented ],
 			[ "Polymorph", 		effectMessageNotImplemented ],
-			[ "Restore aeility", effectMessageNotImplemented ],
+			[ "Restore Ability", effectMessageNotImplemented ],
 			[ "See Invisible", 	effectMessageNotImplemented ],
 			[ "Sickness", 		new Effect( function start(u, w, p, e) { e.killable.integrityAdd(-20); e.player.controlUpdate(w, te); } ) ],
 			[ "Sleeping", 		effectMessageNotImplemented ],
@@ -419,7 +409,7 @@
 			(
 				itemDefnName,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					new Drawable(visuals[appearance]),
 					effector,
 					itemDefn,
@@ -531,7 +521,7 @@
 				(
 					name,
 					[
-						collidableDefns.Open,
+						mappableDefns.Open,
 						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
@@ -565,32 +555,49 @@
 		entityDefnSets
 	)
 	{
-		// items - magic - scrolls
+		function Scroll(name, use)
+		{
+			this.name = name;
+			this.use = use;
+		}
 
-		var namesOfScrolls =
+		var useScrollNotImplemented = function(universe, world, place, entityUsing)
+		{
+			var message = "You read the scroll aloud."
+			var player = entityUsing.player;
+			if (player != null)
+			{
+				player.messageLog.messageAdd(message);
+				player.messageLog.messageAdd("Scroll effect not yet implemented!");
+			}
+
+			return message;
+		};
+
+		var scrolls =
 		[
-			"Amnesia", // 0
-			"Blank",
-			"Charging",
-			"Confuse Monster",
-			"Create Monster",
-			"Destroy Armor",  // 5
-			"Detect Food",
-			"Detect Gold",
-			"Earth",
-			"Enchant Armor",
-			"Enchant Weapon", // 10
-			"Fire",
-			"Genocide",
-			"Identify",
-			"Light",
-			"Mapping", // 15
-			"Punishment",
-			"Remove Curse",
-			"Scare Monster",
-			"Stinking Cloud",
-			"Taming", // 20
-			"Teleport", // 21
+			new Scroll("Amnesia", useScrollNotImplemented ),
+			new Scroll("Blank", useScrollNotImplemented ),
+			new Scroll("Charging", useScrollNotImplemented ),
+			new Scroll("Confuse Monster", useScrollNotImplemented ),
+			new Scroll("Create Monster", useScrollNotImplemented ),
+			new Scroll("Destroy Armor", useScrollNotImplemented ),
+			new Scroll("Detect Food", useScrollNotImplemented ),
+			new Scroll("Detect Gold", useScrollNotImplemented ),
+			new Scroll("Earth", useScrollNotImplemented ),
+			new Scroll("Enchant Armor", useScrollNotImplemented ),
+			new Scroll("Enchant Weapon", useScrollNotImplemented ),
+			new Scroll("Fire", useScrollNotImplemented ),
+			new Scroll("Genocide", useScrollNotImplemented ),
+			new Scroll("Identify", useScrollNotImplemented ),
+			new Scroll("Light", useScrollNotImplemented ),
+			new Scroll("Mapping", useScrollNotImplemented ),
+			new Scroll("Punishment", useScrollNotImplemented ),
+			new Scroll("Remove Curse", useScrollNotImplemented ),
+			new Scroll("Scare Monster", useScrollNotImplemented ),
+			new Scroll("Stinking Cloud", useScrollNotImplemented ),
+			new Scroll("Taming", useScrollNotImplemented ),
+			new Scroll("Teleport", useScrollNotImplemented ),
 		];
 
 		appearances =
@@ -606,41 +613,34 @@
 
 		var entityDefnSetScrolls = [];
 
-		var device = new Device
-		(
-			"Scroll",
-			null, null, // init, update
-			this.itemEffectorApply
-		);
+		var categoryNamesScroll = [ "Scroll" ];
 
-		for (var i = 0; i < namesOfScrolls.length; i++)
+		var mass = 1; // todo
+
+		for (var i = 0; i < scrolls.length; i++)
 		{
-			var name = "Scroll of " + namesOfScrolls[i];
+			var scroll = scrolls[i];
+			var name = "Scroll of " + scroll.name;
 
-			var appearanceIndex = Math.floor
-			(
-				this.randomizer.getNextRandom()
-				* appearances.length
-			);
-			var appearance = "Scroll Titled '" + appearances[appearanceIndex] + "'";
-			appearances.removeAt(appearanceIndex);
+			var appearance = appearances.random(this.randomizer);
+			appearances.remove(appearance);
+			appearance = "Scroll Titled '" + appearance + "'";
 
 			var entityDefn = new Entity
 			(
 				name,
 				[
-					collidableDefns.Open,
-					device,
+					mappableDefns.Open,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
 						name,
 						appearance,
 						appearance, // description
-						1, // mass
+						mass,
 						1, // stackSizeMax
-						[ "Scroll" ], // categoryNames
-						this.itemUseDevice
+						categoryNamesScroll,
+						scroll.use
 					),
 					new Generatable(1) // todo
 				]
@@ -797,7 +797,7 @@
 			(
 				itemDefnName,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
@@ -836,94 +836,86 @@
 		entityDefnSets
 	)
 	{
-		var effectMessage = new Effect
-		(
-			"Display a Message",
-			function apply(world, actingEntity, targetEntity)
-			{
-				var actingEntityDefnName = actingEntity.name;
-				// todo
-				targetEntity.controlUpdate(world);
-			}
-		);
+		var wandUseNotImplemented = function(universe, world, place, actingEntity, targetEntity)
+		{
+			return "Wand effect not implemented!";
+		}
 
-		var effectProjectileSpawn = new Effect
-		(
-			"Spawn Projectile",
-			function apply(world, actingEntity, targetEntity)
-			{
-				var loc = targetEntity.locatable.loc;
-				var venue = loc.place(world);
+		var wandUseProjectileSpawn = function (universe, world, place, actingEntity, targetEntity)
+		{
+			var loc = targetEntity.locatable.loc;
+			var venue = loc.place(world);
 
-				var entityForProjectile = new Entity
+			var entityForProjectile = new Entity
+			(
+				"Projectile0",
+				world.defn.entityDefns["Rock"].name,
+				loc.pos.clone()
+			);
+
+			venue.entitiesToSpawn.push(entityForProjectile);
+
+			targetEntity.controlUpdate(world);
+		};
+
+		var wandUseTeleport = function(universe, world, place, actingEntity, targetEntity)
+		{
+			var loc = targetEntity.locatable.loc;
+
+			var teleportPos = null;
+			while (teleportPos == null)
+			{
+				var map = loc.place(world).map;
+				teleportPos = new Coords().randomize(randomizer).multiply
 				(
-					"Projectile0",
-					world.defn.entityDefns["Rock"].name,
-					loc.pos.clone()
-				);
+					map.sizeInCells
+				).floor();
 
-				venue.entitiesToSpawn.push(entityForProjectile);
-
-				targetEntity.controlUpdate(world);
-			}
-		);
-
-		var effectTeleport = new Effect
-		(
-			"Teleport",
-			function apply(world, actingEntity, targetEntity)
-			{
-				var loc = targetEntity.locatable.loc;
-
-				var teleportPos = null;
-				while (teleportPos == null)
+				var cellToTeleportTo = map.cellAtPos(teleportPos);
+				var cellTerrain = cellToTeleportTo.terrain(map);
+				if (cellTerrain.costToTraverse > 100) // hack
 				{
-					var map = loc.place(world).map;
-					teleportPos = new Coords().randomize(randomizer).multiply
-					(
-						map.sizeInCells
-					).floor();
-
-					var cellToTeleportTo = map.cellAtPos(teleportPos);
-					var cellTerrain = cellToTeleportTo.terrain(map);
-					if (cellTerrain.costToTraverse > 100) // hack
-					{
-						teleportPos = null;
-					}
+					teleportPos = null;
 				}
-				loc.pos.overwriteWith(teleportPos);
-
-				targetEntity.controlUpdate(world);
-				targetEntity.player.controlUpdate(world, targetEntity);
 			}
-		);
+			loc.pos.overwriteWith(teleportPos);
+
+			targetEntity.controlUpdate(world);
+			targetEntity.player.controlUpdate(world, targetEntity);
+		};
+
+		function Wand(name, use)
+		{
+			this.name = name;
+			this.use = use;
+		}
 
 		var wandDatas =
 		[
-			[ "Cancelling", 	effectMessage ], // 0
-			[ "Cold", 		effectProjectileSpawn ],
-			[ "Create Monster", 	effectMessage ],
-			[ "Death",		effectProjectileSpawn ],
-			[ "Digging",		effectTeleport ],
-			[ "Enlightenment",	effectMessage ], // 5
-			[ "Fire",		effectProjectileSpawn ],
-			[ "Light", 		effectMessage ],
-			[ "Lightning", 		effectProjectileSpawn ],
-			[ "Locking",		effectMessage ],
-			[ "Make Invisible",	effectMessage ], // 10
-			[ "Magic Missile",	effectProjectileSpawn ],
-			[ "Nothing",		effectMessage ],
-			[ "Opening",		effectMessage ],
-			[ "Polymorph",		effectMessage ],
-			[ "Probing",		effectMessage ], // 15
-			[ "Secret Door Detection", effectMessage ],
-			[ "Sleep",		effectMessage ],
-			[ "Slow Monster",	effectMessage ],
-			[ "Speed Monster", 	effectMessage ],
-			[ "Striking",		effectProjectileSpawn ], // 20
-			[ "Teleport",		effectTeleport ],
-			[ "Turn Undead",	effectMessage ],
-			[ "Wishing",		effectMessage ], // 23
+			new Wand("Cancelling", 		wandUseNotImplemented), // 0
+			new Wand("Cold", 			wandUseProjectileSpawn),
+			new Wand("Create Monster", 	wandUseNotImplemented),
+			new Wand("Death",			wandUseProjectileSpawn),
+			new Wand("Digging",			wandUseTeleport),
+			new Wand("Enlightenment",	wandUseNotImplemented), // 5
+			new Wand("Fire",			wandUseProjectileSpawn),
+			new Wand("Light", 			wandUseNotImplemented),
+			new Wand("Lightning", 		wandUseProjectileSpawn),
+			new Wand("Locking",			wandUseNotImplemented),
+			new Wand("Make Invisible",	wandUseNotImplemented), // 10
+			new Wand("Magic Missile",	wandUseProjectileSpawn),
+			new Wand("Nothing",			wandUseNotImplemented),
+			new Wand("Opening",			wandUseNotImplemented),
+			new Wand("Polymorph",		wandUseNotImplemented),
+			new Wand("Probing",			wandUseNotImplemented), // 15
+			new Wand("Secret Door Detection", wandUseNotImplemented),
+			new Wand("Sleep",			wandUseNotImplemented),
+			new Wand("Slow Monster",	wandUseNotImplemented),
+			new Wand("Speed Monster", 	wandUseNotImplemented),
+			new Wand("Striking",		wandUseProjectileSpawn), // 20
+			new Wand("Teleport",		wandUseTeleport),
+			new Wand("Turn Undead",		wandUseNotImplemented),
+			new Wand("Wishing",			wandUseNotImplemented), // 23
 		];
 
 		appearances =
@@ -965,7 +957,7 @@
 			(
 				wandName,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
@@ -1051,7 +1043,7 @@
 			(
 				name,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1168,7 +1160,7 @@
 			(
 				name,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1263,7 +1255,7 @@
 			(
 				name,
 				[
-					collidableDefns.Open,
+					mappableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1373,7 +1365,7 @@
 				(
 					name,
 					[
-						collidableDefns.Open,
+						mappableDefns.Open,
 
 						new Drawable(visuals[appearance]),
 						new ItemDefn

@@ -37,20 +37,6 @@
 			[ "Coins", new Coords(29, 19) ],
 			[ "Corpse", new Coords(36, 15) ],
 
-			// items - amulets
-
-			[ "Circular Amulet", new Coords(14, 14) ],
-			[ "Spherical Amulet", new Coords(15, 14) ],
-			[ "Oval Amulet", new Coords(16, 14) ],
-			[ "Triangular Amulet", new Coords(17, 14) ],
-			[ "Pyramidal Amulet", new Coords(18, 14) ],
-			[ "Square Amulet", new Coords(19, 14) ],
-			[ "Concave Amulet", new Coords(20, 14) ],
-			[ "Hexagonal Amulet", new Coords(21, 14) ],
-			[ "Octagonal Amulet", new Coords(22, 14) ],
-			[ "Plastic Imitation Amulet of Yendor", new Coords(23, 14) ],
-			[ "Amulet of Yendor", new Coords(24, 14) ],
-
 			// items - foods
 
 			[ "Eucalyptus Leaf", new Coords(3, 16) ],
@@ -74,35 +60,6 @@
 			[ "K Ration", new Coords(21, 16) ],
 			[ "C Ration", new Coords(22, 16) ],
 			[ "Tin", new Coords(23, 16) ],
-
-			// items - potions
-
-			[ "Ruby Potion", new Coords(24, 16) ],
-			[ "Pink Potion", new Coords(25, 16) ],
-			[ "Orange Potion", new Coords(26, 16) ],
-			[ "Yellow Potion", new Coords(27, 16) ],
-			[ "Emerald Potion", new Coords(28, 16) ],
-			[ "Dark Green Potion", new Coords(29, 16) ],
-			[ "Sky Blue Potion", new Coords(30, 16) ],
-			[ "Cyan Potion", new Coords(31, 16) ],
-			[ "Brilliant Blue Potion", new Coords(32, 16) ],
-			[ "Magenta Potion", new Coords(33, 16) ],
-			[ "Purple-Red Potion", new Coords(34, 16) ],
-			[ "Puce Potion", new Coords(35, 16) ],
-			[ "Milky Potion", new Coords(36, 16) ],
-			[ "Swirly Potion", new Coords(37, 16) ],
-			[ "Bubbly Potion", new Coords(38, 16) ],
-			[ "Smoky Potion", new Coords(39, 16) ],
-			[ "Cloudy Potion", new Coords(39, 16) ],
-			[ "Effervescent Potion", new Coords(0, 17) ],
-			[ "Black Potion", new Coords(1, 17) ],
-			[ "Golden Potion", new Coords(2, 17) ],
-			[ "Brown Potion", new Coords(3, 17) ],
-			[ "Fizzy Potion", new Coords(4, 17) ],
-			[ "Dark Potion", new Coords(5, 17) ],
-			[ "White Potion", new Coords(6, 17) ],
-			[ "Murky Potion", new Coords(7, 17) ],
-			[ "Clear Potion", new Coords(8, 17) ],
 
 			// items - armor - helmets
 
@@ -204,176 +161,9 @@
 			[ "Riding Boots", new Coords(24, 13) ],
 			[ "Snow Boots", new Coords(25, 13) ],
 
-			// items - rings
-
-			[ "Wooden Ring", new Coords(26, 13) ],
-			[ "Granite Ring", new Coords(27, 13) ],
-			[ "Moonstone Ring", new Coords(28, 13) ],
-			[ "Clay Ring", new Coords(29, 13) ],
-			[ "Shiny Ring", new Coords(30, 13) ],
-			[ "Black Onyx Ring", new Coords(31, 13) ],
-			[ "Opal Ring", new Coords(32, 13) ],
-			[ "Tiger Eye Ring", new Coords(33, 13) ],
-			[ "Emerald Ring", new Coords(34, 13) ],
-			[ "Bronze Ring", new Coords(35, 13) ],
-			[ "Topaz Ring", new Coords(36, 13) ],
-			[ "Agate Ring", new Coords(37, 13) ],
-			[ "Sapphire Ring", new Coords(38, 13) ],
-			[ "Ruby Ring", new Coords(39, 13) ],
-			[ "Diamond Ring", new Coords(0, 14) ],
-			[ "Pearl Ring", new Coords(1, 14) ],
-			[ "Iron Ring", new Coords(2, 14) ],
-			[ "Brass Ring", new Coords(3, 14) ],
-			[ "Copper Ring", new Coords(4, 14) ],
-			[ "Twisted Ring", new Coords(5, 14) ],
-			[ "Steel Ring", new Coords(6, 14) ],
-			[ "Silver Ring", new Coords(7, 14) ],
-			[ "Gold Ring", new Coords(8, 14) ],
-			[ "Ivory Ring", new Coords(9, 14) ],
-			[ "Jade Ring", new Coords(10, 14) ],
-			[ "Wire Ring", new Coords(11, 14) ],
-			[ "Engagement Ring", new Coords(12, 14) ],
-			[ "Coral Ring", new Coords(13, 14) ],
-
-			// items - scrolls
-
-			[ "Scroll Titled 'Andova Begarin'", new Coords(10, 17) ],
-			[ "Scroll Titled 'Daiyen Fooels'", new Coords(11, 17) ],
-			[ "Scroll Titled 'Duam Xnaht'", new Coords(12, 17) ],
-			[ "Scroll Titled 'Eblib Yloh'", new Coords(13, 17) ],
-			[ "Scroll Titled 'Elam Ebow'", new Coords(14, 17) ],
-			[ "Scroll Titled 'Foobie Bletch'", new Coords(15, 17) ],
-			[ "Scroll Titled 'Garven Deh'", new Coords(16, 17) ],
-			[ "Scroll Titled 'Hackem Muche'", new Coords(17, 17) ],
-			[ "Scroll Titled 'Juyed Awk Yacc'", new Coords(18, 17) ],
-			[ "Scroll Titled 'Kernod Wel'", new Coords(19, 17) ],
-			[ "Scroll Titled 'Kirje'", new Coords(20, 17) ],
-			[ "Scroll Titled 'Lep Gex Ven Zea'", new Coords(21, 17) ],
-			[ "Scroll Titled 'NR 9'", new Coords(22, 17) ],
-			[ "Scroll Titled 'Pratyavayah'", new Coords(23, 17) ],
-			[ "Scroll Titled 'Prirutsenie'", new Coords(24, 17) ],
-			[ "Scroll Titled 'Read Me'", new Coords(25, 17) ],
-			[ "Scroll Titled 'Temov'", new Coords(26, 17) ],
-			[ "Scroll Titled 'Tharr'", new Coords(27, 17) ],
-			[ "Scroll Titled 'Ve Forbryderne'", new Coords(28, 17) ],
-			[ "Scroll Titled 'Velox Neb'", new Coords(29, 17) ],
-			[ "Scroll Titled 'Venzar Borgavve'", new Coords(30, 17) ],
-			[ "Scroll Titled 'Verr Yed Horre'", new Coords(31, 17) ],
-			[ "Scroll Titled 'Xixaxa Xoxaxa Xuxaxa'", new Coords(32, 17) ],
-			[ "Scroll Titled 'Yum Yum'", new Coords(33, 17) ],
-			[ "Scroll Titled 'Zelgo Mer'", new Coords(34, 17) ],
-
-			// items - spellbooks
-
-			[ "Parchment Spellbook", new Coords(37, 17) ],
-			[ "Vellum Spellbook", new Coords(38, 17) ],
-			[ "Ragged Spellbook", new Coords(39, 17) ],
-			[ "Dogeared Spellbook", new Coords(0, 18) ],
-			[ "Mottled Spellbook", new Coords(1, 18) ],
-			[ "Stained Spellbook", new Coords(2, 18) ],
-			[ "Cloth Spellbook", new Coords(3, 18) ],
-			[ "Leather Spellbook", new Coords(4, 18) ],
-			[ "White Spellbook", new Coords(5, 18) ],
-			[ "Pink Spellbook", new Coords(6, 18) ],
-			[ "Red Spellbook", new Coords(7, 18) ],
-			[ "Orange Spellbook", new Coords(8, 18) ],
-			[ "Yellow Spellbook", new Coords(9, 18) ],
-			[ "Velvet Spellbook", new Coords(10, 18) ],
-			[ "Light Green Spellbook", new Coords(11, 18) ],
-			[ "Dark Green Spellbook", new Coords(12, 18) ],
-			[ "Turquoise Spellbook", new Coords(13, 18) ],
-			[ "Cyan Spellbook", new Coords(14, 18) ],
-			[ "Light Blue Spellbook", new Coords(15, 18) ],
-			[ "Dark Blue Spellbook", new Coords(16, 18) ],
-			[ "Indigo Spellbook", new Coords(17, 18) ],
-			[ "Magenta Spellbook", new Coords(18, 18) ],
-			[ "Purple Spellbook", new Coords(19, 18) ],
-			[ "Violet Spellbook", new Coords(20, 18) ],
-			[ "Tan Spellbook", new Coords(21, 18) ],
-			[ "Plaid Spellbook", new Coords(22, 18) ],
-			[ "Light Brown Spellbook", new Coords(23, 18) ],
-			[ "Dark Brown Spellbook", new Coords(24, 18) ],
-			[ "Gray Spellbook", new Coords(25, 18) ],
-			[ "Wrinkled Spellbook", new Coords(26, 18) ],
-			[ "Dusty Spellbook", new Coords(27, 18) ],
-			[ "Bronze Spellbook", new Coords(28, 18) ],
-			[ "Copper Spellbook", new Coords(29, 18) ],
-			[ "Silver Spellbook", new Coords(30, 18) ],
-			[ "Gold Spellbook", new Coords(31, 18) ],
-			[ "Glittering Spellbook", new Coords(32, 18) ],
-			[ "Shining Spellbook", new Coords(33, 18) ],
-			[ "Dull Spellbook", new Coords(34, 18) ],
-			[ "Thin Spellbook", new Coords(35, 18) ],
-			[ "Thick Spellbook", new Coords(36, 18) ],
-
-			// items - stones
-
-			[ "White Gem", new Coords(27, 19) ],
-			[ "White Gem", new Coords(28, 19) ],
-			[ "Red Gem", new Coords(29, 19) ],
-			[ "Orange Gem", new Coords(30, 19) ],
-			[ "Blue Gem", new Coords(31, 19) ],
-			[ "Black Gem", new Coords(32, 19) ],
-			[ "Green Gem", new Coords(33, 19) ],
-			[ "Green Gem", new Coords(34, 19) ],
-			[ "Yellow Gem", new Coords(35, 19) ],
-			[ "Green Gem", new Coords(36, 19) ],
-			[ "Brownish Gem", new Coords(37, 19) ],
-			[ "Brownish Gem", new Coords(38, 19) ],
-			[ "Black Gem", new Coords(39, 19) ],
-			[ "White Gem", new Coords(0, 20) ],
-			[ "Yellow Gem", new Coords(1, 20) ],
-			[ "Red Gem", new Coords(2, 20) ],
-			[ "Violet Gem", new Coords(3, 20) ],
-			[ "Red Gem", new Coords(4, 20) ],
-			[ "Violet Gem", new Coords(5, 20) ],
-			[ "Black Gem", new Coords(6, 20) ],
-			[ "Orange Gem", new Coords(7, 20) ],
-			[ "Green Gem", new Coords(8, 20) ],
-			[ "White Gem", new Coords(9, 20) ],
-			[ "Blue Gem", new Coords(10, 20) ],
-			[ "Red Gem", new Coords(11, 20) ],
-			[ "Brownish Gem", new Coords(12, 20) ],
-			[ "Orange Gem", new Coords(13, 20) ],
-			[ "Yellow Gem", new Coords(14, 20) ],
-			[ "Black Gem", new Coords(15, 20) ],
-			[ "Green Gem", new Coords(16, 20) ],
-			[ "Violet Gem", new Coords(17, 20) ],
-			[ "Gray Stone", new Coords(18, 20) ],
-			[ "Gray Stone", new Coords(19, 20) ],
-			[ "Gray Stone", new Coords(20, 20) ],
-			[ "Gray Stone", new Coords(21, 20) ],
-			[ "Rock", new Coords(22, 20) ],
-
-			// items - wands
-
-			[ "Glass Wand", new Coords(39, 18) ],
-			[ "Balsa Wand", new Coords(0, 19) ],
-			[ "Crystal Wand", new Coords(1, 19) ],
-			[ "Maple Wand", new Coords(2, 19) ],
-			[ "Pine Wand", new Coords(3, 19) ],
-			[ "Oak Wand", new Coords(4, 19) ],
-			[ "Ebony Wand", new Coords(5, 19) ],
-			[ "Marble Wand", new Coords(6, 19) ],
-			[ "Tin Wand", new Coords(7, 19) ],
-			[ "Brass Wand", new Coords(8, 19) ],
-			[ "Copper Wand", new Coords(9, 19) ],
-			[ "Silver Wand", new Coords(10, 19) ],
-			[ "Platinum Wand", new Coords(11, 19) ],
-			[ "Iridium Wand", new Coords(12, 19) ],
-			[ "Zinc Wand", new Coords(13, 19) ],
-			[ "Aluminum Wand", new Coords(14, 19) ],
-			[ "Uranium Wand", new Coords(15, 19) ],
-			[ "Iron Wand", new Coords(16, 19) ],
-			[ "Steel Wand", new Coords(17, 19) ],
-			[ "Hexagonal Wand", new Coords(18, 19) ],
-			[ "Short Wand", new Coords(19, 19) ],
-			[ "Runed Wand", new Coords(20, 19) ],
-			[ "Long Wand", new Coords(21, 19) ],
-			[ "Curved Wand", new Coords(22, 19) ],
-			[ "Forked Wand", new Coords(23, 19) ],
-			[ "Spiked Wand", new Coords(24, 19) ],
-			[ "Jeweled Wand", new Coords(25, 19) ],
+			// items - amulets - special
+			[ "Plastic Imitation Amulet of Yendor", new Coords(23, 14) ],
+			[ "Amulet of Yendor", new Coords(24, 14) ],
 
 			// items - tools
 
@@ -446,6 +236,116 @@
 			[ "Sword", new Coords(23, 10) ],
 			[ "WormTooth", new Coords(19, 10) ],
 		];
+
+		function createTiles(namesInTileOrder, namePrefix, nameSuffix, tilePos)
+		{
+			for (var i = 0; i < namesInTileOrder.length; i++)
+			{
+				var name = namesInTileOrder[i];
+				name = namePrefix + name + nameSuffix;
+				var tileNameAndPosition = [ name, tilePos.clone() ];
+				tileNamesAndPositions.push(tileNameAndPosition);
+
+				tilePos.x++;
+				if (tilePos.x >= 40)
+				{
+					tilePos.x = 0;
+					tilePos.y++;
+				}
+			}
+		}
+
+		var ringNamesInTileOrder =
+		[
+			"Wooden", "Granite", "Moonstone", "Clay",  "Shiny",
+			"Black Onyx", "Opal", "Tiger Eye", "Emerald", "Bronze",
+			"Topaz", "Agate", "Sapphire", "Ruby", "Diamond",
+			"Pearl", "Iron", "Brass", "Copper", "Twisted",
+			"Steel", "Silver", "Gold", "Ivory", "Jade",
+			"Wire", "Engagement", "Coral"
+		];
+
+		createTiles(ringNamesInTileOrder, "", " Ring", new Coords(26, 13));
+
+		var amuletNamesInTileOrder =
+		[
+			"Circular", "Spherical", "Oval", "Triangular",
+			"Pyramidal", "Square", "Concave", "Hexagonal",
+			"Octagonal",
+		];
+
+		createTiles(amuletNamesInTileOrder, "", " Amulet", new Coords(14, 14));
+
+		var potionNamesInTileOrder =
+		[
+			"Ruby", "Pink", "Orange", "Yellow",
+			"Emerald", "Dark Green", "Sky Blue", "Cyan",
+			"Brilliant Blue", "Magenta", "Purple-Red", "Puce",
+			"Milky", "Swirly", "Bubbly", "Smoky",
+			"Cloudy", "Effervescent", "Black", "Golden",
+			"Brown", "Fizzy", "Dark", "White",
+			"Murky", "Clear",
+		];
+
+		createTiles(potionNamesInTileOrder, "", " Potion", new Coords(24, 16));
+
+		var scrollNamesInTileOrder =
+		[
+			"Andova Begarin", "Daiyen Fooels", "Duam Xnaht", "Eblib Yloh",
+			"Elam Ebow", "Foobie Bletch", "Garven Deh", "Hackem Muche",
+			"Juyed Awk Yacc", "Kernod Wel", "Kirje", "Lep Gex Ven Zea",
+			"NR 9", "Pratyavayah", "Prirutsenie", "Read Me",
+			"Temov", "Tharr", "Ve Forbryderne", "Velox Neb",
+			"Venzar Borgavve", "Verr Yed Horre", "Xixaxa Xoxaxa Xuxaxa", "Yum Yum",
+			"Zelgo Mer",
+		];
+
+		createTiles(scrollNamesInTileOrder, "Scroll Titled '", "'", new Coords(10, 17));
+
+		var spellbookNamesInTileOrder =
+		[
+			"Parchment", "Vellum", "Ragged", "Dogeared",
+			"Mottled", "Stained", "Cloth", "Leather",
+			"White", "Pink", "Red", "Orange",
+			"Yellow", "Velvet", "Light Green", "Dark Green",
+			"Turquoise", "Cyan", "Light Blue", "Dark Blue",
+			"Indigo", "Magenta", "Purple", "Violet",
+			"Tan", "Plaid", "Light Brown", "Dark Brown",
+			"Gray", "Wrinkled", "Dusty", "Bronze",
+			"Copper", "Silver", "Gold", "Glittering",
+			"Shining", "Dull", "Thin", "Thick",
+		];
+
+		createTiles(spellbookNamesInTileOrder, "", " Spellbook", new Coords(37, 17));
+
+		var wandNamesInTileOrder =
+		[
+			"Glass", "Balsa", "Crystal", "Maple",
+			"Pine", "Oak", "Ebony", "Marble",
+			"Tin", "Brass", "Copper", "Silver",
+			"Platinum", "Iridium", "Zinc", "Aluminum",
+			"Uranium", "Iron", "Steel", "Hexagonal",
+			"Short", "Runed", "Long", "Curved",
+			"Forked", "Spiked", "Jeweled",
+		];
+
+		createTiles(wandNamesInTileOrder, "", " Wand", new Coords(39, 18));
+
+		var stoneNamesInTileOrder =
+		[
+			"White Gem", "White Gem", "Red Gem", "Orange Gem",
+			"Blue Gem", "Black Gem", "Green Gem", "Green Gem",
+			"Yellow Gem", "Green Gem", "Brownish Gem", "Brownish Gem",
+			"Black Gem", "White Gem", "Yellow Gem", "Red Gem",
+			"Violet Gem", "Red Gem", "Violet Gem", "Black Gem",
+			"Orange Gem", "Green Gem", "White Gem", "Blue Gem",
+			"Red Gem", "Brownish Gem", "Orange Gem", "Yellow Gem",
+			"Black Gem", "Green Gem", "Violet Gem", "Gray Stone",
+			"Gray Stone", "Gray Stone", "Gray Stone", "Rock",
+		];
+
+		var tilePos = new Coords(27, 19);
+		createTiles(stoneNamesInTileOrder, "", "", new Coords(27, 19));
 
 		var monsterNamesInTileOrder =
 		[
@@ -600,21 +500,7 @@
 			"Student", 				"Chieftan", 	"Neanderthal", 								"Attendant", 	"Page", 		"Abbot", 		"Acolyte", 		"Hunter", 	"Thug", 				"Roshi", 			"Guide", 		"Warrior", 		"Apprentice"
 		];
 
-		var tilePos = new Coords(0, 0);
-		var tilePosXMax = 40; //?
-		for (var i = 0; i < monsterNamesInTileOrder.length; i++)
-		{
-			var monsterName = monsterNamesInTileOrder[i];
-			var tileNameAndPosition = [ monsterName, tilePos.clone() ];
-			tileNamesAndPositions.push(tileNameAndPosition);
-
-			tilePos.x++;
-			if (tilePos.x >= tilePosXMax)
-			{
-				tilePos.x = 0;
-				tilePos.y++;
-			}
-		}
+		createTiles(monsterNamesInTileOrder, "", "", new Coords(0, 0));
 
 		var emplacementNamesInTileOrder =
 		[
@@ -641,21 +527,7 @@
 			 "Web", "?", "TrapHex", "TrapDrain", "TrapPolymorph"
 		];
 
-		var tilePos = new Coords(1, 21);
-		var tilePosXMax = 40; //?
-		for (var i = 0; i < emplacementNamesInTileOrder.length; i++)
-		{
-			var tileName = emplacementNamesInTileOrder[i];
-			var tileNameAndPosition = [ tileName, tilePos.clone() ];
-			tileNamesAndPositions.push(tileNameAndPosition);
-
-			tilePos.x++;
-			if (tilePos.x >= tilePosXMax)
-			{
-				tilePos.x = 0;
-				tilePos.y++;
-			}
-		}
+		createTiles(emplacementNamesInTileOrder, "", "", new Coords(1, 21));
 
 		for (var i = 0; i < tileNamesAndPositions.length; i++)
 		{
