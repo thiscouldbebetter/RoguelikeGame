@@ -520,7 +520,7 @@
 			// 867-869
 			"Sky", "Cloud", "WaterDepths",
 			// 870-879
-			"TrapArrow", "TrapDart", "TrapDeadfall", "TrapNoise", "TrapJaws", "TrapMine", "TrapBoulder", "TrapSleep", "TrapWater", "TrapFire",
+			"TrapArrow", "TrapDart", "TrapDeadfall", "TrapAlarm", "TrapJaws", "TrapMine", "TrapBoulder", "TrapSleep", "TrapWater", "TrapFire",
 			// 880-886
 			"Pit", "PitSpiked", "Hole", "TrapDoor", "TeleporterShort", "TeleporterLong", "MagicPortal",
 			 // 887

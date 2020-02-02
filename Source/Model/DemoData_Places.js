@@ -744,31 +744,32 @@
 				toPos.y = zoneToConnectBounds.max().y;
 			}
 
-			doorwayPositions.push(fromPos.clone().subtract(directionToZoneToConnect));
-			doorwayPositions.push(toPos.clone().add(directionToZoneToConnect));
+			var doorwayPosFrom = fromPos.clone().subtract(directionToZoneToConnect);
+			var doorwayPosTo = toPos.clone().add(directionToZoneToConnect);
+			doorwayPositions.push(doorwayPosFrom);
+			doorwayPositions.push(doorwayPosTo);
 
 			var cellPos = fromPos.clone();
 
-			terrainCodeChar = terrains.Floor.codeChar;
+			terrainFloorCodeChar = terrains.Floor.codeChar;
 
 			var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
-
-			var terrainCodeCharsForWalls =
-				terrains.WallEastWest.codeChar +
-				terrains.WallNorthSouth.codeChar;
 
 			while (displacementToZoneToConnect.equals(zeroes) == false)
 			{
 				var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
-				var terrainCodeCharExisting = mapCellRowAsString[cellPos.x];
+				var terrainExistingCodeChar = mapCellRowAsString[cellPos.x];
 
-				mapCellRowAsString =
-					mapCellRowAsString.substring(0, cellPos.x)
-					+ terrainCodeChar
-					+ mapCellRowAsString.substring(cellPos.x + 1);
+				if (terrainExistingCodeChar != terrainFloorCodeChar)
+				{
+					mapCellRowAsString =
+						mapCellRowAsString.substring(0, cellPos.x)
+						+ terrainFloorCodeChar
+						+ mapCellRowAsString.substring(cellPos.x + 1);
 
-				mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
+					mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
+				}
 
 				displacementToZoneToConnect.overwriteWith
 				(
@@ -793,20 +794,6 @@
 
 			zonesToConnect.remove(zoneToConnect);
 			zonesConnected.push(zoneToConnect);
-		}
-
-		for (var i = 0; i < doorwayPositions.length; i++)
-		{
-			var cellPos = doorwayPositions[i];
-
-			var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
-
-			mapCellRowAsString =
-				mapCellRowAsString.substring(0, cellPos.x)
-				+ terrainCodeChar
-				+ mapCellRowAsString.substring(cellPos.x + 1);
-
-			mapCellsAsStrings[cellPos.y] = mapCellRowAsString;
 		}
 
 		return doorwayPositions;
@@ -915,29 +902,47 @@
 		}
 
 		var chanceOfDoorPerDoorway = .75;
+		var chanceOfDoorBeingHidden = .1;
 		var chanceOfDoorBeingOpen = .25;
 
 		for (var i = 0; i < doorwayPositions.length; i++)
 		{
+			var doorPos = doorwayPositions[i];
+
+			var mapRow = mapCellsAsStrings[doorPos.y];
+			var terrainExistingCharCode = mapRow[doorPos.x];
+			mapRow = mapRow.substr(0, doorPos.x) + "." + mapRow.substr(doorPos.x + 1);
+			mapCellsAsStrings[doorPos.y] = mapRow;
+
 			var randomNumber = randomizer.getNextRandom();
 			if (randomNumber <= chanceOfDoorPerDoorway)
 			{
-				var doorPos = doorwayPositions[i];
-
+				var isWallEastWest = (terrainExistingCharCode == "-");
+				var doorForward = (isWallEastWest ? new Coords(-1, 0) : new Coords(1, 0));
+				var doorOri = new Orientation(doorForward);
+				var doorLoc = new Location(doorPos, doorOri);
 				var entityForDoor = EntityHelper.new
 				(
 					"Door" + i,
 					entityDefns["Door"],
 					[
-						new Locatable
-						(
-							new Location(doorwayPositions[i])
-						)
+						new Locatable(doorLoc)
 					]
 				);
 
 				randomNumber = randomizer.getNextRandom();
-				var isDoorOpen = (randomNumber <= chanceOfDoorBeingOpen);
+				var isDoorHidden = (randomNumber <= chanceOfDoorBeingHidden);
+				var isDoorOpen;
+				if (isDoorHidden)
+				{
+					entityForDoor.searchable.isHidden = true;
+					isDoorOpen = false;
+				}
+				else
+				{
+					randomNumber = randomizer.getNextRandom();
+					isDoorOpen = (randomNumber <= chanceOfDoorBeingOpen);
+				}
 				entityForDoor.openable.isOpen = isDoorOpen;
 
 				entities.push(entityForDoor);

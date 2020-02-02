@@ -142,14 +142,30 @@ function DemoData(randomizer)
 						(
 							function selectChildName(universe, world, display, entity)
 							{
-								return (entity.openable.isOpen ? "Open" : "Closed");
+								return (entity.searchable.isHidden ? "Hidden" : (entity.openable.isOpen ? "Open" : "Closed"));
 							},
-							[ "Closed", "Open" ],
-							[ visuals["DoorClosed"], visuals["DoorOpenLeft"] ]
+							[ "Hidden", "Closed", "Open" ],
+							[ 
+								new VisualDirectional
+								(
+									null,
+									[
+										visuals["WallDungeonNorthSouth"],
+										visuals["WallDungeonEastWest"]
+									]
+								),
+								visuals["DoorClosed"],
+								visuals["DoorOpenLeft"]
+							]
 						)
 					),
 					new Emplacement("door"),
 					new Openable(false),
+					new Searchable
+					(
+						.25, // chance
+						false // isHidden
+					),
 					generatable0
 				]
 			),

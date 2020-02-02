@@ -200,8 +200,15 @@ function DemoData_Actions()
 				{
 					var entityInCell = entitiesInCellDestination[0];
 
+					var searchable = entityInCell.searchable;
 					var openable = entityInCell.openable;
-					if (openable != null)
+
+					var isHidden = (searchable != null && searchable.isHidden);
+					if (isHidden)
+					{
+						// Do nothing.
+					}
+					else if (openable != null)
 					{
 						var isAlreadyInDesiredState = (shouldOpenNotClose == openable.isOpen);
 						if (isAlreadyInDesiredState)
@@ -516,31 +523,35 @@ function DemoData_Actions()
 				{
 					isDestinationAccessible = false;
 
-					var entityDefnName;
-
-					if (entityInCell.emplacement != null)
+					var searchable = entityInCell.searchable;
+					if (searchable == null || searchable.isHidden == false)
 					{
+						var entityDefnName;
+
+						if (entityInCell.emplacement != null)
+						{
+							if (player != null)
+							{
+								entityDefnName = entityInCell.emplacement.appearance;
+							}
+						}
+						else if (entityInCell.mover != null)
+						{
+							if (player != null)
+							{
+								entityDefnName = entityInCell.namable.name;
+							}
+							else
+							{
+								this.actionAttack_Melee_Perform(universe, world, place, actor, action);
+							}
+						}
+
 						if (player != null)
 						{
-							entityDefnName = entityInCell.emplacement.appearance;
+							var message = "A " + entityDefnName + " blocks your path.";
+							player.messageLog.messageAdd(message);
 						}
-					}
-					else if (entityInCell.mover != null)
-					{
-						if (player != null)
-						{
-							entityDefnName = entityInCell.namable.name;
-						}
-						else
-						{
-							this.actionAttack_Melee_Perform(universe, world, place, actor, action);
-						}
-					}
-
-					if (player != null)
-					{
-						var message = "A " + entityDefnName + " blocks your path.";
-						player.messageLog.messageAdd(message);
 					}
 				}
 			}
@@ -619,6 +630,9 @@ function DemoData_Actions()
 			return;
 		}
 
+		actor.mover.movesThisTurn = 0;
+		actor.turnable.hasActedThisTurn = true;
+
 		var player = actor.player;
 		var actorLoc = actor.locatable.loc;
 		var map = place.map;
@@ -628,7 +642,7 @@ function DemoData_Actions()
 			new Coords(-1, 1), new Coords(-1, 0), new Coords(-1, -1),
 			new Coords(0, -1), new Coords(1, -1)
 		]; // hack
-		
+
 		for (var n = 0; n < offsetsToNeighboringCells.length; n++)
 		{
 			var direction = offsetsToNeighboringCells[n];
@@ -645,15 +659,19 @@ function DemoData_Actions()
 					var entityInCell = entitiesInCellToSearch[i];
 
 					var searchable = entityInCell.searchable;
-					if (searchable != null)
+					if (searchable != null && searchable.isHidden)
 					{
 						var randomNumber = world.randomizer.getNextRandom();
 						if (randomNumber <= searchable.chanceOfDiscoveryPerSearch)
 						{
-							searchable.isDiscovered = true;
+							searchable.isHidden = false;
 							entityInCell.drawable.isVisible = true;
 							var message = "You find a " + entityInCell.emplacement.appearance + ".";
 							player.messageLog.messageAdd(message);
+							if (searchable.discover != null)
+							{
+								searchable.discover(universe, world, place, actor, entityInCell);
+							}
 						}
 					}
 
@@ -696,7 +714,10 @@ function DemoData_Actions()
 			function perform(universe, world, place, actor, action)
 			{
 				var shouldOpenNotClose = false;
-				actions.actionDoorOpenOrClose_Perform(universe, world, place, actor, action, shouldOpenNotClose);
+				actions.actionDoorOpenOrClose_Perform
+				(
+					universe, world, place, actor, action, shouldOpenNotClose
+				);
 			}
 		);
 
@@ -706,7 +727,10 @@ function DemoData_Actions()
 			function perform(universe, world, place, actor, action)
 			{
 				var shouldOpenNotClose = true;
-				actions.actionDoorOpenOrClose_Perform(universe, world, place, actor, action, shouldOpenNotClose);
+				actions.actionDoorOpenOrClose_Perform
+				(
+					universe, world, place, actor, action, shouldOpenNotClose
+				);
 			}
 		);
 
