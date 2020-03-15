@@ -40,6 +40,14 @@ function MapCell(terrainCode, entitiesPresent)
 		return returnValue;
 	};
 
+	MapCell.prototype.overwriteWith = function(other)
+	{
+		this.terrainCode = other.terrainCode;
+		this.entitiesPresent.length = 0;
+		this.entitiesPresent.push(...other.entitiesPresent);
+		return this;
+	};
+
 	MapCell.prototype.terrain = function(map)
 	{
 		return map.terrains[this.terrainCode];

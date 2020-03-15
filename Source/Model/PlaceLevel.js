@@ -272,7 +272,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 	PlaceLevel.prototype.draw = function(universe, world)
 	{
-		if (this.hasBeenUpdatedSinceDrawn == true)
+		if (this.hasBeenUpdatedSinceDrawn)
 		{
 			this.hasBeenUpdatedSinceDrawn = false;
 
@@ -292,7 +292,6 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 		display.childSelectByName(null);
 
-		this.hasBeenUpdatedSinceLastDrawn = false;
 		display.childSelectByName("Map");
 		display.drawBackground("Black");
 		this.map.draw(universe, world, display, this);

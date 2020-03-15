@@ -76,16 +76,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		return returnValue;
 	};
 
-	// instance methods
-
-	Map.prototype.buildCellPosFromIndex = function(cellIndex)
-	{
-		return new Coords
-		(
-			cellIndex % this.sizeInCells.x,
-			Math.floor(cellIndex / this.sizeInCells.x)
-		);
-	};
+	// Instance methods.
 
 	Map.prototype.cellAtPos = function(cellPos)
 	{
@@ -106,34 +97,32 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		this.cells[cellIndex] = cellToSet;
 	};
 
-	Map.prototype.cellsAsString = function()
+	Map.prototype.copyNCellsAtPositionsToOther = function
+	(
+		numberOfCellsToCopy, cellPositionsToCopy, other
+	)
 	{
-		return this.cellsAsStrings().join("\n");
-	};
-
-	Map.prototype.cellsAsStrings = function()
-	{
-		// For debugging.
-
-		var rowsAsStrings = [];
-
-		var cellPos = this._cellPos;
-		for (var y = 0; y < this.sizeInCells.y; y++)
+		for (var i = 0; i < numberOfCellsToCopy; i++)
 		{
-			var rowAsString = "";
-			cellPos.y = y;
-			for (var x = 0; x < this.sizeInCells.x; x++)
+			var cellPos = cellPositionsToCopy[i];
+			var cellToCopy = this.cellAtPos(cellPos);
+			if (cellToCopy != null)
 			{
-				cellPos.x = x;
-				var cellAtPos = this.cellAtPos(cellPos);
-				var cellTerrain = cellAtPos.terrain(this);
-				rowAsString += cellTerrain.codeChar;
-			}
-			rowsAsStrings.push(rowAsString);
-		}
+				other.cellAtPos_Set(cellPos, cellToCopy);
 
-		return rowsAsStrings;
+				// todo - For unknown reasons, causes drawing to lag actual.
+				//var cellToOverwrite = other.cellAtPos(cellPos);
+				//cellToOverwrite.overwriteWith(cellToCopy);
+			}
+		}
 	};
+
+	Map.prototype.indexOfCellAtPos = function(cellPos)
+	{
+		return cellPos.y * this.sizeInCells.x + cellPos.x
+	};
+
+	// Clonable.
 
 	Map.prototype.clone = function()
 	{
@@ -167,27 +156,33 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		);
 	};
 
-	Map.prototype.copyNCellsAtPositionsToOther = function
-	(
-		numberOfCellsToCopy,
-		cellPositionsToCopy,
-		other
-	)
+	// Debugging.
+
+	Map.prototype.cellsAsString = function()
 	{
-		for (var i = 0; i < numberOfCellsToCopy; i++)
-		{
-			var cellPos = cellPositionsToCopy[i];
-			var cell = this.cellAtPos(cellPos);
-			if (cell != null)
-			{
-				other.cellAtPos_Set(cellPos, cell);
-			}
-		}
+		return this.cellsAsStrings().join("\n");
 	};
 
-	Map.prototype.indexOfCellAtPos = function(cellPos)
+	Map.prototype.cellsAsStrings = function()
 	{
-		return cellPos.y * this.sizeInCells.x + cellPos.x
+		var rowsAsStrings = [];
+
+		var cellPos = this._cellPos;
+		for (var y = 0; y < this.sizeInCells.y; y++)
+		{
+			var rowAsString = "";
+			cellPos.y = y;
+			for (var x = 0; x < this.sizeInCells.x; x++)
+			{
+				cellPos.x = x;
+				var cellAtPos = this.cellAtPos(cellPos);
+				var cellTerrain = cellAtPos.terrain(this);
+				rowAsString += cellTerrain.codeChar;
+			}
+			rowsAsStrings.push(rowAsString);
+		}
+
+		return rowsAsStrings;
 	};
 
 	// drawable
@@ -202,7 +197,10 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 		var boundsVisible = this._boundsVisible;
 		boundsVisible.center.overwriteWith(playerPos);
-		boundsVisible.sizeOverwriteWith(new Coords(1, 1).multiplyScalar(36)); // todo
+		boundsVisible.sizeOverwriteWith
+		(
+			boundsVisible.size.overwriteWith(Coords.Instances().Ones).multiplyScalar(38)
+		);
 		var cellPosVisibleMin = boundsVisible.min().trimToRangeMax(this.sizeInCells);
 		var cellPosVisibleMax = boundsVisible.max().trimToRangeMax(this.sizeInCells);
 
@@ -269,28 +267,10 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 		var entitiesInCell = cell.entitiesPresent;
 
-		var entitiesSortedBottomToTop = this._entitiesSortedBottomToTop;
-
-		// note - Array.sort() fails to order stacks of items correctly?
-
-		entitiesSortedBottomToTop.length = 0;
-
-		for (var i = 0; i < entitiesInCell.length; i++)
-		{
-			var entityToSort = entitiesInCell[i];
-			var entityToSortZIndex = entityToSort.locatable.loc.pos.z;
-			var j;
-			for (j = 0; j < entitiesSortedBottomToTop.length; j++)
-			{
-				var entitySorted = entitiesSortedBottomToTop[j];
-				var entitySortedZIndex = entitySorted.locatable.loc.pos.z;
-				if (entityToSortZIndex <= entitySortedZIndex)
-				{
-					break;
-				}
-			}
-			entitiesSortedBottomToTop.splice(j, 0, entityToSort);
-		}
+		var entitiesSortedBottomToTop = entitiesInCell.sort
+		(
+			(a, b) => a.locatable.loc.pos.z - b.locatable.loc.pos.z
+		);
 
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
