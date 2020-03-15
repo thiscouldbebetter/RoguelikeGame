@@ -509,10 +509,10 @@ function DemoData_Actions()
 		universe, world, place, actor, action, directionToMove, cellDestination, isDestinationAccessible
 	)
 	{
-		var player = actor.player;
-
 		if (isDestinationAccessible)
 		{
+			var player = actor.player;
+
 			var entitiesInCellDestination = cellDestination.entitiesPresent;
 
 			for (var b = 0; b < entitiesInCellDestination.length; b++)
@@ -1030,8 +1030,8 @@ function DemoData_Actions()
 					var playerPos = player.locatable.loc.pos;
 					var map = place.map;
 					/*
-					var fieldOfView = world.sightHelper.fieldOfView;
-					var canActorSeePlayer = fieldOfView.lineOfSightBetweenPointsOnMap
+					var sightHelper = world.sightHelper;
+					var canActorSeePlayer = sightHelper.lineOfSightBetweenPointsOnMap
 					(
 						actorPos, playerPos, map
 					);

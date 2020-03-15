@@ -67,7 +67,10 @@ function Player(sightRange)
 			}
 
 			world.turnsSoFar++;
+		}
 
+		if (place.hasBeenUpdatedSinceDrawn)
+		{
 			var player = entityPlayer.player;
 			var placeKnown = player.placeKnownLookup[place.name];
 

@@ -97,26 +97,6 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		this.cells[cellIndex] = cellToSet;
 	};
 
-	Map.prototype.copyNCellsAtPositionsToOther = function
-	(
-		numberOfCellsToCopy, cellPositionsToCopy, other
-	)
-	{
-		for (var i = 0; i < numberOfCellsToCopy; i++)
-		{
-			var cellPos = cellPositionsToCopy[i];
-			var cellToCopy = this.cellAtPos(cellPos);
-			if (cellToCopy != null)
-			{
-				other.cellAtPos_Set(cellPos, cellToCopy);
-
-				// todo - For unknown reasons, causes drawing to lag actual.
-				//var cellToOverwrite = other.cellAtPos(cellPos);
-				//cellToOverwrite.overwriteWith(cellToCopy);
-			}
-		}
-	};
-
 	Map.prototype.indexOfCellAtPos = function(cellPos)
 	{
 		return cellPos.y * this.sizeInCells.x + cellPos.x
@@ -187,7 +167,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	// drawable
 
-	Map.prototype.draw = function(universe, world, display, venue)
+	Map.prototype.draw = function(universe, world, display)
 	{
 		var player = world.entityForPlayer;
 		var playerPos = player.locatable.loc.pos;
@@ -226,9 +206,9 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 		} // end for y
 
-		var fieldOfView = world.sightHelper.fieldOfView;
-		var numberOfCellsVisible = fieldOfView.numberOfCellsVisible;
-		var cellPositionsVisible = fieldOfView._cellPositionsVisible;
+		var sightHelper = world.sightHelper;
+		var numberOfCellsVisible = sightHelper.numberOfCellsVisible;
+		var cellPositionsVisible = sightHelper._cellPositionsVisible;
 		shouldDrawMovers = true;
 		for (var i = 0; i < numberOfCellsVisible; i++)
 		{
