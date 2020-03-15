@@ -19,7 +19,7 @@ function Player(sightRange)
 		{
 			var mapComplete = place.map;
 
-			mapKnown = Map.buildBlank
+			mapKnown = this.initializeEntityForPlace_MapBuildBlank
 			(
 				mapComplete.name + "_Known",
 				mapComplete.terrains,
@@ -49,7 +49,36 @@ function Player(sightRange)
 				entity.player.sightRange
 			);
 		}
-	}
+	};
+
+	Player.prototype.initializeEntityForPlace_MapBuildBlank = function(name, terrains, cellSizeInPixels, sizeInCells)
+	{
+		var cellsAsStrings = [];
+
+		var terrainBlank = terrains[0]; // hack
+
+		for (var y = 0; y < sizeInCells.y; y++)
+		{
+			var cellRowAsString = "";
+
+			for (var x = 0; x < sizeInCells.x; x++)
+			{
+				cellRowAsString += terrainBlank.codeChar;
+			}
+
+			cellsAsStrings.push(cellRowAsString);
+		}
+
+		var returnValue = new Map
+		(
+			name,
+			terrains,
+			cellSizeInPixels,
+			cellsAsStrings
+		);
+
+		return returnValue;
+	};
 
 	Player.prototype.updateForTimerTick = function(universe, world, place, entityPlayer)
 	{
