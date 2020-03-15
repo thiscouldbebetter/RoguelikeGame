@@ -716,7 +716,7 @@
 				dimensionIndexToClear = 1;
 			}
 
-			directionToZoneToConnect.dimension
+			directionToZoneToConnect.dimensionSet
 			(
 				dimensionIndexToClear,
 				0 // valueToSet
@@ -782,7 +782,7 @@
 				directionToZoneToConnect.overwriteWith
 				(
 					displacementToZoneToConnect
-				).dimension
+				).dimensionSet
 				(
 					directionToZoneToConnect.dimensionIndexOfSmallest(0),
 					0 // valueToSet
@@ -1132,7 +1132,7 @@
 
 		var mapSizeInCells = new Coords(16, 16, 1);
 		var mapCellsAsStrings = [];
-		var mapRowAsString = "".padLeft(mapSizeInCells.x, ".");
+		var mapRowAsString = "".padStart(mapSizeInCells.x, ".");
 		for (var y = 0; y < mapSizeInCells.y; y++)
 		{
 			mapCellsAsStrings.push(mapRowAsString);

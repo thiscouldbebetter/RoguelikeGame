@@ -3,6 +3,8 @@ function Mappable(defn)
 {
 	this.defn = defn;
 	this.mapCellOccupied = null;
+
+	this.entitiesAlreadyCollidedWith = []; // hack
 }
 {
 	Mappable.prototype.collider = function()
