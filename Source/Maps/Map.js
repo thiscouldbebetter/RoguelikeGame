@@ -173,7 +173,6 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		var playerPos = player.locatable.loc.pos;
 
 		var cellPos = this._cellPos;
-		var shouldDrawMovers = false;
 
 		var boundsVisible = this._boundsVisible;
 		boundsVisible.center.overwriteWith(playerPos);
@@ -198,28 +197,17 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 					world,
 					display,
 					playerPos,
-					cellPos,
-					shouldDrawMovers
+					cellPos
 				);
 
 			} // end for x
 
 		} // end for y
 
-		var sightHelper = world.sightHelper;
-		var numberOfCellsVisible = sightHelper.numberOfCellsVisible;
-		var cellPositionsVisible = sightHelper._cellPositionsVisible;
-		shouldDrawMovers = true;
-		for (var i = 0; i < numberOfCellsVisible; i++)
-		{
-			var cellPos = cellPositionsVisible[i];
-			this.drawCellAtPos(universe, world, display, playerPos, cellPos, shouldDrawMovers);
-		}
-
 		display.flush();
 	};
 
-	Map.prototype.drawCellAtPos = function(universe, world, display, playerPos, cellPos, drawMovers)
+	Map.prototype.drawCellAtPos = function(universe, world, display, playerPos, cellPos)
 	{
 		var map = this;
 
@@ -255,23 +243,20 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
-			if (entity.mover == null || drawMovers)
+			var drawable = entity.drawable;
+			if (drawable.isVisible)
 			{
-				var drawable = entity.drawable;
-				if (drawable.isVisible)
-				{
-					var entityLoc = entity.locatable.loc;
-					var entityPos = entityLoc.pos;
+				var entityLoc = entity.locatable.loc;
+				var entityPos = entityLoc.pos;
 
-					this._drawPosSaved.overwriteWith(entityPos);
+				this._drawPosSaved.overwriteWith(entityPos);
 
-					entityPos.overwriteWith(drawPos);
+				entityPos.overwriteWith(drawPos);
 
-					var visual = drawable.visual;
-					visual.draw(universe, world, display, entity);
+				var visual = drawable.visual;
+				visual.draw(universe, world, display, entity);
 
-					entityPos.overwriteWith(this._drawPosSaved);
-				}
+				entityPos.overwriteWith(this._drawPosSaved);
 			}
 
 		} // end for entitiesSortedBottomToTop
