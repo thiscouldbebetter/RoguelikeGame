@@ -35,8 +35,8 @@ function RangeSet(ranges)
 
 			if (range.min > range.max)
 			{
-				var rangePart0 = new Range(0, range.max);
-				var rangePart1 = new Range(range.min, period);
+				var rangePart0 = new RangeExtent(0, range.max);
+				var rangePart1 = new RangeExtent(range.min, period);
 
 				this.ranges.splice(i, 1, rangePart0, rangePart1);
 				i++;

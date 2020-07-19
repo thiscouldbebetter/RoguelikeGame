@@ -35,7 +35,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 	this.hasBeenUpdatedSinceDrawn = true;
 
 	// Helper variables.
-	this._drawLoc = new Location(new Coords());
+	this._drawLoc = new Disposition(new Coords());
 }
 
 {
@@ -61,7 +61,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			for (var i = 0; i < entitiesWithPropertyName.length; i++)
 			{
 				var entity = entitiesWithPropertyName[i];
-				if (entity.locatable.loc.pos.equalsXY(cellPosToCheck) == true)
+				if (entity.locatable().loc.pos.equalsXY(cellPosToCheck) == true)
 				{
 					returnEntities.insertElementAt(entity, 0);
 				}
@@ -125,15 +125,16 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			var propertyName = propertyNamesKnown[i];
 			var entitiesWithProperty = this.entitiesByPropertyName[propertyName];
 
-			propertyName = propertyName.lowercaseFirstCharacter();
 			for (var b = 0; b < entitiesWithProperty.length; b++)
 			{
 				var entity = entitiesWithProperty[b];
-				var entityDefn = entity;
-				var entityDefnProperty = entityDefn[propertyName];
-				if (entityDefnProperty.updateForTimerTick != null)
+				if (entity.propertiesByName.has(propertyName))
 				{
-					entityDefnProperty.updateForTimerTick(universe, world, this, entity);
+					var entityProperty = entity.propertiesByName.get(propertyName);
+					if (entityProperty.updateForTimerTick != null)
+					{
+						entityProperty.updateForTimerTick(universe, world, this, entity);
+					}
 				}
 			}
 		}
@@ -152,7 +153,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			var entityToRemove = this.entitiesToRemove[i];
 
 			// hack
-			var mappable = entityToRemove.mappable;
+			var mappable = entityToRemove.mappable();
 			if (mappable != null)
 			{
 				var entitiesInCell = mappable.mapCellOccupied.entitiesPresent;
@@ -260,7 +261,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 				new Coords(180, 272), // size
 				// children
 				[
-					entityForPlayer.player.controlUpdate(world, entityForPlayer),
+					entityForPlayer.player().controlUpdate(world, entityForPlayer),
 				]
 			);
 		}
@@ -277,7 +278,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			this.hasBeenUpdatedSinceDrawn = false;
 
 			var player = world.entityForPlayer;
-			var placeKnown = player.player.placeKnownLookup[this.name];
+			var placeKnown = player.player().placesKnownByName.get(this.name);
 
 			if (placeKnown != null)
 			{
@@ -305,7 +306,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 		display.childSelectByName("Messages");
 		display.clear();
-		var messageLogAsControl = world.entityForPlayer.player.messageLog.controlUpdate(world);
+		var messageLogAsControl = world.entityForPlayer.player().messageLog.controlUpdate(world);
 		this._drawLoc.pos.clear();
 		messageLogAsControl.draw(universe, display, this._drawLoc);
 		display.flush();

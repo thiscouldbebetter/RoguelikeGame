@@ -12,8 +12,8 @@ function EntityHelper()
 		{
 			var property = properties[i];
 			returnValue.properties.push(property);
-			var propertyName = property.constructor.name.lowercaseFirstCharacter();
-			returnValue[propertyName] = property;
+			//var propertyName = StringHelper.lowercaseFirstCharacter(property.constructor.name);
+			returnValue.propertiesByName.set(property.constructor.name, property);
 		}
 		return returnValue;
 	}

@@ -14,7 +14,7 @@ function MapCell(terrainCode, entitiesPresent)
 			for (var i = 0; i < this.entitiesPresent.length; i++)
 			{
 				var entityPresent = this.entitiesPresent[i];
-				if (entityPresent.mappableDefn.blocksVision(entityPresent))
+				if (entityPresent.mappableDefn().blocksVision(entityPresent))
 				{
 					returnValue = true;
 					break;
@@ -31,7 +31,7 @@ function MapCell(terrainCode, entitiesPresent)
 		for (var i = 0; i < this.entitiesPresent.length; i++)
 		{
 			var entityPresent = this.entitiesPresent[i];
-			if (entityPresent.mappableDefn.blocksMovement(entityPresent))
+			if (entityPresent.mappableDefn().blocksMovement(entityPresent))
 			{
 				returnValue = MapTerrain.AlmostInfinity;
 				break;
@@ -50,6 +50,6 @@ function MapCell(terrainCode, entitiesPresent)
 
 	MapCell.prototype.terrain = function(map)
 	{
-		return map.terrains[this.terrainCode];
+		return map.terrainsByCodeChar.get(this.terrainCode);
 	};
 }

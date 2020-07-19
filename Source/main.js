@@ -42,7 +42,7 @@ function main()
 
 	//localStorage.clear();
 
-	var mediaLibrary = new MediaLibrary.fromFileNames
+	var mediaLibrary = MediaLibrary.fromFileNames
 	(
 		"../Content/",
 		[ "Title.png", "Tiles.png" ],

@@ -38,10 +38,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 
 	PlaceBranch.prototype.buildPlaces_1_Generate = function(worldDefn, randomizer, depthFirst)
 	{
-		var placeDefns = worldDefn.placeDefns;
-		var entityDefns = worldDefn.entityDefns;
+		var placeDefnsByName = worldDefn.placeDefnsByName;
 
-		var placeDefn = placeDefns[this.placeDefnName];
+		var placeDefn = placeDefnsByName.get(this.placeDefnName);
 		var placeDefnName = placeDefn.name;
 
 		var numberOfVenuesInBranch = Math.floor(this.depthRangeInVenues.random(randomizer));
@@ -72,8 +71,8 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 			var place = this.places[i];
 			var placeNext = this.places[i + 1];
 
-			var placePortalDown = place.entitiesToSpawn.filter(x => x.name == "StairsDownToNextLevel")[0].portal;
-			var placeNextPortalUp = placeNext.entitiesToSpawn.filter(x => x.name == "StairsUp")[0].portal;
+			var placePortalDown = place.entitiesToSpawn.filter(x => x.name == "StairsDownToNextLevel")[0].portal();
+			var placeNextPortalUp = placeNext.entitiesToSpawn.filter(x => x.name == "StairsUp")[0].portal();
 
 			placePortalDown.destinationPlaceName = placeNext.name;
 			placeNextPortalUp.destinationPlaceName = place.name;
@@ -128,13 +127,13 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 				var childPortalLast = childPlaceLast.entitiesToSpawn.filter
 				(
 					x => x.name == "StairsDownToNextLevel"
-				)[0].portal;
+				)[0].portal();
 
 				var childNextPlaceFirst = childNext.places[0];
 				var childNextPortalFirst = childNextPlaceFirst.entitiesToSpawn.filter
 				(
 					x => x.name == "StairsUp"
-				)[0].portal;
+				)[0].portal();
 
 				childPortalLast.destinationPlaceName = childNextPlaceFirst.name;
 				childNextPortalFirst.destinationPlaceName = childPlaceLast.name;
@@ -180,13 +179,13 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 							break;
 						}
 					}
-					var parentPortalToBranchFrom = parentPortals[parentPortalIndexToBranchFrom].portal;
+					var parentPortalToBranchFrom = parentPortals[parentPortalIndexToBranchFrom].portal();
 
 					var childPlaceFirst = child.places[0];
 					var childPortalFirst = childPlaceFirst.entitiesToSpawn.filter
 					(
 						x => x.name == "StairsUp"
-					)[0].portal;
+					)[0].portal();
 
 					parentPortalToBranchFrom.destinationPlaceName = childPlaceFirst.name;
 					childPortalFirst.destinationPlaceName = parentPlaceToBranchFrom.name;
@@ -211,7 +210,7 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 			for (var p = 0; p < stairsDownToChild.length; p++)
 			{
 				var stairDownToChild = stairsDownToChild[p];
-				if (stairDownToChild.portal.destinationPlaceName == null)
+				if (stairDownToChild.portal().destinationPlaceName == null)
 				{
 					placeEntities.remove(stairDownToChild);
 				}

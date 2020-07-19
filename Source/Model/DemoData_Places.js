@@ -19,9 +19,6 @@
 			this.WallNorthSouth,
 		];
 
-		terrains.addLookupsByName();
-		terrains.addLookups( function(element) { return element["codeChar"]; } );
-
 		return terrains;
 	};
 
@@ -44,9 +41,6 @@
 			this.WallNorthSouth,
 		];
 
-		terrains.addLookupsByName();
-		terrains.addLookups( function(element) { return element["codeChar"]; } );
-
 		return terrains;
 	};
 
@@ -68,9 +62,6 @@
 			this.WallEastWest,
 			this.WallNorthSouth,
 		];
-
-		terrains.addLookupsByName();
-		terrains.addLookups( function(element) { return element["codeChar"]; } );
 
 		return terrains;
 	};
@@ -252,7 +243,7 @@
 				"Surface", // displayName
 				"Surface", // placeDefnName
 				null, // startOffsetRange
-				new Range(1, 1), // depth
+				new RangeExtent(1, 1), // depth
 				[]
 			),
 			new PlaceBranch
@@ -261,7 +252,7 @@
 				"Dungeon", // displayName
 				"Dungeon", // placeDefnName
 				null, // startOffsetRange
-				new Range(5, 6), // depthRangeInVenues
+				new RangeExtent(5, 6), // depthRangeInVenues
 				// children
 				[
 					new PlaceBranch
@@ -269,8 +260,8 @@
 						"MinesShallow", // name
 						"Mines", // displayName
 						"Mines", // placeDefnName
-						new Range(1, 4), // startOffset
-						new Range(2, 4),
+						new RangeExtent(1, 4), // startOffset
+						new RangeExtent(2, 4),
 						[]
 					),
 					new PlaceBranch
@@ -279,7 +270,7 @@
 						"Mines", // displayName
 						"MinesTown",
 						null, // startOffsetRange
-						new Range(1, 1),
+						new RangeExtent(1, 1),
 						[]
 					),
 					new PlaceBranch
@@ -288,7 +279,7 @@
 						"Mines", // displayName
 						"Mines",
 						null, // startOffsetRange
-						new Range(2, 4),
+						new RangeExtent(2, 4),
 						[]
 					),
 					new PlaceBranch
@@ -297,7 +288,7 @@
 						"Mines", // displayName
 						"MinesBottom",
 						null, // startOffsetRange
-						new Range(1, 1),
+						new RangeExtent(1, 1),
 						[]
 					),
 				]
@@ -308,7 +299,7 @@
 				"Dungeon", // displayName
 				"Oracle",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -317,15 +308,15 @@
 				"Dungeon", // displayName
 				"Dungeon",
 				null, // startOffsetRange
-				new Range(5, 6),
+				new RangeExtent(5, 6),
 				[
 					new PlaceBranch
 					(
 						"Puzzle",
 						"Puzzle", // displayName
 						"Puzzle",
-						new Range(1, 4), // startOffset
-						new Range(2, 4),
+						new RangeExtent(1, 4), // startOffset
+						new RangeExtent(2, 4),
 						[]
 					),
 				]
@@ -336,7 +327,7 @@
 				"Dungeon", // displayName
 				"Labyrinth",
 				null, // startOffsetRange
-				new Range(3, 5),
+				new RangeExtent(3, 5),
 				[]
 			),
 			new PlaceBranch
@@ -345,7 +336,7 @@
 				"Dungeon", // displayName
 				"Island",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -354,7 +345,7 @@
 				"Dungeon", // displayName
 				"Fortress",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -363,7 +354,7 @@
 				"Hades", // displayName
 				"Limbo",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -372,7 +363,7 @@
 				"Hades", // displayName
 				"Hades",
 				null, // startOffsetRange
-				new Range(10, 20),
+				new RangeExtent(10, 20),
 				[]
 			),
 			new PlaceBranch
@@ -381,7 +372,7 @@
 				"Hades", // displayName
 				"Depths",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 		];
@@ -392,7 +383,7 @@
 			null, // displayName
 			"Dungeon", // hack
 			null, // startOffsetRange
-			new Range(0, 0),
+			new RangeExtent(0, 0),
 			branchesMain
 		);
 
@@ -409,15 +400,15 @@
 		var placeEntities = place.entitiesToSpawn;
 		var stairDown = placeEntities.filter(x => x.name == "StairsDownToChildBranch")[0];
 
-		var itemDefns = worldDefn.entityDefns;
+		var itemDefnsByName = worldDefn.entityDefnsByName;
 		var itemDefnGoalName = "Amulet of Yendor";
-		var itemDefnGoal = itemDefns[itemDefnGoalName];
+		var itemDefnGoal = itemDefnsByName.get(itemDefnGoalName);
 		var entityGoal = EntityHelper.new
 		(
 			itemDefnGoal.name,
 			itemDefnGoal,
 			[
-				new Locatable(stairDown.locatable.loc.clone()),
+				new Locatable(stairDown.locatable().loc.clone()),
 				new Item(itemDefnGoal.name, 1)
 			]
 		);
@@ -436,33 +427,33 @@
 
 		var mapSizeInCells = new Coords(64, 64);
 		var numberOfZones = 12;
-		var terrains = placeDefn.terrains;
+		var terrainsByName = placeDefn.terrainsByName;
 
 		var mapCellsAsStrings = this.placeGenerateDungeon_1_InitMap
 		(
-			worldDefn, terrains, mapSizeInCells
+			worldDefn, terrainsByName, mapSizeInCells
 		);
 		var zoneBoundsSet = this.placeGenerateDungeon_2_ZoneBounds
 		(
-			terrains, randomizer, mapSizeInCells, numberOfZones
+			terrainsByName, randomizer, mapSizeInCells, numberOfZones
 		);
 		var zones = this.placeGenerateDungeon_3_Zones
 		(
-			numberOfZones, zoneBoundsSet, mapCellsAsStrings, terrains
+			numberOfZones, zoneBoundsSet, mapCellsAsStrings, terrainsByName
 		);
 		var doorwayPositions = this.placeGenerateDungeon_4_Doors
 		(
-			zones, terrains, randomizer, mapCellsAsStrings
+			zones, terrainsByName, randomizer, mapCellsAsStrings
 		);
 		var entities = this.placeGenerateDungeon_5_Entities
 		(
 			worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings
 		);
 
-		var map = new Map
+		var map = new MapOfTerrain
 		(
 			venueName + "Map",
-			terrains,
+			placeDefn.terrains,
 			new Coords(16, 16, 1), // hack - cellSizeInPixels
 			mapCellsAsStrings
 		);
@@ -484,17 +475,14 @@
 		return returnValue;
 	};
 
-	DemoData.prototype.placeGenerateDungeon_1_InitMap = function(worldDefn, terrains, mapSizeInCells)
+	DemoData.prototype.placeGenerateDungeon_1_InitMap = function(worldDefn, terrainsByName, mapSizeInCells)
 	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
-		var entityDefns = worldDefn.entityDefns;
-
-		entityDefns.addLookupsByName();
 
 		var mapCellsAsStrings = [];
 		var cellPos = new Coords(0, 0);
 
-		terrainCodeChar = terrains.Stone.codeChar;
+		terrainCodeChar = terrainsByName.get("Stone").codeChar;
 
 		for (var y = 0; y < mapSizeInCells.y; y++)
 		{
@@ -511,13 +499,16 @@
 		return mapCellsAsStrings;
 	}
 
-	DemoData.prototype.placeGenerateDungeon_2_ZoneBounds = function(terrains, randomizer, mapSizeInCells, numberOfZones)
+	DemoData.prototype.placeGenerateDungeon_2_ZoneBounds = function
+	(
+		terrainsByName, randomizer, mapSizeInCells, numberOfZones
+	)
 	{
 		var zoneSizeMin = new Coords(4, 4, 1);
 		var zoneSizeMax = new Coords(13, 13, 1);
 		var zoneSizeRange = zoneSizeMax.clone().subtract(zoneSizeMin);
 
-		terrainCodeChar = terrains.Floor.codeChar;
+		terrainCodeChar = terrainsByName.get("Floor").codeChar;
 
 		var zoneBoundsSetSoFar = [];
 
@@ -579,7 +570,7 @@
 
 	DemoData.prototype.placeGenerateDungeon_3_Zones = function
 	(
-		numberOfZones, zoneBoundsSetSoFar, mapCellsAsStrings, terrains
+		numberOfZones, zoneBoundsSetSoFar, mapCellsAsStrings, terrainsByName
 	)
 	{
 		var zones = [];
@@ -608,24 +599,24 @@
 					{
 						if (y == zonePos.y)
 						{
-							terrainCodeChar = terrains.WallCornerNorth.codeChar;
+							terrainCodeChar = terrainsByName.get("WallCornerNorth").codeChar;
 						}
 						else if (y == zoneMax.y - 1)
 						{
-							terrainCodeChar = terrains.WallCornerSouth.codeChar;
+							terrainCodeChar = terrainsByName.get("WallCornerSouth").codeChar;
 						}
 						else
 						{
-							terrainCodeChar = terrains.WallNorthSouth.codeChar;
+							terrainCodeChar = terrainsByName.get("WallNorthSouth").codeChar;
 						}
 					}
 					else if (y == zonePos.y || y == zoneMax.y - 1)
 					{
-						terrainCodeChar = terrains.WallEastWest.codeChar;
+						terrainCodeChar = terrainsByName.get("WallEastWest").codeChar;
 					}
 					else
 					{
-						terrainCodeChar = terrains.Floor.codeChar;
+						terrainCodeChar = terrainsByName.get("Floor").codeChar;
 					}
 
 					mapCellRowAsString =
@@ -751,7 +742,7 @@
 
 			var cellPos = fromPos.clone();
 
-			terrainFloorCodeChar = terrains.Floor.codeChar;
+			terrainFloorCodeChar = terrains.get("Floor").codeChar;
 
 			var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
@@ -844,8 +835,8 @@
 		worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings
 	)
 	{
-		var entityDefns = worldDefn.entityDefns;
-		var entityDefnGroups = worldDefn.entityDefnGroups;
+		var entityDefns = worldDefn.entityDefnsByName;
+		var entityDefnGroups = worldDefn.entityDefnGroupsByName;
 
 		var entities = [];
 
@@ -854,9 +845,9 @@
 		var stairsUp = EntityHelper.new
 		(
 			"StairsUp",
-			entityDefns["StairsUp"],
+			entityDefns.get("StairsUp"),
 			[
-				new Locatable(new Location(zone0Center)),
+				new Locatable(new Disposition(zone0Center)),
 				new Portal
 				(
 					null, // placeName
@@ -887,9 +878,9 @@
 			var stairsDown = EntityHelper.new
 			(
 				(i == 0 ? "StairsDownToNextLevel" : "StairsDownToChildBranch"),
-				entityDefns["StairsDown"],
+				entityDefns.get("StairsDown"),
 				[
-					new Locatable(new Location(zoneCenter)),
+					new Locatable(new Disposition(zoneCenter)),
 					new Portal
 					(
 						null, // placeName
@@ -920,11 +911,11 @@
 				var isWallEastWest = (terrainExistingCharCode == "-");
 				var doorForward = (isWallEastWest ? new Coords(-1, 0) : new Coords(1, 0));
 				var doorOri = new Orientation(doorForward);
-				var doorLoc = new Location(doorPos, doorOri);
+				var doorLoc = new Disposition(doorPos, doorOri);
 				var entityForDoor = EntityHelper.new
 				(
 					"Door" + i,
-					entityDefns["Door"],
+					entityDefns.get("Door"),
 					[
 						new Locatable(doorLoc)
 					]
@@ -935,7 +926,7 @@
 				var isDoorOpen;
 				if (isDoorHidden)
 				{
-					entityForDoor.searchable.isHidden = true;
+					entityForDoor.searchable().isHidden = true;
 					isDoorOpen = false;
 				}
 				else
@@ -943,7 +934,7 @@
 					randomNumber = randomizer.getNextRandom();
 					isDoorOpen = (randomNumber <= chanceOfDoorBeingOpen);
 				}
-				entityForDoor.openable.isOpen = isDoorOpen;
+				entityForDoor.openable().isOpen = isDoorOpen;
 
 				entities.push(entityForDoor);
 			}
@@ -954,14 +945,14 @@
 		var chancesForEmplacementPerZone = 2;
 		var probabilityOfEmplacementPerChance = .33;
 
-		var entityDefnsForEmplacements = entityDefnGroups.Emplacements.entityDefns;
+		var entityDefnsForEmplacements = entityDefnGroups.get("Emplacements").entityDefns;
 
 		var sumOfFrequenciesForAllEmplacements = 0;
 
 		for (var g = 0; g < entityDefnsForEmplacements.length; g++)
 		{
 			var entityDefn = entityDefnsForEmplacements[g];
-			var relativeFrequency = entityDefn.generatable.relativeFrequency;
+			var relativeFrequency = entityDefn.generatable().relativeFrequency;
 			sumOfFrequenciesForAllEmplacements += relativeFrequency;
 		}
 
@@ -970,15 +961,15 @@
 
 		var entityDefnGroupsForItems =
 		[
-			entityDefnGroups.Armor,
-			entityDefnGroups.Food,
-			entityDefnGroups.Potions,
-			entityDefnGroups.Scrolls,
-			entityDefnGroups.Spellbooks,
-			entityDefnGroups.Stones,
-			entityDefnGroups.Tools,
-			entityDefnGroups.Wands,
-			entityDefnGroups.Weapons,
+			entityDefnGroups.get("Armor"),
+			entityDefnGroups.get("Food"),
+			entityDefnGroups.get("Potions"),
+			entityDefnGroups.get("Scrolls"),
+			entityDefnGroups.get("Spellbooks"),
+			entityDefnGroups.get("Stones"),
+			entityDefnGroups.get("Tools"),
+			entityDefnGroups.get("Wands"),
+			entityDefnGroups.get("Weapons"),
 		];
 
 		var sumOfFrequenciesForAllGroups = 0;
@@ -1024,7 +1015,7 @@
 					var entityDefnGroup = entityDefnGroupsForItems[entityDefnGroupIndex];
 					var entityDefns = entityDefnGroup.entityDefns;
 
-					var entityDefnForItem = entityDefns.random(randomizer);
+					var entityDefnForItem = ArrayHelper.random(entityDefns, randomizer);
 
 					var pos = new Coords().randomize(randomizer).multiply
 					(
@@ -1045,7 +1036,7 @@
 						entityDefnForItem.name,
 						entityDefnForItem,
 						[
-							new Locatable(new Location(pos)),
+							new Locatable(new Disposition(pos)),
 							new Item(entityDefnForItem.name, 1)
 						]
 					);
@@ -1072,7 +1063,7 @@
 					{
 						var entityDefn = entityDefnsForEmplacements[e];
 						sumOfFrequenciesForEmplacementsSoFar +=
-							entityDefn.generatable.relativeFrequency;
+							entityDefn.generatable().relativeFrequency;
 
 						if (sumOfFrequenciesForEmplacementsSoFar >= randomValue)
 						{
@@ -1102,7 +1093,7 @@
 						entityDefn.name,
 						entityDefn,
 						[
-							new Locatable(new Location(pos)),
+							new Locatable(new Disposition(pos)),
 						]
 					);
 
@@ -1138,7 +1129,7 @@
 			mapCellsAsStrings.push(mapRowAsString);
 		}
 
-		var map = new Map
+		var map = new MapOfTerrain
 		(
 			venueName + "Map",
 			placeDefn.terrains,
@@ -1150,9 +1141,9 @@
 		var entityStairsDown = EntityHelper.new
 		(
 			"StairsDownToNextLevel",
-			worldDefn.entityDefns["StairsDown"],
+			worldDefn.entityDefnsByName.get("StairsDown"),
 			[
-				new Locatable(new Location(stairsDownPos)),
+				new Locatable(new Disposition(stairsDownPos)),
 				new Portal(null, "StairsUp")
 			]
 		);
@@ -1161,9 +1152,9 @@
 		var entityAltar = EntityHelper.new
 		(
 			"Altar",
-			worldDefn.entityDefns["Altar"],
+			worldDefn.entityDefnsByName.get("Altar"),
 			[
-				new Locatable(new Location(altarPos)),
+				new Locatable(new Disposition(altarPos)),
 			]
 		);
 

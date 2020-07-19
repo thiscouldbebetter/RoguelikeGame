@@ -29,16 +29,16 @@ function MappableDefn(blocksMovement, blocksVision)
 	{
 		var mappable = new Mappable
 		(
-			entity.mappableDefn
+			entity.mappableDefn()
 		);
 
 		var map = place.map;
-		var entityPosInCells = entity.locatable.loc.pos;
+		var entityPosInCells = entity.locatable().loc.pos;
 		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
 		mappable.mapCellOccupied = mapCellOccupied;
 
-		entity.mappable = mappable;
+		entity.propertiesByName.set(Mappable.name, mappable);
 		entity.collidable = entity.mappable; // hack
 	};
 

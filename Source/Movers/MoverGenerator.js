@@ -37,7 +37,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 
 				if (randomNumber <= this.chanceOfSpawnPerTurn)
 				{
-					var zoneToSpawnInto = this.zones.random(randomizer);
+					var zoneToSpawnInto = ArrayHelper.random(this.zones, randomizer);
 					this.moverSpawn(universe, world, place, zoneToSpawnInto);
 				}
 			}
@@ -48,7 +48,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 	{
 		var randomizer = universe.randomizer;
 
-		var playerRank = world.entityForPlayer.demographics.rank;
+		var playerRank = world.entityForPlayer.demographics().rank;
 
 		var difficultyMin = 1; // todo
 		var difficultyMax = Math.ceil((place.depth + playerRank) / 2);
@@ -63,11 +63,11 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 		var difficulty = difficultyMin + Math.floor(Math.random() * difficultyRange);
 
 		var entityDefnGroupName = "AgentsOfDifficulty" + difficulty;
-		var entityDefnGroup = world.defn.entityDefnGroups[entityDefnGroupName];
+		var entityDefnGroup = world.defn2.entityDefnGroupsByName.get(entityDefnGroupName);
 		var entityDefnsForAgentsOfDifficulty = entityDefnGroup.entityDefns;
 		var relativeFrequencyTotal = entityDefnsForAgentsOfDifficulty.map
 		(
-			x => x.generatable.relativeFrequency
+			x => x.generatable().relativeFrequency
 		).reduce
 		(
 			(sum, addend) => sum + addend, 0
@@ -79,7 +79,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 		for (var i = 0; i < entityDefnsForAgentsOfDifficulty.length; i++)
 		{
 			var entityDefn = entityDefnsForAgentsOfDifficulty[i];
-			cumulativeFrequencySoFar += entityDefn.generatable.relativeFrequency;
+			cumulativeFrequencySoFar += entityDefn.generatable().relativeFrequency;
 			if (cumulativeFrequencySoFar > cumulativeFrequencyToStopAt)
 			{
 				entityDefnForAgentToSpawn = entityDefn;
@@ -103,7 +103,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 			entityName,
 			entityDefnForAgentToSpawn,
 			[
-				new Locatable(new Location(posToSpawnAt))
+				new Locatable(new Disposition(posToSpawnAt))
 			]
 		);
 
