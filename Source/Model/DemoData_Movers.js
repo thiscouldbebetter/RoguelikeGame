@@ -60,7 +60,7 @@ class DemoData_Movers
 				[
 					entityDying.locatable,
 					new Item(itemDefnCorpse.name, 1),
-					thist.mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals["Corpse"]),
 					new Turnable(rot)
 				]
