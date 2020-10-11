@@ -1,13 +1,16 @@
-function MessageLog()
+
+class MessageLog
 {
-	this.messagesMax = 20;
-	this.messages =
-	[
-		"You enter the dungeon."
-	];
-}
-{
-	MessageLog.prototype.messageAdd = function(messageToAdd)
+	constructor()
+	{
+		this.messagesMax = 20;
+		this.messages =
+		[
+			"You enter the dungeon."
+		];
+	}
+
+	messageAdd(messageToAdd)
 	{
 		this.messages.push(messageToAdd);
 		if (this.messages.length > this.messagesMax)
@@ -15,15 +18,15 @@ function MessageLog()
 			var messagesToDelete = this.messages.length - this.messagesMax;
 			this.messages.splice(0, messagesToDelete);
 		}
-	};
+	}
 
 	// controls
 
-	MessageLog.prototype.controlUpdate = function(world)
+	controlUpdate(world)
 	{
 		if (this.control == null)
 		{
-			controlForMessages = ControlList.fromPosSizeAndItems
+			var controlForMessages = ControlList.fromPosSizeAndItems
 			(
 				new Coords(10, 15), // pos
 				new Coords(160, 260), // size

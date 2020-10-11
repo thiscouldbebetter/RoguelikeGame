@@ -1,6 +1,9 @@
 
-function Attack(name, dieRollDamage)
+class Attack
 {
-	this.name = name;
-	this.dieRollDamage = dieRollDamage;
+	constructor(name, dieRollDamage)
+	{
+		this.name = name;
+		this.dieRollDamage = dieRollDamage;
+	}
 }

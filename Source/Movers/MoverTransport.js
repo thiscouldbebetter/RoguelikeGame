@@ -1,11 +1,13 @@
 
-function MoverTransport(entityMover, locDestination)
+class MoverTransport
 {
-	this.entityMover = entityMover;
-	this.locDestination = locDestination;
-}
-{
-	MoverTransport.prototype.initializeEntityForPlace = function(universe, world, place, entityTransport)
+	constructor(entityMover, locDestination)
+	{
+		this.entityMover = entityMover;
+		this.locDestination = locDestination;
+	}
+
+	initializeEntityForPlace(universe, world, place, entityTransport)
 	{
 		var moverLoc = this.entityMover.locatable.loc;
 
@@ -22,5 +24,5 @@ function MoverTransport(entityMover, locDestination)
 
 		place.entitiesToSpawn.push(this.entityMover);
 		place.entitiesToRemove.push(entityTransport);
-	};
+	}
 }

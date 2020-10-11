@@ -1,12 +1,13 @@
 
-function Starvable(satietyMax)
+class Starvable
 {
-	this.satietyMax = satietyMax;
-	this.satiety = this.satietyMax;
-}
+	constructor(satietyMax)
+	{
+		this.satietyMax = satietyMax;
+		this.satiety = this.satietyMax;
+	}
 
-{
-	Starvable.prototype.satietyAdd = function(world, amountToAdd, moverEntity)
+	satietyAdd(world, amountToAdd, moverEntity)
 	{
 		this.satiety += amountToAdd;
 
@@ -20,11 +21,11 @@ function Starvable(satietyMax)
 		}
 
 		this.controlUpdate(world, moverEntity);
-	};
+	}
 
 	// controls
 
-	Starvable.prototype.controlUpdate = function(world, entity, pos)
+	controlUpdate(world, entity, pos)
 	{
 		if (this.control == null && pos != null) // hack
 		{
@@ -66,5 +67,5 @@ function Starvable(satietyMax)
 		}
 
 		return this.control;
-	};
+	}
 }

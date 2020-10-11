@@ -1,59 +1,60 @@
 
-function World(name, defn, places, entityForPlayer, randomizer)
+class World
 {
-	this.name = name;
-	this.defn = defn;
-	this.places = places.addLookupsByName();
-	this.entityForPlayer = entityForPlayer;
-	this.randomizer = randomizer;
-
-	if (this.entityForPlayer == null)
+	constructor(name, defn, places, entityForPlayer, randomizer)
 	{
-		var place0 = this.places[0];
-		var portal0 = place0.entitiesToSpawn[0]; // hack
-		var portal0Pos = portal0.locatable.loc.pos.clone();
+		this.name = name;
+		this.defn = defn;
+		this.places = places.addLookupsByName();
+		this.entityForPlayer = entityForPlayer;
+		this.randomizer = randomizer;
 
-		var entityDefnPlayer = this.defn.entityDefns.Player;
-		this.entityForPlayer = EntityHelper.new
+		if (this.entityForPlayer == null)
+		{
+			var place0 = this.places[0];
+			var portal0 = place0.entitiesToSpawn[0]; // hack
+			var portal0Pos = portal0.locatable.loc.pos.clone();
+
+			var entityDefnPlayer = this.defn.entityDefns.Player;
+			this.entityForPlayer = EntityHelper.new
+			(
+				entityDefnPlayer.name,
+				entityDefnPlayer,
+				[
+					new Locatable
+					(
+						new Location(portal0Pos, null, place0.name)
+					)
+				]
+			);
+			this.entityForPlayer.demographics.rank = 1; // hack
+
+			place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
+		}
+
+		this.placeNext = this.places[this.entityForPlayer.locatable.loc.placeName];
+
+		this.turnsSoFar = 0;
+
+		this.idHelper = IDHelper.Instance();
+		this.sightHelper = new SightHelper(8);
+		this.timerTicksSoFar = 0;
+
+		var itemDefns = this.defn.entityDefns.filter
 		(
-			entityDefnPlayer.name,
-			entityDefnPlayer,
-			[
-				new Locatable
-				(
-					new Location(portal0Pos, null, place0.name)
-				)
-			]
-		);
-		this.entityForPlayer.demographics.rank = 1; // hack
+			x => x.itemDefn != null
+		).map
+		(
+			x => x.itemDefn
+		).addLookupsByName();
 
-		place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
+		this.defns =
+		{
+			"itemDefns" : itemDefns
+		};
 	}
 
-	this.placeNext = this.places[this.entityForPlayer.locatable.loc.placeName];
-
-	this.turnsSoFar = 0;
-
-	this.idHelper = IDHelper.Instance();
-	this.sightHelper = new SightHelper(8);
-	this.timerTicksSoFar = 0;
-
-	var itemDefns = this.defn.entityDefns.filter
-	(
-		x => x.itemDefn != null
-	).map
-	(
-		x => x.itemDefn
-	).addLookupsByName();
-
-	this.defns =
-	{
-		"itemDefns" : itemDefns
-	};
-}
-
-{
-	World.new = function(universe)
+	static new(universe)
 	{
 		var randomizer = RandomizerLCG.default();
 		var visualsForTiles = [];
@@ -83,7 +84,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 			visualsForTiles.push(visualsForTilesRow);
 		}
 
-		var worldDefn = new DemoData(randomizer).buildWorldDefn
+		var worldDefn = new DemoData_Main(randomizer).buildWorldDefn
 		(
 			visualsForTiles
 		);
@@ -108,12 +109,12 @@ function World(name, defn, places, entityForPlayer, randomizer)
 		return world;
 	}
 
-	World.prototype.draw = function()
+	draw()
 	{
 		// todo
 	}
 
-	World.prototype.initialize = function(universe)
+	initialize(universe)
 	{
 		if (this.placeCurrent != null)
 		{
@@ -121,7 +122,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 		}
 	}
 
-	World.prototype.updateForTimerTick = function(universe)
+	updateForTimerTick(universe)
 	{
 		if (this.placeNext != null)
 		{
@@ -139,7 +140,7 @@ function World(name, defn, places, entityForPlayer, randomizer)
 
 	// debugging
 
-	World.prototype.logTicksPerSecond = function()
+	logTicksPerSecond()
 	{
 		var reportingWindowInTicks = 10;
 		if (this.timerTicksSoFar % reportingWindowInTicks == 0)

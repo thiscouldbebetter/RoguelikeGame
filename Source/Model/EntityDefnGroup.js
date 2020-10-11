@@ -1,7 +1,10 @@
 
-function EntityDefnGroup(name, relativeFrequency, entityDefns)
+class EntityDefnGroup
 {
-	this.name = name;
-	this.relativeFrequency = relativeFrequency;
-	this.entityDefns = entityDefns;
+	constructor(name, relativeFrequency, entityDefns)
+	{
+		this.name = name;
+		this.relativeFrequency = relativeFrequency;
+		this.entityDefns = entityDefns;
+	}
 }

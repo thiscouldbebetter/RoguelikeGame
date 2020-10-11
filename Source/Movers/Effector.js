@@ -1,5 +1,8 @@
 
-function Effector(effects)
+class Effector
 {
-	this.effects = effects || [];
+	constructor(effects)
+	{
+		this.effects = effects || [];
+	}
 }

@@ -1,13 +1,14 @@
 
-function Effect(start, update, finish)
+class Effect
 {
-	this.start = start;
-	this.update = update;
-	this.finish = finish;
-}
+	constructor(start, update, finish)
+	{
+		this.start = start;
+		this.update = update;
+		this.finish = finish;
+	}
 
-{
-	Effect.prototype.updateForCycle = function(universe, world, place, entityEffectable)
+	updateForCycle(universe, world, place, entityEffectable)
 	{
 		// A "cycle" could be either a tick or a turn.
 
@@ -45,11 +46,11 @@ function Effect(start, update, finish)
 
 			this.cyclesSoFar++;
 		}
-	};
+	}
 
 	// Cloneable.
 
-	Effect.prototype.clone = function()
+	clone()
 	{
 		return new Effect(this.durationInTurns, this.start, this.update, this.finish);
 	}

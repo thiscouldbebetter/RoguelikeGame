@@ -1,10 +1,20 @@
 
-function Direction()
+class Direction
 {
-	// static class
+	static Instances()
+	{
+		if (Direction._instances == null)
+		{
+			Direction._instances = new Direction_Instances();
+		}
+
+		return Direction._instances;
+	}
 }
+
+class Direction_Instances
 {
-	function Direction_Instances()
+	constructor()
 	{
 		this.E 		= new Coords(1, 0);
 		this.N 		= new Coords(0, -1);
@@ -26,15 +36,5 @@ function Direction()
 			this.N,
 			this.NE,
 		];
-	};
-
-	Direction.Instances = function()
-	{
-		if (Direction._instances == null)
-		{
-			Direction._instances = new Direction_Instances();
-		}
-
-		return Direction._instances;
-	};
+	}
 }

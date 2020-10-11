@@ -1,11 +1,13 @@
 
-function Effectable(effects)
+class Effectable
 {
-	this.effects = effects || [];
-	this.effectsToRemove = [];
-}
-{
-	Effectable.prototype.effectorApply = function(effector)
+	constructor(effects)
+	{
+		this.effects = effects || [];
+		this.effectsToRemove = [];
+	}
+
+	effectorApply(effector)
 	{
 		var effectsToApply = effector.effects;
 		for (var i = 0; i < effectsToApply.length; i++)
@@ -13,9 +15,9 @@ function Effectable(effects)
 			var effectToApply = effectsToApply[i];
 			this.effects.add(effectToApply);
 		}
-	};
+	}
 
-	Effectable.prototype.updateForTurn = function(universe, world, place, entityEffectable)
+	updateForTurn(universe, world, place, entityEffectable)
 	{
 		this.effectsToRemove.length = 0;
 
@@ -35,5 +37,5 @@ function Effectable(effects)
 			var effect = this.effectsToRemove[i];
 			this.effects.remove(effect);
 		}
-	};
+	}
 }

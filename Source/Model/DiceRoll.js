@@ -1,13 +1,14 @@
 
-function DiceRoll(expression)
+class DiceRoll
 {
-	this.expression = expression;
-}
+	constructor(expression)
+	{
+		this.expression = expression;
+	}
 
-{
 	// static methods
 
-	DiceRoll.roll = function(randomizer, expression)
+	static roll(randomizer, expression)
 	{
 		var diceRoll = DiceRoll.Instance;
 		diceRoll.overwriteWithExpression(expression)
@@ -17,18 +18,18 @@ function DiceRoll(expression)
 
 	// instances
 
-	DiceRoll.Instance = new DiceRoll("1");
+	static Instance = new DiceRoll("1");
 
 	// instance methods
 
-	DiceRoll.prototype.overwriteWithExpression = function(expression)
+	overwriteWithExpression(expression)
 	{
 		this.expression = expression;
 
 		return this;
 	}
 
-	DiceRoll.prototype.roll = function(randomizer)
+	roll(randomizer)
 	{
 		var expression = this.expression;
 

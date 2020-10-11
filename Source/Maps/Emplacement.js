@@ -1,11 +1,13 @@
 
-function Emplacement(appearance, use)
+class Emplacement
 {
-	this.appearance = appearance;
-	this._use = use;
-}
-{
-	Emplacement.prototype.use = function(universe, world, place, entityUsing, entityUsed)
+	constructor(appearance, use)
+	{
+		this.appearance = appearance;
+		this._use = use;
+	}
+
+	use(universe, world, place, entityUsing, entityUsed)
 	{
 		if (this._use == null)
 		{
@@ -19,8 +21,8 @@ function Emplacement(appearance, use)
 
 	// Cloneable.
 
-	Emplacement.prototype.clone = function()
+	clone()
 	{
 		return this;
-	};
+	}
 }

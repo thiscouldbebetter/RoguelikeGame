@@ -1,29 +1,32 @@
-function DisplayPane(name, pos, size, colorFore, colorBack, children)
-{
-	this.name = name;
-	this.pos = pos;
-	this.sizeInPixels = size;
-	this.sizeInPixelsHalf = this.sizeInPixels.clone().half();
-	this.sizesAvailable = [ size ];
-	this.children = children.addLookupsByName();
 
-	this.childSelected = null;
-	this.displayInner = new Display
-	(
-		[ this.sizeInPixels ],
-		"Font", 10, // fontName, fontHeightInPixels,
-		colorFore, colorBack,
-		(children.length == 0 ? true : false) // isInvisible
-	);
-}
+class DisplayPane
 {
-	DisplayPane.prototype.childSelectByName = function(paneName)
+	constructor(name, pos, size, colorFore, colorBack, children)
+	{
+		this.name = name;
+		this.pos = pos;
+		this.sizeInPixels = size;
+		this.sizeInPixelsHalf = this.sizeInPixels.clone().half();
+		this.sizesAvailable = [ size ];
+		this.children = children.addLookupsByName();
+
+		this.childSelected = null;
+		this.displayInner = new Display
+		(
+			[ this.sizeInPixels ],
+			"Font", 10, // fontName, fontHeightInPixels,
+			colorFore, colorBack,
+			(children.length == 0 ? true : false) // isInvisible
+		);
+	}
+
+	childSelectByName(paneName)
 	{
 		this.childSelected = (paneName == null ? null : this.children[paneName]);
 		this._displayToUse = null;
 	};
 
-	DisplayPane.prototype.displayToUse = function()
+	displayToUse()
 	{
 		if (this._displayToUse == null)
 		{
@@ -32,7 +35,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		return this._displayToUse;
 	};
 
-	DisplayPane.prototype.flush = function()
+	flush()
 	{
 		var child = this.childSelected;
 		if (child != null)
@@ -41,7 +44,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		}
 	};
 
-	DisplayPane.prototype.initialize = function(universe)
+	initialize(universe)
 	{
 		this.displayInner.initialize(universe);
 		for (var i = 0; i < this.children.length; i++)
@@ -51,49 +54,49 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		}
 	};
 
-	DisplayPane.prototype.toDomElement = function(platformHelper)
+	toDomElement(platformHelper)
 	{
 		return this.displayInner.toDomElement(platformHelper);
 	};
 
-	DisplayPane.prototype.textWidthForFontHeight = function(textToMeasure, fontHeightInPixels)
+	textWidthForFontHeight(textToMeasure, fontHeightInPixels)
 	{
 		return this.displayInner.textWidthForFontHeight(textToMeasure, fontHeightInPixels);
 	};
 
-	DisplayPane.prototype.toImage = function()
+	toImage()
 	{
 		return this.displayInner.toImage();
 	};
 
 	// drawing
 
-	DisplayPane.prototype.clear = function()
+	clear()
 	{
 		this.displayToUse().clear();
 	};
 
-	DisplayPane.prototype.drawBackground = function(colorBack, colorBorder)
+	drawBackground(colorBack, colorBorder)
 	{
 		this.displayToUse().drawBackground(colorBorder, colorBack);
 	};
 
-	DisplayPane.prototype.drawImage = function(imageToDraw, pos)
+	drawImage(imageToDraw, pos)
 	{
 		this.displayToUse().drawImage(imageToDraw, pos);
 	};
 
-	DisplayPane.prototype.drawImagePartial = function(imageToDraw, pos, boundsToShow)
+	drawImagePartial(imageToDraw, pos, boundsToShow)
 	{
 		this.displayToUse().drawImagePartial(imageToDraw, pos, boundsToShow);
 	};
 
-	DisplayPane.prototype.drawImageScaled = function(imageToDraw, pos, size)
+	drawImageScaled(imageToDraw, pos, size)
 	{
 		this.displayToUse().drawImageScaled(imageToDraw, pos, size);
 	};
 
-	DisplayPane.prototype.drawCircle = function
+	drawCircle
 	(
 		pos,
 		radius,
@@ -110,7 +113,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		);
 	};
 
-	DisplayPane.prototype.drawRectangle = function
+	drawRectangle
 	(
 		pos,
 		size,
@@ -129,7 +132,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 		);
 	};
 
-	DisplayPane.prototype.drawText = function
+	drawText
 	(
 		text,
 		fontHeightInPixels,
@@ -152,14 +155,14 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 			isCentered,
 			widthMaxInPixels
 		);
-	};
+	}
 
-	DisplayPane.prototype.scaleFactor = function()
+	scaleFactor()
 	{
 		return this.displayToUse().scaleFactor();
 	}
 
-	DisplayPane.prototype.sizeDefault = function()
+	sizeDefault()
 	{
 		return this.sizeInPixels;
 	}

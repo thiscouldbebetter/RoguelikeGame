@@ -1,13 +1,15 @@
 
-function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones)
+class MoverGenerator
 {
-	this.chanceOfSpawnPerZoneInitial = chanceOfSpawnPerZoneInitial;
-	this.chanceOfSpawnPerTurn = chanceOfSpawnPerTurn;
-	this.zones = zones;
-	this.turnLastMoved = null;
-}
-{
-	MoverGenerator.prototype.activityPerform = function(universe, world, place, actor, activity)
+	constructor(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones)
+	{
+		this.chanceOfSpawnPerZoneInitial = chanceOfSpawnPerZoneInitial;
+		this.chanceOfSpawnPerTurn = chanceOfSpawnPerTurn;
+		this.zones = zones;
+		this.turnLastMoved = null;
+	}
+
+	activityPerform(universe, world, place, actor, activity)
 	{
 		var randomizer = universe.randomizer;
 		if (this.turnLastMoved == null)
@@ -42,9 +44,9 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 				}
 			}
 		}
-	};
+	}
 
-	MoverGenerator.prototype.moverSpawn = function(universe, world, place, zoneToSpawnInto)
+	moverSpawn(universe, world, place, zoneToSpawnInto)
 	{
 		var randomizer = universe.randomizer;
 
@@ -93,7 +95,7 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 			zoneBounds.sizeHalf.clone().subtract(Coords.Instances().Ones)
 		).clearZ();
 		var posToSpawnAt = offsetWithinZone.add(zoneBounds.center).floor();
-		posToSpawnAt.z = PlaceLevel.ZLayers.Movers;
+		posToSpawnAt.z = PlaceLevel.ZLayers().Movers;
 
 		var entityName =
 			entityDefnForAgentToSpawn.name + universe.idHelper.idNext();
@@ -108,5 +110,5 @@ function MoverGenerator(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones
 		);
 
 		place.entitiesToSpawn.push(entityForAgent);
-	};
+	}
 }

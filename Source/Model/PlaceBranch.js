@@ -1,22 +1,23 @@
 
-function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinParent, depthRangeInVenues, children)
+class PlaceBranch
 {
-	this.name = name;
-	this.displayName = displayName;
-	this.placeDefnName = placeDefnName;
-	this.startOffsetRangeWithinParent = startOffsetRangeWithinParent;
-	this.depthRangeInVenues = depthRangeInVenues;
-	this.children = children;
-	this.places = [];
-
-	for (var i = 0; i < this.children.length; i++)
+	constructor(name, displayName, placeDefnName, startOffsetRangeWithinParent, depthRangeInVenues, children)
 	{
-		this.children[i].parent = this;
-	}
-}
+		this.name = name;
+		this.displayName = displayName;
+		this.placeDefnName = placeDefnName;
+		this.startOffsetRangeWithinParent = startOffsetRangeWithinParent;
+		this.depthRangeInVenues = depthRangeInVenues;
+		this.children = children;
+		this.places = [];
 
-{
-	PlaceBranch.prototype.buildPlaces = function(worldDefn, randomizer, depthFirst)
+		for (var i = 0; i < this.children.length; i++)
+		{
+			this.children[i].parent = this;
+		}
+	}
+
+	buildPlaces(worldDefn, randomizer, depthFirst)
 	{
 		this.buildPlaces_1_Generate(worldDefn, randomizer, depthFirst);
 		this.buildPlaces_2_ConnectAdjacentPlaces();
@@ -34,9 +35,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 		}
 
 		return returnValues;
-	};
+	}
 
-	PlaceBranch.prototype.buildPlaces_1_Generate = function(worldDefn, randomizer, depthFirst)
+	buildPlaces_1_Generate(worldDefn, randomizer, depthFirst)
 	{
 		var placeDefns = worldDefn.placeDefns;
 		var entityDefns = worldDefn.entityDefns;
@@ -44,13 +45,16 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 		var placeDefn = placeDefns[this.placeDefnName];
 		var placeDefnName = placeDefn.name;
 
-		var numberOfVenuesInBranch = Math.floor(this.depthRangeInVenues.random(randomizer));
+		var numberOfVenuesInBranch =
+			Math.floor(this.depthRangeInVenues.random(randomizer));
+
+		var demoDataPlaces = new DemoData_Main(randomizer).demoDataPlaces;
 
 		for (var i = 0; i < numberOfVenuesInBranch; i++)
 		{
 			var place = placeDefn.placeGenerate.call
 			(
-				new DemoData(randomizer), // this
+				demoDataPlaces, // this
 				worldDefn,
 				this,
 				placeDefn,
@@ -61,9 +65,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 
 			this.places.push(place);
 		}
-	};
+	}
 
-	PlaceBranch.prototype.buildPlaces_2_ConnectAdjacentPlaces = function()
+	buildPlaces_2_ConnectAdjacentPlaces()
 	{
 		// Connect adjacent places within parent branch.
 
@@ -79,9 +83,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 			placeNextPortalUp.destinationPlaceName = place.name;
 			placeNextPortalUp.destinationEntityName = "StairsDownToNextLevel";
 		}
-	};
+	}
 
-	PlaceBranch.prototype.buildPlaces_3_CreateChildBranches = function(worldDefn, randomizer, depthFirst)
+	buildPlaces_3_CreateChildBranches(worldDefn, randomizer, depthFirst)
 	{
 		// Create child branches.
 
@@ -111,9 +115,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 
 			sumOfChildDepthsInMainBranchSoFar += (isChildInMainBranch ? child.places.length : 0);
 		}
-	};
+	}
 
-	PlaceBranch.prototype.buildPlaces_4_ConnectChildrenToSiblings = function()
+	buildPlaces_4_ConnectChildrenToSiblings()
 	{
 		// Connect each child to next sibling if appropriate.
 
@@ -149,9 +153,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 				childPlaceLastEntities.remove(childPortalLast);
 			}
 		}
-	};
+	}
 
-	PlaceBranch.prototype.buildPlaces_5_ConnectToChildren = function()
+	buildPlaces_5_ConnectToChildren()
 	{
 		// Connect to child branches.
 
@@ -194,9 +198,9 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 				}
 			}
 		}
-	};
+	}
 
-	PlaceBranch.prototype.buildPlaces_6_RemovePlaceholderPortals = function()
+	buildPlaces_6_RemovePlaceholderPortals()
 	{
 		// Remove unused placeholder portals.
 
@@ -217,5 +221,5 @@ function PlaceBranch(name, displayName, placeDefnName, startOffsetRangeWithinPar
 				}
 			}
 		}
-	};
+	}
 }

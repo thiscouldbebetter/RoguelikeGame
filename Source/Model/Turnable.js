@@ -1,12 +1,14 @@
 
-function Turnable(updateForTurn)
+class Turnable
 {
-	this.updateForTurn = updateForTurn;
-	this.hasActedThisTurn = false;
-}
-{
-	Turnable.prototype.clone = function()
+	constructor(updateForTurn)
+	{
+		this.updateForTurn = updateForTurn;
+		this.hasActedThisTurn = false;
+	}
+
+	clone()
 	{
 		return new Turnable(this.updateForTurn);
-	};
+	}
 }

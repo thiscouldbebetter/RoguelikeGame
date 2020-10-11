@@ -1,11 +1,13 @@
 
-function MapCell(terrainCode, entitiesPresent)
+class MapOfTerrainCell
 {
-	this.terrainCode = terrainCode;
-	this.entitiesPresent = entitiesPresent || [];
-}
-{
-	MapCell.prototype.blocksVision = function(map)
+	constructor(terrainCode, entitiesPresent)
+	{
+		this.terrainCode = terrainCode;
+		this.entitiesPresent = entitiesPresent || [];
+	}
+
+	blocksVision(map)
 	{
 		var returnValue = this.terrain(map).blocksVision;
 
@@ -23,9 +25,9 @@ function MapCell(terrainCode, entitiesPresent)
 		}
 
 		return returnValue;
-	};
+	}
 
-	MapCell.prototype.costToTraverse = function(map)
+	costToTraverse(map)
 	{
 		var returnValue = this.terrain(map).costToTraverse;
 		for (var i = 0; i < this.entitiesPresent.length; i++)
@@ -38,18 +40,18 @@ function MapCell(terrainCode, entitiesPresent)
 			}
 		}
 		return returnValue;
-	};
+	}
 
-	MapCell.prototype.overwriteWith = function(other)
+	overwriteWith(other)
 	{
 		this.terrainCode = other.terrainCode;
 		this.entitiesPresent.length = 0;
 		this.entitiesPresent.push(...other.entitiesPresent);
 		return this;
-	};
+	}
 
-	MapCell.prototype.terrain = function(map)
+	terrain(map)
 	{
 		return map.terrains[this.terrainCode];
-	};
+	}
 }

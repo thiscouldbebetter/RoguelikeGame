@@ -1,7 +1,10 @@
 
-function Equippable(equip, update, unequip)
+class Equippable
 {
-	this.equip = equip;
-	this.update = update;
-	this.unequip = unequip;
+	constructor(equip, update, unequip)
+	{
+		this.equip = equip;
+		this.update = update;
+		this.unequip = unequip;
+	}
 }

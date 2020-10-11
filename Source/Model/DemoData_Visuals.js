@@ -1,7 +1,12 @@
 
-// partial class DemoData
+class DemoData_Visuals
 {
-	DemoData.prototype.buildVisualLookup = function(visualsForTiles)
+	constructor(parent)
+	{
+		this.parent = parent;
+	}
+
+	buildVisualLookup(visualsForTiles)
 	{
 		var returnValue = [];
 
@@ -541,7 +546,7 @@
 			returnValue[tileName] = visual;
 		}
 
-		var agentNames = this.buildAgentDatas();
+		var agentNames = this.parent.demoDataMovers.buildAgentDatas();
 
 		var tilePos = new Coords(0, 0);
 		var imageSizeInTiles = new Coords(40, 27);
@@ -727,7 +732,7 @@
 
 			var pixelsAsStrings = reticlePixelSetsAsStringArrays[i];
 
-			var imageForReticle = this.imageBuilder.buildImageFromStrings
+			var imageForReticle = this.parent.imageBuilder.buildImageFromStrings
 			(
 				imageName,
 				pixelsAsStrings
@@ -738,5 +743,5 @@
 		}
 
 		return returnValue;
-	};
+	}
 }

@@ -1,5 +1,8 @@
 
-function Generatable(relativeFrequency)
+class Generatable
 {
-	this.relativeFrequency = relativeFrequency;
+	constructor(relativeFrequency)
+	{
+		this.relativeFrequency = relativeFrequency;
+	}
 }

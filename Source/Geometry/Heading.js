@@ -1,14 +1,13 @@
 
-function Heading()
-{}
+class Heading
 {
 	// constants
 
-	Heading.numberOfHeadings = 8;
+	static numberOfHeadings = 8;
 
 	// static methods
 
-	Heading.fromCoords = function(coordsToConvert)
+	static fromCoords(coordsToConvert)
 	{
 		var returnValue = Math.floor
 		(

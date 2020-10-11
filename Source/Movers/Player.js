@@ -1,14 +1,16 @@
 
-function Player(sightRange)
+class Player
 {
-	this.sightRange = sightRange;
-	this.messageLog = new MessageLog();
-	this.placeKnownLookup = [];
-}
-{
-	Player.prototype.initializeEntityForPlace = function(universe, world, place, entity)
+	constructor(sightRange)
 	{
-		entity.locatable.loc.pos.z = PlaceLevel.ZLayers.Movers;
+		this.sightRange = sightRange;
+		this.messageLog = new MessageLog();
+		this.placeKnownLookup = [];
+	}
+
+	initializeEntityForPlace(universe, world, place, entity)
+	{
+		entity.locatable.loc.pos.z = PlaceLevel.ZLayers().Movers;
 
 		entity.mover.movesThisTurn = 0;
 		entity.turnable.hasActedThisTurn = true;
@@ -19,7 +21,7 @@ function Player(sightRange)
 		{
 			var mapComplete = place.map;
 
-			mapKnown = this.initializeEntityForPlace_MapBuildBlank
+			var mapKnown = this.initializeEntityForPlace_MapBuildBlank
 			(
 				mapComplete.name + "_Known",
 				mapComplete.terrains,
@@ -49,9 +51,9 @@ function Player(sightRange)
 				entity.player.sightRange
 			);
 		}
-	};
+	}
 
-	Player.prototype.initializeEntityForPlace_MapBuildBlank = function(name, terrains, cellSizeInPixels, sizeInCells)
+	initializeEntityForPlace_MapBuildBlank(name, terrains, cellSizeInPixels, sizeInCells)
 	{
 		var cellsAsStrings = [];
 
@@ -69,7 +71,7 @@ function Player(sightRange)
 			cellsAsStrings.push(cellRowAsString);
 		}
 
-		var returnValue = new Map
+		var returnValue = new MapOfTerrain
 		(
 			name,
 			terrains,
@@ -78,9 +80,9 @@ function Player(sightRange)
 		);
 
 		return returnValue;
-	};
+	}
 
-	Player.prototype.updateForTimerTick = function(universe, world, place, entityPlayer)
+	updateForTimerTick(universe, world, place, entityPlayer)
 	{
 		if (entityPlayer.turnable.hasActedThisTurn)
 		{
@@ -113,11 +115,11 @@ function Player(sightRange)
 
 			player.controlUpdate(world, entityPlayer);
 		}
-	};
+	}
 
 	// controls
 
-	Player.prototype.controlUpdate = function(world, entity)
+	controlUpdate(world, entity)
 	{
 		if (this.control == null)
 		{
@@ -165,5 +167,5 @@ function Player(sightRange)
 		}
 
 		return this.control;
-	};
+	}
 }

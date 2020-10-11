@@ -1,7 +1,14 @@
 
-// partial class DemoData
+class DemoData_Movers
 {
-	DemoData.prototype.buildEntityDefnGroups_Movers = function
+	constructor(parent)
+	{
+		this.parent = parent;
+
+		this.mappableDefns = MappableDefn.Instances();
+	}
+
+	buildEntityDefnGroups_Movers
 	(
 		visuals, activityDefns, itemCategories
 	)
@@ -15,7 +22,7 @@
 			visuals, activityDefns, itemCategories, returnValues
 		);
 
-		var rot = function(universe, world, place, entityTurnable)
+		var rot = (universe, world, place, entityTurnable) =>
 		{
 			var turnable = entityTurnable.turnable;
 			if (turnable.turnsToLive == null)
@@ -38,22 +45,22 @@
 
 		var agentDatas = this.buildAgentDatas();
 
-		var useCorpse = function(universe, world, place, entityItem, user)
+		var useCorpse = (universe, world, place, entityItem, user) =>
 		{
 			// todo
 		};
 
-		var dieAndDropCorpse = function(universe, world, place, entityDying)
+		var dieAndDropCorpse = (universe, world, place, entityDying) =>
 		{
 			var itemDefnCorpse = entityDying.killable.itemDefnCorpse;
-			entityDying.locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
+			entityDying.locatable.loc.pos.z = PlaceLevel.ZLayers().Items;
 			var entityCorpse = new Entity
 			(
 				itemDefnCorpse.name + universe.idHelper.idNext(),
 				[
 					entityDying.locatable,
 					new Item(itemDefnCorpse.name, 1),
-					mappableDefns.Open,
+					thist.mappableDefns.Open,
 					new Drawable(visuals["Corpse"]),
 					new Turnable(rot)
 				]
@@ -87,7 +94,7 @@
 				// properties
 				[
 					new ActorDefn(activityDefns["Move Toward Player"].name),
-					mappableDefns.Transparent,
+					this.mappableDefns.Transparent,
 					itemHolder,
 					new Demographics(null, null, difficulty, experienceToKill),
 					new Drawable(visuals[agentName]),
@@ -137,9 +144,9 @@
 		}
 
 		return groups;
-	};
+	}
 
-	DemoData.prototype.buildEntityDefnGroups_Movers_Player = function
+	buildEntityDefnGroups_Movers_Player
 	(
 		visuals, activityDefns, itemCategories, returnValues
 	)
@@ -216,7 +223,7 @@
 			// properties
 			[
 				new ActorDefn(activityDefnName),
-				mappableDefns.Transparent,
+				this.mappableDefns.Transparent,
 				demographics,
 				drawableDefnPlayer,
 				new Effectable(),
@@ -236,7 +243,7 @@
 		returnValues[entityName] = entityDefnPlayer;
 	};
 
-	DemoData.prototype.buildAgentDatas = function()
+	buildAgentDatas()
 	{
 		// resistances and effects
 
@@ -884,9 +891,9 @@
 		];
 
 		return agentDatas;
-	};
+	}
 
-	DemoData.prototype.buildRoles = function()
+	buildRoles()
 	{
 		var returnValues =
 		[
@@ -895,5 +902,5 @@
 		];
 
 		return returnValues;
-	};
+	}
 }

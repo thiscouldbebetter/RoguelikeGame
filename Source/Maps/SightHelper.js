@@ -1,46 +1,47 @@
 
-function SightHelper(distanceFromEyeMax)
+class SightHelper
 {
-	this.entitiesPerceivedTransient = [];
-
-	this._cellPositionsVisible = [];
-	var numberOfCellPositionsMax =
-		4
-		* distanceFromEyeMax
-		* distanceFromEyeMax;
-
-	for (var i = 0; i < numberOfCellPositionsMax; i++)
+	constructor(distanceFromEyeMax)
 	{
-		this._cellPositionsVisible.push(new Coords(0, 0));
+		this.entitiesPerceivedTransient = [];
+
+		this._cellPositionsVisible = [];
+		var numberOfCellPositionsMax =
+			4
+			* distanceFromEyeMax
+			* distanceFromEyeMax;
+
+		for (var i = 0; i < numberOfCellPositionsMax; i++)
+		{
+			this._cellPositionsVisible.push(new Coords(0, 0));
+		}
+
+		this.numberOfCellsVisible = 0;
+
+		// Helper variables.
+
+		this.directionsForSides =
+		[
+			new Coords(-1, 1), new Coords(-1, -1),
+			new Coords(1, -1), new Coords(1, 1)
+		];
+
+		this.cornerAddendsForSides =
+		[
+			new Coords(0, 0), new Coords(0, -1),
+			new Coords(1, 0), new Coords(0, 1)
+		];
+
+		this._cellPos = new Coords();
+		this._cellPosRelative = new Coords();
+		this._eyePosCentered = new Coords();
+		this._vertexPositionsRelative =
+		[
+			new Coords(), new Coords()
+		];
 	}
 
-	this.numberOfCellsVisible = 0;
-
-	// Helper variables.
-
-	this.directionsForSides =
-	[
-		new Coords(-1, 1), new Coords(-1, -1),
-		new Coords(1, -1), new Coords(1, 1)
-	];
-
-	this.cornerAddendsForSides =
-	[
-		new Coords(0, 0), new Coords(0, -1),
-		new Coords(1, 0), new Coords(0, 1)
-	];
-
-	this._cellPos = new Coords();
-	this._cellPosRelative = new Coords();
-	this._eyePosCentered = new Coords();
-	this._vertexPositionsRelative =
-	[
-		new Coords(), new Coords()
-	];
-}
-
-{
-	SightHelper.prototype.entitiesPerceivedTransientRemoveFromMap = function(map)
+	entitiesPerceivedTransientRemoveFromMap(map)
 	{
 		for (var i = 0; i < this.entitiesPerceivedTransient.length; i++)
 		{
@@ -53,9 +54,9 @@ function SightHelper(distanceFromEyeMax)
 				cell.entitiesPresent.remove(entityPresent);
 			}
 		}
-	};
+	}
 
-	SightHelper.prototype.copyNCellsAtPositionsFromMapToOther = function
+	copyNCellsAtPositionsFromMapToOther
 	(
 		numberOfCellsToCopy, cellPositionsToCopy, mapFrom, mapTo
 	)
@@ -73,9 +74,9 @@ function SightHelper(distanceFromEyeMax)
 				);
 			}
 		}
-	};
+	}
 
-	SightHelper.prototype.overwriteMapCellWithPerceptsFromOther = function(cellTo, cellFrom)
+	overwriteMapCellWithPerceptsFromOther(cellTo, cellFrom)
 	{
 		cellTo.terrainCode = cellFrom.terrainCode;
 
@@ -117,9 +118,9 @@ function SightHelper(distanceFromEyeMax)
 		}
 
 		return this;
-	};
+	}
 
-	SightHelper.prototype.updatePlaceFromCompleteForViewerPosAndRange = function
+	updatePlaceFromCompleteForViewerPosAndRange
 	(
 		placeKnown, placeComplete, viewerPos, sightRange
 	)
@@ -143,7 +144,7 @@ function SightHelper(distanceFromEyeMax)
 		);
 	};
 
-	SightHelper.prototype.cellPositionsVisible = function(eyePos, distanceFromEyeMax, map)
+	cellPositionsVisible(eyePos, distanceFromEyeMax, map)
 	{
 		var rangeInitial = new Range(0, 1);
 
@@ -153,9 +154,9 @@ function SightHelper(distanceFromEyeMax)
 		);
 
 		return returnValues;
-	};
+	}
 
-	SightHelper.prototype.cellPositionsVisibleForRange = function(eyePos, distanceFromEyeMax, map, rangeInitial)
+	cellPositionsVisibleForRange(eyePos, distanceFromEyeMax, map, rangeInitial)
 	{
 		var coordsInstances = Coords.Instances();
 
@@ -246,9 +247,9 @@ function SightHelper(distanceFromEyeMax)
 		}
 
 		return this._cellPositionsVisible;
-	};
+	}
 
-	SightHelper.prototype.lineOfSightBetweenPointsOnMap = function(point0, point1, map)
+	lineOfSightBetweenPointsOnMap(point0, point1, map)
 	{
 		// hack - Inefficient.
 		var displacementBetweenPoints = point1.clone().subtract(point0);
@@ -263,13 +264,13 @@ function SightHelper(distanceFromEyeMax)
 		);
 		var returnValue = pointsVisibleFromPoint0.some(x => x.equals(point1));
 		return returnValue;
-	};
+	}
 
 	// helper methods
 
-	SightHelper.RadiansPerTurn = Math.PI * 2;
+	static RadiansPerTurn = Math.PI * 2;
 
-	SightHelper.prototype.atan3 = function(coordsToFind)
+	atan3(coordsToFind)
 	{
 		var returnValue = Math.atan2(coordsToFind.y, coordsToFind.x);
 
@@ -281,6 +282,6 @@ function SightHelper(distanceFromEyeMax)
 		returnValue /= SightHelper.RadiansPerTurn;
 
 		return returnValue;
-	};
+	}
 
 }

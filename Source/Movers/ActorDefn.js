@@ -1,11 +1,12 @@
 
-function ActorDefn(activityDefnNameInitial)
+class ActorDefn
 {
-	this.activityDefnNameInitial = activityDefnNameInitial;
-}
+	constructor(activityDefnNameInitial)
+	{
+		this.activityDefnNameInitial = activityDefnNameInitial;
+	}
 
-{
-	ActorDefn.prototype.initializeEntityForPlace = function(universe, world, place, entity)
+	initializeEntityForPlace(universe, world, place, entity)
 	{
 		var actorData = new ActorData();
 		entity.actorData = actorData;
@@ -19,9 +20,9 @@ function ActorDefn(activityDefnNameInitial)
 		);
 
 		actorData.activity_Set(universe, world, place, entity, activity);
-	};
+	}
 
-	ActorDefn.prototype.updateForTimerTick = function(universe, world, place, entity)
+	updateForTimerTick(universe, world, place, entity)
 	{
 		if (entity.killable == null || entity.killable.isAlive())
 		{
@@ -43,5 +44,5 @@ function ActorDefn(activityDefnNameInitial)
 
 			entityActions.length = 0;
 		}
-	};
+	}
 }

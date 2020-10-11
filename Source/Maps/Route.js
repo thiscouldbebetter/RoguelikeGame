@@ -1,25 +1,18 @@
 
-function Path(map, startPos, goalPos, lengthMax)
+class Route
 {
-	this.map = map;
-	this.startPos = startPos;
-	this.goalPos = goalPos;
-	this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
-
-	// Helper variables.
-	this._tempPos = new Coords();
-}
-
-{
-	function PathNode(cellPos, costFromStart, costToGoalEstimated, prev)
+	constructor(map, startPos, goalPos, lengthMax)
 	{
-		this.cellPos = cellPos;
-		this.costFromStart = costFromStart;
-		this.costToGoalEstimated = costToGoalEstimated;
-		this.prev = prev;
+		this.map = map;
+		this.startPos = startPos;
+		this.goalPos = goalPos;
+		this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
+
+		// Helper variables.
+		this._tempPos = new Coords();
 	}
 
-	Path.prototype.calculate = function()
+	calculate()
 	{
 		var map = this.map;
 		var startPos = this.startPos.clone();
@@ -38,7 +31,7 @@ function Path(map, startPos, goalPos, lengthMax)
 			startPos
 		).absolute().clearZ().sumOfDimensions();
 
-		var startNode = new PathNode
+		var startNode = new RouteNode
 		(
 			startPos, // cellPos
 			0, // costFromStart
@@ -124,9 +117,9 @@ function Path(map, startPos, goalPos, lengthMax)
 				current = current.prev;
 			}
 		}
-	};
+	}
 
-	Path.prototype.getNeighborsForNode = function(map, node, goalPos)
+	getNeighborsForNode(map, node, goalPos)
 	{
 		var returnValues = [];
 		var originalPos = node.cellPos;
@@ -167,7 +160,7 @@ function Path(map, startPos, goalPos, lengthMax)
 				originalPos
 			).magnitude();
 
-			var neighborNode = new PathNode
+			var neighborNode = new RouteNode
 			(
 				neighborPos,
 				node.costFromStart + costToTraverse,
@@ -185,5 +178,16 @@ function Path(map, startPos, goalPos, lengthMax)
 		}
 
 		return returnValues;
+	}
+}
+
+class RouteNode
+{
+	constructor(cellPos, costFromStart, costToGoalEstimated, prev)
+	{
+		this.cellPos = cellPos;
+		this.costFromStart = costFromStart;
+		this.costToGoalEstimated = costToGoalEstimated;
+		this.prev = prev;
 	}
 }

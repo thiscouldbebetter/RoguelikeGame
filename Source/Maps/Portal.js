@@ -1,11 +1,13 @@
 
-function Portal(destinationPlaceName, destinationEntityName)
+class Portal
 {
-	this.destinationPlaceName = destinationPlaceName;
-	this.destinationEntityName = destinationEntityName;
-}
-{
-	Portal.prototype.use = function(universe, world, place, entityActor, entityPortal)
+	constructor(destinationPlaceName, destinationEntityName)
+	{
+		this.destinationPlaceName = destinationPlaceName;
+		this.destinationEntityName = destinationEntityName;
+	}
+
+	use(universe, world, place, entityActor, entityPortal)
 	{
 		var portal = entityPortal.portal;
 		var destinationPlaceName = portal.destinationPlaceName;
@@ -31,5 +33,5 @@ function Portal(destinationPlaceName, destinationEntityName)
 				world.placeNext = destinationPlace;
 			}
 		}
-	};
+	}
 }
