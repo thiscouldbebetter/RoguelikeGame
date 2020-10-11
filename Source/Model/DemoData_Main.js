@@ -1,21 +1,30 @@
 
-function DemoData(randomizer)
+class DemoData_Main
 {
-	this.randomizer = randomizer;
-	this.imageBuilder = new ImageBuilder(Color.Instances()._All);
-}
-{
-	var mappableDefns = MappableDefn.Instances();
+	constructor(randomizer)
+	{
+		this.randomizer = randomizer;
+		this.imageBuilder = new ImageBuilder(Color.Instances()._All);
 
-	DemoData.prototype.buildEntityDefnGroups = function(images, activityDefns, itemCategories)
+		this.demoDataActions = new DemoData_Actions(this);
+		this.demoDataItems = new DemoData_Items(this);
+		this.demoDataMovers = new DemoData_Movers(this);
+		this.demoDataPlaces = new DemoData_Places(this);
+		this.demoDataVisuals = new DemoData_Visuals(this);
+	}
+
+	buildEntityDefnGroups(images, activityDefns, itemCategories)
 	{
 		// entityDefns
 
-		var emplacements = this.buildEntityDefnGroups_Emplacements(images);
+		var emplacements =
+			this.buildEntityDefnGroups_Emplacements(images);
 
-		var itemGroups = this.buildEntityDefnGroups_Items(images, itemCategories);
+		var itemGroups =
+			this.demoDataItems.buildEntityDefnGroups_Items(images, itemCategories);
 
-		var moverGroups = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
+		var moverGroups =
+			this.demoDataMovers.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
 		var moverEntities = moverGroups[0].entityDefns;
 		var killables = moverEntities.filter(x => x.killable != null); // hack
 		var itemDefnsForCorpses = killables.map
@@ -37,13 +46,13 @@ function DemoData(randomizer)
 		].concatenateAll();
 
 		return returnValues;
-	};
+	}
 
-	DemoData.prototype.buildEntityDefnGroups_Emplacements = function(visuals)
+	buildEntityDefnGroups_Emplacements(visuals)
 	{
 		var sizeInPixels = visuals["Floor"].size;
 
-		var useEmplacementAltar = function(universe, world, place, entityUsing, entityUsed)
+		var useEmplacementAltar = (universe, world, place, entityUsing, entityUsed) =>
 		{
 			var itemsHeld = entityUsing.itemHolder.itemEntities;
 			var isItemGoalHeld = itemsHeld.some(x => x.name == "Amulet of Yendor");
@@ -96,13 +105,14 @@ function DemoData(randomizer)
 			}
 		}
 
-		var useEmplacementPortal = function(universe, world, place, entityUsing, entityUsed)
+		var useEmplacementPortal = (universe, world, place, entityUsing, entityUsed) =>
 		{
 			var message = "You use the " + entityUsed.emplacement.appearance + ".";
 			entityUsing.player.messageLog.messageAdd(message);
 			entityUsed.portal.use(universe, world, place, entityUsing, entityUsed);
 		};
 
+		var mappableDefns = MappableDefn.Instances();
 		var mappableOpen = mappableDefns.Open;
 		var generatable0 = new Generatable(0);
 		var generatable1 = new Generatable(1);
@@ -252,26 +262,27 @@ function DemoData(randomizer)
 		);
 
 		return returnValue;
-	};
+	}
 
-	DemoData.prototype.buildWorldDefn = function(visualsForTiles)
+	buildWorldDefn(visualsForTiles)
 	{
-		var visualsOpaque = this.buildVisualLookup(visualsForTiles);
+		var visualsOpaque =
+			this.demoDataVisuals.buildVisualLookup(visualsForTiles);
 
-		var actions = this.actionsBuild();
+		var actions = this.demoDataActions.actionsBuild();
 
-		var activityDefns = this.buildActivityDefns();
+		var activityDefns = this.demoDataActions.buildActivityDefns();
 
-		var itemCategories = this.buildItemCategories();
+		var itemCategories = this.demoDataItems.buildItemCategories();
 
 		var entityDefnGroups = this.buildEntityDefnGroups
 		(
 			visualsOpaque, activityDefns, itemCategories
 		);
 
-		var placeDefns = this.buildPlaceDefns(visualsOpaque, actions);
+		var placeDefns = this.demoDataPlaces.buildPlaceDefns(visualsOpaque, actions);
 
-		var placeTree = this.buildPlaceTree();
+		var placeTree = this.demoDataPlaces.buildPlaceTree();
 
 		var randomizer = this.randomizer;
 
@@ -297,6 +308,6 @@ function DemoData(randomizer)
 		);
 
 		return returnValue;
-	};
+	}
 
 }

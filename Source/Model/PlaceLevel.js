@@ -1,56 +1,57 @@
 
-function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, entities)
+class PlaceLevel
 {
-	this.name = name;
-	this.displayName = displayName;
-	this.depth = depth;
-	this.defn = defn;
-	this.sizeInPixels = sizeInPixels;
-	this.map = map;
-	this.zones = zones;
-	this.entities = [];
-
-	this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
-
-	this.entitiesByPropertyName = [];
-	var propertyNamesKnown = this.defn.propertyNamesKnown;
-	for (var c = 0; c < propertyNamesKnown.length; c++)
+	constructor(name, displayName, depth, defn, sizeInPixels, map, zones, entities)
 	{
-		var propertyName = propertyNamesKnown[c];
+		this.name = name;
+		this.displayName = displayName;
+		this.depth = depth;
+		this.defn = defn;
+		this.sizeInPixels = sizeInPixels;
+		this.map = map;
+		this.zones = zones;
+		this.entities = [];
 
-		var entitiesWithProperty = [];
-		this.entitiesByPropertyName.push(entitiesWithProperty);
-		this.entitiesByPropertyName[propertyName] = entitiesWithProperty;
+		this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
+
+		this.entitiesByPropertyName = [];
+		var propertyNamesKnown = this.defn.propertyNamesKnown;
+		for (var c = 0; c < propertyNamesKnown.length; c++)
+		{
+			var propertyName = propertyNamesKnown[c];
+
+			var entitiesWithProperty = [];
+			this.entitiesByPropertyName.push(entitiesWithProperty);
+			this.entitiesByPropertyName[propertyName] = entitiesWithProperty;
+		}
+
+		this.entitiesToSpawn = [];
+		this.entitiesToRemove = [];
+
+		for (var i = 0; i < entities.length; i++)
+		{
+			var entity = entities[i];
+			this.entitiesToSpawn.push(entity);
+		}
+
+		this.hasBeenUpdatedSinceDrawn = true;
+
+		// Helper variables.
+		this._drawLoc = new Location(new Coords());
 	}
 
-	this.entitiesToSpawn = [];
-	this.entitiesToRemove = [];
-
-	for (var i = 0; i < entities.length; i++)
+	static ZLayers()
 	{
-		var entity = entities[i];
-		this.entitiesToSpawn.push(entity);
+		if (PlaceLevel._zLayers == null)
+		{
+			PlaceLevel._zLayers = new PlaceLevel_ZLayers();
+		}
+		return PlaceLevel._zLayers;
 	}
-
-	this.hasBeenUpdatedSinceDrawn = true;
-
-	// Helper variables.
-	this._drawLoc = new Location(new Coords());
-}
-
-{
-	function PlaceLevel_ZLayers()
-	{
-		this.Emplacements = 1;
-		this.Items = 2;
-		this.Movers = 3;
-	}
-
-	PlaceLevel.ZLayers = new PlaceLevel_ZLayers();
 
 	// instance methods
 
-	PlaceLevel.prototype.entitiesWithPropertyNamePresentAtCellPos = function(propertyName, cellPosToCheck)
+	entitiesWithPropertyNamePresentAtCellPos(propertyName, cellPosToCheck)
 	{
 		var returnEntities = [];
 
@@ -71,7 +72,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 		return returnEntities;
 	}
 
-	PlaceLevel.prototype.entitySpawn = function(universe, world, entityToSpawn)
+	entitySpawn(universe, world, entityToSpawn)
 	{
 		this.entities.push(entityToSpawn);
 		this.entities[entityToSpawn.name] = entityToSpawn;
@@ -107,15 +108,15 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 				}
 			}
 		}
-	};
+	}
 
-	PlaceLevel.prototype.initialize = function(universe, world)
+	initialize(universe, world)
 	{
 		this.hasBeenUpdatedSinceDrawn = true;
 		// Initialization of entities is handled in entitySpawn().
-	};
+	}
 
-	PlaceLevel.prototype.update = function(universe, world)
+	update(universe, world)
 	{
 		this.update_EntitiesToSpawn(universe, world);
 
@@ -143,9 +144,9 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 		this.update_EntitiesToRemove(universe, world);
 
 		this.draw(universe, world);
-	};
+	}
 
-	PlaceLevel.prototype.update_EntitiesToRemove = function(universe, world)
+	update_EntitiesToRemove(universe, world)
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -179,7 +180,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 		this.entitiesToRemove.length = 0;
 	}
 
-	PlaceLevel.prototype.update_EntitiesToSpawn = function(universe, world)
+	update_EntitiesToSpawn(universe, world)
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
@@ -190,7 +191,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 		this.entitiesToSpawn.length = 0;
 	}
 
-	PlaceLevel.prototype.update_Mappables = function(universe, world)
+	update_Mappables(universe, world)
 	{
 		var emplacements = this.entitiesByPropertyName[Emplacement.name];
 		var enemies = this.entitiesByPropertyName["Enemy"];
@@ -234,7 +235,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 						collisionHelper.collideEntities
 						(
-							world, collision, entityThis, entityOther
+	-						world, collision, entityThis, entityOther
 						);
 						collisionHelper.collideEntities
 						(
@@ -248,7 +249,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 	// controls
 
-	PlaceLevel.prototype.controlUpdate = function(world)
+	controlUpdate(world)
 	{
 		if (this.control == null)
 		{
@@ -270,7 +271,7 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 
 	// drawable
 
-	PlaceLevel.prototype.draw = function(universe, world)
+	draw(universe, world)
 	{
 		if (this.hasBeenUpdatedSinceDrawn)
 		{
@@ -284,9 +285,9 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 				placeKnown.drawAsKnown(universe, world);
 			}
 		}
-	};
+	}
 
-	PlaceLevel.prototype.drawAsKnown = function(universe, world)
+	drawAsKnown(universe, world)
 	{
 		var display = universe.display;
 
@@ -317,27 +318,37 @@ function PlaceLevel(name, displayName, depth, defn, sizeInPixels, map, zones, en
 			display.displayToUse().sizeInPixels,
 			null, "Gray"
 		);
-	};
+	}
 
 	// entities
 
-	PlaceLevel.prototype.awaitables = function()
+	awaitables()
 	{
 		return this.entitiesByPropertyName[Awaitable.name];
-	};
+	}
 
-	PlaceLevel.prototype.ephemerals = function()
+	ephemerals()
 	{
 		return this.entitiesByPropertyName[Ephemeral.name];
-	};
+	}
 
-	PlaceLevel.prototype.movers = function()
+	movers()
 	{
 		return this.entitiesByPropertyName[Mover.name];
-	};
+	}
 
-	PlaceLevel.prototype.player = function()
+	player()
 	{
 		return this.entitiesByPropertyName[Player.name][0];
-	};
+	}
+}
+
+class PlaceLevel_ZLayers
+{
+	constructor()
+	{
+		this.Emplacements = 1;
+		this.Items = 2;
+		this.Movers = 3;
+	}
 }

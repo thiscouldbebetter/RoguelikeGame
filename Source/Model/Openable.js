@@ -1,11 +1,13 @@
 
-function Openable(isOpen)
+class Openable
 {
-	this.isOpen = isOpen;
-}
-{
-	Openable.prototype.clone = function()
+	constructor(isOpen)
+	{
+		this.isOpen = isOpen;
+	}
+
+	clone()
 	{
 		return new Openable(this.isOpen);
-	};
+	}
 }

@@ -1,11 +1,12 @@
 
-function DemoData_Actions()
+class DemoData_Actions
 {
-	// partial class DemoData
-}
+	constructor(parent)
+	{
+		this.parent = parent;
+	}
 
-{
-	DemoData.prototype.actionAttack_Melee_Perform = function(universe, world, place, actor, action)
+	actionAttack_Melee_Perform(universe, world, place, actor, action)
 	{
 		var costToAttack = actor.mover.movesPerTurn; // todo
 
@@ -109,9 +110,9 @@ function DemoData_Actions()
 			} // end if (mover != null)
 
 		} // end for entitiesInCellDestination
-	};
+	}
 
-	DemoData.prototype.actionAttack_Projectile_Perform = function
+	actionAttack_Projectile_Perform
 	(
 		universe, world, place, actor, action
 	)
@@ -174,9 +175,9 @@ function DemoData_Actions()
 		{
 			actor.player.messageLog.messageAdd("You throw a dagger.");
 		}
-	};
+	}
 
-	DemoData.prototype.actionDoorOpenOrClose_Perform = function(universe, world, place, actor, action, shouldOpenNotClose)
+	actionDoorOpenOrClose_Perform(universe, world, place, actor, action, shouldOpenNotClose)
 	{
 		var costToPerform = actor.mover.movesPerTurn; // todo
 
@@ -243,9 +244,9 @@ function DemoData_Actions()
 			} // end if cellDestination != null
 
 		} // end if enough moves
-	};
+	}
 
-	DemoData.prototype.actionEmplacement_Use_Perform = function(universe, world, place, actor, action)
+	actionEmplacement_Use_Perform(universe, world, place, actor, action)
 	{
 		var loc = actor.locatable.loc;
 		var posInCells = loc.pos;
@@ -274,15 +275,15 @@ function DemoData_Actions()
 			);
 		}
 
-	};
+	}
 
-	DemoData.prototype.actionItem_DropSelected_Perform = function(universe, world, place, actor, action)
+	actionItem_DropSelected_Perform(universe, world, place, actor, action)
 	{
 		var loc = actor.locatable.loc;
 		var posInCells = loc.pos;
-		var itemsPresentInCell = place.entitiesWithPropertyPresentAtCellPos
+		var itemsPresentInCell = place.entitiesWithPropertyNamePresentAtCellPos
 		(
-			"Item", posInCells
+			Item.name, posInCells
 		);
 
 		var itemHolder = actor.itemHolder;
@@ -323,9 +324,9 @@ function DemoData_Actions()
 
 			dropItem(actor.itemHolder, world, actor, itemToDrop);
 		}
-	};
+	}
 
-	DemoData.prototype.actionItem_PickUp_Perform = function(universe, world, place, actor, action)
+	actionItem_PickUp_Perform(universe, world, place, actor, action)
 	{
 		var loc = actor.locatable.loc;
 		var posInCells = loc.pos;
@@ -367,7 +368,7 @@ function DemoData_Actions()
 		}
 	}
 
-	DemoData.prototype.actionItem_SelectAtOffset_Perform = function(universe, world, place, actor, action, indexOffset)
+	actionItem_SelectAtOffset_Perform(universe, world, place, actor, action, indexOffset)
 	{
 		var itemHolder = actor.itemHolder;
 		var itemsHeld = itemHolder.items;
@@ -405,14 +406,14 @@ function DemoData_Actions()
 		actor.player.controlUpdate(world, actor);
 	};
 
-	DemoData.prototype.actionItem_TargetSelected_Perform = function(universe, world, place, actor, action)
+	actionItem_TargetSelected_Perform(universe, world, place, actor, action)
 	{
 		var itemHolder = actor.itemHolder;
 		itemHolder.itemTargeted = itemHolder.itemSelected;
 		actor.player.controlUpdate(world, actor);
 	};
 
-	DemoData.prototype.actionItem_UseSelected_Perform = function(universe, world, place, actor, action)
+	actionItem_UseSelected_Perform(universe, world, place, actor, action)
 	{
 		var itemToUse = actor.itemHolder.itemSelected;
 
@@ -431,7 +432,7 @@ function DemoData_Actions()
 		}
 	};
 
-	DemoData.prototype.actionMove_Perform = function(universe, world, place, actor, action, directionToMove)
+	actionMove_Perform(universe, world, place, actor, action, directionToMove)
 	{
 		if (actor.mover.movesThisTurn < actor.mover.movesPerTurn)
 		{
@@ -483,9 +484,9 @@ function DemoData_Actions()
 			cellDestination, isDestinationAccessible, posInCellsDestination
 		);
 
-	};
+	}
 
-	DemoData.prototype.actionMove_Perform_1 = function
+	actionMove_Perform_1
 	(
 		universe, world, place, actor, action, directionToMove, cellDestination
 	)
@@ -504,7 +505,7 @@ function DemoData_Actions()
 		return isDestinationAccessible;
 	}
 
-	DemoData.prototype.actionMove_Perform_2 = function
+	actionMove_Perform_2
 	(
 		universe, world, place, actor, action, directionToMove, cellDestination, isDestinationAccessible
 	)
@@ -560,7 +561,7 @@ function DemoData_Actions()
 		return isDestinationAccessible;
 	};
 
-	DemoData.prototype.actionMove_Perform_3 = function
+	actionMove_Perform_3
 	(
 		universe, world, place, actor, action, directionToMove,
 		cellDestination, isDestinationAccessible, posInCellsDestination
@@ -621,7 +622,7 @@ function DemoData_Actions()
 		} // end if (isDestinationAccessible)
 	};
 
-	DemoData.prototype.actionSearch_Perform = function(universe, world, place, actor, action)
+	actionSearch_Perform(universe, world, place, actor, action)
 	{
 		var costToSearch = actor.mover.movesPerTurn; // todo
 
@@ -682,13 +683,13 @@ function DemoData_Actions()
 		} // end for each neighboring cell
 	};
 
-	DemoData.prototype.actionWait_Perform = function(universe, world, place, actor, action)
+	actionWait_Perform(universe, world, place, actor, action)
 	{
 		actor.mover.movesThisTurn = 0;
 		actor.turnable.hasActedThisTurn = true;
 	};
 
-	DemoData.prototype.actionsBuild = function()
+	actionsBuild()
 	{
 		// directions
 
@@ -901,9 +902,9 @@ function DemoData_Actions()
 		returnValues.addLookupsByName();
 
 		return returnValues;
-	};
+	}
 
-	DemoData.prototype.buildActivityDefns = function()
+	buildActivityDefns()
 	{
 		var activityDefnDoNothing = new ActivityDefn
 		(
@@ -1053,7 +1054,7 @@ function DemoData_Actions()
 						target.overwriteWith(zone.bounds.center).floor();
 					}
 
-					var path = new Path
+					var path = new Route
 					(
 						map,
 						actorPos,

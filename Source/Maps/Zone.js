@@ -1,6 +1,9 @@
 
-function Zone(bounds)
+class Zone
 {
-	this.bounds = bounds;
-	this.zonesConnected = [];
+	constructor(bounds)
+	{
+		this.bounds = bounds;
+		this.zonesConnected = [];
+	}
 }

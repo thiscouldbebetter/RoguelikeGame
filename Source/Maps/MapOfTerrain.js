@@ -1,52 +1,53 @@
 
-function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
+class MapOfTerrain
 {
-	this.name = name;
-	this.terrains = terrains.addLookups(x => x.codeChar);
-	this.cellSizeInPixels = cellSizeInPixels;
-
-	this.sizeInCells = new Coords
-	(
-		cellsAsStrings[0].length, cellsAsStrings.length, Number.POSITIVE_INFINITY // 1
-	);
-
-	this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract
-	(
-		Coords.Instances().Ones
-	);
-
-	this.sizeInPixels = this.sizeInCells.clone().multiply(this.cellSizeInPixels);
-
-	this.cells = [];
-
-	var cellPos = new Coords(0, 0, 0);
-	for (var y = 0; y < this.sizeInCells.y; y++)
+	constructor(name, terrains, cellSizeInPixels, cellsAsStrings)
 	{
-		cellPos.y = y;
-		for (var x = 0; x < this.sizeInCells.x; x++)
+		this.name = name;
+		this.terrains = terrains.addLookups(x => x.codeChar);
+		this.cellSizeInPixels = cellSizeInPixels;
+
+		this.sizeInCells = new Coords
+		(
+			cellsAsStrings[0].length, cellsAsStrings.length, Number.POSITIVE_INFINITY // 1
+		);
+
+		this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract
+		(
+			Coords.Instances().Ones
+		);
+
+		this.sizeInPixels = this.sizeInCells.clone().multiply(this.cellSizeInPixels);
+
+		this.cells = [];
+
+		var cellPos = new Coords(0, 0, 0);
+		for (var y = 0; y < this.sizeInCells.y; y++)
 		{
-			cellPos.x = x;
+			cellPos.y = y;
+			for (var x = 0; x < this.sizeInCells.x; x++)
+			{
+				cellPos.x = x;
 
-			var cellAsChar = cellsAsStrings[cellPos.y][cellPos.x];
+				var cellAsChar = cellsAsStrings[cellPos.y][cellPos.x];
 
-			var cell = new MapCell(cellAsChar);
-			this.cells.push(cell);
+				var cell = new MapOfTerrainCell(cellAsChar);
+				this.cells.push(cell);
+			}
 		}
+
+		// Helper variables.
+		this._cellPos = new Coords();
+		this._drawPos = new Coords();
+		this._drawPosSaved = new Coords();
+		this._drawLoc = new Location( this._drawPos );
+		this._drawableEntity = new Entity( "_drawableEntity", [ new Locatable(this._drawLoc) ] );
+		this._entitiesSortedBottomToTop = [];
 	}
 
-	// Helper variables.
-	this._cellPos = new Coords();
-	this._drawPos = new Coords();
-	this._drawPosSaved = new Coords();
-	this._drawLoc = new Location( this._drawPos );
-	this._drawableEntity = new Entity( "_drawableEntity", [ new Locatable(this._drawLoc) ] );
-	this._entitiesSortedBottomToTop = [];
-}
-
-{
 	// Instance methods.
 
-	Map.prototype.cellAtPos = function(cellPos)
+	cellAtPos(cellPos)
 	{
 		var returnValue;
 
@@ -61,7 +62,7 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 
 	// Clonable.
 
-	Map.prototype.clone = function()
+	clone()
 	{
 		var cellsAsStrings = [];
 
@@ -84,18 +85,18 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			cellsAsStrings.push(cellRowAsString);
 		}
 
-		return new Map
+		return new MapOfTerrain
 		(
 			this.name,
 			this.terrains,
 			this.cellSizeInPixels,
 			cellsAsStrings
 		);
-	};
+	}
 
 	// drawable
 
-	Map.prototype.draw = function(universe, world, display)
+	draw(universe, world, display)
 	{
 		// hack - Build camera from player.
 		var entityCamera = world.entityForPlayer;
@@ -137,9 +138,9 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 		} // end for y
 
 		display.flush();
-	};
+	}
 
-	Map.prototype.drawCellAtPos = function(universe, world, display, cameraPos, cellPos)
+	drawCellAtPos(universe, world, display, cameraPos, cellPos)
 	{
 		var map = this;
 
@@ -192,5 +193,5 @@ function Map(name, terrains, cellSizeInPixels, cellsAsStrings)
 			}
 
 		} // end for entitiesSortedBottomToTop
-	};
+	}
 }

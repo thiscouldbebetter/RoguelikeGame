@@ -1,9 +1,12 @@
-function RangeSet(ranges)
+
+class RangeSet
 {
-	this.ranges = ranges;
-}
-{
-	RangeSet.prototype.overlapsWith = function(other)
+	constructor(ranges)
+	{
+		this.ranges = ranges;
+	}
+
+	overlapsWith(other)
 	{
 		var returnValue = false;
 
@@ -27,7 +30,7 @@ function RangeSet(ranges)
 		return returnValue;
 	}
 
-	RangeSet.prototype.splitRangesThatSpanPeriod = function(period)
+	splitRangesThatSpanPeriod(period)
 	{
 		for (var i = 0; i < this.ranges.length; i++)
 		{
@@ -44,7 +47,7 @@ function RangeSet(ranges)
 		}
 	}
 
-	RangeSet.prototype.subtract = function(other)
+	subtract(other)
 	{
 		var rangesCurrent = this.ranges;
 

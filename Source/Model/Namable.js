@@ -1,6 +1,9 @@
 
-function Namable(name, appearance)
+class Namable
 {
-	this.name = name;
-	this.appearance = appearance;
+	constructor(name, appearance)
+	{
+		this.name = name;
+		this.appearance = appearance;
+	}
 }

@@ -1,6 +1,15 @@
-// partial class DemoData
+
+class DemoData_Items
 {
-	DemoData.prototype.buildEntityDefnGroups_Items = function(images, itemCategories)
+	constructor(parent)
+	{
+		this.parent = parent;
+
+		this.randomizer = this.parent.randomizer;
+		this.mappableDefns = MappableDefn.Instances();
+	}
+
+	buildEntityDefnGroups_Items(images, itemCategories)
 	{
 		// convenience variables
 
@@ -77,9 +86,9 @@
 		}
 
 		return itemDefnGroups;
-	};
+	}
 
-	DemoData.prototype.buildEntityDefns_Items_Amulets = function
+	buildEntityDefns_Items_Amulets
 	(
 		visuals,
 		categories,
@@ -127,7 +136,7 @@
 			(
 				name,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
@@ -150,7 +159,7 @@
 		(
 			name,
 			[
-				mappableDefns.Open,
+				this.mappableDefns.Open,
 				new Drawable(visuals[name]),
 				new ItemDefn
 				(
@@ -171,7 +180,7 @@
 		return new EntityDefnGroup("Amulets", 1, entityDefnSets[0]);
 	};
 
-	DemoData.prototype.buildEntityDefns_Items_Containers = function
+	buildEntityDefns_Items_Containers
 	(
 		visuals,
 		categories,
@@ -199,7 +208,7 @@
 		return returnValue;
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Food = function
+	buildEntityDefns_Items_Food
 	(
 		visuals,
 		categories,
@@ -248,7 +257,7 @@
 
 		var entityDefnSetFoods = [];
 
-		var useFood = function(universe, world, place, userEntity, usedEntity)
+		var useFood = (universe, world, place, userEntity, usedEntity) =>
 		{
 			userEntity.starvable.satietyAdd(usedEntity.food.satiety);
 			userEntity.itemHolder.itemEntityRemove(usedEntity);
@@ -265,7 +274,7 @@
 			(
 				name,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[name]),
 					food,
 					new ItemDefn
@@ -290,7 +299,7 @@
 		return new EntityDefnGroup("Food", 1, entityDefnSets[0]);
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Potions = function
+	buildEntityDefns_Items_Potions
 	(
 		visuals,
 		categories,
@@ -358,7 +367,7 @@
 
 		var categoryNamesPotion = [ "Potion" ];
 
-		var useItemPotion = function(universe, world, place, entityUsing, entityUsed)
+		var useItemPotion = (universe, world, place, entityUsing, entityUsed) =>
 		{
 			var message = null;
 			var player = entityUsing.player;
@@ -409,7 +418,7 @@
 			(
 				itemDefnName,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[appearance]),
 					effector,
 					itemDefn,
@@ -423,9 +432,9 @@
 		entityDefnSets.push(entityDefnSetPotions);
 
 		return new EntityDefnGroup("Potions", 1, entityDefnSets[0]);
-	};
+	}
 
-	DemoData.prototype.buildEntityDefns_Items_Rings = function
+	buildEntityDefns_Items_Rings
 	(
 		visuals,
 		categories,
@@ -454,7 +463,7 @@
 			}
 		);
 
-		var equipTodo = function equip(universe, world, place, entityEquippable)
+		var equipTodo = (universe, world, place, entityEquippable) =>
 		{
 			entityEquippable.effectable.effects.push(effectPreventHunger);
 		};
@@ -491,7 +500,7 @@
 			new Ring("Warning", 			equipTodo), // 27
 		];
 
-		appearances =
+		var appearances =
 		[
 			"Pearl","Iron","Twisted","Steel",
 			"Wire","Engagement","Shiny","Bronze",
@@ -521,7 +530,7 @@
 				(
 					name,
 					[
-						mappableDefns.Open,
+						this.mappableDefns.Open,
 						new Drawable(visuals[appearance]),
 						new ItemDefn
 						(
@@ -541,9 +550,9 @@
 		entityDefnSets.push(entityDefnSetRings);
 
 		return new EntityDefnGroup("Rings", 1, entityDefnSets[0]);
-	};
+	}
 
-	DemoData.prototype.buildEntityDefns_Items_Scrolls = function
+	buildEntityDefns_Items_Scrolls
 	(
 		visuals,
 		categories,
@@ -561,7 +570,7 @@
 			this.use = use;
 		}
 
-		var useScrollNotImplemented = function(universe, world, place, entityUsing)
+		var useScrollNotImplemented = (universe, world, place, entityUsing) =>
 		{
 			var message = "You read the scroll aloud."
 			var player = entityUsing.player;
@@ -600,7 +609,7 @@
 			new Scroll("Teleport", useScrollNotImplemented ),
 		];
 
-		appearances =
+		var appearances =
 		[
 			"Andova Begarin", "Daiyen Fooels", "Duam Xnaht", "Eblib Yloh",
 			"Elam Ebow", "Foobie Bletch", "Garven Deh", "Hackem Muche",
@@ -630,7 +639,7 @@
 			(
 				name,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
 					(
@@ -656,7 +665,7 @@
 		return returnValue;
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Spellbooks = function
+	buildEntityDefns_Items_Spellbooks
 	(
 		visuals,
 		categories,
@@ -797,7 +806,7 @@
 			(
 				itemDefnName,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
@@ -824,7 +833,7 @@
 		return returnValue;
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Wands = function
+	buildEntityDefns_Items_Wands
 	(
 		visuals,
 		categories,
@@ -836,12 +845,12 @@
 		entityDefnSets
 	)
 	{
-		var wandUseNotImplemented = function(universe, world, place, actingEntity, targetEntity)
+		var wandUseNotImplemented = (universe, world, place, actingEntity, targetEntity) =>
 		{
 			return "Wand effect not implemented!";
 		}
 
-		var wandUseProjectileSpawn = function (universe, world, place, actingEntity, targetEntity)
+		var wandUseProjectileSpawn = (universe, world, place, actingEntity, targetEntity) =>
 		{
 			var loc = targetEntity.locatable.loc;
 			var venue = loc.place(world);
@@ -858,7 +867,7 @@
 			targetEntity.controlUpdate(world);
 		};
 
-		var wandUseTeleport = function(universe, world, place, actingEntity, targetEntity)
+		var wandUseTeleport = (universe, world, place, actingEntity, targetEntity) =>
 		{
 			var loc = targetEntity.locatable.loc;
 
@@ -918,7 +927,7 @@
 			new Wand("Wishing",			wandUseNotImplemented), // 23
 		];
 
-		appearances =
+		var appearances =
 		[
 			"Glass","Balsa","Crystal","Maple",
 			"Pine","Oak","Ebony","Marble",
@@ -957,7 +966,7 @@
 			(
 				wandName,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					device,
 					new Drawable(visuals[appearance]),
 					new ItemDefn
@@ -983,7 +992,7 @@
 
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_MagicTools = function
+	buildEntityDefns_Items_MagicTools
 	(
 		visuals,
 		categories,
@@ -998,7 +1007,7 @@
 		// todo
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Weapons = function
+	buildEntityDefns_Items_Weapons
 	(
 		visuals,
 		categories,
@@ -1043,7 +1052,7 @@
 			(
 				name,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1067,7 +1076,7 @@
 		return new EntityDefnGroup("Weapons", 1, entityDefnSets[0]);
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Armor = function
+	buildEntityDefns_Items_Armor
 	(
 		visuals,
 		categories,
@@ -1160,7 +1169,7 @@
 			(
 				name,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1184,7 +1193,7 @@
 		return new EntityDefnGroup("Armor", 1, entityDefnSets[0]);
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Tools = function
+	buildEntityDefns_Items_Tools
 	(
 		visuals,
 		categories,
@@ -1255,7 +1264,7 @@
 			(
 				name,
 				[
-					mappableDefns.Open,
+					this.mappableDefns.Open,
 					new Drawable(visuals[name]),
 					new ItemDefn
 					(
@@ -1276,7 +1285,7 @@
 		return new EntityDefnGroup("Tools", 1, entityDefnSet);
 	}
 
-	DemoData.prototype.buildEntityDefns_Items_Stones = function
+	buildEntityDefns_Items_Stones
 	(
 		visuals,
 		categories,
@@ -1365,7 +1374,7 @@
 				(
 					name,
 					[
-						mappableDefns.Open,
+						this.mappableDefns.Open,
 
 						new Drawable(visuals[appearance]),
 						new ItemDefn
@@ -1405,9 +1414,9 @@
 
 		return new EntityDefnGroup("Stones", 1, entityDefnSets[0]);
 		return new EntityDefnGroup("Valuables", 1, entityDefnSets[1]);
-	};
+	}
 
-	DemoData.prototype.buildItemCategories = function()
+	buildItemCategories()
 	{
 		var returnValues =
 		[
@@ -1435,9 +1444,9 @@
 		returnValues.addLookupsByName();
 
 		return returnValues;
-	};
+	}
 
-	DemoData.prototype.itemUseDevice = function(universe, world, place, userEntity, itemEntity)
+	itemUseDevice(universe, world, place, userEntity, itemEntity)
 	{
 		var itemAppearance = itemEntity.item.defn(world).appearance;
 		var itemMessage = "You use the " + itemAppearance + ".";
@@ -1454,5 +1463,5 @@
 
 		var message = itemMessage + " " + deviceMessage;
 		return message;
-	};
+	}
 }

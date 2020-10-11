@@ -1,16 +1,18 @@
 
-function Searchable(chanceOfDiscoveryPerSearch, isHidden, discover)
+class Searchable
 {
-	this.chanceOfDiscoveryPerSearch = chanceOfDiscoveryPerSearch;
-	this.isHidden = isHidden || false;
-	this.discover = discover;
-}
-{
-	Searchable.prototype.clone = function()
+	constructor(chanceOfDiscoveryPerSearch, isHidden, discover)
+	{
+		this.chanceOfDiscoveryPerSearch = chanceOfDiscoveryPerSearch;
+		this.isHidden = isHidden || false;
+		this.discover = discover;
+	}
+
+	clone()
 	{
 		return new Searchable
 		(
 			this.chanceOfDiscoveryPerSearch, this.isHidden, this.discover
 		);
-	};
+	}
 }

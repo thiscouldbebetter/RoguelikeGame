@@ -1,16 +1,17 @@
 
-function Demographics(species, role, rank, experienceToKill)
+class Demographics
 {
-	this.species = species;
-	this.role = role;
-	this.rank = rank;
-	this.experienceToKill = experienceToKill;
+	constructor(species, role, rank, experienceToKill)
+	{
+		this.species = species;
+		this.role = role;
+		this.rank = rank;
+		this.experienceToKill = experienceToKill;
 
-	this.experienceEarned = 0;
-}
+		this.experienceEarned = 0;
+	}
 
-{
-	Demographics.prototype.experienceAdd = function(experienceToAdd)
+	experienceAdd(experienceToAdd)
 	{
 		var wasRankIncreased = false;
 
@@ -23,11 +24,11 @@ function Demographics(species, role, rank, experienceToKill)
 		}
 
 		return wasRankIncreased;
-	};
+	}
 
 	// controls
 
-	Demographics.prototype.controlUpdate = function(world, entity, pos)
+	controlUpdate(world, entity, pos)
 	{
 		if (this.control == null)
 		{
@@ -51,5 +52,5 @@ function Demographics(species, role, rank, experienceToKill)
 		}
 
 		return this.control;
-	};
+	}
 }

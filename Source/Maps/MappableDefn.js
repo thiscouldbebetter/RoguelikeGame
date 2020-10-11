@@ -1,31 +1,24 @@
 
-function MappableDefn(blocksMovement, blocksVision)
+class MappableDefn
 {
-	this.blocksMovement = blocksMovement;
-	this.blocksVision = blocksVision;
-}
-
-{
-	function MappableDefn_Instances()
+	constructor(blocksMovement, blocksVision)
 	{
-		this.Blocking = new MappableDefn(() => true, () => true);
-		this.Concealing = new MappableDefn(() => false, () => true);
-		this.Open = new MappableDefn(() => false, () => false);
-		this.Transparent = new MappableDefn(() => true, () => false);
+		this.blocksMovement = blocksMovement;
+		this.blocksVision = blocksVision;
 	}
 
-	MappableDefn.Instances = function()
+	static Instances()
 	{
 		if (MappableDefn._instances == null)
 		{
 			MappableDefn._instances = new MappableDefn_Instances();
 		}
 		return MappableDefn._instances;
-	};
+	}
 
 	// entity
 
-	MappableDefn.prototype.initializeEntityForPlace = function(universe, world, place, entity)
+	initializeEntityForPlace(universe, world, place, entity)
 	{
 		var mappable = new Mappable
 		(
@@ -40,17 +33,28 @@ function MappableDefn(blocksMovement, blocksVision)
 
 		entity.mappable = mappable;
 		entity.collidable = entity.mappable; // hack
-	};
+	}
 
-	MappableDefn.prototype.updateForTimerTick = function(universe, world, place, entity)
+	updateForTimerTick(universe, world, place, entity)
 	{
 		// todo
-	};
+	}
 
 	// Cloneable.
 
-	MappableDefn.prototype.clone = function()
+	clone()
 	{
 		return this; // hack
-	};
+	}
+}
+
+class MappableDefn_Instances
+{
+	constructor()
+	{
+		this.Blocking = new MappableDefn(() => true, () => true);
+		this.Concealing = new MappableDefn(() => false, () => true);
+		this.Open = new MappableDefn(() => false, () => false);
+		this.Transparent = new MappableDefn(() => true, () => false);
+	}
 }

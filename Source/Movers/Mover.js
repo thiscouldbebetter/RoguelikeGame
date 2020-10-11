@@ -1,11 +1,12 @@
 
-function Mover(movesPerTurn)
+class Mover
 {
-	this.movesPerTurn = movesPerTurn;
-}
+	constructor(movesPerTurn)
+	{
+		this.movesPerTurn = movesPerTurn;
+	}
 
-{
-	Mover.prototype.initializeEntityForPlace = function(universe, world, place, entity)
+	initializeEntityForPlace(universe, world, place, entity)
 	{
 		var mover = entity.mover;
 		mover.movesThisTurn = mover.movesPerTurn;
@@ -25,9 +26,9 @@ function Mover(movesPerTurn)
 				}
 			);
 		}
-	};
+	}
 
-	Mover.prototype.updateForTimerTick = function(universe, world, place, entity)
+	updateForTimerTick(universe, world, place, entity)
 	{
 		var entityLoc = entity.locatable.loc;
 
@@ -35,5 +36,5 @@ function Mover(movesPerTurn)
 		(
 			place.map.sizeInCellsMinusOnes
 		);
-	};
+	}
 }

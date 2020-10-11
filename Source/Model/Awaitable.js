@@ -1,5 +1,8 @@
 
-function Awaitable()
+class Awaitable
 {
-	this.isDone = false;
+	constructor()
+	{
+		this.isDone = false;
+	}
 }

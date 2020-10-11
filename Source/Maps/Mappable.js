@@ -1,13 +1,15 @@
 
-function Mappable(defn)
+class Mappable
 {
-	this.defn = defn;
-	this.mapCellOccupied = null;
+	constructor(defn)
+	{
+		this.defn = defn;
+		this.mapCellOccupied = null;
 
-	this.entitiesAlreadyCollidedWith = []; // hack
-}
-{
-	Mappable.prototype.collider = function()
+		this.entitiesAlreadyCollidedWith = []; // hack
+	}
+
+	collider()
 	{
 		return new Sphere(0, 0);
 	}

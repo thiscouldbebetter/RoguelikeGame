@@ -1,6 +1,13 @@
-// partial class DemoData
+class DemoData_Places
 {
-	DemoData.prototype.buildMapTerrainsDungeon = function(visualsForTiles)
+	constructor(parent)
+	{
+		this.parent = parent;
+
+		this.randomizer = this.parent.randomizer;
+	}
+
+	buildMapTerrainsDungeon(visualsForTiles)
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualsForTiles["Floor"]);
 		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
@@ -23,9 +30,9 @@
 		terrains.addLookups( function(element) { return element["codeChar"]; } );
 
 		return terrains;
-	};
+	}
 
-	DemoData.prototype.buildMapTerrainsHades = function(visualsForTiles)
+	buildMapTerrainsHades(visualsForTiles)
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualsForTiles["Floor"]);
 		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
@@ -48,9 +55,9 @@
 		terrains.addLookups( function(element) { return element["codeChar"]; } );
 
 		return terrains;
-	};
+	}
 
-	DemoData.prototype.buildMapTerrainsMines = function(visualsForTiles)
+	buildMapTerrainsMines(visualsForTiles)
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles["Floor"]);
 		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
@@ -73,24 +80,24 @@
 		terrains.addLookups( function(element) { return element["codeChar"]; } );
 
 		return terrains;
-	};
+	}
 
-	DemoData.prototype.buildMapTerrainsLabyrinth = function(visualsForTiles)
+	buildMapTerrainsLabyrinth(visualsForTiles)
 	{
 		return this.buildMapTerrainsDungeon(visualsForTiles);
-	};
+	}
 
-	DemoData.prototype.buildMapTerrainsPuzzle = function(visualsForTiles)
+	buildMapTerrainsPuzzle(visualsForTiles)
 	{
 		return this.buildMapTerrainsDungeon(visualsForTiles);
-	};
+	}
 
-	DemoData.prototype.buildMapTerrainsThrowback = function(visualsForTiles)
+	buildMapTerrainsThrowback(visualsForTiles)
 	{
 		return this.buildMapTerrainsDungeon(visualsForTiles);
-	};
+	}
 
-	DemoData.prototype.buildPlaceDefns = function(visuals, actions)
+	buildPlaceDefns(visuals, actions)
 	{
 		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visuals);
 		var mapTerrainsHades = this.buildMapTerrainsHades(visuals);
@@ -240,9 +247,9 @@
 		];
 
 		return returnValues;
-	};
+	}
 
-	DemoData.prototype.buildPlaceTree = function()
+	buildPlaceTree()
 	{
 		var branchesMain =
 		[
@@ -397,9 +404,9 @@
 		);
 
 		return placeTreeRoot;
-	};
+	}
 
-	DemoData.prototype.placeGenerateDepths = function
+	placeGenerateDepths
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
@@ -424,9 +431,9 @@
 		placeEntities.push(entityGoal);
 
 		return place;
-	};
+	}
 
-	DemoData.prototype.placeGenerateDungeon = function
+	placeGenerateDungeon
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
@@ -459,7 +466,7 @@
 			worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings
 		);
 
-		var map = new Map
+		var map = new MapOfTerrain
 		(
 			venueName + "Map",
 			terrains,
@@ -482,9 +489,9 @@
 		);
 
 		return returnValue;
-	};
+	}
 
-	DemoData.prototype.placeGenerateDungeon_1_InitMap = function(worldDefn, terrains, mapSizeInCells)
+	placeGenerateDungeon_1_InitMap(worldDefn, terrains, mapSizeInCells)
 	{
 		var entityDefnGroups = worldDefn.entityDefnGroups;
 		var entityDefns = worldDefn.entityDefns;
@@ -494,7 +501,7 @@
 		var mapCellsAsStrings = [];
 		var cellPos = new Coords(0, 0);
 
-		terrainCodeChar = terrains.Stone.codeChar;
+		var terrainCodeChar = terrains.Stone.codeChar;
 
 		for (var y = 0; y < mapSizeInCells.y; y++)
 		{
@@ -511,13 +518,13 @@
 		return mapCellsAsStrings;
 	}
 
-	DemoData.prototype.placeGenerateDungeon_2_ZoneBounds = function(terrains, randomizer, mapSizeInCells, numberOfZones)
+	placeGenerateDungeon_2_ZoneBounds(terrains, randomizer, mapSizeInCells, numberOfZones)
 	{
 		var zoneSizeMin = new Coords(4, 4, 1);
 		var zoneSizeMax = new Coords(13, 13, 1);
 		var zoneSizeRange = zoneSizeMax.clone().subtract(zoneSizeMin);
 
-		terrainCodeChar = terrains.Floor.codeChar;
+		var terrainCodeChar = terrains.Floor.codeChar;
 
 		var zoneBoundsSetSoFar = [];
 
@@ -577,12 +584,13 @@
 		return zoneBoundsSetSoFar;
 	}
 
-	DemoData.prototype.placeGenerateDungeon_3_Zones = function
+	placeGenerateDungeon_3_Zones
 	(
 		numberOfZones, zoneBoundsSetSoFar, mapCellsAsStrings, terrains
 	)
 	{
 		var zones = [];
+		var terrainCodeChar = "";
 
 		for (var r = 0; r < numberOfZones; r++)
 		{
@@ -641,7 +649,7 @@
 		return zones;
 	}
 
-	DemoData.prototype.placeGenerateDungeon_4_Doors = function(zones, terrains, randomizer, mapCellsAsStrings)
+	placeGenerateDungeon_4_Doors(zones, terrains, randomizer, mapCellsAsStrings)
 	{
 		var zonesConnected = [ zones[0] ];
 		var zonesToConnect = [];
@@ -751,7 +759,7 @@
 
 			var cellPos = fromPos.clone();
 
-			terrainFloorCodeChar = terrains.Floor.codeChar;
+			var terrainFloorCodeChar = terrains.Floor.codeChar;
 
 			var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
 
@@ -799,7 +807,7 @@
 		return doorwayPositions;
 	}
 
-	DemoData.prototype.placeGenerateDungeon_4_Doors_1_NearestZones = function(zonesToConnect, zonesConnected)
+	placeGenerateDungeon_4_Doors_1_NearestZones(zonesToConnect, zonesConnected)
 	{
 		var nearestZonesSoFar = null;
 		var distanceBetweenNearestZonesSoFar = null;
@@ -839,7 +847,7 @@
 		return nearestZonesSoFar;
 	}
 
-	DemoData.prototype.placeGenerateDungeon_5_Entities = function
+	placeGenerateDungeon_5_Entities
 	(
 		worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings
 	)
@@ -1112,17 +1120,17 @@
 		}
 
 		return entities;
-	};
+	}
 
-	DemoData.prototype.placeGenerateFortress = function
+	placeGenerateFortress
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateSurface = function
+	placeGenerateSurface
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
@@ -1138,7 +1146,7 @@
 			mapCellsAsStrings.push(mapRowAsString);
 		}
 
-		var map = new Map
+		var map = new MapOfTerrain
 		(
 			venueName + "Map",
 			placeDefn.terrains,
@@ -1184,77 +1192,77 @@
 		);
 
 		return returnValue;
-	};
+	}
 
-	DemoData.prototype.placeGenerateHades = function
+	placeGenerateHades
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateIsland = function
+	placeGenerateIsland
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateMines = function
+	placeGenerateMines
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateOracle = function
+	placeGenerateOracle
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateLabyrinth = function
+	placeGenerateLabyrinth
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateLimbo = function
+	placeGenerateLimbo
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGeneratePuzzle = function
+	placeGeneratePuzzle
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateSingleChamber = function
+	placeGenerateSingleChamber
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 
-	DemoData.prototype.placeGenerateThrowback = function
+	placeGenerateThrowback
 	(
 		worldDefn, branch, placeDefn, placeIndex, depth, randomizer
 	)
 	{
 		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
-	};
+	}
 }

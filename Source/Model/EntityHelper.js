@@ -1,10 +1,7 @@
 
-function EntityHelper()
+class EntityHelper
 {
-	throw "Static class!";
-}
-{
-	EntityHelper.new = function(name, defn, properties)
+	static new(name, defn, properties)
 	{
 		var returnValue = defn.clone();
 		returnValue.name = name;
