@@ -17,7 +17,7 @@
 
 		var rot = function(universe, world, place, entityTurnable)
 		{
-			var turnable = entityTurnable.turnable();
+			var turnable = entityTurnable.turnable;
 			if (turnable.turnsToLive == null)
 			{
 				turnable.turnsToLive = 30;
@@ -45,13 +45,13 @@
 
 		var dieAndDropCorpse = function(universe, world, place, entityDying)
 		{
-			var itemDefnCorpse = entityDying.killable().itemDefnCorpse;
-			entityDying.locatable().loc.pos.z = PlaceLevel.ZLayers.Items;
+			var itemDefnCorpse = entityDying.killable.itemDefnCorpse;
+			entityDying.locatable.loc.pos.z = PlaceLevel.ZLayers.Items;
 			var entityCorpse = new Entity
 			(
 				itemDefnCorpse.name + universe.idHelper.idNext(),
 				[
-					entityDying.locatable(),
+					entityDying.locatable,
 					new Item(itemDefnCorpse.name, 1),
 					mappableDefns.Open,
 					new Drawable(visuals["Corpse"]),
@@ -86,7 +86,7 @@
 				agentName,
 				// properties
 				[
-					new ActorDefn(activityDefns.get("Move Toward Player").name),
+					new ActorDefn(activityDefns["Move Toward Player"].name),
 					mappableDefns.Transparent,
 					itemHolder,
 					new Demographics(null, null, difficulty, experienceToKill),
@@ -116,7 +116,7 @@
 		for (var i = 0; i < returnValues.length; i++)
 		{
 			var entityDefnForAgent = returnValues[i];
-			var difficulty = (entityDefnForAgent.demographics() == null ? null : entityDefnForAgent.demographics().rank);
+			var difficulty = (entityDefnForAgent.demographics == null ? null : entityDefnForAgent.demographics.rank);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty[difficulty];
@@ -147,75 +147,6 @@
 		var entityName = Player.name;
 
 		var sizeInPixels = visuals["Floor"].size;
-
-		var controllable = new Controllable
-		(
-			(universe, size, entity, venuePrev) => // toControl
-			{
-				var fontHeight = 12;
-				var labelSize = new Coords(150, fontHeight * 1.25, 0);
-
-				var statusAsControl = new ControlContainer
-				(
-					"Status",
-					new Coords(0, 0, 0), // pos
-					size.clone().addDimensions(0, -30, 0), // size
-					// children
-					[
-						new ControlLabel
-						(
-							"labelStatus",
-							new Coords(10, labelSize.y, 0), // pos
-							labelSize.clone(),
-							false, // isTextCentered
-							"Health:" + entity.killable().integrity,
-							fontHeight
-						),
-					],
-					null, null
-				);
-
-				var itemHolderAsControl = entity.itemHolder().toControl
-				(
-					universe, size, entity, venuePrev, false // includeTitleAndDoneButton
-				);
-
-				var equipmentUserAsControl = entity.equipmentUser().toControl
-				(
-					universe, size, entity, venuePrev, false // includeTitleAndDoneButton
-				);
-
-				/*
-				var skillLearnerAsControl = entity.skillLearner().toControl
-				(
-					universe, size, entity, venuePrev, false // includeTitleAndDoneButton
-				);
-				*/
-
-				var back = function()
-				{
-					var venueNext= venuePrev;
-					venueNext = new VenueFader(venueNext, universe.venueCurrent, null, null);
-					universe.venueNext = venueNext;
-				};
-
-				var returnValue = new ControlTabbed
-				(
-					"tabbedItems",
-					new Coords(0, 0, 0), // pos
-					size,
-					[
-						statusAsControl,
-						itemHolderAsControl,
-						equipmentUserAsControl,
-						//skillLearnerAsControl
-					],
-					null, // fontHeightInPixels
-					back
-				);
-				return returnValue;
-			}
-		);
 
 		var demographics = new Demographics
 		(
@@ -255,8 +186,8 @@
 		var drawableDefnPlayer = new Drawable(visualForPlayer);
 
 		var activityDefnName =
-			activityDefns.get("Accept User Input").name;
-			//activityDefns.get("Demo User Input").name;
+			activityDefns["Accept User Input"].name;
+			//activityDefns["Demo User Input"].name;
 
 		var equipmentSocketDefnGroup = new EquipmentSocketDefnGroup
 		(
@@ -286,7 +217,6 @@
 			[
 				new ActorDefn(activityDefnName),
 				mappableDefns.Transparent,
-				controllable,
 				demographics,
 				drawableDefnPlayer,
 				new Effectable(),

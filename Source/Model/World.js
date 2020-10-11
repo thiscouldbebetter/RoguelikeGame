@@ -1,11 +1,9 @@
 
-function World(name, defn, defn2, places, entityForPlayer, randomizer)
+function World(name, defn, places, entityForPlayer, randomizer)
 {
 	this.name = name;
 	this.defn = defn;
-	this.defn2 = defn2;
-	this.places = places;
-	this.placesByName = ArrayHelper.addLookupsByName(this.places);
+	this.places = places.addLookupsByName();
 	this.entityForPlayer = entityForPlayer;
 	this.randomizer = randomizer;
 
@@ -13,9 +11,9 @@ function World(name, defn, defn2, places, entityForPlayer, randomizer)
 	{
 		var place0 = this.places[0];
 		var portal0 = place0.entitiesToSpawn[0]; // hack
-		var portal0Pos = portal0.locatable().loc.pos.clone();
+		var portal0Pos = portal0.locatable.loc.pos.clone();
 
-		var entityDefnPlayer = this.defn2.entityDefnsByName.get(Player.name);
+		var entityDefnPlayer = this.defn.entityDefns.Player;
 		this.entityForPlayer = EntityHelper.new
 		(
 			entityDefnPlayer.name,
@@ -23,16 +21,16 @@ function World(name, defn, defn2, places, entityForPlayer, randomizer)
 			[
 				new Locatable
 				(
-					new Disposition(portal0Pos, null, place0.name)
+					new Location(portal0Pos, null, place0.name)
 				)
 			]
 		);
-		this.entityForPlayer.demographics().rank = 1; // hack
+		this.entityForPlayer.demographics.rank = 1; // hack
 
 		place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
 	}
 
-	this.placeNext = this.placesByName.get(this.entityForPlayer.locatable().loc.placeName);
+	this.placeNext = this.places[this.entityForPlayer.locatable.loc.placeName];
 
 	this.turnsSoFar = 0;
 
@@ -40,19 +38,17 @@ function World(name, defn, defn2, places, entityForPlayer, randomizer)
 	this.sightHelper = new SightHelper(8);
 	this.timerTicksSoFar = 0;
 
-	var itemDefns = this.defn2.entityDefns.filter
+	var itemDefns = this.defn.entityDefns.filter
 	(
 		x => x.itemDefn != null
 	).map
 	(
 		x => x.itemDefn
-	);
-	var itemDefnsByName = ArrayHelper.addLookupsByName(itemDefns);
+	).addLookupsByName();
 
 	this.defns =
 	{
-		"itemDefns": itemDefns,
-		"itemDefnsByName": itemDefnsByName
+		"itemDefns" : itemDefns
 	};
 }
 
@@ -87,14 +83,12 @@ function World(name, defn, defn2, places, entityForPlayer, randomizer)
 			visualsForTiles.push(visualsForTilesRow);
 		}
 
-		var worldDefns = new DemoData(randomizer).buildWorldDefns
+		var worldDefn = new DemoData(randomizer).buildWorldDefn
 		(
 			visualsForTiles
 		);
-		var worldDefn = worldDefns[0];
-		var worldDefn2 = worldDefns[1];
 
-		var places = worldDefn2.buildPlaces
+		var places = worldDefn.buildPlaces
 		(
 			worldDefn,
 			worldDefn.placeDefns,
@@ -106,7 +100,6 @@ function World(name, defn, defn2, places, entityForPlayer, randomizer)
 		(
 			"World0",
 			worldDefn,
-			worldDefn2,
 			places,
 			null, // entityForPlayer
 			randomizer

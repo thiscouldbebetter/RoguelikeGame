@@ -17,10 +17,10 @@ function DemoData(randomizer)
 
 		var moverGroups = this.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
 		var moverEntities = moverGroups[0].entityDefns;
-		var killables = moverEntities.filter(x => x.killable() != null); // hack
+		var killables = moverEntities.filter(x => x.killable != null); // hack
 		var itemDefnsForCorpses = killables.map
 		(
-			x => x.killable().itemDefnCorpse
+			x => x.killable.itemDefnCorpse
 		).filter
 		(
 			x => (x != null)
@@ -45,9 +45,9 @@ function DemoData(randomizer)
 
 		var useEmplacementAltar = function(universe, world, place, entityUsing, entityUsed)
 		{
-			var itemsHeld = entityUsing.itemHolder().itemEntities;
+			var itemsHeld = entityUsing.itemHolder.itemEntities;
 			var isItemGoalHeld = itemsHeld.some(x => x.name == "Amulet of Yendor");
-			var messageLog = entityUsing.player().messageLog;
+			var messageLog = entityUsing.player.messageLog;
 			if (isItemGoalHeld == false)
 			{
 				var message = "You do not have the Amulet of Yendor!"
@@ -98,9 +98,9 @@ function DemoData(randomizer)
 
 		var useEmplacementPortal = function(universe, world, place, entityUsing, entityUsed)
 		{
-			var message = "You use the " + entityUsed.emplacement().appearance + ".";
-			entityUsing.player().messageLog.messageAdd(message);
-			entityUsed.portal().use(universe, world, place, entityUsing, entityUsed);
+			var message = "You use the " + entityUsed.emplacement.appearance + ".";
+			entityUsing.player.messageLog.messageAdd(message);
+			entityUsed.portal.use(universe, world, place, entityUsing, entityUsed);
 		};
 
 		var mappableOpen = mappableDefns.Open;
@@ -129,11 +129,11 @@ function DemoData(randomizer)
 					(
 						function blocksMovement(entity)
 						{
-							return (entity.openable().isOpen == false);
+							return (entity.openable.isOpen == false);
 						},
 						function blocksVision(entity)
 						{
-							return (entity.openable().isOpen == false);
+							return (entity.openable.isOpen == false);
 						},
 					),
 					new Drawable
@@ -142,7 +142,7 @@ function DemoData(randomizer)
 						(
 							function selectChildName(universe, world, display, entity)
 							{
-								return (entity.searchable().isHidden ? "Hidden" : (entity.openable().isOpen ? "Open" : "Closed"));
+								return (entity.searchable.isHidden ? "Hidden" : (entity.openable.isOpen ? "Open" : "Closed"));
 							},
 							[ "Hidden", "Closed", "Open" ],
 							[ 
@@ -254,41 +254,19 @@ function DemoData(randomizer)
 		return returnValue;
 	};
 
-	DemoData.prototype.buildWorldDefns = function(visualsForTiles)
+	DemoData.prototype.buildWorldDefn = function(visualsForTiles)
 	{
 		var visualsOpaque = this.buildVisualLookup(visualsForTiles);
 
 		var actions = this.actionsBuild();
 
 		var activityDefns = this.buildActivityDefns();
-		var activityDefnsByName = ArrayHelper.addLookupsByName(activityDefns);
 
 		var itemCategories = this.buildItemCategories();
-		var itemCategoriesByName = ArrayHelper.addLookupsByName(itemCategories);
 
 		var entityDefnGroups = this.buildEntityDefnGroups
 		(
-			visualsOpaque, activityDefnsByName, itemCategoriesByName
-		);
-		
-		var entityDefnGroupsForItems = entityDefnGroups.filter
-		(
-			x => x.entityDefns.some
-			(
-				y => y.itemDefn() != null
-			)
-		);
-		
-		var entityDefnArraysForItems = entityDefnGroupsForItems.map
-		(
-			x => x.entityDefns
-		);
-
-		var entityDefnsForItems = [].concat.apply([], entityDefnArraysForItems)
-
-		var itemDefns = entityDefnsForItems.map
-		(
-			x => x.itemDefn()
+			visualsOpaque, activityDefns, itemCategories
 		);
 
 		var placeDefns = this.buildPlaceDefns(visualsOpaque, actions);
@@ -297,12 +275,7 @@ function DemoData(randomizer)
 
 		var randomizer = this.randomizer;
 
-		var worldDefn = new WorldDefn
-		([
-			itemDefns
-		]);
-
-		var worldDefn2 = new WorldDefn2
+		var returnValue = new WorldDefn
 		(
 			"WorldDefn0",
 			actions,
@@ -323,8 +296,7 @@ function DemoData(randomizer)
 			}
 		);
 
-		var returnValues = [ worldDefn, worldDefn2 ];
-		return returnValues;
+		return returnValue;
 	};
 
 }

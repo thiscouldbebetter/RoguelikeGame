@@ -45,7 +45,7 @@ function SightHelper(distanceFromEyeMax)
 		for (var i = 0; i < this.entitiesPerceivedTransient.length; i++)
 		{
 			var entity = this.entitiesPerceivedTransient[i];
-			var cellPos = entity.locatable().loc.pos;
+			var cellPos = entity.locatable.loc.pos;
 			var cell = map.cellAtPos(cellPos);
 			var entityPresent = cell.entitiesPresent.filter(x => x == entity)[0];
 			if (entityPresent != null)
@@ -88,18 +88,18 @@ function SightHelper(distanceFromEyeMax)
 			var entityActual = entitiesActual[i];
 			var entityPerceivedProperties =
 			[
-				entityActual.drawable().clone(),
-				entityActual.locatable().clone()
+				entityActual.drawable.clone(),
+				entityActual.locatable.clone()
 			];
 
-			if (entityActual.openable() != null)
+			if (entityActual.openable != null)
 			{
-				entityPerceivedProperties.push(entityActual.openable().clone())
+				entityPerceivedProperties.push(entityActual.openable.clone())
 			}
 
-			if (entityActual.searchable() != null)
+			if (entityActual.searchable != null)
 			{
-				entityPerceivedProperties.push(entityActual.searchable().clone())
+				entityPerceivedProperties.push(entityActual.searchable.clone())
 			}
 
 			var entityPerceived = new Entity
@@ -108,7 +108,7 @@ function SightHelper(distanceFromEyeMax)
 				entityPerceivedProperties
 			);
 
-			if (entityActual.mover() != null)
+			if (entityActual.mover != null)
 			{
 				this.entitiesPerceivedTransient.push(entityPerceived);
 			}
@@ -145,7 +145,7 @@ function SightHelper(distanceFromEyeMax)
 
 	SightHelper.prototype.cellPositionsVisible = function(eyePos, distanceFromEyeMax, map)
 	{
-		var rangeInitial = new RangeExtent(0, 1);
+		var rangeInitial = new Range(0, 1);
 
 		var returnValues = this.cellPositionsVisibleForRange
 		(
@@ -201,7 +201,7 @@ function SightHelper(distanceFromEyeMax)
 
 					if (isCellInMapBounds)
 					{
-						var cellSpan = new RangeExtent
+						var cellSpan = new Range
 						(
 							this.atan3(vertexPosRelative0),
 							this.atan3(vertexPosRelative1)
@@ -255,7 +255,7 @@ function SightHelper(distanceFromEyeMax)
 		var distanceBetweenPoints = displacementBetweenPoints.magnitude() + 1;
 		var direction = displacementBetweenPoints.normalize();
 		var directionInTurns = new Polar().fromCoords(direction).azimuthInTurns;
-		var range = new RangeExtent(directionInTurns, directionInTurns);
+		var range = new Range(directionInTurns, directionInTurns);
 
 		var pointsVisibleFromPoint0 = this.cellPositionsVisible
 		(

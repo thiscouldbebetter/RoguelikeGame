@@ -5,11 +5,10 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 	this.sizeInPixels = size;
 	this.sizeInPixelsHalf = this.sizeInPixels.clone().half();
 	this.sizesAvailable = [ size ];
-	this.children = children;
-	this.childrenByName = ArrayHelper.addLookupsByName(children);
+	this.children = children.addLookupsByName();
 
 	this.childSelected = null;
-	this.displayInner = new Display2D
+	this.displayInner = new Display
 	(
 		[ this.sizeInPixels ],
 		"Font", 10, // fontName, fontHeightInPixels,
@@ -20,7 +19,7 @@ function DisplayPane(name, pos, size, colorFore, colorBack, children)
 {
 	DisplayPane.prototype.childSelectByName = function(paneName)
 	{
-		this.childSelected = (paneName == null ? null : this.childrenByName.get(paneName));
+		this.childSelected = (paneName == null ? null : this.children[paneName]);
 		this._displayToUse = null;
 	};
 

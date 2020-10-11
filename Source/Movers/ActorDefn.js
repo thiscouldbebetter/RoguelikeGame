@@ -14,7 +14,7 @@ function ActorDefn(activityDefnNameInitial)
 
 		var activity = new Activity
 		(
-			entity.actorDefn().activityDefnNameInitial,
+			entity.actorDefn.activityDefnNameInitial,
 			null
 		);
 
@@ -23,7 +23,7 @@ function ActorDefn(activityDefnNameInitial)
 
 	ActorDefn.prototype.updateForTimerTick = function(universe, world, place, entity)
 	{
-		if (entity.killable() == null || entity.killable().isAlive())
+		if (entity.killable == null || entity.killable.isAlive())
 		{
 			var actorData = entity.actorData;
 			actorData.activity_Get().perform(universe, world, place, entity);

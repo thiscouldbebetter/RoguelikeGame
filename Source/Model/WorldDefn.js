@@ -1,5 +1,5 @@
 
-function WorldDefn2(name, actions, activityDefns, itemCategories, entityDefnGroups, placeDefns, placeTree, buildPlaces)
+function WorldDefn(name, actions, activityDefns, itemCategories, entityDefnGroups, placeDefns, placeTree, buildPlaces)
 {
 	this.name = name;
 	this.actions = actions;
@@ -10,16 +10,16 @@ function WorldDefn2(name, actions, activityDefns, itemCategories, entityDefnGrou
 	this.placeTree = placeTree;
 	this.buildPlaces = buildPlaces;
 
-	var entityDefnSets = this.entityDefnGroups.map
+	var entityDefnSets = this.entityDefnGroups.select
 	(
-		x => x.entityDefns
+		function(element) { return element["entityDefns"]; }
 	);
 
 	this.entityDefns = entityDefnSets.concatenateAll();
 
-	this.actionsByName = ArrayHelper.addLookupsByName(this.actions);
-	this.activityDefnsByName = ArrayHelper.addLookupsByName(this.activityDefns);
-	this.placeDefnsByName = ArrayHelper.addLookupsByName(this.placeDefns);
-	this.entityDefnGroupsByName = ArrayHelper.addLookupsByName(this.entityDefnGroups);
-	this.entityDefnsByName = ArrayHelper.addLookupsByName(this.entityDefns);
+	this.actions.addLookupsByName();
+	this.activityDefns.addLookupsByName();
+	this.placeDefns.addLookupsByName();
+	this.entityDefnGroups.addLookupsByName();
+	this.entityDefns.addLookupsByName();
 }

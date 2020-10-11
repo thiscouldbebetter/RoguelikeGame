@@ -7,13 +7,13 @@ function MoverTransport(entityMover, locDestination)
 {
 	MoverTransport.prototype.initializeEntityForPlace = function(universe, world, place, entityTransport)
 	{
-		var moverLoc = this.entityMover.locatable().loc;
+		var moverLoc = this.entityMover.locatable.loc;
 
 		var placeToDepart = moverLoc.place(world);
 		placeToDepart.entitiesToRemove.push(this.entityMover);
 
 		// hack
-		var collidable = this.entityMover.collidable();
+		var collidable = this.entityMover.collidable;
 		var cellOccupied = collidable.mapCellOccupied;
 		var entitiesPresentInCellOccupied = cellOccupied.entitiesPresent;
 		entitiesPresentInCellOccupied.remove(this.entityMover);
