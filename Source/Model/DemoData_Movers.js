@@ -8,23 +8,24 @@ class DemoData_Movers
 		this.mappableDefns = MappableDefn.Instances();
 	}
 
-	buildEntityDefnGroups_Movers
+	buildEntityDefnGroups_MoversAndCorpses
 	(
 		visuals, activityDefns, itemCategories
 	)
 	{
-		var returnValues = [];
+		var entityDefnsMovers = [];
+		var entityDefnsCorpses = [];
 
 		var sizeInPixels = visuals["Floor"].size;
 
-		this.buildEntityDefnGroups_Movers_Player
+		this.buildEntityDefnGroups_MoversAndCorpses_Player
 		(
-			visuals, activityDefns, itemCategories, returnValues
+			visuals, activityDefns, itemCategories, entityDefnsMovers
 		);
 
 		var rot = (universe, world, place, entityTurnable) =>
 		{
-			var turnable = entityTurnable.turnable;
+			var turnable = entityTurnable.turnable();
 			if (turnable.turnsToLive == null)
 			{
 				turnable.turnsToLive = 30;
@@ -50,25 +51,6 @@ class DemoData_Movers
 			// todo
 		};
 
-		var dieAndDropCorpse = (universe, world, place, entityDying) =>
-		{
-			var itemDefnCorpse = entityDying.killable.itemDefnCorpse;
-			entityDying.locatable.loc.pos.z = PlaceLevel.ZLayers().Items;
-			var entityCorpse = new Entity
-			(
-				itemDefnCorpse.name + universe.idHelper.idNext(),
-				[
-					entityDying.locatable,
-					new Item(itemDefnCorpse.name, 1),
-					this.mappableDefns.Open,
-					new Drawable(visuals["Corpse"]),
-					new Turnable(rot)
-				]
-			);
-
-			place.entitiesToSpawn.push(entityCorpse);
-		};
-
 		for (var i = 0; i < agentDatas.length; i++)
 		{
 			var agentData = agentDatas[i];
@@ -77,16 +59,33 @@ class DemoData_Movers
 			var experienceToKill = agentData.baseExperience || 0;
 			var movesPerTurn = agentData.speed || 0;
 
+			var itemDefnName = agentName + " Corpse";
 			var itemDefnCorpse = new ItemDefn
 			(
-				agentName + " Corpse", // name
-				agentName + " Corpse", // appearance
-				agentName + " Corpse", // description
+				itemDefnName, // name
+				itemDefnName, // appearance
+				itemDefnName, // description
 				1, // mass
 				1, // stackSizeMax,
 				[ "Food" ], // categoryNames
 				useCorpse
 			);
+			var entityDefnCorpse = new Entity
+			(
+				itemDefnCorpse.name,
+				[
+					new Locatable(null),
+					new Item(itemDefnCorpse.name, 1),
+					itemDefnCorpse,
+					this.mappableDefns.Open,
+					new Drawable(visuals["Corpse"]),
+					new Turnable(rot)
+				]
+			);
+			var entityDropChanceCorpse = new EntityDropChance(1, entityDefnCorpse);
+
+			entityDefnsCorpses.push(entityDefnCorpse);
+			entityDefnsCorpses[itemDefnName] = entityDefnCorpse;
 
 			var entityDefnForAgent = new Entity
 			(
@@ -99,31 +98,39 @@ class DemoData_Movers
 					new Demographics(null, null, difficulty, experienceToKill),
 					new Drawable(visuals[agentName]),
 					new Generatable(1),
-					new Killable(5, null, dieAndDropCorpse, itemDefnCorpse),
+					new Killable(5, null, null, [entityDropChanceCorpse]),
 					new Mover(movesPerTurn),
 					new Namable(agentName),
 				]
 			);
 
-			returnValues.push(entityDefnForAgent);
-			returnValues[agentName] = entityDefnForAgent;
+			entityDefnsMovers.push(entityDefnForAgent);
+			entityDefnsMovers[agentName] = entityDefnForAgent;
 		}
 
 		var entityGroupAgents = new EntityDefnGroup
 		(
 			"Agents",
 			0, // relativeFrequency
-			returnValues
+			entityDefnsMovers
 		);
 
-		var groups = [ entityGroupAgents ];
+		var entityGroupCorpses = new EntityDefnGroup
+		(
+			"Corpses",
+			0, // relativeFrequency
+			entityDefnsCorpses
+		);
+
+		var agentGroups = [ entityGroupAgents ];
 
 		var entityDefnGroupsByDifficulty = [];
 
-		for (var i = 0; i < returnValues.length; i++)
+		for (var i = 0; i < entityDefnsMovers.length; i++)
 		{
-			var entityDefnForAgent = returnValues[i];
-			var difficulty = (entityDefnForAgent.demographics == null ? null : entityDefnForAgent.demographics.rank);
+			var entityDefnForAgent = entityDefnsMovers[i];
+			var entityDemographics = entityDefnForAgent.demographics();
+			var difficulty = (entityDemographics == null ? null : entityDemographics.rank);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty[difficulty];
@@ -136,17 +143,19 @@ class DemoData_Movers
 						[]
 					);
 					entityDefnGroupsByDifficulty[difficulty] = entityDefnGroupForDifficulty;
-					groups.push(entityDefnGroupForDifficulty);
+					agentGroups.push(entityDefnGroupForDifficulty);
 				}
 
 				entityDefnGroupForDifficulty.entityDefns.push(entityDefnForAgent);
 			}
 		}
 
-		return groups;
+		var returnValues = [ agentGroups, entityGroupCorpses ];
+
+		return returnValues;
 	}
 
-	buildEntityDefnGroups_Movers_Player
+	buildEntityDefnGroups_MoversAndCorpses_Player
 	(
 		visuals, activityDefns, itemCategories, returnValues
 	)

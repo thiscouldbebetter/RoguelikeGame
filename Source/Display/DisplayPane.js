@@ -11,7 +11,7 @@ class DisplayPane
 		this.children = children.addLookupsByName();
 
 		this.childSelected = null;
-		this.displayInner = new Display
+		this.displayInner = new Display2D
 		(
 			[ this.sizeInPixels ],
 			"Font", 10, // fontName, fontHeightInPixels,

@@ -42,24 +42,44 @@ function main()
 
 	//localStorage.clear();
 
-	var mediaLibrary = new MediaLibrary.fromFileNames
-	(
-		"../Content/",
-		[ "Title.png", "Tiles.png" ],
-		[ "Sound.wav" ],
-		[ "Music.mp3" ],
-		[ "Movie.webm" ],
-		[ "Font.ttf" ],
-		[ "Conversation.json", "Instructions.txt" ]
-	);
+	var contentPath = "../Content/";
+	var imagePath = contentPath + "Images/";
+	var audioPath = contentPath + "Audio/";
+	var effectsPath = audioPath + "Effects/";
+	var musicPath = audioPath + "Music/";
+	var videoPath = contentPath + "Video/";
+	var fontPath = contentPath + "Fonts/";
+	var textStringPath = contentPath + "TextStrings/";
+
+	var mediaLibrary = MediaLibrary.fromFilePaths
+	([
+		imagePath + "Opening.png",
+		imagePath + "Title.png",
+		imagePath + "Tiles.png",
+
+		effectsPath + "Sound.wav",
+
+		musicPath + "Music.mp3",
+		musicPath + "Title.mp3",
+
+		videoPath + "Movie.webm",
+
+		fontPath + "Font.ttf",
+	]);
 
 	var timerHelper = new TimerHelper(15);
 
-	var version = "0.0.0-20191130-1545";
+	var version = "0.0.0-20201011-1700";
 
-	var universe = Universe.new
+	var universe = Universe.create
 	(
-		"RoguelikeGame", version, timerHelper, display, mediaLibrary, null
+		"RoguelikeGame",
+		version,
+		timerHelper,
+		display,
+		mediaLibrary,
+		ControlStyle.Instances().Default,
+		null // world
 	);
 	universe.initialize
 	(

@@ -16,7 +16,7 @@ class MapOfTerrainCell
 			for (var i = 0; i < this.entitiesPresent.length; i++)
 			{
 				var entityPresent = this.entitiesPresent[i];
-				if (entityPresent.mappableDefn.blocksVision(entityPresent))
+				if (entityPresent.mappableDefn().blocksVision(entityPresent))
 				{
 					returnValue = true;
 					break;
@@ -33,7 +33,7 @@ class MapOfTerrainCell
 		for (var i = 0; i < this.entitiesPresent.length; i++)
 		{
 			var entityPresent = this.entitiesPresent[i];
-			if (entityPresent.mappableDefn.blocksMovement(entityPresent))
+			if (entityPresent.mappableDefn().blocksMovement(entityPresent))
 			{
 				returnValue = MapTerrain.AlmostInfinity;
 				break;

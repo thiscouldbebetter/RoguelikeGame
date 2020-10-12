@@ -32,6 +32,7 @@ class MessageLog
 				new Coords(160, 260), // size
 				this.messages // items
 			);
+			controlForMessages.name = "listMessages";
 
 			this.control = new ControlContainer
 			(

@@ -13,7 +13,7 @@ class Starvable
 
 		if (this.satiety <= 0)
 		{
-			moverEntity.killable.integrity = 0;
+			moverEntity.killable().integrity = 0;
 		}
 		else if (this.satiety >= this.satietyMax)
 		{
@@ -41,7 +41,7 @@ class Starvable
 						new Coords(10, 5),
 						new DataBinding
 						(
-							entity.killable,
+							entity.killable(),
 							function get(c)
 							{
 								return "Life: " + c.integrity + "/" + c.integrityMax;

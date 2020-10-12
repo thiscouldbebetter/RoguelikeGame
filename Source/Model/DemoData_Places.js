@@ -106,9 +106,11 @@ class DemoData_Places
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
 		[
+			ActorData.name,
 			ActorDefn.name,
 			Awaitable.name,
 			MappableDefn.name,
+			Mappable.name,
 			Device.name,
 			//Drawable.name,
 			Emplacement.name,
@@ -121,6 +123,7 @@ class DemoData_Places
 			MoverTransport.name,
 			Player.name,
 			Portal.name,
+			Turnable.name
 		];
 
 		var returnValues =
@@ -259,7 +262,7 @@ class DemoData_Places
 				"Surface", // displayName
 				"Surface", // placeDefnName
 				null, // startOffsetRange
-				new Range(1, 1), // depth
+				new RangeExtent(1, 1), // depth
 				[]
 			),
 			new PlaceBranch
@@ -268,7 +271,7 @@ class DemoData_Places
 				"Dungeon", // displayName
 				"Dungeon", // placeDefnName
 				null, // startOffsetRange
-				new Range(5, 6), // depthRangeInVenues
+				new RangeExtent(5, 6), // depthRangeInVenues
 				// children
 				[
 					new PlaceBranch
@@ -276,8 +279,8 @@ class DemoData_Places
 						"MinesShallow", // name
 						"Mines", // displayName
 						"Mines", // placeDefnName
-						new Range(1, 4), // startOffset
-						new Range(2, 4),
+						new RangeExtent(1, 4), // startOffset
+						new RangeExtent(2, 4),
 						[]
 					),
 					new PlaceBranch
@@ -286,7 +289,7 @@ class DemoData_Places
 						"Mines", // displayName
 						"MinesTown",
 						null, // startOffsetRange
-						new Range(1, 1),
+						new RangeExtent(1, 1),
 						[]
 					),
 					new PlaceBranch
@@ -295,7 +298,7 @@ class DemoData_Places
 						"Mines", // displayName
 						"Mines",
 						null, // startOffsetRange
-						new Range(2, 4),
+						new RangeExtent(2, 4),
 						[]
 					),
 					new PlaceBranch
@@ -304,7 +307,7 @@ class DemoData_Places
 						"Mines", // displayName
 						"MinesBottom",
 						null, // startOffsetRange
-						new Range(1, 1),
+						new RangeExtent(1, 1),
 						[]
 					),
 				]
@@ -315,7 +318,7 @@ class DemoData_Places
 				"Dungeon", // displayName
 				"Oracle",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -324,15 +327,15 @@ class DemoData_Places
 				"Dungeon", // displayName
 				"Dungeon",
 				null, // startOffsetRange
-				new Range(5, 6),
+				new RangeExtent(5, 6),
 				[
 					new PlaceBranch
 					(
 						"Puzzle",
 						"Puzzle", // displayName
 						"Puzzle",
-						new Range(1, 4), // startOffset
-						new Range(2, 4),
+						new RangeExtent(1, 4), // startOffset
+						new RangeExtent(2, 4),
 						[]
 					),
 				]
@@ -343,7 +346,7 @@ class DemoData_Places
 				"Dungeon", // displayName
 				"Labyrinth",
 				null, // startOffsetRange
-				new Range(3, 5),
+				new RangeExtent(3, 5),
 				[]
 			),
 			new PlaceBranch
@@ -352,7 +355,7 @@ class DemoData_Places
 				"Dungeon", // displayName
 				"Island",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -361,7 +364,7 @@ class DemoData_Places
 				"Dungeon", // displayName
 				"Fortress",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -370,7 +373,7 @@ class DemoData_Places
 				"Hades", // displayName
 				"Limbo",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 			new PlaceBranch
@@ -379,7 +382,7 @@ class DemoData_Places
 				"Hades", // displayName
 				"Hades",
 				null, // startOffsetRange
-				new Range(10, 20),
+				new RangeExtent(10, 20),
 				[]
 			),
 			new PlaceBranch
@@ -388,7 +391,7 @@ class DemoData_Places
 				"Hades", // displayName
 				"Depths",
 				null, // startOffsetRange
-				new Range(1, 1),
+				new RangeExtent(1, 1),
 				[]
 			),
 		];
@@ -399,7 +402,7 @@ class DemoData_Places
 			null, // displayName
 			"Dungeon", // hack
 			null, // startOffsetRange
-			new Range(0, 0),
+			new RangeExtent(0, 0),
 			branchesMain
 		);
 
@@ -424,7 +427,7 @@ class DemoData_Places
 			itemDefnGoal.name,
 			itemDefnGoal,
 			[
-				new Locatable(stairDown.locatable.loc.clone()),
+				new Locatable(stairDown.locatable().loc.clone()),
 				new Item(itemDefnGoal.name, 1)
 			]
 		);
@@ -540,10 +543,10 @@ class DemoData_Places
 				var zoneSize = new Coords().randomize(randomizer).multiply
 				(
 					zoneSizeRange
-				).floor().add
+				).add
 				(
 					zoneSizeMin
-				);
+				).floor();
 
 				var zoneSizePlusOnes = zoneSize.clone().add
 				(
@@ -561,10 +564,10 @@ class DemoData_Places
 				var zonePos = new Coords().randomize(randomizer).multiply
 				(
 					zonePosRange
-				).floor().add
+				).add
 				(
 					ones
-				);
+				).floor();
 
 				var zoneBoundsWithWalls =
 					new Box().fromMinAndSize(zonePos, zoneSizePlusOnes);
@@ -662,6 +665,13 @@ class DemoData_Places
 		var zeroes = Coords.Instances().Zeroes;
 		var oneOne = Coords.Instances().OneOneZero;
 		var twoTwo = Coords.Instances().TwoTwoZero;
+		var displacementToZoneToConnect = new Coords();
+		var directionToZoneToConnect = new Coords();
+		var fromPos = new Coords();
+		var toPos = new Coords();
+		var coordsRandom = new Coords();
+		var zoneConnectedSizeMinusTwos = new Coords();
+		var zoneToConnectSizeMinusTwos = new Coords();
 
 		var doorwayPositions = [];
 
@@ -678,42 +688,59 @@ class DemoData_Places
 			var zoneConnectedBounds = zoneConnected.bounds;
 			var zoneToConnectBounds = zoneToConnect.bounds;
 
-			var fromPos = zoneConnectedBounds.min().clone().add
+			var zoneConnectedMax = zoneConnectedBounds.max();
+			var zoneConnectedMin = zoneConnectedBounds.min();
+			var zoneConnectedSize = zoneConnectedBounds.size;
+			zoneConnectedSizeMinusTwos.overwriteWith
 			(
-				new Coords().randomize(randomizer).multiply
+				zoneConnectedSize
+			).subtract(twoTwo);
+
+			var zoneToConnectMax = zoneToConnectBounds.min();
+			var zoneToConnectMin = zoneToConnectBounds.min();
+			var zoneToConnectSize = zoneToConnectBounds.size;
+			zoneToConnectSizeMinusTwos.overwriteWith
+			(
+				zoneToConnectSize
+			).subtract(twoTwo);
+
+			fromPos.overwriteWith(zoneConnectedMin).add
+			(
+				coordsRandom.randomize(randomizer).multiply
 				(
-					zoneConnectedBounds.size.clone().subtract
-					(
-						twoTwo
-					)
+					zoneConnectedSizeMinusTwos
 				).floor()
 			).add
 			(
 				oneOne
-			);
+			)
 
-			var toPos = zoneToConnectBounds.min().clone().add
+			toPos.overwriteWith(zoneToConnectMin).add
 			(
-				new Coords().randomize(randomizer).multiply
+				coordsRandom.randomize(randomizer).multiply
 				(
-					zoneToConnectBounds.size.clone().subtract
-					(
-						twoTwo
-					)
+					zoneToConnectSizeMinusTwos
 				).floor()
 			).add
 			(
 				oneOne
-			);
+			)
 
-			var displacementToZoneToConnect = toPos.clone().subtract
+			displacementToZoneToConnect.overwriteWith
+			(
+				toPos
+			).subtract
 			(
 				fromPos
 			);
 
-			var directionToZoneToConnect = displacementToZoneToConnect.clone();
+			directionToZoneToConnect.overwriteWith
+			(
+				displacementToZoneToConnect
+			);
 
-			var dimensionIndexToClear = directionToZoneToConnect.dimensionIndexOfSmallest(0);
+			var dimensionIndexToClear =
+				directionToZoneToConnect.dimensionIndexOfSmallest(0);
 
 			if (zoneConnectedBounds.overlapsWithOtherInDimension(zoneToConnectBounds, 0))
 			{
@@ -733,24 +760,27 @@ class DemoData_Places
 
 			if (directionToZoneToConnect.x > 0)
 			{
-				fromPos.x = zoneConnectedBounds.max().x;
-				toPos.x = zoneToConnectBounds.min().x - 1;
+				fromPos.x = zoneConnectedMax.x;
+				toPos.x = zoneToConnectMin.x - 1;
 			}
 			else if (directionToZoneToConnect.x < 0)
 			{
-				fromPos.x = zoneConnectedBounds.min().x - 1;
-				toPos.x = zoneToConnectBounds.max().x;
+				fromPos.x = zoneConnectedMin.x - 1;
+				toPos.x = zoneToConnectMax.x;
 			}
 			else if (directionToZoneToConnect.y > 0)
 			{
-				fromPos.y = zoneConnectedBounds.max().y;
-				toPos.y = zoneToConnectBounds.min().y - 1;
+				fromPos.y = zoneConnectedMax.y;
+				toPos.y = zoneToConnectMin.y - 1;
 			}
 			else if (directionToZoneToConnect.y < 0)
 			{
-				fromPos.y = zoneConnectedBounds.min().y - 1;
-				toPos.y = zoneToConnectBounds.max().y;
+				fromPos.y = zoneConnectedMin.y - 1;
+				toPos.y = zoneToConnectMax.y;
 			}
+
+			fromPos.floor();
+			toPos.floor();
 
 			var doorwayPosFrom = fromPos.clone().subtract(directionToZoneToConnect);
 			var doorwayPosTo = toPos.clone().add(directionToZoneToConnect);
@@ -835,8 +865,7 @@ class DemoData_Places
 				{
 					nearestZonesSoFar =
 					[
-						zoneConnected,
-						zoneToConnect,
+						zoneConnected, zoneToConnect,
 					];
 
 					distanceBetweenNearestZonesSoFar = distance;
@@ -864,7 +893,7 @@ class DemoData_Places
 			"StairsUp",
 			entityDefns["StairsUp"],
 			[
-				new Locatable(new Location(zone0Center)),
+				new Locatable(new Disposition(zone0Center)),
 				new Portal
 				(
 					null, // placeName
@@ -897,7 +926,7 @@ class DemoData_Places
 				(i == 0 ? "StairsDownToNextLevel" : "StairsDownToChildBranch"),
 				entityDefns["StairsDown"],
 				[
-					new Locatable(new Location(zoneCenter)),
+					new Locatable(new Disposition(zoneCenter)),
 					new Portal
 					(
 						null, // placeName
@@ -928,7 +957,7 @@ class DemoData_Places
 				var isWallEastWest = (terrainExistingCharCode == "-");
 				var doorForward = (isWallEastWest ? new Coords(-1, 0) : new Coords(1, 0));
 				var doorOri = new Orientation(doorForward);
-				var doorLoc = new Location(doorPos, doorOri);
+				var doorLoc = new Disposition(doorPos, doorOri);
 				var entityForDoor = EntityHelper.new
 				(
 					"Door" + i,
@@ -943,7 +972,7 @@ class DemoData_Places
 				var isDoorOpen;
 				if (isDoorHidden)
 				{
-					entityForDoor.searchable.isHidden = true;
+					entityForDoor.searchable().isHidden = true;
 					isDoorOpen = false;
 				}
 				else
@@ -951,7 +980,7 @@ class DemoData_Places
 					randomNumber = randomizer.getNextRandom();
 					isDoorOpen = (randomNumber <= chanceOfDoorBeingOpen);
 				}
-				entityForDoor.openable.isOpen = isDoorOpen;
+				entityForDoor.openable().isOpen = isDoorOpen;
 
 				entities.push(entityForDoor);
 			}
@@ -969,7 +998,7 @@ class DemoData_Places
 		for (var g = 0; g < entityDefnsForEmplacements.length; g++)
 		{
 			var entityDefn = entityDefnsForEmplacements[g];
-			var relativeFrequency = entityDefn.generatable.relativeFrequency;
+			var relativeFrequency = entityDefn.generatable().relativeFrequency;
 			sumOfFrequenciesForAllEmplacements += relativeFrequency;
 		}
 
@@ -998,10 +1027,15 @@ class DemoData_Places
 		}
 
 		var oneOneZero = Coords.Instances().OneOneZero;
+		var twoTwoZero = Coords.Instances().TwoTwoZero;
 
 		for (var r = 0; r < zones.length; r++)
 		{
 			var zone = zones[r];
+
+			var zoneMin = zone.bounds.min();
+			var zoneSizeMinusTwos =
+				zone.bounds.size.clone().subtract(twoTwoZero);
 
 			for (var c = 0; c < chancesForItemPerZone; c++)
 			{
@@ -1036,24 +1070,21 @@ class DemoData_Places
 
 					var pos = new Coords().randomize(randomizer).multiply
 					(
-						zone.bounds.size.clone().subtract
-						(
-							Coords.Instances().TwoTwoZero
-						)
-					).floor().add
+						zoneSizeMinusTwos
+					).add
 					(
-						zone.bounds.min()
+						zoneMin
 					).add
 					(
 						oneOneZero
-					)
+					).floor();
 
 					var entityForItem = EntityHelper.new
 					(
 						entityDefnForItem.name,
 						entityDefnForItem,
 						[
-							new Locatable(new Location(pos)),
+							new Locatable(new Disposition(pos)),
 							new Item(entityDefnForItem.name, 1)
 						]
 					);
@@ -1080,7 +1111,7 @@ class DemoData_Places
 					{
 						var entityDefn = entityDefnsForEmplacements[e];
 						sumOfFrequenciesForEmplacementsSoFar +=
-							entityDefn.generatable.relativeFrequency;
+							entityDefn.generatable().relativeFrequency;
 
 						if (sumOfFrequenciesForEmplacementsSoFar >= randomValue)
 						{
@@ -1093,24 +1124,21 @@ class DemoData_Places
 
 					var pos = new Coords().randomize(randomizer).multiply
 					(
-						zone.bounds.size.clone().subtract
-						(
-							Coords.Instances().TwoTwoZero
-						)
-					).floor().add
+						zoneSizeMinusTwos
+					).add
 					(
-						zone.bounds.min()
+						zoneMin
 					).add
 					(
 						oneOneZero
-					)
+					).floor();
 
 					var entity = EntityHelper.new
 					(
 						entityDefn.name,
 						entityDefn,
 						[
-							new Locatable(new Location(pos)),
+							new Locatable(new Disposition(pos)),
 						]
 					);
 
@@ -1160,7 +1188,7 @@ class DemoData_Places
 			"StairsDownToNextLevel",
 			worldDefn.entityDefns["StairsDown"],
 			[
-				new Locatable(new Location(stairsDownPos)),
+				new Locatable(new Disposition(stairsDownPos)),
 				new Portal(null, "StairsUp")
 			]
 		);
@@ -1171,7 +1199,7 @@ class DemoData_Places
 			"Altar",
 			worldDefn.entityDefns["Altar"],
 			[
-				new Locatable(new Location(altarPos)),
+				new Locatable(new Disposition(altarPos)),
 			]
 		);
 

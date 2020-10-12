@@ -14,15 +14,15 @@ class PlaceLevel
 
 		this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
 
-		this.entitiesByPropertyName = [];
+		this._entitiesByPropertyName = [];
 		var propertyNamesKnown = this.defn.propertyNamesKnown;
 		for (var c = 0; c < propertyNamesKnown.length; c++)
 		{
 			var propertyName = propertyNamesKnown[c];
 
 			var entitiesWithProperty = [];
-			this.entitiesByPropertyName.push(entitiesWithProperty);
-			this.entitiesByPropertyName[propertyName] = entitiesWithProperty;
+			this._entitiesByPropertyName.push(entitiesWithProperty);
+			this._entitiesByPropertyName[propertyName] = entitiesWithProperty;
 		}
 
 		this.entitiesToSpawn = [];
@@ -37,7 +37,7 @@ class PlaceLevel
 		this.hasBeenUpdatedSinceDrawn = true;
 
 		// Helper variables.
-		this._drawLoc = new Location(new Coords());
+		this._drawLoc = new Disposition(new Coords());
 	}
 
 	static ZLayers()
@@ -51,18 +51,23 @@ class PlaceLevel
 
 	// instance methods
 
+	entitiesByPropertyName(propertyName)
+	{
+		return this._entitiesByPropertyName[propertyName];
+	}
+
 	entitiesWithPropertyNamePresentAtCellPos(propertyName, cellPosToCheck)
 	{
 		var returnEntities = [];
 
-		var entitiesWithPropertyName = this.entitiesByPropertyName[propertyName];
+		var entitiesWithPropertyName = this.entitiesByPropertyName(propertyName);
 
 		if (entitiesWithPropertyName != null)
 		{
 			for (var i = 0; i < entitiesWithPropertyName.length; i++)
 			{
 				var entity = entitiesWithPropertyName[i];
-				if (entity.locatable.loc.pos.equalsXY(cellPosToCheck) == true)
+				if (entity.locatable().loc.pos.equalsXY(cellPosToCheck) == true)
 				{
 					returnEntities.insertElementAt(entity, 0);
 				}
@@ -84,13 +89,14 @@ class PlaceLevel
 			var entityDefnProperty = entityDefnProperties[c];
 			var entityPropertyName = entityDefnProperty.constructor.name;
 
-			var entityListForPropertyName = this.entitiesByPropertyName[entityPropertyName];
+			var entityListForPropertyName = this.entitiesByPropertyName(entityPropertyName);
 
 			if (entityListForPropertyName != null)
 			{
 				entityListForPropertyName.push(entityToSpawn);
 
-				var entityProperty = entityToSpawn[entityPropertyName];
+				var entityProperty =
+					entityToSpawn.propertyByName(entityPropertyName);
 
 				if (entityDefnProperty.initializeEntityForPlace == null)
 				{
@@ -124,14 +130,14 @@ class PlaceLevel
 		for (var i = 0; i < propertyNamesKnown.length; i++)
 		{
 			var propertyName = propertyNamesKnown[i];
-			var entitiesWithProperty = this.entitiesByPropertyName[propertyName];
+			var entitiesWithProperty = this.entitiesByPropertyName(propertyName);
 
-			propertyName = propertyName.lowercaseFirstCharacter();
+			//propertyName = propertyName.lowercaseFirstCharacter();
 			for (var b = 0; b < entitiesWithProperty.length; b++)
 			{
 				var entity = entitiesWithProperty[b];
 				var entityDefn = entity;
-				var entityDefnProperty = entityDefn[propertyName];
+				var entityDefnProperty = entityDefn.propertyByName(propertyName);
 				if (entityDefnProperty.updateForTimerTick != null)
 				{
 					entityDefnProperty.updateForTimerTick(universe, world, this, entity);
@@ -153,7 +159,7 @@ class PlaceLevel
 			var entityToRemove = this.entitiesToRemove[i];
 
 			// hack
-			var mappable = entityToRemove.mappable;
+			var mappable = entityToRemove.mappable();
 			if (mappable != null)
 			{
 				var entitiesInCell = mappable.mapCellOccupied.entitiesPresent;
@@ -168,7 +174,7 @@ class PlaceLevel
 			{
 				var entityDefnProperty = entityDefnProperties[c];
 				var entityDefnPropertyName = entityDefnProperty.constructor.name;
-				var entitiesWithProperty = this.entitiesByPropertyName[entityDefnPropertyName];
+				var entitiesWithProperty = this.entitiesByPropertyName(entityDefnPropertyName);
 
 				if (entitiesWithProperty != null) // hack
 				{
@@ -193,12 +199,12 @@ class PlaceLevel
 
 	update_Mappables(universe, world)
 	{
-		var emplacements = this.entitiesByPropertyName[Emplacement.name];
-		var enemies = this.entitiesByPropertyName["Enemy"];
-		var items = this.entitiesByPropertyName[Item.name];
-		var players = this.entitiesByPropertyName[Player.name]
-		var portals = this.entitiesByPropertyName[Portal.name];
-		var projectiles = this.entitiesByPropertyName["Projectile"];
+		var emplacements = this.emplacements();
+		var enemies = this.enemies();
+		var items = this.items();
+		var players = this.players();
+		var portals = this.portals();
+		var projectiles = this.projectiles();
 
 		var collisionHelper = universe.collisionHelper;
 
@@ -261,7 +267,7 @@ class PlaceLevel
 				new Coords(180, 272), // size
 				// children
 				[
-					entityForPlayer.player.controlUpdate(world, entityForPlayer),
+					entityForPlayer.player().controlUpdate(world, entityForPlayer),
 				]
 			);
 		}
@@ -278,7 +284,7 @@ class PlaceLevel
 			this.hasBeenUpdatedSinceDrawn = false;
 
 			var player = world.entityForPlayer;
-			var placeKnown = player.player.placeKnownLookup[this.name];
+			var placeKnown = player.player().placeKnownLookup[this.name];
 
 			if (placeKnown != null)
 			{
@@ -295,7 +301,7 @@ class PlaceLevel
 
 		display.childSelectByName("Map");
 		display.drawBackground("Black");
-		this.map.draw(universe, world, display, this);
+		this.map.draw(universe, world, this, display, this);
 
 		display.childSelectByName("Status");
 		display.clear();
@@ -306,7 +312,7 @@ class PlaceLevel
 
 		display.childSelectByName("Messages");
 		display.clear();
-		var messageLogAsControl = world.entityForPlayer.player.messageLog.controlUpdate(world);
+		var messageLogAsControl = world.entityForPlayer.player().messageLog.controlUpdate(world);
 		this._drawLoc.pos.clear();
 		messageLogAsControl.draw(universe, display, this._drawLoc);
 		display.flush();
@@ -322,25 +328,18 @@ class PlaceLevel
 
 	// entities
 
-	awaitables()
-	{
-		return this.entitiesByPropertyName[Awaitable.name];
-	}
+	awaitables() { return this.entitiesByPropertyName(Awaitable.name); }
+	emplacements() { return this.entitiesByPropertyName(Emplacement.name); }
+	enemies() { return this.entitiesByPropertyName("Enemy"); }
+	ephemerals() { return this.entitiesByPropertyName[Ephemeral.name]; }
+	items() { return this.entitiesByPropertyName(Item.name); }
+	mappables() { return this.entitiesByPropertyName(Mappable.name); }
+	movers() { return this.entitiesByPropertyName(Mover.name); }
+	player() { return this.players()[0]; }
+	players() { return this.entitiesByPropertyName(Player.name); }
+	portals() { return this.entitiesByPropertyName(Portal.name); }
+	projectiles() { return this.entitiesByPropertyName("Projectile"); }
 
-	ephemerals()
-	{
-		return this.entitiesByPropertyName[Ephemeral.name];
-	}
-
-	movers()
-	{
-		return this.entitiesByPropertyName[Mover.name];
-	}
-
-	player()
-	{
-		return this.entitiesByPropertyName[Player.name][0];
-	}
 }
 
 class PlaceLevel_ZLayers

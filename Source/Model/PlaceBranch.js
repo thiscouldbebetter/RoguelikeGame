@@ -76,8 +76,14 @@ class PlaceBranch
 			var place = this.places[i];
 			var placeNext = this.places[i + 1];
 
-			var placePortalDown = place.entitiesToSpawn.filter(x => x.name == "StairsDownToNextLevel")[0].portal;
-			var placeNextPortalUp = placeNext.entitiesToSpawn.filter(x => x.name == "StairsUp")[0].portal;
+			var placePortalDown = place.entitiesToSpawn.filter
+			(
+				x => x.name == "StairsDownToNextLevel"
+			)[0].portal();
+			var placeNextPortalUp = placeNext.entitiesToSpawn.filter
+			(
+				x => x.name == "StairsUp"
+			)[0].portal();
 
 			placePortalDown.destinationPlaceName = placeNext.name;
 			placeNextPortalUp.destinationPlaceName = place.name;
@@ -132,13 +138,13 @@ class PlaceBranch
 				var childPortalLast = childPlaceLast.entitiesToSpawn.filter
 				(
 					x => x.name == "StairsDownToNextLevel"
-				)[0].portal;
+				)[0].portal();
 
 				var childNextPlaceFirst = childNext.places[0];
 				var childNextPortalFirst = childNextPlaceFirst.entitiesToSpawn.filter
 				(
 					x => x.name == "StairsUp"
-				)[0].portal;
+				)[0].portal();
 
 				childPortalLast.destinationPlaceName = childNextPlaceFirst.name;
 				childNextPortalFirst.destinationPlaceName = childPlaceLast.name;
@@ -184,13 +190,14 @@ class PlaceBranch
 							break;
 						}
 					}
-					var parentPortalToBranchFrom = parentPortals[parentPortalIndexToBranchFrom].portal;
+					var parentPortalToBranchFrom =
+						parentPortals[parentPortalIndexToBranchFrom].portal();
 
 					var childPlaceFirst = child.places[0];
 					var childPortalFirst = childPlaceFirst.entitiesToSpawn.filter
 					(
 						x => x.name == "StairsUp"
-					)[0].portal;
+					)[0].portal();
 
 					parentPortalToBranchFrom.destinationPlaceName = childPlaceFirst.name;
 					childPortalFirst.destinationPlaceName = parentPlaceToBranchFrom.name;

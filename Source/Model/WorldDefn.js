@@ -12,9 +12,9 @@ class WorldDefn
 		this.placeTree = placeTree;
 		this.buildPlaces = buildPlaces;
 
-		var entityDefnSets = this.entityDefnGroups.select
+		var entityDefnSets = this.entityDefnGroups.map
 		(
-			function(element) { return element["entityDefns"]; }
+			x => x.entityDefns
 		);
 
 		this.entityDefns = entityDefnSets.concatenateAll();
@@ -24,5 +24,15 @@ class WorldDefn
 		this.placeDefns.addLookupsByName();
 		this.entityDefnGroups.addLookupsByName();
 		this.entityDefns.addLookupsByName();
+
+		var entityDefnsForItemDefns = this.entityDefns.filter(x => x.itemDefn() != null);
+		this.itemDefns = entityDefnsForItemDefns.map(x => x.itemDefn());
+		var itemDefnNamesAndDefns = this.itemDefns.map(x => [ x.name, x ]);
+		this._itemDefnsByName = new Map(itemDefnNamesAndDefns);
+	}
+
+	itemDefnsByName()
+	{
+		return this._itemDefnsByName;
 	}
 }

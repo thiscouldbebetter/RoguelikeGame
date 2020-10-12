@@ -8,29 +8,32 @@ class Mover
 
 	initializeEntityForPlace(universe, world, place, entity)
 	{
-		var mover = entity.mover;
+		var mover = entity.mover();
 		mover.movesThisTurn = mover.movesPerTurn;
 
-		if (entity.turnable == null)
+		if (entity.turnable() == null)
 		{
-			entity.turnable = new Turnable
+			var turnable = new Turnable
 			(
 				function updateForTurn(universe, world, place, entity)
 				{
-					entity.mover.movesThisTurn += entity.mover.movesPerTurn;
-					if (entity.effectable != null)
+					var mover = entity.mover();
+					mover.movesThisTurn += mover.movesPerTurn;
+					var effectable = entity.effectable();
+					if (effectable != null)
 					{
-						entity.effectable.updateForTurn(universe, world, place, entity);
+						effectable.updateForTurn(universe, world, place, entity);
 					}
-					entity.turnable.hasActedThisTurn = false;
+					entity.turnable().hasActedThisTurn = false;
 				}
 			);
+			entity.propertyAddForPlace(turnable, place);
 		}
 	}
 
 	updateForTimerTick(universe, world, place, entity)
 	{
-		var entityLoc = entity.locatable.loc;
+		var entityLoc = entity.locatable().loc;
 
 		entityLoc.pos.trimToRangeMax
 		(

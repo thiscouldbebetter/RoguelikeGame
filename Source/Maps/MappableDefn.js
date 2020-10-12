@@ -22,17 +22,17 @@ class MappableDefn
 	{
 		var mappable = new Mappable
 		(
-			entity.mappableDefn
+			entity.mappableDefn()
 		);
 
 		var map = place.map;
-		var entityPosInCells = entity.locatable.loc.pos;
+		var entityPosInCells = entity.locatable().loc.pos;
 		var mapCellOccupied = map.cellAtPos(entityPosInCells);
 		mapCellOccupied.entitiesPresent.push(entity);
 		mappable.mapCellOccupied = mapCellOccupied;
 
-		entity.mappable = mappable;
-		entity.collidable = entity.mappable; // hack
+		entity.propertyAddForPlace(mappable, place);
+		//entity.collidable = entity.mappable; // hack
 	}
 
 	updateForTimerTick(universe, world, place, entity)

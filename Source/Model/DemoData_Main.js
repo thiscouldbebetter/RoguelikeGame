@@ -23,20 +23,13 @@ class DemoData_Main
 		var itemGroups =
 			this.demoDataItems.buildEntityDefnGroups_Items(images, itemCategories);
 
-		var moverGroups =
-			this.demoDataMovers.buildEntityDefnGroups_Movers(images, activityDefns, itemCategories);
+		var moverAndCorpseGroups =
+			this.demoDataMovers.buildEntityDefnGroups_MoversAndCorpses(images, activityDefns, itemCategories);
+		var moverGroups = moverAndCorpseGroups[0];
+		var corpseGroup = moverAndCorpseGroups[1];
+
 		var moverEntities = moverGroups[0].entityDefns;
-		var killables = moverEntities.filter(x => x.killable != null); // hack
-		var itemDefnsForCorpses = killables.map
-		(
-			x => x.killable.itemDefnCorpse
-		).filter
-		(
-			x => (x != null)
-		);
-		var entityDefnsForCorpses = itemDefnsForCorpses.map(x => new Entity(x.name, [ x ]) );
-		var entityDefnGroupForCorpses = new EntityDefnGroup("Corpses", 0, entityDefnsForCorpses);
-		itemGroups.push(entityDefnGroupForCorpses);
+		itemGroups.push(corpseGroup);
 
 		var returnValues =
 		[
@@ -54,9 +47,9 @@ class DemoData_Main
 
 		var useEmplacementAltar = (universe, world, place, entityUsing, entityUsed) =>
 		{
-			var itemsHeld = entityUsing.itemHolder.itemEntities;
+			var itemsHeld = entityUsing.itemHolder().itemEntities;
 			var isItemGoalHeld = itemsHeld.some(x => x.name == "Amulet of Yendor");
-			var messageLog = entityUsing.player.messageLog;
+			var messageLog = entityUsing.player().messageLog;
 			if (isItemGoalHeld == false)
 			{
 				var message = "You do not have the Amulet of Yendor!"
@@ -107,9 +100,9 @@ class DemoData_Main
 
 		var useEmplacementPortal = (universe, world, place, entityUsing, entityUsed) =>
 		{
-			var message = "You use the " + entityUsed.emplacement.appearance + ".";
-			entityUsing.player.messageLog.messageAdd(message);
-			entityUsed.portal.use(universe, world, place, entityUsing, entityUsed);
+			var message = "You use the " + entityUsed.emplacement().appearance + ".";
+			entityUsing.player().messageLog.messageAdd(message);
+			entityUsed.portal().use(universe, world, place, entityUsing, entityUsed);
 		};
 
 		var mappableDefns = MappableDefn.Instances();
@@ -139,34 +132,38 @@ class DemoData_Main
 					(
 						function blocksMovement(entity)
 						{
-							return (entity.openable.isOpen == false);
+							return (entity.openable().isOpen == false);
 						},
 						function blocksVision(entity)
 						{
-							return (entity.openable.isOpen == false);
+							return (entity.openable().isOpen == false);
 						},
 					),
 					new Drawable
 					(
 						new VisualSelect
 						(
-							function selectChildName(universe, world, display, entity)
+							new Map
+							([
+								[ "Hidden", "Closed", "Open" ],
+								[ 
+									"Hidden",
+									new VisualDirectional
+									(
+										null,
+										[
+											visuals["WallDungeonNorthSouth"],
+											visuals["WallDungeonEastWest"]
+										]
+									)
+								],
+								[ "Closed", visuals["DoorClosed"] ],
+								[ "Open", visuals["DoorOpenLeft"] ]
+							]),
+							(universe, world, display, entity) =>
 							{
-								return (entity.searchable.isHidden ? "Hidden" : (entity.openable.isOpen ? "Open" : "Closed"));
-							},
-							[ "Hidden", "Closed", "Open" ],
-							[ 
-								new VisualDirectional
-								(
-									null,
-									[
-										visuals["WallDungeonNorthSouth"],
-										visuals["WallDungeonEastWest"]
-									]
-								),
-								visuals["DoorClosed"],
-								visuals["DoorOpenLeft"]
-							]
+								return [ (entity.searchable().isHidden ? "Hidden" : (entity.openable().isOpen ? "Open" : "Closed")) ];
+							}
 						)
 					),
 					new Emplacement("door"),

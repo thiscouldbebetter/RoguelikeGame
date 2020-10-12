@@ -9,8 +9,9 @@ class EntityHelper
 		{
 			var property = properties[i];
 			returnValue.properties.push(property);
-			var propertyName = property.constructor.name.lowercaseFirstCharacter();
-			returnValue[propertyName] = property;
+			var propertyName = property.constructor.name; //.lowercaseFirstCharacter();
+			//returnValue[propertyName] = property;
+			returnValue.propertiesByName.set(propertyName, property);
 		}
 		return returnValue;
 	}

@@ -15,9 +15,9 @@ class DemoData_Items
 
 		var categoriesCommon =
 		[
-			"Collidable",
-			"Drawable",
-			"Item",
+			Collidable.name,
+			Drawable.name,
+			Item.name,
 		];
 
 		var sizeInPixels = images["Floor"].sizeInPixels;
@@ -259,8 +259,8 @@ class DemoData_Items
 
 		var useFood = (universe, world, place, userEntity, usedEntity) =>
 		{
-			userEntity.starvable.satietyAdd(usedEntity.food.satiety);
-			userEntity.itemHolder.itemEntityRemove(usedEntity);
+			userEntity.starvable().satietyAdd(usedEntity.food.satiety);
+			userEntity.itemHolder().itemEntityRemove(usedEntity);
 		}
 
 		var categoryNamesFood = [ "Food" ];
@@ -315,7 +315,7 @@ class DemoData_Items
 		(
 			function start(universe, world, place, entityEffectable)
 			{
-				var player = entityEffectable.player;
+				var player = entityEffectable.player();
 				if (player != null)
 				{
 					player.messageLog.messageAdd("Potion effect not yet implemented!");
@@ -325,18 +325,18 @@ class DemoData_Items
 
 		var namesAndEffectDefnsOfPotions =
 		[
-			[ "Acid", 			new Effect( function start(u, w, p, e) { e.killable.integrityAdd(-30); e.player.controlUpdate(w, te); } ) ],
+			[ "Acid", 			new Effect( function start(u, w, p, e) { e.killable().integrityAdd(-30); e.player().controlUpdate(w, te); } ) ],
 			[ "Blindness", 		effectMessageNotImplemented ],
 			[ "Booze", 			effectMessageNotImplemented ],
 			[ "Enlightenment", 	effectMessageNotImplemented ],
 			[ "Confusion", 		effectMessageNotImplemented ],
-			[ "Fruit Juice", 	new Effect( function start(u, w, p, e) { e.starvable.satietyAdd(w, 100, targetEntity); e.player.controlUpdate(targetEntity); } ) ],
+			[ "Fruit Juice", 	new Effect( function start(u, w, p, e) { e.starvable().satietyAdd(w, 100, targetEntity); e.player().controlUpdate(targetEntity); } ) ],
 			[ "Gain Ability", 	effectMessageNotImplemented ],
 			[ "Gain Energy", 	effectMessageNotImplemented ],
-			[ "Gain Level", 	new Effect( function start(u, w, p, e) { e.demographics.level += 1; e.player.controlUpdate(te); } ) ],
-			[ "Healing", 		new Effect( function start(u, w, p, e) { e.killable.integrityAdd(10); e.player.controlUpdate(w, te); } ) ],
-			[ "Healing Extra", 	new Effect( function start(u, w, p, e) { e.killable.integrityAdd(30); e.player.controlUpdate(w, te); } ) ],
-			[ "Healing Full", 	new Effect( function start(u, w, p, e) { e.killable.integrityAdd(1000); e.player.controlUpdate(w, te); } ) ],
+			[ "Gain Level", 	new Effect( function start(u, w, p, e) { e.demographics().level += 1; e.player().controlUpdate(te); } ) ],
+			[ "Healing", 		new Effect( function start(u, w, p, e) { e.killable().integrityAdd(10); e.player().controlUpdate(w, te); } ) ],
+			[ "Healing Extra", 	new Effect( function start(u, w, p, e) { e.killable().integrityAdd(30); e.player().controlUpdate(w, te); } ) ],
+			[ "Healing Full", 	new Effect( function start(u, w, p, e) { e.killable().integrityAdd(1000); e.player().controlUpdate(w, te); } ) ],
 			[ "Invisibility", 	effectMessageNotImplemented ],
 			[ "Levitation", 	effectMessageNotImplemented ],
 			[ "Monster Detection", effectMessageNotImplemented ],
@@ -346,7 +346,7 @@ class DemoData_Items
 			[ "Polymorph", 		effectMessageNotImplemented ],
 			[ "Restore Ability", effectMessageNotImplemented ],
 			[ "See Invisible", 	effectMessageNotImplemented ],
-			[ "Sickness", 		new Effect( function start(u, w, p, e) { e.killable.integrityAdd(-20); e.player.controlUpdate(w, te); } ) ],
+			[ "Sickness", 		new Effect( function start(u, w, p, e) { e.killable().integrityAdd(-20); e.player().controlUpdate(w, te); } ) ],
 			[ "Sleeping", 		effectMessageNotImplemented ],
 			[ "Speed", 			effectMessageNotImplemented ],
 			[ "Water", 			effectMessageNotImplemented ],
@@ -370,14 +370,14 @@ class DemoData_Items
 		var useItemPotion = (universe, world, place, entityUsing, entityUsed) =>
 		{
 			var message = null;
-			var player = entityUsing.player;
+			var player = entityUsing.player();
 			if (player != null)
 			{
-				var item = entityUsed.item;
+				var item = entityUsed.item();
 				var itemDefn = item.defn(world);
 				message = "You drink the " + itemDefn.appearance + ".";
 				player.messageLog.messageAdd(message);
-				var effectable = entityUsing.effectable;
+				var effectable = entityUsing.effectable();
 				effectable.effectorApply(entityUsed.effector);
 				effectable.updateForTurn(universe, world, place, entityUsing);
 			}
@@ -459,13 +459,13 @@ class DemoData_Items
 			"Prevent Hunger",
 			function apply(universe, world, place, entityToApplyTo)
 			{
-				entityToApplyTo.starvable.satietyAdd(1);
+				entityToApplyTo.starvable().satietyAdd(1);
 			}
 		);
 
 		var equipTodo = (universe, world, place, entityEquippable) =>
 		{
-			entityEquippable.effectable.effects.push(effectPreventHunger);
+			entityEquippable.effectable().effects.push(effectPreventHunger);
 		};
 
 		var namesOfRings =
@@ -573,7 +573,7 @@ class DemoData_Items
 		var useScrollNotImplemented = (universe, world, place, entityUsing) =>
 		{
 			var message = "You read the scroll aloud."
-			var player = entityUsing.player;
+			var player = entityUsing.player();
 			if (player != null)
 			{
 				player.messageLog.messageAdd(message);
@@ -783,7 +783,7 @@ class DemoData_Items
 				function apply(world, targetEntity)
 				{
 					var spellToAdd = new SpellDefn("[Spell]");
-					var spellsKnown = targetEntity.mover.spells.spells;
+					var spellsKnown = targetEntity.mover().spells.spells;
 
 					var isSpellAlreadyKnown = false;
 					for (var i = 0; i < spellsKnown.length; i++)
@@ -852,7 +852,7 @@ class DemoData_Items
 
 		var wandUseProjectileSpawn = (universe, world, place, actingEntity, targetEntity) =>
 		{
-			var loc = targetEntity.locatable.loc;
+			var loc = targetEntity.locatable().loc;
 			var venue = loc.place(world);
 
 			var entityForProjectile = new Entity
@@ -869,7 +869,7 @@ class DemoData_Items
 
 		var wandUseTeleport = (universe, world, place, actingEntity, targetEntity) =>
 		{
-			var loc = targetEntity.locatable.loc;
+			var loc = targetEntity.locatable().loc;
 
 			var teleportPos = null;
 			while (teleportPos == null)
@@ -890,7 +890,7 @@ class DemoData_Items
 			loc.pos.overwriteWith(teleportPos);
 
 			targetEntity.controlUpdate(world);
-			targetEntity.player.controlUpdate(world, targetEntity);
+			targetEntity.player().controlUpdate(world, targetEntity);
 		};
 
 		function Wand(name, use)
@@ -950,8 +950,8 @@ class DemoData_Items
 		for (var i = 0; i < wandDatas.length; i++)
 		{
 			var wandData = wandDatas[i];
-			var name = wandData[0];
-			var effect = wandData[1];
+			var name = wandData.name;
+			//var effect = wandData.use;
 
 			var appearanceIndex = Math.floor
 			(
@@ -1448,13 +1448,13 @@ class DemoData_Items
 
 	itemUseDevice(universe, world, place, userEntity, itemEntity)
 	{
-		var itemAppearance = itemEntity.item.defn(world).appearance;
+		var itemAppearance = itemEntity.item().defn(world).appearance;
 		var itemMessage = "You use the " + itemAppearance + ".";
 
 		var device = itemEntity.Device;
 		var deviceMessage = device.use(universe, world, place, userEntity, itemEntity);
 
-		var player = userEntity.player;
+		var player = userEntity.player();
 		if (player != null)
 		{
 			player.messageLog.messageAdd(itemMessage);

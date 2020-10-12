@@ -5,15 +5,17 @@ class World
 	{
 		this.name = name;
 		this.defn = defn;
-		this.places = places.addLookupsByName();
+		this.places = places;
 		this.entityForPlayer = entityForPlayer;
 		this.randomizer = randomizer;
+
+		this.placesByName = ArrayHelper.addLookupsByName(this.places);
 
 		if (this.entityForPlayer == null)
 		{
 			var place0 = this.places[0];
 			var portal0 = place0.entitiesToSpawn[0]; // hack
-			var portal0Pos = portal0.locatable.loc.pos.clone();
+			var portal0Pos = portal0.locatable().loc.pos.clone();
 
 			var entityDefnPlayer = this.defn.entityDefns.Player;
 			this.entityForPlayer = EntityHelper.new
@@ -23,16 +25,19 @@ class World
 				[
 					new Locatable
 					(
-						new Location(portal0Pos, null, place0.name)
+						new Disposition(portal0Pos, null, place0.name)
 					)
 				]
 			);
-			this.entityForPlayer.demographics.rank = 1; // hack
+			this.entityForPlayer.demographics().rank = 1; // hack
 
 			place0.entitiesToSpawn.insertElementAt(this.entityForPlayer, 0);
 		}
 
-		this.placeNext = this.places[this.entityForPlayer.locatable.loc.placeName];
+		this.placeNext = this.placesByName.get
+		(
+			this.entityForPlayer.locatable().loc.placeName
+		);
 
 		this.turnsSoFar = 0;
 
@@ -54,7 +59,7 @@ class World
 		};
 	}
 
-	static new(universe)
+	static create(universe)
 	{
 		var randomizer = RandomizerLCG.default();
 		var visualsForTiles = [];
@@ -162,5 +167,10 @@ class World
 
 			this.timeReportingWindowStarted = now;
 		}
+	}
+
+	toControl()
+	{
+		return new ControlNone();
 	}
 }

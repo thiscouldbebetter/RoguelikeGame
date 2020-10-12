@@ -40,7 +40,7 @@ class MapOfTerrain
 		this._cellPos = new Coords();
 		this._drawPos = new Coords();
 		this._drawPosSaved = new Coords();
-		this._drawLoc = new Location( this._drawPos );
+		this._drawLoc = new Disposition( this._drawPos );
 		this._drawableEntity = new Entity( "_drawableEntity", [ new Locatable(this._drawLoc) ] );
 		this._entitiesSortedBottomToTop = [];
 	}
@@ -58,32 +58,44 @@ class MapOfTerrain
 		}
 
 		return returnValue;
-	};
+	}
 
-	// Clonable.
-
-	clone()
+	cellsAsStrings()
 	{
 		var cellsAsStrings = [];
 
 		var cellPos = new Coords(0, 0);
-		for (var y = 0; y < map.sizeInCells.y; y++)
+		for (var y = 0; y < this.sizeInCells.y; y++)
 		{
 			cellPos.y = y;
 			var cellRowAsString = "";
 
-			for (var x = 0; x < map.sizeInCells.x; x++)
+			for (var x = 0; x < this.sizeInCells.x; x++)
 			{
 				cellPos.x = x;
 
 				var cell = this.cellAtPos(cellPos);
-				var cellTerrain = this.terrains[cellAsChar];
-				var terrainChar = terrain.codeChar;
+				var cellTerrain = cell.terrain(this);
+				var terrainChar = cellTerrain.codeChar;
 				cellRowAsString += terrainChar;
 			}
 
 			cellsAsStrings.push(cellRowAsString);
 		}
+
+		return cellsAsStrings;
+	}
+
+	toString()
+	{
+		return this.cellsAsStrings().join("\n");
+	}
+
+	// Clonable.
+
+	clone()
+	{
+		var cellsAsStrings = this.cellsAsStrings();
 
 		return new MapOfTerrain
 		(
@@ -96,18 +108,18 @@ class MapOfTerrain
 
 	// drawable
 
-	draw(universe, world, display)
+	draw(universe, world, place, display)
 	{
 		// hack - Build camera from player.
 		var entityCamera = world.entityForPlayer;
-		var cameraPos = entityCamera.locatable.loc.pos.clone();
+		var cameraPos = entityCamera.locatable().loc.pos.clone();
 
 		var viewDimensionHalf = 38; // hack
 		var camera = new Camera
 		(
 			new Coords(1, 1, 0).multiplyScalar(viewDimensionHalf),
 			null, // focalLength
-			new Location(cameraPos)
+			new Disposition(cameraPos)
 		);
 
 		var cellPos = this._cellPos;
@@ -128,6 +140,7 @@ class MapOfTerrain
 				(
 					universe,
 					world,
+					place,
 					display,
 					cameraPos,
 					cellPos
@@ -140,7 +153,7 @@ class MapOfTerrain
 		display.flush();
 	}
 
-	drawCellAtPos(universe, world, display, cameraPos, cellPos)
+	drawCellAtPos(universe, world, place, display, cameraPos, cellPos)
 	{
 		var map = this;
 
@@ -164,22 +177,22 @@ class MapOfTerrain
 			display.displayToUse().sizeInPixelsHalf
 		);
 
-		terrainVisual.draw(universe, world, display, drawableEntity);
+		terrainVisual.draw(universe, world, place, drawableEntity, display);
 
 		var entitiesInCell = cell.entitiesPresent;
 
 		var entitiesSortedBottomToTop = entitiesInCell.sort
 		(
-			(a, b) => a.locatable.loc.pos.z - b.locatable.loc.pos.z
+			(a, b) => a.locatable().loc.pos.z - b.locatable().loc.pos.z
 		);
 
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
-			var drawable = entity.drawable;
+			var drawable = entity.drawable();
 			if (drawable.isVisible)
 			{
-				var entityLoc = entity.locatable.loc;
+				var entityLoc = entity.locatable().loc;
 				var entityPos = entityLoc.pos;
 
 				this._drawPosSaved.overwriteWith(entityPos);
@@ -187,7 +200,7 @@ class MapOfTerrain
 				entityPos.overwriteWith(drawPos);
 
 				var visual = drawable.visual;
-				visual.draw(universe, world, display, entity);
+				visual.draw(universe, world, place, entity, display);
 
 				entityPos.overwriteWith(this._drawPosSaved);
 			}

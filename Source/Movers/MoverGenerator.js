@@ -29,7 +29,7 @@ class MoverGenerator
 		{
 			this.turnLastMoved = world.turnsSoFar;
 
-			var agentsInPlace = place.entitiesByPropertyName[Mover.name];
+			var agentsInPlace = place.movers();
 
 			var numberOfAgentsMax = 100; // hack
 
@@ -50,7 +50,7 @@ class MoverGenerator
 	{
 		var randomizer = universe.randomizer;
 
-		var playerRank = world.entityForPlayer.demographics.rank;
+		var playerRank = world.entityForPlayer.demographics().rank;
 
 		var difficultyMin = 1; // todo
 		var difficultyMax = Math.ceil((place.depth + playerRank) / 2);
@@ -69,7 +69,7 @@ class MoverGenerator
 		var entityDefnsForAgentsOfDifficulty = entityDefnGroup.entityDefns;
 		var relativeFrequencyTotal = entityDefnsForAgentsOfDifficulty.map
 		(
-			x => x.generatable.relativeFrequency
+			x => x.generatable().relativeFrequency
 		).reduce
 		(
 			(sum, addend) => sum + addend, 0
@@ -81,7 +81,7 @@ class MoverGenerator
 		for (var i = 0; i < entityDefnsForAgentsOfDifficulty.length; i++)
 		{
 			var entityDefn = entityDefnsForAgentsOfDifficulty[i];
-			cumulativeFrequencySoFar += entityDefn.generatable.relativeFrequency;
+			cumulativeFrequencySoFar += entityDefn.generatable().relativeFrequency;
 			if (cumulativeFrequencySoFar > cumulativeFrequencyToStopAt)
 			{
 				entityDefnForAgentToSpawn = entityDefn;
@@ -92,7 +92,7 @@ class MoverGenerator
 		var zoneBounds = zoneToSpawnInto.bounds;
 		var offsetWithinZone = new Coords().randomize(randomizer).multiply
 		(
-			zoneBounds.sizeHalf.clone().subtract(Coords.Instances().Ones)
+			zoneBounds.sizeHalf().clone().subtract(Coords.Instances().Ones)
 		).clearZ();
 		var posToSpawnAt = offsetWithinZone.add(zoneBounds.center).floor();
 		posToSpawnAt.z = PlaceLevel.ZLayers().Movers;
@@ -105,7 +105,7 @@ class MoverGenerator
 			entityName,
 			entityDefnForAgentToSpawn,
 			[
-				new Locatable(new Location(posToSpawnAt))
+				new Locatable(new Disposition(posToSpawnAt))
 			]
 		);
 

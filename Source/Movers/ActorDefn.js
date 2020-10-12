@@ -9,13 +9,13 @@ class ActorDefn
 	initializeEntityForPlace(universe, world, place, entity)
 	{
 		var actorData = new ActorData();
-		entity.actorData = actorData;
+		entity.propertyAddForPlace(actorData, place);
 
 		actorData.actions = [];
 
 		var activity = new Activity
 		(
-			entity.actorDefn.activityDefnNameInitial,
+			entity.actorDefn().activityDefnNameInitial,
 			null
 		);
 
@@ -24,9 +24,9 @@ class ActorDefn
 
 	updateForTimerTick(universe, world, place, entity)
 	{
-		if (entity.killable == null || entity.killable.isAlive())
+		if (entity.killable() == null || entity.killable().isAlive())
 		{
-			var actorData = entity.actorData;
+			var actorData = entity.actorData();
 			actorData.activity_Get().perform(universe, world, place, entity);
 
 			var entityActions = actorData.actions;
