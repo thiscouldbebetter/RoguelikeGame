@@ -469,12 +469,12 @@ class DemoData_Movers
 			new AD("Rabid Rat",		4, one, [ "Bite:2d4" ],		2, 17, 12, 6, 0, 	0, 1, true, 30, 5, 	tiny, [ poison ], null ),
 			new AD("Wererat" ),
 			new AD("Rock Mole" ),
-			new AD("Woodchuck" ),
+			new AD("Groundhog" ),
 
 			// spiders and centipedes
 
 			new AD("Cave Spider", 	3, "1d3", [ "Bite:1d2" ],		1, 8, 12, 3, 0, 	0, 2, true, 50, 50, 	tiny, [ poison ], [ poison, .07 ] ),
-			new AD("Centipede" ),
+			new AD("Giant Millipede" ),
 			new AD("Giant Spider" ),
 			new AD("Scorpion" ),
 
@@ -542,7 +542,7 @@ class DemoData_Movers
 
 			new AD("Baby Gray Dragon" ),
 			new AD("Baby Silver Dragon" ),
-			new AD("Baby Silver Dragon 2" ),
+			//new AD("Baby Shimmering Dragon" ),
 			new AD("Baby Red Dragon" ),
 			new AD("Baby White Dragon" ),
 			new AD("Baby Orange Dragon" ),
@@ -552,7 +552,7 @@ class DemoData_Movers
 			new AD("Baby Yellow Dragon" ),
 			new AD("Gray Dragon" ),
 			new AD("Silver Dragon" ),
-			new AD("Silver Dragon 2" ),
+			//new AD("Shimmering Dragon" ),
 			new AD("Red Dragon" ),
 			new AD("White Dragon" ),
 			new AD("Orange Dragon" ),
@@ -602,7 +602,7 @@ class DemoData_Movers
 			// jabberwock
 
 			new AD("Jabberwock" ),
-			new AD("Jabberwock 2?" ),
+			//new AD("Jabberwock 2?" ),
 
 			// keystone kops
 
@@ -689,7 +689,7 @@ class DemoData_Movers
 
 			new AD("Vampire" ),
 			new AD("Vampire Lord" ),
-			new AD("Vampire 2?" ),
+			//new AD("Vampire 2?" ),
 			new AD("Vlad the Impaler" ),
 
 			// wraiths
@@ -826,7 +826,7 @@ class DemoData_Movers
 			new AD("Chameleon" ),
 			new AD("Crocodile" ),
 			new AD("Salamander" ),
-			new AD("Long Worm Entity" ),
+			new AD("Long Worm Head" ),
 
 			// player monsters
 
@@ -848,11 +848,11 @@ class DemoData_Movers
 
 			// quest leaders
 
-			new AD("Unknown Quest Leader 1?" ),
 			new AD("Lord Carnarvon" ),
 			new AD("Pelias" ),
 			new AD("Shaman Karnov" ),
-			new AD("Unknown Quest Leader 2?" ),
+			new AD("Earendil" ),
+			new AD("Elwing" ),
 			new AD("Hippocrates" ),
 			new AD("King Arthur" ),
 			new AD("Grand Master" ),
@@ -869,7 +869,7 @@ class DemoData_Movers
 			new AD("Minion of Huhetotl" ),
 			new AD("Thoth Amon" ),
 			new AD("Chromatic Dragon" ),
-			new AD("Unknown Quest Nemesis 1?" ),
+			new AD("Goblin King" ),
 			new AD("Cyclops" ),
 			new AD("Ixoth" ),
 			new AD("Master Kaen" ),
@@ -885,7 +885,7 @@ class DemoData_Movers
 			new AD("Student" ),
 			new AD("Chieftan" ),
 			new AD("Neanderthal" ),
-			new AD("Unknown Quest Guardian 1?" ),
+			new AD("High-elf" ),
 			new AD("Attendant" ),
 			new AD("Page" ),
 			new AD("Abbot" ),

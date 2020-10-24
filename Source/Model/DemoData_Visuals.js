@@ -361,11 +361,11 @@ class DemoData_Visuals
 			// chickenoids - 9-11
 			"Chickatrice", "Cockatrice", "Pyrolisk",
 			// canines - 12-27
-			"Jackal", "Fox", "Coyote", "Werejackal", "Little Dog", "Dog", "Large Dog", "Dingo", "Wolf", "Werewolf", "Dire Wolf", "Frost Hound Pup", "Frost Hound", "Hell Hound Pup", "Hell Hound", "Cerberus",
+			"Jackal", "Fox", "Coyote", "Werejackal", "Little Dog", "Dog", "Large Dog", "Dingo", "Wolf", "Werewolf", "Warg", "Winter Wolf Cub", "Winter Wolf", "Hell Hound Pup", "Hell Hound", "Cerberus",
 			// spheres - 28-33
 			"Gas Spore", "Floating Eye", "Freezing Sphere", "Flaming Sphere", "Shocking Sphere", "Beholder",
 			// felines - 34-40
-			"Little Cat", "Housecat", "Jaguar", "Lynx", "Panther", "Large Cat", "Tiger",
+			"Kitten", "Housecat", "Jaguar", "Lynx", "Panther", "Large Cat", "Tiger",
 			// gremlinoids - 41-43
 			"Gremlin", "Gargoyle", "Winged Gargoyle",
 			// humanoids - 44-50
@@ -379,17 +379,17 @@ class DemoData_Visuals
 			// leprechaun - 64
 			"Leprechaun",
 			// mimics - 65-67
-			"Mimic", "Large Mimic", "Giant Mimic",
+			"Small Mimic", "Large Mimic", "Giant Mimic",
 			// nymphs - 68-70
 			"Wood Nymph", "Water Nymph", "Mountain Nymph",
 			// goblins - 71-78
-			"Goblin", "Hobgoblin", "Orc?", "Hill Orc", "Mordor Orc", "Uruk-Hai", "Orc Shaman", "Orc Captain",
+			"Goblin", "Hobgoblin", "Orc", "Hill Orc", "Mordor Orc", "Uruk-hai", "Orc Shaman", "Orc Captain",
 			// piercers - 79-81
 			"Rock Piercer", "Iron Piercer", "Glass Piercer",
 			// quadrupeds - 82-88
-			"Rothe", "Mumak", "Leocrotta", "Wumpus", "Baluchitherium", "Titanothere", "Mammoth",
+			"Rothe", "Mumak", "Leocrotta", "Wumpus", "Baluchitherium", "Titanothere", "Mastodon",
 			// rats - 89-94
-			"Sewer Rat", "Giant Rat", "Rabit Rat", "Wererat", "Rock Mole", "Groundhog",
+			"Sewer Rat", "Giant Rat", "Rabid Rat", "Wererat", "Rock Mole", "Groundhog",
 			// polypods - 95-98
 			"Cave Spider", "Giant Millipede", "Giant Spider", "Scorpion",
 			// trappers - 99-100
@@ -397,11 +397,11 @@ class DemoData_Visuals
 			// unicorns - 101-103
 			"White Unicorn", "Gray Unicorn", "Black Unicorn",
 			// horses - 104-106
-			"Pony", "Horse", "War Horse",
+			"Pony", "Horse", "Warhorse",
 			// clouds - 107-112
 			"Fog Cloud", "Dust Vortex", "Ice Vortex", "Energy Vortex", "Steam Vortex", "Fire Vortex",
 			// worms - 113-116
-			"Baby Long Worm", "Baby Purple Worm", "Long Worm", "Purple Worm",
+			"Baby Long Worm", "Baby Purple Worm", "Long Worm Head", "Purple Worm",
 			// exotic insects - 117-118
 			"Grid Bug", "Xan",
 			// lights - 119-120
@@ -409,27 +409,27 @@ class DemoData_Visuals
 			// zruty - 121
 			"Zruty",
 			// angels - 122-126
-			"Coatl", "Aleax", "Angel", "Ki-Rin", "Archon",
+			"Couatl", "Aleax", "Angel", "Ki-rin", "Archon",
 			// bats - 127-130
 			"Bat", "Giant Bat", "Raven", "Vampire Bat",
 			// centaurs - 131-133
 			"Plains Centaur", "Mountain Centaur", "Forest Centaur",
 			// baby dragons - 134-143
-			"Baby Gray Dragon", "Baby Silver Dragon", "Baby Shining Dragon?", "Baby Red Dragon", "Baby White Dragon", "Baby Orange Dragon", "Baby Black Dragon", "Baby Blue Dragon", "Baby Green Dragon", "Baby Yellow Dragon",
+			"Baby Gray Dragon", "Baby Silver Dragon", "[Baby Shimmering Dragon]", "Baby Red Dragon", "Baby White Dragon", "Baby Orange Dragon", "Baby Black Dragon", "Baby Blue Dragon", "Baby Green Dragon", "Baby Yellow Dragon",
 			// dragons - 144-153
-			"Gray Dragon", "Silver Dragon", "Shining Dragon?", "Red Dragon", "White Dragon", "Orange Dragon", "Black Dragon", "Blue Dragon", "Green Dragon", "Yellow Dragon",
+			"Gray Dragon", "Silver Dragon", "[Shimmering Dragon]", "Red Dragon", "White Dragon", "Orange Dragon", "Black Dragon", "Blue Dragon", "Green Dragon", "Yellow Dragon",
 			// elementals - 154-158
 			"Stalker", "Air Elemental", "Fire Elemental", "Earth Elemental", "Water Elemental",
 			// fungi - 159-165
-			"Lichen", "Brown Mold", "Yellow Mold", "Green Mold", "Red Mold", "Shrieker", "Violet Mold",
+			"Lichen", "Brown Mold", "Yellow Mold", "Green Mold", "Red Mold", "Shrieker", "Violet Fungus",
 			// gnomes - 166-169
-			"Gnome", "Gnome Lord", "Gnome Wizard", "Gnome King",
+			"Gnome", "Gnome Lord", "Gnomish Wizard", "Gnome King",
 			// giant - 170-178
 			"Giant", "Stone Giant", "Hill Giant", "Fire Giant", "Frost Giant", "Storm Giant", "Ettin", "Titan", "Minotaur",
 			// jabberwockoids - 179-180
 			"Jabberwock", "[green jabberwock?]",
 			// keystone kops - 181-184
-			"[kop1]", "[kop1]", "[kop2]", "[kop3]",
+			"Keystone Kop", "Kop Sergeant", "Kop Lieutenant", "Kop Kaptain",
 			// liches - 185-188
 			"Lich", "Demilich", "Master Lich", "Arch-Lich",
 			// mummies - 189-196
@@ -445,7 +445,7 @@ class DemoData_Visuals
 			// 213-214
 			"Rust Monster", "Disenchanter",
 			// snakes - 215-220
-			"Garter Snake", "Snake", "Water Moccassin", "Viper", "Python", "Cobra",
+			"Garter Snake", "Snake", "Water Moccasin", "Pit Viper", "Python", "Cobra",
 			// trolls - 221-225
 			"Troll", "Ice Troll", "Rock Troll", "Water Troll", "Olog-Hai",
 			// 226
@@ -465,44 +465,43 @@ class DemoData_Visuals
 			// golems - 251-261
 			"Straw Golem", "Paper Golem", "Rope Golem", "Gold Golem", "Leather Golem", "Wood Golem", "Flesh Golem", "Clay Golem", "Stone Golem", "Glass Golem", "Iron Golem",
 			// werecreatures (human) - 262-265
-			"Wererat_Human", "Werejackal_Human", "Werewolf_Human", "[werecreature4]",
+			"Human", "Wererat_Human", "Werejackal_Human", "Werewolf_Human",
 			// elves - 266-271
-			"Elf", "Wood Elf", "Green Elf", "Gray Elf", "Elf Lord", "Elvenking",
+			"Elf", "Woodland-Elf", "Green-Elf", "Grey-Elf", "Elf-Lord", "Elvenking",
 			// 272
-			"Doppleganger",
+			"Doppelganger",
 			// human civilians - 273-279
-			"Nurse", "Shopkeeper", "Guard", "Prisoner", "Oracle", "Priest", "High Priest",
+			"Nurse", "Shopkeeper", "Guard", "Prisoner", "Oracle", "Aligned Priest", "High Priest",
 			// soldiers - 280-285
 			"Soldier", "Sergeant", "Lieutenant", "Captain", "Watchman", "Watch Captain",
 			// 286-289
-			"Medusa", "Wizard of Yendor", "Croesus?", "?",
+			"Medusa", "Wizard of Yendor", "Croesus", "?",
 			// ghosts - 290-291
 			"Ghost", "Shade",
 			// 292
 			"Water Demon",
 			// devils - 293-305
-			"Horned Devil", "Succubus", "Incubus", "Erinys", "Barbed Devil", "Marilith", "Vrock", "Hezrou", "Bone Devil?", "Ice Devil", "Nalfeshnee", "Pit Fiend", "Balrog",
+			"Horned Devil", "Succubus", "Incubus", "Erinys", "Barbed Devil", "Marilith", "Vrock", "Hezrou", "Bone Devil", "Ice Devil", "Nalfeshnee", "Pit Fiend", "Balrog",
 			// demon princes - 306-313
-			"Juiblex", "Yeenoghu", "Orcus", "Geryon", "Dispater", "Beelzebub", "Asmodeus", "Demogorgon",
+			"Jubilex", "Yeenoghu", "Orcus", "Geryon", "Dispater", "Baalzebub", "Asmodeus", "Demogorgon",
 			// riders - 314-316
 			"Death", "Pestilence", "Famine",
 			// 317-319
-			"?", "Genie", "?",
+			"Mail Demon", "Djinni", "Sandestin",
 			// marine - 320-325
 			"Jellyfish", "Piranha", "Shark", "Giant Eel", "Electric Eel", "Kraken",
 			// lizards - 326-333
-			"Newt", "Gecko", "Iguana", "Baby Crocodile", "Lizard", "?", "Crocodile", "Salamader",
+			"Newt", "Gecko", "Iguana", "Baby Crocodile", "Lizard", "Chameleon", "Crocodile", "Salamander",
 			// 334
 			"Long Worm Tail",
 			// roles - 335-?
-			"Archaeologist", 		"Barbarian", 	"Caveman", "Cavewoman", 					"Healer", 		"Knight", 		"Monk", 		"Priest", "?", 	"Ranger", 	"Rogue", 				"Samurai", 			"Tourist", 		"Valkyrie", 	"Wizard",
+			"Archeologist", 		"Barbarian", 	"Caveman", "Cavewoman", 						"Healer", 		"Knight", 		"Monk", 		"Priest", "Priestess", 	"Ranger", 	"Rogue", 				"Samurai", 			"Tourist", 		"Valkyrie", 	"Wizard",
 			// quest leaders
-			"[QuestLead1]?",
-			"Lord Carnarvon", 		"Pelias", 		"Shaman Karnov", 	"QLead2?", "QLead3?", 	"Hippocrates", 	"King Arthur", 	"Grand Master", "Arch Priest", 	"Orion", 	"Master of Thieves", 	"Lord Sato", 		"Twoflower", 	"Norn", 		"Neferet the Green",
+			"Lord Carnarvon", 		"Pelias", 		"Shaman Karnov", 		"Earendil", "Elwing", 	"Hippocrates", 	"King Arthur", 	"Grand Master", "Arch Priest", 			"Orion", 	"Master of Thieves", 	"Lord Sato", 		"Twoflower", 	"Norn", 		"Neferet the Green",
 			// quest nemeses
-			"Minion of Huhetotl", 	"Thoth Amon", 	"Chromatic Dragon", "Goblinking?", 			"Cyclops", 		"Ixoth", 		"Master Kaen", 	"Nalzok", 		"Scorpius", "Master Assassin", 		"Ashikaga Takauji", 				"Lord Surtur", 	"The Dark One",
+			"Minion of Huhetotl", 	"Thoth Amon", 	"Chromatic Dragon", 	"Goblin King", 			"Cyclops", 		"Ixoth", 		"Master Kaen", 	"Nalzok", 				"Scorpius", "Master Assassin", 		"Ashikaga Takauji", 				"Lord Surtur", 	"The Dark One",
 			// quest guardians
-			"Student", 				"Chieftan", 	"Neanderthal", 								"Attendant", 	"Page", 		"Abbot", 		"Acolyte", 		"Hunter", 	"Thug", 				"Roshi", 			"Guide", 		"Warrior", 		"Apprentice"
+			"Student", 				"Chieftan", 	"Neanderthal", 			"High-elf",				"Attendant", 	"Page", 		"Abbot", 		"Acolyte", 				"Hunter", 	"Thug", "Ninja",		"Roshi", 			"Guide", 		"Warrior", 		"Apprentice"
 		];
 
 		createTiles(monsterNamesInTileOrder, "", "", new Coords(0, 0));
