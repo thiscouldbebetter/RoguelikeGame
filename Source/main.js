@@ -69,7 +69,7 @@ function main()
 
 	var timerHelper = new TimerHelper(15);
 
-	var version = "0.0.0-20201011-1700";
+	var version = "0.0.0-20201027-0000";
 
 	var universe = Universe.create
 	(
@@ -79,7 +79,7 @@ function main()
 		display,
 		mediaLibrary,
 		ControlStyle.Instances().Default,
-		null // world
+		(u) => World2.create(u)
 	);
 	universe.initialize
 	(

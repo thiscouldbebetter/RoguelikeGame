@@ -1,232 +1,132 @@
-
-class PlaceBranch
-{
-	constructor(name, displayName, placeDefnName, startOffsetRangeWithinParent, depthRangeInVenues, children)
-	{
-		this.name = name;
-		this.displayName = displayName;
-		this.placeDefnName = placeDefnName;
-		this.startOffsetRangeWithinParent = startOffsetRangeWithinParent;
-		this.depthRangeInVenues = depthRangeInVenues;
-		this.children = children;
-		this.places = [];
-
-		for (var i = 0; i < this.children.length; i++)
-		{
-			this.children[i].parent = this;
-		}
-	}
-
-	buildPlaces(worldDefn, randomizer, depthFirst)
-	{
-		this.buildPlaces_1_Generate(worldDefn, randomizer, depthFirst);
-		this.buildPlaces_2_ConnectAdjacentPlaces();
-		this.buildPlaces_3_CreateChildBranches(worldDefn, randomizer, depthFirst);
-		this.buildPlaces_4_ConnectChildrenToSiblings();
-		this.buildPlaces_5_ConnectToChildren();
-		this.buildPlaces_6_RemovePlaceholderPortals();
-
-		var returnValues = [];
-		returnValues.addMany(this.places);
-		for (var i = 0; i < this.children.length; i++)
-		{
-			var child = this.children[i];
-			returnValues.addMany(child.places);
-		}
-
-		return returnValues;
-	}
-
-	buildPlaces_1_Generate(worldDefn, randomizer, depthFirst)
-	{
-		var placeDefns = worldDefn.placeDefns;
-		var entityDefns = worldDefn.entityDefns;
-
-		var placeDefn = placeDefns[this.placeDefnName];
-		var placeDefnName = placeDefn.name;
-
-		var numberOfVenuesInBranch =
-			Math.floor(this.depthRangeInVenues.random(randomizer));
-
-		var demoDataPlaces = new DemoData_Main(randomizer).demoDataPlaces;
-
-		for (var i = 0; i < numberOfVenuesInBranch; i++)
-		{
-			var place = placeDefn.placeGenerate.call
-			(
-				demoDataPlaces, // this
-				worldDefn,
-				this,
-				placeDefn,
-				i,
-				depthFirst + i,
-				randomizer
-			);
-
-			this.places.push(place);
-		}
-	}
-
-	buildPlaces_2_ConnectAdjacentPlaces()
-	{
-		// Connect adjacent places within parent branch.
-
-		for (var i = 0; i < this.places.length - 1; i++)
-		{
-			var place = this.places[i];
-			var placeNext = this.places[i + 1];
-
-			var placePortalDown = place.entitiesToSpawn.filter
-			(
-				x => x.name == "StairsDownToNextLevel"
-			)[0].portal();
-			var placeNextPortalUp = placeNext.entitiesToSpawn.filter
-			(
-				x => x.name == "StairsUp"
-			)[0].portal();
-
-			placePortalDown.destinationPlaceName = placeNext.name;
-			placeNextPortalUp.destinationPlaceName = place.name;
-			placeNextPortalUp.destinationEntityName = "StairsDownToNextLevel";
-		}
-	}
-
-	buildPlaces_3_CreateChildBranches(worldDefn, randomizer, depthFirst)
-	{
-		// Create child branches.
-
-		var sumOfChildDepthsInMainBranchSoFar = 0;
-
-		for (var c = 0; c < this.children.length; c++)
-		{
-			var child = this.children[c];
-
-			var childStartOffsetRange = child.startOffsetRangeWithinParent;
-			var isChildInMainBranch = (childStartOffsetRange == null);
-			if (isChildInMainBranch == false)
-			{
-				child.startOffset = Math.floor
-				(
-					childStartOffsetRange.random(randomizer)
-				);
-			}
-
-			var childDepthWithinThis =
-			(
-				isChildInMainBranch ? sumOfChildDepthsInMainBranchSoFar : child.startOffset
-			);
-			var childDepthFirst = depthFirst + childDepthWithinThis;
-
-			child.buildPlaces(worldDefn, randomizer, childDepthFirst);
-
-			sumOfChildDepthsInMainBranchSoFar += (isChildInMainBranch ? child.places.length : 0);
-		}
-	}
-
-	buildPlaces_4_ConnectChildrenToSiblings()
-	{
-		// Connect each child to next sibling if appropriate.
-
-		for (var c = 0; c < this.children.length; c++)
-		{
-			var child = this.children[c];
-			var childPlaceLast = child.places[child.places.length - 1];
-			var childNext = this.children[c + 1];
-
-			if (childNext != null && childNext.startOffsetRangeWithinParent == null)
-			{
-				var childPortalLast = childPlaceLast.entitiesToSpawn.filter
-				(
-					x => x.name == "StairsDownToNextLevel"
-				)[0].portal();
-
-				var childNextPlaceFirst = childNext.places[0];
-				var childNextPortalFirst = childNextPlaceFirst.entitiesToSpawn.filter
-				(
-					x => x.name == "StairsUp"
-				)[0].portal();
-
-				childPortalLast.destinationPlaceName = childNextPlaceFirst.name;
-				childNextPortalFirst.destinationPlaceName = childPlaceLast.name;
-				childNextPortalFirst.destinationEntityName = "StairsDownToNextLevel";
-			}
-			else
-			{
-				// If this is final sibling or should not connect to next sibling, remove final portal.
-
-				var childPlaceLastEntities = childPlaceLast.entitiesToSpawn;
-				var childPortalLast = childPlaceLastEntities.filter(x => x.name == "StairsDownToNextLevel")[0];
-				childPlaceLastEntities.remove(childPortalLast);
-			}
-		}
-	}
-
-	buildPlaces_5_ConnectToChildren()
-	{
-		// Connect to child branches.
-
-		if (this.places.length > 0)
-		{
-			for (var c = 0; c < this.children.length; c++)
-			{
-				var child = this.children[c];
-				var childStartOffset = child.startOffset;
-
-				if (childStartOffset != null)
-				{
-					var parentPlaceToBranchFrom = this.places[childStartOffset];
-					var parentPortals = parentPlaceToBranchFrom.entitiesToSpawn.filter
-					(
-						x => x.name == "StairsDownToChildBranch"
-					);
-
-					var parentPortalIndexToBranchFrom;
-					for (var p = 0; p < parentPortals.length; p++)
-					{
-						var portal = parentPortals[p];
-						if (portal.destinationPlaceName == null)
-						{
-							parentPortalIndexToBranchFrom = p;
-							break;
-						}
-					}
-					var parentPortalToBranchFrom =
-						parentPortals[parentPortalIndexToBranchFrom].portal();
-
-					var childPlaceFirst = child.places[0];
-					var childPortalFirst = childPlaceFirst.entitiesToSpawn.filter
-					(
-						x => x.name == "StairsUp"
-					)[0].portal();
-
-					parentPortalToBranchFrom.destinationPlaceName = childPlaceFirst.name;
-					childPortalFirst.destinationPlaceName = parentPlaceToBranchFrom.name;
-					childPortalFirst.destinationEntityName = "StairsDownToChildBranch";
-				}
-			}
-		}
-	}
-
-	buildPlaces_6_RemovePlaceholderPortals()
-	{
-		// Remove unused placeholder portals.
-
-		for (var i = 0; i < this.places.length; i++)
-		{
-			var place = this.places[i];
-			var placeEntities = place.entitiesToSpawn;
-			var stairsDownToChild = placeEntities.filter
-			(
-				x => x.name == "StairsDownToChildBranch"
-			);
-			for (var p = 0; p < stairsDownToChild.length; p++)
-			{
-				var stairDownToChild = stairsDownToChild[p];
-				if (stairDownToChild.portal.destinationPlaceName == null)
-				{
-					placeEntities.remove(stairDownToChild);
-				}
-			}
-		}
-	}
+"use strict";
+class PlaceBranch {
+    constructor(name, displayName, placeDefnName, startOffsetRangeWithinParent, depthRangeInVenues, children) {
+        this.name = name;
+        this.displayName = displayName;
+        this.placeDefnName = placeDefnName;
+        this.startOffsetRangeWithinParent = startOffsetRangeWithinParent;
+        this.depthRangeInVenues = depthRangeInVenues;
+        this.children = children;
+        this.places = [];
+        for (var i = 0; i < this.children.length; i++) {
+            this.children[i].parent = this;
+        }
+    }
+    buildPlaces(worldDefn, randomizer, depthFirst) {
+        this.buildPlaces_1_Generate(worldDefn, randomizer, depthFirst);
+        this.buildPlaces_2_ConnectAdjacentPlaces();
+        this.buildPlaces_3_CreateChildBranches(worldDefn, randomizer, depthFirst);
+        this.buildPlaces_4_ConnectChildrenToSiblings();
+        this.buildPlaces_5_ConnectToChildren();
+        this.buildPlaces_6_RemovePlaceholderPortals();
+        var returnValues = new Array();
+        returnValues.push(...this.places);
+        for (var i = 0; i < this.children.length; i++) {
+            var child = this.children[i];
+            returnValues.push(...child.places);
+        }
+        return returnValues;
+    }
+    buildPlaces_1_Generate(worldDefn, randomizer, depthFirst) {
+        var placeDefnsByName = worldDefn.placeDefn2sByName;
+        var placeDefn = placeDefnsByName.get(this.placeDefnName);
+        var numberOfVenuesInBranch = Math.floor(this.depthRangeInVenues.random(randomizer));
+        var demoDataPlaces = new DemoData_Main(randomizer).demoDataPlaces;
+        for (var i = 0; i < numberOfVenuesInBranch; i++) {
+            var place = placeDefn.placeGenerate.call(demoDataPlaces, // this
+            worldDefn, this, placeDefn, i, depthFirst + i, randomizer);
+            this.places.push(place);
+        }
+    }
+    buildPlaces_2_ConnectAdjacentPlaces() {
+        // Connect adjacent places within parent branch.
+        for (var i = 0; i < this.places.length - 1; i++) {
+            var place = this.places[i];
+            var placeNext = this.places[i + 1];
+            var placePortalDown = place.entitiesToSpawn.filter((x) => x.name == "StairsDownToNextLevel")[0].portal2();
+            var placeNextPortalUp = placeNext.entitiesToSpawn.filter((x) => x.name == "StairsUp")[0].portal2();
+            placePortalDown.destinationPlaceName = placeNext.name;
+            placeNextPortalUp.destinationPlaceName = place.name;
+            placeNextPortalUp.destinationEntityName = "StairsDownToNextLevel";
+        }
+    }
+    buildPlaces_3_CreateChildBranches(worldDefn, randomizer, depthFirst) {
+        // Create child branches.
+        var sumOfChildDepthsInMainBranchSoFar = 0;
+        for (var c = 0; c < this.children.length; c++) {
+            var child = this.children[c];
+            var childStartOffsetRange = child.startOffsetRangeWithinParent;
+            var isChildInMainBranch = (childStartOffsetRange == null);
+            if (isChildInMainBranch == false) {
+                child.startOffset = Math.floor(childStartOffsetRange.random(randomizer));
+            }
+            var childDepthWithinThis = (isChildInMainBranch ? sumOfChildDepthsInMainBranchSoFar : child.startOffset);
+            var childDepthFirst = depthFirst + childDepthWithinThis;
+            child.buildPlaces(worldDefn, randomizer, childDepthFirst);
+            sumOfChildDepthsInMainBranchSoFar += (isChildInMainBranch ? child.places.length : 0);
+        }
+    }
+    buildPlaces_4_ConnectChildrenToSiblings() {
+        // Connect each child to next sibling if appropriate.
+        for (var c = 0; c < this.children.length; c++) {
+            var child = this.children[c];
+            var childPlaceLast = child.places[child.places.length - 1];
+            var childNext = this.children[c + 1];
+            if (childNext != null && childNext.startOffsetRangeWithinParent == null) {
+                var childPortalLast = childPlaceLast.entitiesToSpawn.filter((x) => x.name == "StairsDownToNextLevel")[0].portal2();
+                var childNextPlaceFirst = childNext.places[0];
+                var childNextPortalFirst = childNextPlaceFirst.entitiesToSpawn.filter((x) => x.name == "StairsUp")[0].portal2();
+                childPortalLast.destinationPlaceName = childNextPlaceFirst.name;
+                childNextPortalFirst.destinationPlaceName = childPlaceLast.name;
+                childNextPortalFirst.destinationEntityName = "StairsDownToNextLevel";
+            }
+            else {
+                // If this is final sibling or should not connect to next sibling, remove final portal.
+                var childPlaceLastEntities = childPlaceLast.entitiesToSpawn;
+                var childPortalLastAsEntity = childPlaceLastEntities.filter((x) => x.name == "StairsDownToNextLevel")[0];
+                ArrayHelper.remove(childPlaceLastEntities, childPortalLastAsEntity);
+            }
+        }
+    }
+    buildPlaces_5_ConnectToChildren() {
+        // Connect to child branches.
+        if (this.places.length > 0) {
+            for (var c = 0; c < this.children.length; c++) {
+                var child = this.children[c];
+                var childStartOffset = child.startOffset;
+                if (childStartOffset != null) {
+                    var parentPlaceToBranchFrom = this.places[childStartOffset];
+                    var parentPortals = parentPlaceToBranchFrom.entitiesToSpawn.filter((x) => x.name == "StairsDownToChildBranch");
+                    var parentPortalIndexToBranchFrom;
+                    for (var p = 0; p < parentPortals.length; p++) {
+                        var portal = parentPortals[p].portal2();
+                        if (portal.destinationPlaceName == null) {
+                            parentPortalIndexToBranchFrom = p;
+                            break;
+                        }
+                    }
+                    var parentPortalToBranchFrom = parentPortals[parentPortalIndexToBranchFrom].portal2();
+                    var childPlaceFirst = child.places[0];
+                    var childPortalFirst = childPlaceFirst.entitiesToSpawn.filter((x) => x.name == "StairsUp")[0].portal2();
+                    parentPortalToBranchFrom.destinationPlaceName = childPlaceFirst.name;
+                    childPortalFirst.destinationPlaceName = parentPlaceToBranchFrom.name;
+                    childPortalFirst.destinationEntityName = "StairsDownToChildBranch";
+                }
+            }
+        }
+    }
+    buildPlaces_6_RemovePlaceholderPortals() {
+        // Remove unused placeholder portals.
+        for (var i = 0; i < this.places.length; i++) {
+            var place = this.places[i];
+            var placeEntities = place.entitiesToSpawn;
+            var stairsDownToChild = placeEntities.filter((x) => x.name == "StairsDownToChildBranch");
+            for (var p = 0; p < stairsDownToChild.length; p++) {
+                var stairDownToChild = stairsDownToChild[p];
+                if (stairDownToChild.portal2().destinationPlaceName == null) {
+                    ArrayHelper.remove(placeEntities, stairDownToChild);
+                }
+            }
+        }
+    }
 }
