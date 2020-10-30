@@ -1,0 +1,50 @@
+Roguelike Game
+Issues List
+==============
+
+Enhancements
+------------
+
+Emplacements - Altar - BUC identification.
+Emplacements - Altar - Sacrifice.
+Emplacements - Boulder.
+Emplacements - Door - Locking.
+Emplacements - Traps - Don't do anything.
+
+Items - Blessed/Uncursed/Cursed status.
+Items - Scrolls.
+Items - Rings.
+Items - Wands.
+
+Levels - Castle.
+Levels - Caverns.
+Levels - Hell's Atrium.
+Levels - Hell's Depths.
+Levels - Maze.
+Levels - Mine Town.
+Levels - Mine's End.
+Levels - Puzzle.
+
+Monsters - Always just charge at player.
+Monsters - Missing stub definitions.
+
+Monsters - Combat - Don't do damage, ever.
+Monsters - Combat - Attack types.
+Monsters - Combat - Special attacks.
+
+Monsters - Talkers - Priest
+Monsters - Talkers - Shopkeeper.
+Monsters - Talkers - Oracle.
+
+Player - Attacks don't use weapons.
+Player - Menus.
+Player - Wrong sprite (knight for rogue).
+
+Projectiles - Don't do anything.
+
+Errors
+------
+
+Mysterious crash sometime on second level - Missing monster defn?
+
+ 
