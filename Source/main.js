@@ -49,7 +49,7 @@ function main()
 	var musicPath = audioPath + "Music/";
 	var videoPath = contentPath + "Video/";
 	var fontPath = contentPath + "Fonts/";
-	var textStringPath = contentPath + "TextStrings/";
+	var textStringPath = contentPath + "Text/";
 
 	var mediaLibrary = MediaLibrary.fromFilePaths
 	([
@@ -65,11 +65,13 @@ function main()
 		videoPath + "Movie.webm",
 
 		fontPath + "Font.ttf",
+
+		textStringPath + "Talk/Mentor.json",
 	]);
 
 	var timerHelper = new TimerHelper(15);
 
-	var version = "0.0.0-20201027-0000";
+	var version = "0.0.0-20201031-1645";
 
 	var universe = Universe.create
 	(

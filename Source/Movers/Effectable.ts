@@ -12,14 +12,14 @@ class Effectable2 extends EntityProperty
 		this.effectsToRemove = [];
 	}
 
+	effectApply(effectToApply: Effect2)
+	{
+		this.effects.push(effectToApply);
+	}
+
 	effectorApply(effector: Effector)
 	{
-		var effectsToApply = effector.effects;
-		for (var i = 0; i < effectsToApply.length; i++)
-		{
-			var effectToApply = effectsToApply[i];
-			this.effects.push(effectToApply);
-		}
+		effector.effects.forEach(x => this.effectApply(x));
 	}
 
 	updateForTurn(universe: Universe, world: World, place: Place, entityEffectable: Entity)

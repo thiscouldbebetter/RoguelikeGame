@@ -56,11 +56,15 @@ class Player extends EntityProperty {
             var placeKnown = player.placeKnownLookup.get(place.name);
             world.sightHelper.updatePlaceFromCompleteForViewerPosAndRange(placeKnown, place, // placeComplete
             entityPlayer.locatable().loc.pos, player.sightRange);
-            player.controlUpdate(world, entityPlayer);
+            //player.controlUpdate(world, entityPlayer);
         }
     }
     // controls
-    controlUpdate(world, entity) {
+    toControl(universe, size, entity, venuePrev) {
+        return this.toControlOverlay(universe, size, entity);
+    }
+    toControlOverlay(universe, size, entity) {
+        var world = universe.world;
         var entity2 = entity;
         if (this.control == null) {
             var controlLocus = new ControlContainer("containerLocus", new Coords(10, 48, 0), // pos
@@ -80,13 +84,17 @@ class Player extends EntityProperty {
             new Coords(180, 272, 0), // size
             [
                 ControlLabel.fromPosAndText(new Coords(10, 16, 0), "Name: " + entity.name),
-                entity2.demographics().controlUpdate(world, entity, new Coords(10, 32, 0)),
-                entity2.starvable2().controlUpdate(world, entity, new Coords(10, 64, 0)),
+                entity2.demographics().toControl(world, entity, new Coords(10, 32, 0)),
+                entity2.starvable2().toControl(world, entity, new Coords(10, 64, 0)),
                 controlLocus,
             ], null, null);
         }
         return this.control;
     }
+    controlUpdate(w, e) {
+        // todo - Remove this.
+    }
+    // Clonable.
     clone() {
         return this; // todo
     }

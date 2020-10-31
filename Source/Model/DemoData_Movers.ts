@@ -50,7 +50,12 @@ class DemoData_Movers
 
 		// agents
 
-		var itemHolder = new ItemHolder(null, null, null);
+		var itemHolder = new ItemHolder
+		(
+			[], // itemEntities
+			100, // massMax,
+			0 // reachRadius
+		);
 
 		var agentDatas = this.buildAgentDatas();
 
@@ -64,7 +69,7 @@ class DemoData_Movers
 		{
 			var agentData = agentDatas[i];
 			var agentName = agentData.name;
-			var difficulty = agentData.difficulty || 100; // todo
+			var difficulty: number = agentData.difficulty || 100; // todo
 			var experienceToKill = agentData.baseExperience || 0;
 			var movesPerTurn = agentData.speed || 0;
 
@@ -141,7 +146,7 @@ class DemoData_Movers
 		{
 			var entityDefnForAgent = entityDefnsMovers[i] as Entity2;
 			var entityDemographics = entityDefnForAgent.demographics();
-			var difficulty = (entityDemographics == null ? null : entityDemographics.rank);
+			var difficulty = (entityDemographics == null ? 100 : entityDemographics.rank);
 			if (difficulty != null)
 			{
 				var entityDefnGroupForDifficulty =
@@ -173,7 +178,7 @@ class DemoData_Movers
 		itemCategories: ItemCategory[], returnValues: any
 	)
 	{
-		var entityName = Player.name;
+		var entityName = Player.name; // "Player".
 
 		var demographics = new Demographics
 		(
@@ -238,6 +243,15 @@ class DemoData_Movers
 
 		var equipmentUser = new EquipmentUser(equipmentSocketDefnGroup);
 
+		var toControl = (u: Universe, size: Coords, e: Entity, isMenu: boolean) =>
+		{
+			var toControlMethod = (isMenu ? Playable.toControlMenu : (e as Entity2).player().toControlOverlay);
+			var returnValue = toControlMethod(u, size, e, u.venueCurrent);
+			return returnValue;
+		};
+
+		var controllable = new Controllable(toControl);
+
 		var entityDefnPlayer = new Entity2
 		(
 			entityName,
@@ -245,6 +259,7 @@ class DemoData_Movers
 			[
 				new ActorDefn(activityDefnName),
 				this.mappableDefns.Transparent,
+				controllable,
 				demographics,
 				drawableDefnPlayer,
 				new Effectable2(null),
@@ -528,7 +543,7 @@ class DemoData_Movers
 
 			AD.fromName("Baby Gray Dragon" ),
 			AD.fromName("Baby Silver Dragon" ),
-			//AD.fromName("Baby Shimmering Dragon" ),
+			AD.fromName("Baby Shimmering Dragon" ),
 			AD.fromName("Baby Red Dragon" ),
 			AD.fromName("Baby White Dragon" ),
 			AD.fromName("Baby Orange Dragon" ),
@@ -538,7 +553,7 @@ class DemoData_Movers
 			AD.fromName("Baby Yellow Dragon" ),
 			AD.fromName("Gray Dragon" ),
 			AD.fromName("Silver Dragon" ),
-			//AD.fromName("Shimmering Dragon" ),
+			AD.fromName("Shimmering Dragon" ),
 			AD.fromName("Red Dragon" ),
 			AD.fromName("White Dragon" ),
 			AD.fromName("Orange Dragon" ),
@@ -588,7 +603,7 @@ class DemoData_Movers
 			// jabberwock
 
 			AD.fromName("Jabberwock" ),
-			//AD.fromName("Jabberwock 2?" ),
+			AD.fromName("Jabberwock 2" ),
 
 			// keystone kops
 
@@ -675,7 +690,7 @@ class DemoData_Movers
 
 			AD.fromName("Vampire" ),
 			AD.fromName("Vampire Lord" ),
-			//AD("Vampire 2?" ),
+			AD.fromName("Vampire 2" ),
 			AD.fromName("Vlad the Impaler" ),
 
 			// wraiths

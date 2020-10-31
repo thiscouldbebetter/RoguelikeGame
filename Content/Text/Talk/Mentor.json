@@ -1,0 +1,271 @@
+{
+	"name": "Mentor",
+	"talkNodes": [
+		{
+			"name": "Greet",
+			"defnName": "Display",
+			"text": "Hi, I'm your mentor."
+		},
+		{
+			"name": "Goal",
+			"defnName": "Display",
+			"text": "Your quest, as given by our God..." 
+		},
+		{
+			"defnName": "Display",
+			"text": "...is to find the Amulet of Yendor..." 
+		},
+		{
+			"defnName": "Display",
+			"text": "...bring it back up here..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...and use this altar to sacrifice it."
+		},
+		{
+			"name": "Subject",
+			"defnName": "Display",
+			"text": "Anything else you'd like to know?"
+		},
+		{
+			"defnName": "Option",
+			"text": "Why am I here again?",
+			"next": "Goal"
+		},
+		{
+			"defnName": "Option",
+			"text": "Say, how do I play this game?",
+			"next": "Game"
+		},
+		{
+			"defnName": "Option",
+			"text": "Can you tell me about the dungeon?",
+			"next": "Dungeon"
+		},
+		{
+			"defnName": "Option",
+			"text": "Do you want to trade items?",
+			"next": "Trade"
+		},
+		{
+			"defnName": "Option",
+			"next": "Quit",
+			"text": "Never mind."
+		},
+		{
+			"name": "SubjectPrompt",
+			"defnName": "Prompt"
+		},
+		{
+			"name": "Dungeon",
+			"defnName": "Push"
+		},
+		{
+			"defnName": "Display",
+			"text": "I can tell you a few things, I guess."
+		},
+		{
+			"defnName": "Display",
+			"text": "What do you want to know?"
+		},
+		{
+			"defnName": "Option",
+			"next": "Dungeon.Amulet",
+			"text": "What about this Amulet?"
+		},
+		{
+			"defnName": "Option",
+			"next": "Dungeon.Dangers",
+			"text": "What kind of dangers await?"
+		},
+		{
+			"defnName": "Option",
+			"next": "Dungeon.Tools",
+			"text": "Am I equipped for this?"
+		},
+		{
+			"defnName": "Option",
+			"next": "Dungeon.NeverMind",
+			"text": "That's enough about the dungeon for now."
+		},
+		{
+			"defnName": "Prompt"
+		},
+		{
+			"name": "Dungeon.Dangers",
+			"defnName": "Display",
+			"text": "Well, you're not the first person we've sent down..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...so we know there's monsters and traps"
+		},
+		{
+			"defnName": "Display",
+			"text": "There are goblins, rats, lizards, and carnivorous plants..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...and that's just the first couple of levels."
+		},
+		{
+			"defnName": "Display",
+			"text": "There are doors, which may be locked..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...so you'll have to either pick those or kick them down."
+		},
+		{
+			"defnName": "Display",
+			"text": "Also, it's not unlikely you'll starve..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...since we didn't really bring any extra food."
+		},
+		{
+			"defnName": "Display",
+			"text": "You'll have to live off the land."
+		},
+		{
+			"defnName": "Display",
+			"text": "If all else fails, pray."
+		},
+		{
+			"defnName": "Prompt"
+		},
+		{
+			"name": "Dungeon.Tools",
+			"defnName": "Display",
+			"text": "Not really, no. We are poor folk."
+		},
+		{
+			"defnName": "Display",
+			"text": "Maybe you'll find something down there."
+		},
+		{
+			"defnName": "Prompt"
+		},
+		{
+			"name": "Dungeon.Amulet",
+			"defnName": "Display",
+			"text": "Our god wants it."
+		},
+		{
+			"defnName": "Display",
+			"text": "That's good enough for me."
+		},
+		{
+			"defnName": "Display",
+			"text": "It should be good enough for you."
+		},
+		{
+			"defnName": "Prompt"
+		},
+		{
+			"name": "Dungeon.NeverMind",
+			"defnName": "Display",
+			"text": "Fine."
+		},
+		{
+			"defnName": "Pop",
+			"next": "Subject"
+		},
+		{
+			"name": "Game",
+			"defnName": "Push"
+		},
+		{
+			"defnName": "Display",
+			"text": "Well, it's still in progress."
+		},
+		{
+			"defnName": "Display",
+			"text": "Move with the arrow keys..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...attack with the A Key."
+		},
+		{
+			"defnName": "Display",
+			"text": "Escape brings up the menu."
+		},
+		{
+			"defnName": "Display",
+			"text": "You can get a list of controls in there."
+		},
+		{
+			"defnName": "Display",
+			"text": "If you move over the stairs there..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...and press U, you'll enter the dungeon."
+		},
+		{
+			"defnName": "Display",
+			"text": "You can open doors with the D key..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...unless they're locked."
+		},
+		{
+			"defnName": "Display",
+			"text": "You can pick up items with the G key..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...then use them from the menu's Items tab..."
+		},
+		{
+			"defnName": "Display",
+			"text": "...or equip them from the Equip tab."
+		},
+		{
+			"defnName": "Display",
+			"text": "Beyond  that, just... stay alive.  Find the amulet."
+		},
+		{
+			"defnName": "Display",
+			"text": "Good luck."
+		},
+		{
+			"defnName": "Pop",
+			"next": "Subject"
+		},
+		{
+			"name": "Trade",
+			"defnName": "Display",
+			"text": "Okay, but I don't have much."
+		},
+		{
+			"defnName": "Script",
+			"text": "function(u, cr) { u.venueNext = new ItemBarterer().toControl(u, u.display.sizeInPixels, cr.p, cr.t, u.venueCurrent).toVenue(); }"
+		},
+		{
+			"defnName": "Display",
+			"text": "Hope that helps."
+		},
+		{
+			"defnName": "Goto",
+			"next": "Subject"
+		},
+		{
+			"name": "Quit",
+			"defnName": "Display",
+			"text": "Farewell."
+		},
+		{
+			"name": "TalkOver",
+			"defnName": "Display",
+			"text": "[This conversation is over.]"
+		},
+		{
+			"defnName": "Quit"
+		}
+	]
+}

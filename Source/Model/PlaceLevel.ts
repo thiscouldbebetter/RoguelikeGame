@@ -289,11 +289,12 @@ class PlaceLevel extends Place
 
 	// controls
 
-	controlUpdate(world: World)
+	toControl(universe: Universe, world: World)
 	{
 		if (this.control == null)
 		{
-			var entityForPlayer = (world as World2).entityForPlayer;
+			var size = universe.display.sizeInPixels;
+			var entityForPlayer = (world as World2).entityForPlayer as Entity2;
 			this.control = new ControlContainer
 			(
 				"containerVenue",
@@ -301,7 +302,7 @@ class PlaceLevel extends Place
 				new Coords(180, 272, 0), // size
 				// children
 				[
-					(entityForPlayer as Entity2).player().controlUpdate(world, entityForPlayer),
+					entityForPlayer.player().toControl(universe, size, entityForPlayer, null),
 				],
 				null, null
 			);
@@ -342,7 +343,7 @@ class PlaceLevel extends Place
 
 		display.childSelectByName("Status");
 		display.clear();
-		var venueAsControl = this.controlUpdate(world);
+		var venueAsControl = this.toControl(universe, world);
 		this._drawLoc.pos.clear();
 		venueAsControl.draw(universe, display, this._drawLoc, null);
 		display.flush();

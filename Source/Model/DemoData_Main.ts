@@ -35,6 +35,9 @@ class DemoData_Main
 		var emplacements =
 			this.buildEntityDefnGroups_Emplacements(visualsByName);
 
+		var talkers =
+			this.buildEntityDefnGroups_Talkers(visualsByName);
+
 		var itemGroups = this.demoDataItems.buildEntityDefnGroups_Items
 		(
 			universe, visualsByName, itemCategories
@@ -54,6 +57,7 @@ class DemoData_Main
 		var returnValues = ArrayHelper.concatenateAll
 		([
 			[ emplacements ],
+			[ talkers ],
 			itemGroups,
 			moverGroups
 		]);
@@ -207,7 +211,7 @@ class DemoData_Main
 						true // isVisible
 					),
 					new Emplacement("door", null),
-					new Openable(false),
+					new Openable(false, false),
 					new Searchable
 					(
 						.25, // chance
@@ -296,6 +300,44 @@ class DemoData_Main
 		(
 			"Emplacements",
 			1, // relativeFrequency
+			entityDefns
+		);
+
+		return returnValue;
+	}
+
+	buildEntityDefnGroups_Talkers(visuals: Map<string, Visual>)
+	{
+		var mappableDefns = MappableDefn.Instances();
+		var mappableBlocking = mappableDefns.Blocking;
+		var isVisibleTrue = true;
+
+		var entityDefns =
+		[
+			new Entity2
+			(
+				"Mentor",
+				[
+					mappableBlocking,
+					new Drawable(visuals.get("Aligned Priest"), isVisibleTrue),
+					new ItemHolder
+					(
+						[
+							new Entity2("Coins", [ new Item("Coins", 5) ] ),
+						], // itemEntities
+						100, // massMax
+						0 // reachRadius
+					),
+					new Talker("Talk_Mentor"),
+					new Generatable(0)
+				]
+			)
+		];
+
+		var returnValue = new EntityDefnGroup
+		(
+			"Talkers",
+			0, // relativeFrequency
 			entityDefns
 		);
 

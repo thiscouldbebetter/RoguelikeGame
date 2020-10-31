@@ -167,14 +167,15 @@ class PlaceLevel extends Place {
         }
     }
     // controls
-    controlUpdate(world) {
+    toControl(universe, world) {
         if (this.control == null) {
+            var size = universe.display.sizeInPixels;
             var entityForPlayer = world.entityForPlayer;
             this.control = new ControlContainer("containerVenue", new Coords(10, 10, 0), // pos
             new Coords(180, 272, 0), // size
             // children
             [
-                entityForPlayer.player().controlUpdate(world, entityForPlayer),
+                entityForPlayer.player().toControl(universe, size, entityForPlayer, null),
             ], null, null);
         }
         return this.control;
@@ -199,7 +200,7 @@ class PlaceLevel extends Place {
         this.map.draw(universe, world, this, display);
         display.childSelectByName("Status");
         display.clear();
-        var venueAsControl = this.controlUpdate(world);
+        var venueAsControl = this.toControl(universe, world);
         this._drawLoc.pos.clear();
         venueAsControl.draw(universe, display, this._drawLoc, null);
         display.flush();

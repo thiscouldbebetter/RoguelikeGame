@@ -1174,6 +1174,7 @@ class DemoData_Places
 			entityDefnGroups.get("Spellbooks"),
 			entityDefnGroups.get("Stones"),
 			entityDefnGroups.get("Tools"),
+			entityDefnGroups.get("Valuables"),
 			entityDefnGroups.get("Wands"),
 			entityDefnGroups.get("Weapons"),
 		];
@@ -1311,7 +1312,7 @@ class DemoData_Places
 			"StairsDownToNextLevel",
 			worldDefn.entityDefnsByName().get("StairsDown"),
 			[
-				new Locatable(new Disposition(stairsDownPos, null, null)),
+				Locatable.fromPos(stairsDownPos),
 				new Portal2(null, "StairsUp")
 			]
 		);
@@ -1322,11 +1323,22 @@ class DemoData_Places
 			"Altar",
 			worldDefn.entityDefnsByName().get("Altar"),
 			[
-				new Locatable(new Disposition(altarPos, null, null)),
+				Locatable.fromPos(altarPos),
 			]
 		);
 
-		var entities = [ entityStairsDown, entityAltar ];
+		var mentorPos = altarPos.clone().addDimensions(-1, 0, 0);
+		var entityMentor = Entity2.fromNameDefnAndProperties
+		(
+			"Mentor",
+			worldDefn.entityDefnsByName().get("Mentor"),
+			[
+				Locatable.fromPos(mentorPos),
+				new Namable2("mentor", "mentor")
+			]
+		);
+
+		var entities = [ entityStairsDown, entityAltar, entityMentor ];
 
 		var displayName = branch.displayName;
 

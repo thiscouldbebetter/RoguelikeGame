@@ -74,6 +74,7 @@ class DemoData_Items
 			this.buildEntityDefns_Items_Spellbooks,
 			this.buildEntityDefns_Items_Stones,
 			this.buildEntityDefns_Items_Tools,
+			this.buildEntityDefns_Items_Valuables,
 			this.buildEntityDefns_Items_Wands,
 			this.buildEntityDefns_Items_Weapons,
 		];
@@ -270,14 +271,23 @@ class DemoData_Items
 		var entityDefnSetFoods = new Array<Entity>();
 
 		var useFood =
-			(universe: Universe, world: World, place: Place, userEntity: Entity, usedEntityAsEntity: Entity) =>
+			(universe: Universe, world: World, place: Place, entityUserAsEntity: Entity, entityUsedAsEntity: Entity) =>
 		{
-			var usedEntity = usedEntityAsEntity as Entity2;
+			var entityUser = entityUserAsEntity as Entity2;
+			var entityUsed = entityUsedAsEntity as Entity2;
 
-			userEntity.starvable().satietyAdd(usedEntity.food().satiety);
-			userEntity.itemHolder().itemEntityRemove(usedEntity);
+			var item = entityUsed.item();
+			var itemHolder = entityUser.itemHolder();
+			itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
 
-			return "todo";
+			var food = entityUsed.food();
+			entityUser.starvable2().satietyAdd
+			(
+				world, food.satiety, entityUser
+			);
+
+			var itemDefn = item.defn(world);
+			return "You eat the " + itemDefn.appearance;
 		}
 
 		var categoryNamesFood = [ "Food" ];
@@ -285,6 +295,7 @@ class DemoData_Items
 		for (var i = 0; i < foods.length; i++)
 		{
 			var food = foods[i];
+			var name = food.name;
 			var relativeFrequency = 1; // todo
 
 			var entityDefn = new Entity2
@@ -393,11 +404,15 @@ class DemoData_Items
 				var entityUsing = entityUsingAsEntity as Entity2;
 				var entityUsed = entityUsedAsEntity as Entity2;
 
+				var item = entityUsed.item();
+				var itemHolder = entityUsing.itemHolder();
+				itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
+
 				var message = null;
+
 				var player = entityUsing.player();
 				if (player != null)
 				{
-					var item = entityUsed.item();
 					var itemDefn = item.defn(world);
 					message = "You drink the " + itemDefn.appearance + ".";
 					player.messageLog.messageAdd(message);
@@ -588,21 +603,41 @@ class DemoData_Items
 		entityDefnSets: any
 	)
 	{
-		var useScrollNotImplemented =
-			(universe: Universe, world: World, place: Place, entityUsingAsEntity: Entity) =>
+		var useScrollEffect =
+			(universe: Universe, world: World, place: Place, entityUsingAsEntity: Entity, entityUsedAsEntity: Entity, effect: Effect2) =>
 			{
 				var entityUsing = entityUsingAsEntity as Entity2;
+				var entityUsed = entityUsedAsEntity as Entity2;
 
-				var message = "You read the scroll aloud."
+				var item = entityUsed.item();
+				var itemHolder = entityUsing.itemHolder();
+				itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
+
+				var message = null;
+
 				var player = entityUsing.player();
 				if (player != null)
 				{
-					player.messageLog.messageAdd(message);
-					player.messageLog.messageAdd("Scroll effect not yet implemented!");
+					var itemDefn = item.defn(world);
+					message = "The " + itemDefn.appearance + " disappears as you read it.";
+					var messageLog = player.messageLog;
+					
+					if (effect == null)
+					{
+						// todo
+					}
+					{
+						var effectable = entityUsing.effectable2();
+						effectable.effectApply(effect);
+						effectable.updateForTurn(universe, world, place, entityUsing);
+						// message = "Something happens."
+					}
+					messageLog.messageAdd(message);
 				}
-
 				return message;
 			};
+
+		var useScrollNotImplemented = useScrollEffect;
 
 		var scrolls =
 		[
@@ -654,7 +689,7 @@ class DemoData_Items
 
 			var appearance = ArrayHelper.random(appearances, this.randomizer);
 			ArrayHelper.remove(appearances, appearance);
-			appearance = "Scroll Titled '" + appearance + "'";
+			appearance = "Scroll of '" + appearance + "'";
 
 			var entityDefn = new Entity2
 			(
@@ -922,7 +957,7 @@ class DemoData_Items
 			loc.pos.overwriteWith(teleportPos);
 
 			//targetEntity.controllable().controlUpdate(world);
-			targetEntity.player().controlUpdate(world, targetEntity);
+			//targetEntity.player().controlUpdate(world, size, targetEntity);
 		};
 
 		var wandDatas =
@@ -1411,6 +1446,7 @@ class DemoData_Items
 						this.mappableDefns.Open,
 
 						new Drawable(visuals.get(appearance), true),
+						new Generatable(1), // todo
 						new ItemDefn
 						(
 							name,
@@ -1422,8 +1458,7 @@ class DemoData_Items
 							[ "Stone" ], // categoryNames
 							null, // use
 							null
-						),
-						new Generatable(1) // todo
+						)
 					]
 				)
 			);
@@ -1432,26 +1467,56 @@ class DemoData_Items
 		entityDefnSets.push(entityDefnSetStones);
 		entityDefnSets["Group_Stones"] = entityDefnSetStones;
 
+		return new EntityDefnGroup("Stones", 1, entityDefnSetStones);
+	}
+
+	buildEntityDefns_Items_Valuables
+	(
+		visuals: Map<string, Visual>,
+		categories: ItemCategory[],
+		categoriesCommon: ItemCategory[],
+		sizeInPixels: Coords,
+		itemPropertiesNoStack: any,
+		itemPropertiesStandard: any,
+		effectDoNothing: any,
+		entityDefnSets: any
+	)
+	{
 		var entityDefnSetValuables = [];
+
+		var name = "Coins";
 
 		entityDefnSetValuables.push
 		(
 			new Entity2
 			(
-				"Coins",
+				name,
 				ArrayHelper.concatenateAll
 				([
 					itemPropertiesStandard,
 					new Drawable(visuals.get("Coins"), null),
+					new Generatable(0),
+					new ItemDefn
+					(
+						name,
+						name,
+						name,
+						1, // mass
+						1, // tradeValue
+						10000, // stackSizeMax
+						[ "Vaulables" ], // categoryNames
+						null, // use
+						null
+					)
 				])
 			)
 		);
 
-		entityDefnSets["Group_Valuables"] = entityDefnSetValuables;
 		entityDefnSets.push(entityDefnSetValuables);
+		entityDefnSets["Group_Valuables"] = entityDefnSetValuables;
 
-		return new EntityDefnGroup("Stones", 1, entityDefnSets[0]);
-		//return new EntityDefnGroup("Valuables", 1, entityDefnSets[1]);
+		var returnGroup = new EntityDefnGroup("Valuables", 0, entityDefnSetValuables);
+		return returnGroup;
 	}
 
 	buildItemCategories()

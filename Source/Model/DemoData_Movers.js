@@ -25,7 +25,10 @@ class DemoData_Movers {
             }
         };
         // agents
-        var itemHolder = new ItemHolder(null, null, null);
+        var itemHolder = new ItemHolder([], // itemEntities
+        100, // massMax,
+        0 // reachRadius
+        );
         var agentDatas = this.buildAgentDatas();
         var useCorpse = (universe, world, place, entityItem, user) => {
             return "todo";
@@ -81,7 +84,7 @@ class DemoData_Movers {
         for (var i = 0; i < entityDefnsMovers.length; i++) {
             var entityDefnForAgent = entityDefnsMovers[i];
             var entityDemographics = entityDefnForAgent.demographics();
-            var difficulty = (entityDemographics == null ? null : entityDemographics.rank);
+            var difficulty = (entityDemographics == null ? 100 : entityDemographics.rank);
             if (difficulty != null) {
                 var entityDefnGroupForDifficulty = entityDefnGroupsByDifficulty.get(difficulty);
                 if (entityDefnGroupForDifficulty == null) {
@@ -97,7 +100,7 @@ class DemoData_Movers {
         return returnValues;
     }
     buildEntityDefnGroups_MoversAndCorpses_Player(visuals, activityDefns, itemCategories, returnValues) {
-        var entityName = Player.name;
+        var entityName = Player.name; // "Player".
         var demographics = new Demographics("Human", "Rogue", 0, // rank
         0 // experienceToKill
         );
@@ -137,11 +140,18 @@ class DemoData_Movers {
             new EquipmentSocketDefn("Right Finger", ["Ring"]),
         ]);
         var equipmentUser = new EquipmentUser(equipmentSocketDefnGroup);
+        var toControl = (u, size, e, isMenu) => {
+            var toControlMethod = (isMenu ? Playable.toControlMenu : e.player().toControlOverlay);
+            var returnValue = toControlMethod(u, size, e, u.venueCurrent);
+            return returnValue;
+        };
+        var controllable = new Controllable(toControl);
         var entityDefnPlayer = new Entity2(entityName, 
         // properties
         [
             new ActorDefn(activityDefnName),
             this.mappableDefns.Transparent,
+            controllable,
             demographics,
             drawableDefnPlayer,
             new Effectable2(null),
@@ -358,7 +368,7 @@ class DemoData_Movers {
             // dragons
             AD.fromName("Baby Gray Dragon"),
             AD.fromName("Baby Silver Dragon"),
-            //AD.fromName("Baby Shimmering Dragon" ),
+            AD.fromName("Baby Shimmering Dragon"),
             AD.fromName("Baby Red Dragon"),
             AD.fromName("Baby White Dragon"),
             AD.fromName("Baby Orange Dragon"),
@@ -368,7 +378,7 @@ class DemoData_Movers {
             AD.fromName("Baby Yellow Dragon"),
             AD.fromName("Gray Dragon"),
             AD.fromName("Silver Dragon"),
-            //AD.fromName("Shimmering Dragon" ),
+            AD.fromName("Shimmering Dragon"),
             AD.fromName("Red Dragon"),
             AD.fromName("White Dragon"),
             AD.fromName("Orange Dragon"),
@@ -408,7 +418,7 @@ class DemoData_Movers {
             new AD("Minotaur", 17, one, ["Claw:3d10", "Claw:3d10", "Butt:2d8"], 15, 504, 15, 6, 0, 0, 0, true, 1500, 700, large, null, null, null),
             // jabberwock
             AD.fromName("Jabberwock"),
-            //AD.fromName("Jabberwock 2?" ),
+            AD.fromName("Jabberwock 2"),
             // keystone kops
             AD.fromName("Keystone Kop"),
             AD.fromName("Kop Sergeant"),
@@ -472,7 +482,7 @@ class DemoData_Movers {
             // vampires
             AD.fromName("Vampire"),
             AD.fromName("Vampire Lord"),
-            //AD("Vampire 2?" ),
+            AD.fromName("Vampire 2"),
             AD.fromName("Vlad the Impaler"),
             // wraiths
             AD.fromName("Barrow Wight"),

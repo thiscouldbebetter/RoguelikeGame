@@ -66,7 +66,7 @@ class DemoData_Visuals {
             // items - armor - entity armor
             ["Gray Dragonscale Mail", new Coords(36, 11, 0)],
             ["Silver Dragonscale Mail", new Coords(37, 11, 0)],
-            ["Rainbow Dragonscale Mail", new Coords(38, 11, 0)],
+            ["Shimmering Dragonscale Mail", new Coords(38, 11, 0)],
             ["Red Dragonscale Mail", new Coords(39, 11, 0)],
             ["White Dragonscale Mail", new Coords(0, 12, 0)],
             ["Orange Dragonscale Mail", new Coords(1, 12, 0)],
@@ -76,7 +76,7 @@ class DemoData_Visuals {
             ["Yellow Dragonscale Mail", new Coords(5, 12, 0)],
             ["Gray Dragon Scales", new Coords(6, 12, 0)],
             ["Silver Dragon Scales", new Coords(7, 12, 0)],
-            ["Rainbow Dragon Scales", new Coords(8, 12, 0)],
+            ["Shimmering Dragon Scales", new Coords(8, 12, 0)],
             ["Red Dragon Scales", new Coords(9, 12, 0)],
             ["White Dragon Scales", new Coords(10, 12, 0)],
             ["Orange Dragon Scales", new Coords(11, 12, 0)],
@@ -255,7 +255,7 @@ class DemoData_Visuals {
             "Venzar Borgavve", "Verr Yed Horre", "Xixaxa Xoxaxa Xuxaxa", "Yum Yum",
             "Zelgo Mer",
         ];
-        createTiles(scrollNamesInTileOrder, "Scroll Titled '", "'", new Coords(10, 17, 0));
+        createTiles(scrollNamesInTileOrder, "Scroll of '", "'", new Coords(10, 17, 0));
         var spellbookNamesInTileOrder = [
             "Parchment", "Vellum", "Ragged", "Dogeared",
             "Mottled", "Stained", "Cloth", "Leather",
@@ -354,9 +354,9 @@ class DemoData_Visuals {
             // centaurs - 131-133
             "Plains Centaur", "Mountain Centaur", "Forest Centaur",
             // baby dragons - 134-143
-            "Baby Gray Dragon", "Baby Silver Dragon", "[Baby Shimmering Dragon]", "Baby Red Dragon", "Baby White Dragon", "Baby Orange Dragon", "Baby Black Dragon", "Baby Blue Dragon", "Baby Green Dragon", "Baby Yellow Dragon",
+            "Baby Gray Dragon", "Baby Silver Dragon", "Baby Shimmering Dragon", "Baby Red Dragon", "Baby White Dragon", "Baby Orange Dragon", "Baby Black Dragon", "Baby Blue Dragon", "Baby Green Dragon", "Baby Yellow Dragon",
             // dragons - 144-153
-            "Gray Dragon", "Silver Dragon", "[Shimmering Dragon]", "Red Dragon", "White Dragon", "Orange Dragon", "Black Dragon", "Blue Dragon", "Green Dragon", "Yellow Dragon",
+            "Gray Dragon", "Silver Dragon", "Shimmering Dragon", "Red Dragon", "White Dragon", "Orange Dragon", "Black Dragon", "Blue Dragon", "Green Dragon", "Yellow Dragon",
             // elementals - 154-158
             "Stalker", "Air Elemental", "Fire Elemental", "Earth Elemental", "Water Elemental",
             // fungi - 159-165
@@ -366,7 +366,7 @@ class DemoData_Visuals {
             // giant - 170-178
             "Giant", "Stone Giant", "Hill Giant", "Fire Giant", "Frost Giant", "Storm Giant", "Ettin", "Titan", "Minotaur",
             // jabberwockoids - 179-180
-            "Jabberwock", "[green jabberwock?]",
+            "Jabberwock", "Jabberwock 2",
             // keystone kops - 181-184
             "Keystone Kop", "Kop Sergeant", "Kop Lieutenant", "Kop Kaptain",
             // liches - 185-188
@@ -390,7 +390,7 @@ class DemoData_Visuals {
             // 226
             "Umber Hulk",
             // 227-230
-            "Vampire", "Vampire Lord", "[vampire3]", "Vlad the Impaler",
+            "Vampire", "Vampire Lord", "Vampire 2", "Vlad the Impaler",
             // wraiths - 231-233
             "Barrow Wight", "Wraith", "Nazgul",
             // 234

@@ -19,7 +19,7 @@ class Demographics extends EntityProperty {
         return wasRankIncreased;
     }
     // controls
-    controlUpdate(world, entity, pos) {
+    toControl(world, entity, pos) {
         if (this.control == null) {
             this.control = new ControlContainer("containerDemographics", pos, new Coords(160, 16, 0), // size
             [

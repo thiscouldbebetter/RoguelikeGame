@@ -13,10 +13,10 @@ class Starvable2 extends EntityProperty {
         else if (this.satiety >= this.satietyMax) {
             this.satiety = this.satietyMax;
         }
-        this.controlUpdate(world, moverEntity, null);
+        //this.controlUpdate(world, moverEntity, null);
     }
     // controls
-    controlUpdate(world, entity, pos) {
+    toControl(world, entity, pos) {
         if (this.control == null && pos != null) {
             this.control = new ControlContainer("containerMover_Vitals", pos, new Coords(160, 32, 0), // size
             [

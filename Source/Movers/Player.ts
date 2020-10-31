@@ -142,14 +142,20 @@ class Player extends EntityProperty
 				player.sightRange
 			);
 
-			player.controlUpdate(world, entityPlayer);
+			//player.controlUpdate(world, entityPlayer);
 		}
 	}
 
 	// controls
 
-	controlUpdate(world: World, entity: Entity)
+	toControl(universe: Universe, size: Coords, entity: Entity, venuePrev: Venue): ControlBase
 	{
+		return this.toControlOverlay(universe, size, entity);
+	}
+
+	toControlOverlay(universe: Universe, size: Coords, entity: Entity)
+	{
+		var world = universe.world;
 		var entity2: Entity2 = (entity as Entity2);
 
 		if (this.control == null)
@@ -189,8 +195,8 @@ class Player extends EntityProperty
 				new Coords(180, 272, 0), // size
 				[
 					ControlLabel.fromPosAndText(new Coords(10, 16, 0), "Name: " + entity.name),
-					entity2.demographics().controlUpdate(world, entity, new Coords(10, 32, 0)),
-					entity2.starvable2().controlUpdate(world, entity, new Coords(10, 64, 0)),
+					entity2.demographics().toControl(world, entity, new Coords(10, 32, 0)),
+					entity2.starvable2().toControl(world, entity, new Coords(10, 64, 0)),
 					controlLocus,
 				],
 				null, null
@@ -199,6 +205,13 @@ class Player extends EntityProperty
 
 		return this.control;
 	}
+
+	controlUpdate(w: World, e: Entity)
+	{
+		// todo - Remove this.
+	}
+
+	// Clonable.
 
 	clone()
 	{

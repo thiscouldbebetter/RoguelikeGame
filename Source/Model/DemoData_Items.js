@@ -39,6 +39,7 @@ class DemoData_Items {
             this.buildEntityDefns_Items_Spellbooks,
             this.buildEntityDefns_Items_Stones,
             this.buildEntityDefns_Items_Tools,
+            this.buildEntityDefns_Items_Valuables,
             this.buildEntityDefns_Items_Wands,
             this.buildEntityDefns_Items_Weapons,
         ];
@@ -135,15 +136,21 @@ class DemoData_Items {
             new Food("Wolfsbane Sprig", 40, 1)
         ];
         var entityDefnSetFoods = new Array();
-        var useFood = (universe, world, place, userEntity, usedEntityAsEntity) => {
-            var usedEntity = usedEntityAsEntity;
-            userEntity.starvable().satietyAdd(usedEntity.food().satiety);
-            userEntity.itemHolder().itemEntityRemove(usedEntity);
-            return "todo";
+        var useFood = (universe, world, place, entityUserAsEntity, entityUsedAsEntity) => {
+            var entityUser = entityUserAsEntity;
+            var entityUsed = entityUsedAsEntity;
+            var item = entityUsed.item();
+            var itemHolder = entityUser.itemHolder();
+            itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
+            var food = entityUsed.food();
+            entityUser.starvable2().satietyAdd(world, food.satiety, entityUser);
+            var itemDefn = item.defn(world);
+            return "You eat the " + itemDefn.appearance;
         };
         var categoryNamesFood = ["Food"];
         for (var i = 0; i < foods.length; i++) {
             var food = foods[i];
+            var name = food.name;
             var relativeFrequency = 1; // todo
             var entityDefn = new Entity2(name, [
                 this.mappableDefns.Open,
@@ -210,10 +217,12 @@ class DemoData_Items {
         var useItemPotion = (universe, world, place, entityUsingAsEntity, entityUsedAsEntity) => {
             var entityUsing = entityUsingAsEntity;
             var entityUsed = entityUsedAsEntity;
+            var item = entityUsed.item();
+            var itemHolder = entityUsing.itemHolder();
+            itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
             var message = null;
             var player = entityUsing.player();
             if (player != null) {
-                var item = entityUsed.item();
                 var itemDefn = item.defn(world);
                 message = "You drink the " + itemDefn.appearance + ".";
                 player.messageLog.messageAdd(message);
@@ -321,16 +330,32 @@ class DemoData_Items {
         return new EntityDefnGroup("Rings", 1, entityDefnSets[0]);
     }
     buildEntityDefns_Items_Scrolls(visuals, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
-        var useScrollNotImplemented = (universe, world, place, entityUsingAsEntity) => {
+        var useScrollEffect = (universe, world, place, entityUsingAsEntity, entityUsedAsEntity, effect) => {
             var entityUsing = entityUsingAsEntity;
-            var message = "You read the scroll aloud.";
+            var entityUsed = entityUsedAsEntity;
+            var item = entityUsed.item();
+            var itemHolder = entityUsing.itemHolder();
+            itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
+            var message = null;
             var player = entityUsing.player();
             if (player != null) {
-                player.messageLog.messageAdd(message);
-                player.messageLog.messageAdd("Scroll effect not yet implemented!");
+                var itemDefn = item.defn(world);
+                message = "The " + itemDefn.appearance + " disappears as you read it.";
+                var messageLog = player.messageLog;
+                if (effect == null) {
+                    // todo
+                }
+                {
+                    var effectable = entityUsing.effectable2();
+                    effectable.effectApply(effect);
+                    effectable.updateForTurn(universe, world, place, entityUsing);
+                    // message = "Something happens."
+                }
+                messageLog.messageAdd(message);
             }
             return message;
         };
+        var useScrollNotImplemented = useScrollEffect;
         var scrolls = [
             new Scroll("Amnesia", useScrollNotImplemented),
             new Scroll("Blank", useScrollNotImplemented),
@@ -372,7 +397,7 @@ class DemoData_Items {
             var name = "Scroll of " + scroll.name;
             var appearance = ArrayHelper.random(appearances, this.randomizer);
             ArrayHelper.remove(appearances, appearance);
-            appearance = "Scroll Titled '" + appearance + "'";
+            appearance = "Scroll of '" + appearance + "'";
             var entityDefn = new Entity2(name, [
                 this.mappableDefns.Open,
                 new Drawable(visuals.get(appearance), true),
@@ -535,7 +560,7 @@ class DemoData_Items {
             }
             loc.pos.overwriteWith(teleportPos);
             //targetEntity.controllable().controlUpdate(world);
-            targetEntity.player().controlUpdate(world, targetEntity);
+            //targetEntity.player().controlUpdate(world, size, targetEntity);
         };
         var wandDatas = [
             new Wand("Cancelling", wandUseNotImplemented),
@@ -858,26 +883,37 @@ class DemoData_Items {
             entityDefnSetStones.push(new Entity2(name, [
                 this.mappableDefns.Open,
                 new Drawable(visuals.get(appearance), true),
+                new Generatable(1),
                 new ItemDefn(name, appearance, appearance, 1, // mass
                 1, // tradeValue
                 1, // stackSizeMax
                 ["Stone"], // categoryNames
                 null, // use
-                null),
-                new Generatable(1) // todo
+                null)
             ]));
         }
         entityDefnSets.push(entityDefnSetStones);
         entityDefnSets["Group_Stones"] = entityDefnSetStones;
+        return new EntityDefnGroup("Stones", 1, entityDefnSetStones);
+    }
+    buildEntityDefns_Items_Valuables(visuals, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
         var entityDefnSetValuables = [];
-        entityDefnSetValuables.push(new Entity2("Coins", ArrayHelper.concatenateAll([
+        var name = "Coins";
+        entityDefnSetValuables.push(new Entity2(name, ArrayHelper.concatenateAll([
             itemPropertiesStandard,
             new Drawable(visuals.get("Coins"), null),
+            new Generatable(0),
+            new ItemDefn(name, name, name, 1, // mass
+            1, // tradeValue
+            10000, // stackSizeMax
+            ["Vaulables"], // categoryNames
+            null, // use
+            null)
         ])));
-        entityDefnSets["Group_Valuables"] = entityDefnSetValuables;
         entityDefnSets.push(entityDefnSetValuables);
-        return new EntityDefnGroup("Stones", 1, entityDefnSets[0]);
-        //return new EntityDefnGroup("Valuables", 1, entityDefnSets[1]);
+        entityDefnSets["Group_Valuables"] = entityDefnSetValuables;
+        var returnGroup = new EntityDefnGroup("Valuables", 0, entityDefnSetValuables);
+        return returnGroup;
     }
     buildItemCategories() {
         var returnValues = [

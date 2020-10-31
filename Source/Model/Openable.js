@@ -1,13 +1,16 @@
 "use strict";
 class Openable extends EntityProperty {
-    constructor(isOpen) {
+    constructor(isOpen, isLocked) {
         super();
         this.isOpen = isOpen;
+        this.isLocked = isLocked;
     }
     clone() {
-        return new Openable(this.isOpen);
+        return new Openable(this.isOpen, this.isLocked);
     }
     overwriteWith(other) {
-        return this; // todo
+        this.isOpen = other.isOpen;
+        this.isLocked = other.isLocked;
+        return this;
     }
 }

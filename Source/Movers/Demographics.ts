@@ -38,7 +38,7 @@ class Demographics extends EntityProperty
 
 	// controls
 
-	controlUpdate(world: World, entity: Entity, pos: Coords)
+	toControl(world: World, entity: Entity, pos: Coords)
 	{
 		if (this.control == null)
 		{

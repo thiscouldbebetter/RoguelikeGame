@@ -1,5 +1,5 @@
 Roguelike Game
-Issues List
+Issue List
 ==============
 
 Enhancements
@@ -12,9 +12,13 @@ Emplacements - Door - Locking.
 Emplacements - Traps - Don't do anything.
 
 Items - Blessed/Uncursed/Cursed status.
-Items - Scrolls.
+Items - Effects.
+Items - Potions.
 Items - Rings.
+Items - Scrolls.
 Items - Wands.
+
+Items - Equippable - Can't equip anything.
 
 Levels - Castle.
 Levels - Caverns.
@@ -37,14 +41,26 @@ Monsters - Talkers - Shopkeeper.
 Monsters - Talkers - Oracle.
 
 Player - Attacks don't use weapons.
+Player - Combat - Armor class.
 Player - Menus.
-Player - Wrong sprite (knight for rogue).
+Player - Equipment - None.
 
 Projectiles - Don't do anything.
+
 
 Errors
 ------
 
-Mysterious crash sometime on second level - Missing monster defn?
+Dying just freezes?
 
- 
+Can Step on Monsters?
+
+Stairway to branch (e.g. mines) doesn't work.
+
+Monsters - Wrong sprites.
+	Rogue is Ranger.
+	Newt is kraken.
+	Gold naga spawn is green.
+
+Player - Wrong sprite (knight for rogue).
+Player - No encumbrance.

@@ -199,7 +199,6 @@ class DemoData_Actions
 		shouldOpenNotClose: boolean
 	)
 	{
-		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
 
 		var actorMover = actor.mover();
@@ -208,62 +207,48 @@ class DemoData_Actions
 
 		if (actorMover.movesThisTurn >= costToPerform)
 		{
-			var actorLoc = actor.locatable().loc;
-			var directionFacing = actorLoc.orientation.forward.clone().directions();
-			var posInCellsDestination = actorLoc.pos.clone().add
-			(
-				directionFacing
-			);
+			var entityBeingFaced =
+				actor.actorData().entityBeingFaced(universe, world, placeAsPlace, actor);
 
-			var map = place.map;
-			var cellDestination = map.cellAtPos(posInCellsDestination);
-
-			if (cellDestination != null)
+			if (entityBeingFaced != null)
 			{
-				var entitiesInCellDestination = cellDestination.entitiesPresent;
-				if (entitiesInCellDestination.length == 1)
+				var searchable = entityBeingFaced.searchable();
+				var openable = entityBeingFaced.openable();
+
+				var isHidden = (searchable != null && searchable.isHidden);
+				if (isHidden)
 				{
-					var entityInCell = entitiesInCellDestination[0];
-
-					var searchable = entityInCell.searchable();
-					var openable = entityInCell.openable();
-
-					var isHidden = (searchable != null && searchable.isHidden);
-					if (isHidden)
+					// Do nothing.
+				}
+				else if (openable != null)
+				{
+					var isAlreadyInDesiredState = (shouldOpenNotClose == openable.isOpen);
+					if (isAlreadyInDesiredState)
 					{
-						// Do nothing.
+						if (actor.player() != null)
+						{
+							var openOrClosed = (shouldOpenNotClose ? "open" : "closed");
+							var appearance = entityBeingFaced.emplacement().appearance; // hack
+							var message = "The " + appearance + " is already " + openOrClosed + ".";
+							actor.player().messageLog.messageAdd(message);
+						}
 					}
-					else if (openable != null)
+					else
 					{
-						var isAlreadyInDesiredState = (shouldOpenNotClose == openable.isOpen);
-						if (isAlreadyInDesiredState)
+						var openOrClose = (shouldOpenNotClose ? "open" : "close");
+						if (actor.player() != null)
 						{
-							if (actor.player() != null)
-							{
-								var openOrClosed = (shouldOpenNotClose ? "open" : "closed");
-								var appearance = entityInCell.emplacement().appearance; // hack
-								var message = "The " + appearance + " is already " + openOrClosed + ".";
-								actor.player().messageLog.messageAdd(message);
-							}
+							var appearance = entityBeingFaced.emplacement().appearance; // hack
+							var message = "You " + openOrClose + " the " + appearance + ".";
+							actor.player().messageLog.messageAdd(message);
 						}
-						else
-						{
-							var openOrClose = (shouldOpenNotClose ? "open" : "close");
-							if (actor.player() != null)
-							{
-								var appearance = entityInCell.emplacement().appearance; // hack
-								var message = "You " + openOrClose + " the " + appearance + ".";
-								actor.player().messageLog.messageAdd(message);
-							}
-							openable.isOpen = (openable.isOpen == false);
+						openable.isOpen = (openable.isOpen == false);
 
-							actorMover.movesThisTurn -= costToPerform;
-							actor.turnable().hasActedThisTurn = true;
-						}
+						actorMover.movesThisTurn -= costToPerform;
+						actor.turnable().hasActedThisTurn = true;
+					}
 
-					} // end if (openable != null)
-
-				} // end for entitiesInCellDestination
+				} // end if openable != null
 
 			} // end if cellDestination != null
 
@@ -414,84 +399,6 @@ class DemoData_Actions
 		}
 	}
 
-	actionItem_SelectAtOffset_Perform
-	(
-		universe: Universe, world: World, place: Place, actorAsEntity: Entity, indexOffset: number
-	)
-	{
-		var actor = actorAsEntity as Entity2;
-
-		var itemHolder = actor.itemHolder();
-		var itemsHeld = itemHolder.itemEntities;
-
-		if (itemsHeld.length == 0)
-		{
-			return;
-		}
-
-		var itemSelected = itemHolder.itemEntitySelected;
-
-		var indexOfItemSelected = 0;
-
-		if (itemSelected == null)
-		{
-			indexOfItemSelected = 0;
-		}
-		else
-		{
-			var indexOfItemSelected = itemsHeld.indexOf
-			(
-				itemSelected
-			);
-
-			indexOfItemSelected += indexOffset;
-
-			indexOfItemSelected = NumberHelper.wrapToRangeMinMax
-			(
-				indexOfItemSelected, 0, itemsHeld.length
-			);
-		}
-
-		itemHolder.itemEntitySelected = itemsHeld[indexOfItemSelected];
-
-		actor.player().controlUpdate(world, actor);
-	}
-
-	actionItem_TargetSelected_Perform
-	(
-		universe: Universe, world: World, place: Place, actor: Entity
-	)
-	{
-		//var itemHolder = actor.itemHolder();
-		//itemHolder.itemTargeted = itemHolder.itemEntitySelected;
-		(actor as Entity2).player().controlUpdate(world, actor);
-	}
-
-	actionItem_UseSelected_Perform
-	(
-		universe: Universe, world: World, place: Place, actorAsEntity: Entity
-	)
-	{
-		var actor = actorAsEntity as Entity2;
-
-		var itemEntityToUse = actor.itemHolder().itemEntitySelected;
-
-		if (itemEntityToUse != null)
-		{
-			var itemToUse = itemEntityToUse.item();
-			var movesToUse = 1; // todo
-
-			var mover = actor.mover();
-			if (mover.movesThisTurn >= movesToUse)
-			{
-				mover.movesThisTurn -= movesToUse;
-				actor.turnable().hasActedThisTurn = true;
-
-				itemToUse.defn(world).use(world, actor, itemToUse, actor);
-			}
-		}
-	}
-
 	actionMove_Perform
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
@@ -623,6 +530,14 @@ class DemoData_Actions
 							{
 								this.actionAttack_Melee_Perform(universe, world, place, actor);
 							}
+						}
+						else if (entityInCell.namable() != null)
+						{
+							entityDefnName = entityInCell.namable().name;
+						}
+						else
+						{
+							entityDefnName = "unknown force";
 						}
 
 						if (player != null)
@@ -769,7 +684,37 @@ class DemoData_Actions
 			} // end if cell at offset exists
 
 		} // end for each neighboring cell
-	};
+	}
+
+	actionTalk_Perform
+	(
+		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
+	)
+	{
+		var place = placeAsPlace as PlaceLevel;
+		var actor = actorAsEntity as Entity2;
+
+		var actorMover = actor.mover();
+
+		var costToPerform = actorMover.movesPerTurn; // todo
+
+		if (actorMover.movesThisTurn >= costToPerform)
+		{
+			var entityBeingFaced =
+				actor.actorData().entityBeingFaced(universe, world, place, actor);
+
+			if (entityBeingFaced != null)
+			{
+				var talker = entityBeingFaced.talker();
+				if (talker != null)
+				{
+					talker.talk(universe, world, place, entityBeingFaced, actor);
+				}
+
+			} // end if entityBeingFaced != null
+
+		} // end if enough moves
+	}
 
 	actionWait_Perform
 	(
@@ -779,7 +724,7 @@ class DemoData_Actions
 		var actor = actorAsEntity as Entity2;
 		actor.mover().movesThisTurn = 0;
 		actor.turnable().hasActedThisTurn = true;
-	};
+	}
 
 	actionsBuild()
 	{
@@ -843,34 +788,6 @@ class DemoData_Actions
 		(
 			"Pick Up Item",
 			demoActions.actionItem_PickUp_Perform
-		);
-
-		var actionItem_SelectNext = new Action
-		(
-			"Select Next Item",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
-			{
-				demoActions.actionItem_SelectAtOffset_Perform(universe, world, place, actor, 1);
-			}
-		);
-
-		var actionItem_SelectPrev = new Action
-		(
-			"Select Previous Item",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
-			{
-				demoActions.actionItem_SelectAtOffset_Perform(universe, world, place, actor, -1);
-			}
-		);
-
-		var actionItem_TargetSelected = new Action
-		(
-			"Target Selected Item", demoActions.actionItem_TargetSelected_Perform
-		);
-
-		var actionItem_UseSelected = new Action
-		(
-			"Use Selected Item", demoActions.actionItem_UseSelected_Perform
 		);
 
 		var actionMoveE = new Action
@@ -947,6 +864,8 @@ class DemoData_Actions
 
 		var actionSearch = new Action("Search", demoActions.actionSearch_Perform);
 
+		var actionTalk = new Action("Talk", demoActions.actionTalk_Perform);
+
 		var actionWait = new Action("Wait", demoActions.actionWait_Perform);
 
 		var actionInstances = Action.Instances();
@@ -959,10 +878,6 @@ class DemoData_Actions
 			actionEmplacement_Use,
 			actionItem_DropSelected,
 			actionItem_PickUp,
-			actionItem_SelectNext,
-			actionItem_SelectPrev,
-			actionItem_TargetSelected,
-			actionItem_UseSelected,
 			actionMoveE,
 			actionMoveSE,
 			actionMoveS,
@@ -972,6 +887,7 @@ class DemoData_Actions
 			actionMoveN,
 			actionMoveNE,
 			actionSearch,
+			actionTalk,
 			actionWait,
 			actionInstances.ShowMenu,
 		];
@@ -1204,7 +1120,7 @@ class DemoData_Actions
 					new ActionToInputsMapping("Pick Up Item", [ "g" ], null),
 					new ActionToInputsMapping("Drop Selected Item", [ "r" ], null),
 					new ActionToInputsMapping("Search", [ "s" ], null),
-					new ActionToInputsMapping("Target Selected Item", [ "t" ], null),
+					new ActionToInputsMapping("Talk", [ "t" ], null),
 					new ActionToInputsMapping("Use Emplacement", [ "u" ], null ),
 					new ActionToInputsMapping("Use Selected Item", [ "y" ], null),
 
