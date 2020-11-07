@@ -128,7 +128,7 @@ class DemoData_Movers {
         var equipmentSocketDefnGroup = new EquipmentSocketDefnGroup("Equippable", [
             new EquipmentSocketDefn("Wielding", ["Weapon"]),
             new EquipmentSocketDefn("Ammunition", ["Ammunition"]),
-            new EquipmentSocketDefn("Ready", ["Wand", "Tool"]),
+            new EquipmentSocketDefn("Tool", ["Wand", "Tool"]),
             new EquipmentSocketDefn("Head", ["Headwear"]),
             new EquipmentSocketDefn("Neck", ["Neckwear"]),
             new EquipmentSocketDefn("Shirt", ["Shirt"]),
@@ -156,7 +156,7 @@ class DemoData_Movers {
             drawableDefnPlayer,
             new Effectable2(null),
             equipmentUser,
-            new ItemHolder(null, null, null),
+            new ItemHolder(null, 100, 0),
             new Killable(160, null, null),
             moverPlayer,
             new Player(8 // sightRange
@@ -419,6 +419,7 @@ class DemoData_Movers {
             // jabberwock
             AD.fromName("Jabberwock"),
             AD.fromName("Jabberwock 2"),
+            AD.fromName("???"),
             // keystone kops
             AD.fromName("Keystone Kop"),
             AD.fromName("Kop Sergeant"),

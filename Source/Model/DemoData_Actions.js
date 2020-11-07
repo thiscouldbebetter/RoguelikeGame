@@ -31,7 +31,18 @@ class DemoData_Actions {
                 actor.turnable().hasActedThisTurn = true;
                 // todo - Calculate damage.
                 // hack - Only the player can inflict damage for now.
-                var damagePossibleAsDieRoll = "1d6";
+                var equipmentUser = actor.equipmentUser();
+                var entityWieldableEquipped = (equipmentUser == null
+                    ? null
+                    : equipmentUser.itemEntityInSocketWithName("Wielding"));
+                var actorHasWieldableEquipped = (entityWieldableEquipped != null);
+                var damagePossibleAsDieRoll;
+                if (actorHasWieldableEquipped) {
+                    damagePossibleAsDieRoll = "1d6";
+                }
+                else {
+                    damagePossibleAsDieRoll = "1d6"; // todo
+                }
                 var damageAmount = DiceRoll.roll(damagePossibleAsDieRoll, world.randomizer);
                 var damageInflicted = (actorPlayer == null ? 0 : damageAmount);
                 if (damageInflicted == 0) {
@@ -237,6 +248,45 @@ class DemoData_Actions {
                     actor.player().messageLog.messageAdd(message);
                 }
             }
+        }
+    }
+    actionItem_SelectedUse_Perform(universe, worldAsWorld, placeAsPlace, actorAsEntity) {
+        var world = worldAsWorld;
+        var place = placeAsPlace;
+        var actor = actorAsEntity;
+        var actorMover = actor.mover();
+        var costToUse = actorMover.movesPerTurn; // todo
+        if (actorMover.movesThisTurn < costToUse) {
+            return;
+        }
+        var actorLoc = actor.locatable().loc;
+        var directionFacing = actorLoc.orientation.forward.clone().directions();
+        var posInCellsDestination = actorLoc.pos.clone().add(directionFacing);
+        var map = place.map;
+        var cellDestination = map.cellAtPos(posInCellsDestination);
+        if (cellDestination == null) {
+            return;
+        }
+        var equipmentUser = actor.equipmentUser();
+        var entityItemToUse = equipmentUser.itemEntityInSocketWithName("Tool");
+        var player = actor.player();
+        if (entityItemToUse == null) {
+            var message = "You have no tool equipped!";
+            player.messageLog.messageAdd(message);
+        }
+        else {
+            var entitiesInCellDestination = cellDestination.entitiesPresent;
+            for (var i = 0; i < entitiesInCellDestination.length; i++) {
+                var entityInCell = entitiesInCellDestination[i];
+                actorMover.movesThisTurn -= costToUse;
+                actor.turnable().hasActedThisTurn = true;
+                if (player != null) {
+                    var itemToUse = entityItemToUse.item();
+                    var itemDefnName = itemToUse.defn(world).appearance;
+                    var message = "You use the " + itemDefnName + " on the " + entityInCell.namable().name + ".";
+                    player.messageLog.messageAdd(message);
+                }
+            } // end for entitiesInCellDestination
         }
     }
     actionMove_Perform(universe, world, placeAsPlace, actorAsEntity, action, directionToMove) {
@@ -447,8 +497,15 @@ class DemoData_Actions {
             demoActions.actionDoorOpenOrClose_Perform(universe, world, place, actor, shouldOpenNotClose);
         });
         var actionEmplacement_Use = new Action("Use Emplacement", demoActions.actionEmplacement_Use_Perform);
-        var actionItem_DropSelected = new Action("Drop Selected Item", demoActions.actionItem_DropSelected_Perform);
+        /*
+        var actionItem_DropSelected = new Action
+        (
+            "Drop Selected Item",
+            demoActions.actionItem_DropSelected_Perform
+        );
+        */
         var actionItem_PickUp = new Action("Pick Up Item", demoActions.actionItem_PickUp_Perform);
+        var actionItem_SelectedUse = new Action("Use Selected Item", demoActions.actionItem_SelectedUse_Perform);
         var actionMoveE = new Action("Move East", (universe, world, place, actor) => {
             demoActions.actionMove_Perform(universe, world, place, actor, null, directions[0]);
         });
@@ -483,8 +540,8 @@ class DemoData_Actions {
             actionDoorClose,
             actionDoorOpen,
             actionEmplacement_Use,
-            actionItem_DropSelected,
             actionItem_PickUp,
+            actionItem_SelectedUse,
             actionMoveE,
             actionMoveSE,
             actionMoveS,

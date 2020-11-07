@@ -36,6 +36,7 @@ class Entity2 extends Entity {
     }
     actorData() { return this.propertyByName(ActorData.name); }
     actorDefn() { return this.propertyByName(ActorDefn.name); }
+    armored() { return this.propertyByName(Armored.name); }
     awaitable() { return this.propertyByName(Awaitable.name); }
     demographics() { return this.propertyByName(Demographics.name); }
     effectable2() { return this.propertyByName(Effectable2.name); }

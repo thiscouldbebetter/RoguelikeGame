@@ -345,7 +345,7 @@ class DemoData_Items {
                 if (effect == null) {
                     // todo
                 }
-                {
+                else {
                     var effectable = entityUsing.effectable2();
                     effectable.effectApply(effect);
                     effectable.updateForTurn(universe, world, place, entityUsing);
@@ -650,6 +650,9 @@ class DemoData_Items {
             ["Sword", "Sword"],
         ];
         var entityDefnSetWeapons = [];
+        var equippable = new Equippable(null, // equip
+        null // unequip
+        );
         for (var i = 0; i < namesAndAppearancesOfWeapons.length; i++) {
             var nameAndAppearance = namesAndAppearancesOfWeapons[i];
             var name = nameAndAppearance[0];
@@ -657,12 +660,13 @@ class DemoData_Items {
             var entityDefn = new Entity2(name, [
                 this.mappableDefns.Open,
                 new Drawable(visuals.get(name), true),
+                equippable,
+                new Generatable(1),
                 new ItemDefn(name, appearance, appearance, 1, // mass
                 1, // tradeValue
                 1, // stackSizeMax
                 ["Weapon"], // categoryNames
-                null, null),
-                new Generatable(1) // todo
+                null, null)
             ]);
             entityDefnSetWeapons.push(entityDefn);
         }
@@ -733,6 +737,9 @@ class DemoData_Items {
             ["Small Round Shield", shield],
         ];
         var entityDefnSetArmor = [];
+        var equippable = new Equippable(null, // equip
+        null // unequip
+        );
         for (var i = 0; i < namesAndCategoriesOfArmor.length; i++) {
             var nameAndCategory = namesAndCategoriesOfArmor[i];
             var name = nameAndCategory[0];
@@ -741,6 +748,7 @@ class DemoData_Items {
             var entityDefn = new Entity2(name, [
                 this.mappableDefns.Open,
                 new Drawable(visuals.get(name), true),
+                equippable,
                 new ItemDefn(appearance, appearance, appearance, 1, // mass
                 1, // tradeValue
                 1, // stackSizeMax

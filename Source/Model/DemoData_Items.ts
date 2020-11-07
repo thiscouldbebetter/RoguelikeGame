@@ -626,6 +626,7 @@ class DemoData_Items
 					{
 						// todo
 					}
+					else
 					{
 						var effectable = entityUsing.effectable2();
 						effectable.effectApply(effect);
@@ -1104,6 +1105,12 @@ class DemoData_Items
 
 		var entityDefnSetWeapons = [];
 
+		var equippable = new Equippable
+		(
+			null, // equip
+			null // unequip
+		);
+
 		for (var i = 0; i < namesAndAppearancesOfWeapons.length; i++)
 		{
 			var nameAndAppearance = namesAndAppearancesOfWeapons[i];
@@ -1116,6 +1123,8 @@ class DemoData_Items
 				[
 					this.mappableDefns.Open,
 					new Drawable(visuals.get(name), true),
+					equippable,
+					new Generatable(1), // todo
 					new ItemDefn
 					(
 						name,
@@ -1126,8 +1135,7 @@ class DemoData_Items
 						1, // stackSizeMax
 						[ "Weapon" ], // categoryNames
 						null, null
-					),
-					new Generatable(1) // todo
+					)
 				]
 			);
 
@@ -1222,6 +1230,12 @@ class DemoData_Items
 
 		var entityDefnSetArmor = [];
 
+		var equippable = new Equippable
+		(
+			null, // equip
+			null // unequip
+		);
+
 		for (var i = 0; i < namesAndCategoriesOfArmor.length; i++)
 		{
 			var nameAndCategory = namesAndCategoriesOfArmor[i];
@@ -1235,6 +1249,7 @@ class DemoData_Items
 				[
 					this.mappableDefns.Open,
 					new Drawable(visuals.get(name), true),
+					equippable,
 					new ItemDefn
 					(
 						appearance,

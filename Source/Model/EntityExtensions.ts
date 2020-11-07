@@ -52,6 +52,7 @@ class Entity2 extends Entity
 
 	actorData(): ActorData { return this.propertyByName(ActorData.name) as ActorData; }
 	actorDefn(): ActorDefn { return this.propertyByName(ActorDefn.name) as ActorDefn; }
+	armored(): Armored { return this.propertyByName(Armored.name) as Armored; }
 	awaitable(): Awaitable { return this.propertyByName(Awaitable.name) as Awaitable; }
 	demographics(): Demographics { return this.propertyByName(Demographics.name) as Demographics; }
 	effectable2(): Effectable2 { return this.propertyByName(Effectable2.name) as Effectable2; }

@@ -16,6 +16,7 @@ Items - Effects.
 Items - Potions.
 Items - Rings.
 Items - Scrolls.
+Items - Tools - No way to use.
 Items - Wands.
 
 Items - Equippable - Can't equip anything.
@@ -53,14 +54,9 @@ Errors
 
 Dying just freezes?
 
-Can Step on Monsters?
-
 Stairway to branch (e.g. mines) doesn't work.
 
-Monsters - Wrong sprites.
-	Rogue is Ranger.
-	Newt is kraken.
-	Gold naga spawn is green.
+Monsters - Get stuck (at doors?)
+Monsters - Wrong sprites due to misalignment.
+	Added a hack to fix obvious symptoms.
 
-Player - Wrong sprite (knight for rogue).
-Player - No encumbrance.
