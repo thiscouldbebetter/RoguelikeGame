@@ -192,10 +192,11 @@ class DemoData_Main {
         var activityDefnsByName = ArrayHelper.addLookupsByName(activityDefns);
         var itemCategories = this.demoDataItems.buildItemCategories();
         var entityDefnGroups = this.buildEntityDefnGroups(universe, visualsOpaque, activityDefnsByName, itemCategories);
+        var spells = Spell.Instances()._All;
         var placeDefns = this.demoDataPlaces.buildPlaceDefns(visualsOpaque, actions);
         var placeTree = this.demoDataPlaces.buildPlaceTree();
         var randomizer = this.randomizer;
-        var returnValue = new WorldDefn2("WorldDefn0", actions, actionMovesByHeading, activityDefns, itemCategories, entityDefnGroups, placeDefns, placeTree, (worldDefn) => // buildPlaces
+        var returnValue = new WorldDefn2("WorldDefn0", actions, actionMovesByHeading, activityDefns, itemCategories, entityDefnGroups, spells, placeDefns, placeTree, (worldDefn) => // buildPlaces
          {
             var returnValues = placeTree.buildPlaces(worldDefn, randomizer, 0 // depthFirst
             );

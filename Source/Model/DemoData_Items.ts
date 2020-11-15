@@ -736,7 +736,7 @@ class DemoData_Items
 		entityDefnSets: any
 	)
 	{
-		var namesOfSpellbooks =
+		var spellNames =
 		[
 			// attack
 
@@ -823,10 +823,22 @@ class DemoData_Items
 			null
 		);
 
-		for (var i = 0; i < namesOfSpellbooks.length; i++)
+		var spellLearn =
+		(u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity, spellName: string) =>
 		{
-			var nameOfSpellbook = namesOfSpellbooks[i];
-			var itemDefnName = "Spellbook of " + nameOfSpellbook;
+			var entityUsing = eUsing as Entity2;
+			var spellCaster = entityUsing.spellCaster();
+			var message = spellCaster.spellLearnByName(u, w, p, eUsing, spellName);
+			// todo - Degrade the spellbook?
+			return message;
+		};
+
+		var categoryNamesSpellbook = [ "Spellbook" ];
+
+		for (var i = 0; i < spellNames.length; i++)
+		{
+			var nameOfSpell = spellNames[i];
+			var itemDefnName = "Spellbook of " + nameOfSpell;
 
 			var appearanceIndex = Math.floor
 			(
@@ -836,32 +848,12 @@ class DemoData_Items
 			var appearance = appearances[appearanceIndex] + " Spellbook";
 			ArrayHelper.removeAt(appearances, appearanceIndex);
 
-			/*
-			var effectLearnSpell = new Effect2
-			(
-				"Learn Spell: " + nameOfSpellbook,
-				function apply(world: World, targetEntity: Entity)
+			var itemUseSpellbook =
+				(u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity): string =>
 				{
-					var spellToAdd = new SpellDefn("[Spell]");
-					var spellsKnown = (targetEntity as Entity2).mover().spells.spells;
-
-					var isSpellAlreadyKnown = false;
-					for (var i = 0; i < spellsKnown.length; i++)
-					{
-						if (spellsKnown[i].name == spellToAdd.name)
-						{
-							isSpellAlreadyKnown = true;
-							break;
-						}
-					}
-
-					if (isSpellAlreadyKnown == false)
-					{
-						spellsKnown.push(spellToAdd);
-					}
-				}
-			);
-			*/
+					var message = spellLearn(u, w, p, eUsing, eUsed, nameOfSpell);
+					return message;
+				};
 
 			var entityDefn = new Entity2
 			(
@@ -878,8 +870,8 @@ class DemoData_Items
 						1, // mass
 						1, // tradeValue
 						1, // stackSizeMax
-						[ "Spellbook" ], // categoryNames
-						this.itemUseDevice,
+						categoryNamesSpellbook,
+						itemUseSpellbook,
 						null
 					),
 					new Generatable(1) // todo

@@ -243,6 +243,15 @@ class DemoData_Movers
 
 		var equipmentUser = new EquipmentUser(equipmentSocketDefnGroup);
 
+		var itemHolder = new ItemHolder
+		(
+			[
+				new Entity("Dagger", [ new Item("Dagger", 1) ] ) // todo
+			],
+			100, // weightMax
+			0 // reachRange
+		);
+
 		var toControl = (u: Universe, size: Coords, e: Entity, isMenu: boolean) =>
 		{
 			var toControlMethod = (isMenu ? Playable.toControlMenu : (e as Entity2).player().toControlOverlay);
@@ -251,6 +260,8 @@ class DemoData_Movers
 		};
 
 		var controllable = new Controllable(toControl);
+
+		var spellCaster = new SpellCaster([]);
 
 		var entityDefnPlayer = new Entity2
 		(
@@ -264,13 +275,14 @@ class DemoData_Movers
 				drawableDefnPlayer,
 				new Effectable2(null),
 				equipmentUser,
-				new ItemHolder(null, 100, 0),
+				itemHolder,
 				new Killable(160, null, null),
 				moverPlayer,
 				new Player
 				(
 					8 // sightRange
 				),
+				spellCaster,
 				new Starvable2(1000)
 			]
 		);

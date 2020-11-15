@@ -53,6 +53,7 @@ class Entity2 extends Entity {
     player() { return this.propertyByName(Player.name); }
     portal2() { return this.propertyByName(Portal2.name); }
     searchable() { return this.propertyByName(Searchable.name); }
+    spellCaster() { return this.propertyByName(SpellCaster.name); }
     starvable2() { return this.propertyByName(Starvable2.name); }
     turnable() { return this.propertyByName(Turnable.name); }
 }

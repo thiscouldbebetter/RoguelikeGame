@@ -363,6 +363,8 @@ class DemoData_Main
 			universe, visualsOpaque, activityDefnsByName, itemCategories
 		);
 
+		var spells = Spell.Instances()._All;
+
 		var placeDefns = this.demoDataPlaces.buildPlaceDefns(visualsOpaque, actions);
 
 		var placeTree = this.demoDataPlaces.buildPlaceTree();
@@ -377,6 +379,7 @@ class DemoData_Main
 			activityDefns,
 			itemCategories,
 			entityDefnGroups,
+			spells,
 			placeDefns,
 			placeTree,
 			(worldDefn: WorldDefn2) => // buildPlaces

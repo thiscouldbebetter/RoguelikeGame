@@ -140,12 +140,18 @@ class DemoData_Movers {
             new EquipmentSocketDefn("Right Finger", ["Ring"]),
         ]);
         var equipmentUser = new EquipmentUser(equipmentSocketDefnGroup);
+        var itemHolder = new ItemHolder([
+            new Entity("Dagger", [new Item("Dagger", 1)]) // todo
+        ], 100, // weightMax
+        0 // reachRange
+        );
         var toControl = (u, size, e, isMenu) => {
             var toControlMethod = (isMenu ? Playable.toControlMenu : e.player().toControlOverlay);
             var returnValue = toControlMethod(u, size, e, u.venueCurrent);
             return returnValue;
         };
         var controllable = new Controllable(toControl);
+        var spellCaster = new SpellCaster([]);
         var entityDefnPlayer = new Entity2(entityName, 
         // properties
         [
@@ -156,11 +162,12 @@ class DemoData_Movers {
             drawableDefnPlayer,
             new Effectable2(null),
             equipmentUser,
-            new ItemHolder(null, 100, 0),
+            itemHolder,
             new Killable(160, null, null),
             moverPlayer,
             new Player(8 // sightRange
             ),
+            spellCaster,
             new Starvable2(1000)
         ]);
         returnValues.push(entityDefnPlayer);
@@ -418,8 +425,8 @@ class DemoData_Movers {
             new AD("Minotaur", 17, one, ["Claw:3d10", "Claw:3d10", "Butt:2d8"], 15, 504, 15, 6, 0, 0, 0, true, 1500, 700, large, null, null, null),
             // jabberwock
             AD.fromName("Jabberwock"),
+            AD.fromName("[workaround for tile alignment bug]"),
             AD.fromName("Jabberwock 2"),
-            AD.fromName("???"),
             // keystone kops
             AD.fromName("Keystone Kop"),
             AD.fromName("Kop Sergeant"),

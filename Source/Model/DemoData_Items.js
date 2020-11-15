@@ -414,7 +414,7 @@ class DemoData_Items {
         return returnValue;
     }
     buildEntityDefns_Items_Spellbooks(visuals, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
-        var namesOfSpellbooks = [
+        var spellNames = [
             // attack
             "Force Bolt",
             "Drain Life",
@@ -479,39 +479,25 @@ class DemoData_Items {
         var device = new Device(name, null, null, // init, update
         null, // this.itemEffectorApply
         null);
-        for (var i = 0; i < namesOfSpellbooks.length; i++) {
-            var nameOfSpellbook = namesOfSpellbooks[i];
-            var itemDefnName = "Spellbook of " + nameOfSpellbook;
+        var spellLearn = (u, w, p, eUsing, eUsed, spellName) => {
+            var entityUsing = eUsing;
+            var spellCaster = entityUsing.spellCaster();
+            var message = spellCaster.spellLearnByName(u, w, p, eUsing, spellName);
+            // todo - Degrade the spellbook?
+            return message;
+        };
+        var categoryNamesSpellbook = ["Spellbook"];
+        for (var i = 0; i < spellNames.length; i++) {
+            var nameOfSpell = spellNames[i];
+            var itemDefnName = "Spellbook of " + nameOfSpell;
             var appearanceIndex = Math.floor(this.randomizer.getNextRandom()
                 * appearances.length);
             var appearance = appearances[appearanceIndex] + " Spellbook";
             ArrayHelper.removeAt(appearances, appearanceIndex);
-            /*
-            var effectLearnSpell = new Effect2
-            (
-                "Learn Spell: " + nameOfSpellbook,
-                function apply(world: World, targetEntity: Entity)
-                {
-                    var spellToAdd = new SpellDefn("[Spell]");
-                    var spellsKnown = (targetEntity as Entity2).mover().spells.spells;
-
-                    var isSpellAlreadyKnown = false;
-                    for (var i = 0; i < spellsKnown.length; i++)
-                    {
-                        if (spellsKnown[i].name == spellToAdd.name)
-                        {
-                            isSpellAlreadyKnown = true;
-                            break;
-                        }
-                    }
-
-                    if (isSpellAlreadyKnown == false)
-                    {
-                        spellsKnown.push(spellToAdd);
-                    }
-                }
-            );
-            */
+            var itemUseSpellbook = (u, w, p, eUsing, eUsed) => {
+                var message = spellLearn(u, w, p, eUsing, eUsed, nameOfSpell);
+                return message;
+            };
             var entityDefn = new Entity2(itemDefnName, [
                 this.mappableDefns.Open,
                 device,
@@ -520,8 +506,7 @@ class DemoData_Items {
                 1, // mass
                 1, // tradeValue
                 1, // stackSizeMax
-                ["Spellbook"], // categoryNames
-                this.itemUseDevice, null),
+                categoryNamesSpellbook, itemUseSpellbook, null),
                 new Generatable(1) // todo
             ]);
             entityDefnSetSpellbooks.push(entityDefn);

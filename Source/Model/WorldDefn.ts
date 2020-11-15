@@ -7,6 +7,7 @@ class WorldDefn2 extends WorldDefn
 	activityDefns: ActivityDefn2[];
 	itemCategories: ItemCategory[];
 	entityDefnGroups: EntityDefnGroup[];
+	spells: Spell[];
 	placeDefns: PlaceDefn2[];
 	placeTree: PlaceBranch;
 	buildPlaces: (worldDefn: WorldDefn2) => PlaceLevel[];
@@ -15,6 +16,7 @@ class WorldDefn2 extends WorldDefn
 	activityDefn2sByName: Map<string, ActivityDefn2>;
 	entityDefns: Entity[];
 	entityDefnGroupsByName: Map<string, EntityDefnGroup>;
+	spellsByName: Map<string, Spell>;
 	itemCategoriesByName: Map<string, ItemCategory>;
 	itemDefns: ItemDefn[];
 	placeDefn2sByName: Map<string, PlaceDefn2>;
@@ -28,6 +30,7 @@ class WorldDefn2 extends WorldDefn
 		activityDefns: ActivityDefn2[],
 		itemCategories: ItemCategory[],
 		entityDefnGroups: EntityDefnGroup[],
+		spells: Spell[],
 		placeDefns: PlaceDefn2[],
 		placeTree: PlaceBranch,
 		buildPlaces: any
@@ -40,6 +43,7 @@ class WorldDefn2 extends WorldDefn
 		this.activityDefns = activityDefns;
 		this.itemCategories = itemCategories;
 		this.entityDefnGroups = entityDefnGroups;
+		this.spells = spells;
 		this.placeDefns = placeDefns;
 		this.placeTree = placeTree;
 		this.buildPlaces = buildPlaces;
@@ -84,6 +88,8 @@ class WorldDefn2 extends WorldDefn
 		this._itemDefnsByName = new Map<string,ItemDefn>(itemDefnNamesAndDefns);
 		*/
 		this._itemDefnsByName = ArrayHelper.addLookupsByName(this.itemDefns);
+
+		this.spellsByName = ArrayHelper.addLookupsByName(this.spells);
 	}
 
 	itemDefnsByName()

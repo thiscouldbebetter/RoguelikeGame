@@ -1,6 +1,6 @@
 "use strict";
 class WorldDefn2 extends WorldDefn {
-    constructor(name, actions, actionMovesByHeading, activityDefns, itemCategories, entityDefnGroups, placeDefns, placeTree, buildPlaces) {
+    constructor(name, actions, actionMovesByHeading, activityDefns, itemCategories, entityDefnGroups, spells, placeDefns, placeTree, buildPlaces) {
         super([placeDefns]);
         this.name = name;
         this.actions = actions;
@@ -8,6 +8,7 @@ class WorldDefn2 extends WorldDefn {
         this.activityDefns = activityDefns;
         this.itemCategories = itemCategories;
         this.entityDefnGroups = entityDefnGroups;
+        this.spells = spells;
         this.placeDefns = placeDefns;
         this.placeTree = placeTree;
         this.buildPlaces = buildPlaces;
@@ -38,6 +39,7 @@ class WorldDefn2 extends WorldDefn {
         this._itemDefnsByName = new Map<string,ItemDefn>(itemDefnNamesAndDefns);
         */
         this._itemDefnsByName = ArrayHelper.addLookupsByName(this.itemDefns);
+        this.spellsByName = ArrayHelper.addLookupsByName(this.spells);
     }
     itemDefnsByName() {
         return this._itemDefnsByName;

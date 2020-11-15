@@ -16,6 +16,7 @@ Items - Effects.
 Items - Potions.
 Items - Rings.
 Items - Scrolls.
+Items - Spellbooks.
 Items - Tools - No way to use.
 Items - Wands.
 
@@ -37,13 +38,14 @@ Monsters - Combat - Don't do damage, ever.
 Monsters - Combat - Attack types.
 Monsters - Combat - Special attacks.
 
-Monsters - Talkers - Priest
+Monsters - Talkers - Aligned Priest.
 Monsters - Talkers - Shopkeeper.
 Monsters - Talkers - Oracle.
 
 Player - Attacks don't use weapons.
 Player - Combat - Armor class.
 Player - Menus.
+Player - Menus - Items - Font too large.
 Player - Equipment - None.
 
 Projectiles - Don't do anything.
@@ -55,6 +57,8 @@ Errors
 Dying just freezes?
 
 Stairway to branch (e.g. mines) doesn't work.
+
+Controls - Barter - Lists much smaller than display.
 
 Monsters - Get stuck (at doors?)
 Monsters - Wrong sprites due to misalignment.
