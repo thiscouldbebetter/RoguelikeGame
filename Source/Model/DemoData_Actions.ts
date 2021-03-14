@@ -814,7 +814,7 @@ class DemoData_Actions
 	{
 		// directions
 
-		var directions = new Direction_Instances()._ByHeading;
+		var directions = Direction.Instances()._ByHeading;
 
 		var demoActions = this;
 
