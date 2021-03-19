@@ -484,7 +484,7 @@ class DemoData_Actions {
     }
     actionsBuild() {
         // directions
-        var directions = new Direction_Instances()._ByHeading;
+        var directions = Direction.Instances()._ByHeading;
         var demoActions = this;
         var actionAttack_Melee = new Action("Attack with Melee Weapon", demoActions.actionAttack_Melee_Perform);
         var actionAttack_Projectile = new Action("Fire Projectile", demoActions.actionAttack_Projectile_Perform);
