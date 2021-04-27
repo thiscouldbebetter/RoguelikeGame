@@ -1,17 +1,16 @@
 
-class MoverTransport extends EntityProperty
+class MoverTransport implements EntityProperty
 {
 	entityMover: Entity2;
 	locDestination: Disposition;
 
 	constructor(entityMover: Entity2, locDestination: Disposition)
 	{
-		super();
 		this.entityMover = entityMover;
 		this.locDestination = locDestination;
 	}
 
-	initialize(universe: Universe, world: World, place: Place, entityTransport: Entity)
+	initialize(universe: Universe, world: World, place: Place, entityTransport: Entity): void
 	{
 		var moverLoc = this.entityMover.locatable().loc;
 
@@ -34,6 +33,11 @@ class MoverTransport extends EntityProperty
 	}
 
 	// Clonable.
-	clone() { return this; }
-	overwriteWith(other: MoverTransport) { return this; }
+	clone(): MoverTransport { return this; }
+	overwriteWith(other: MoverTransport): MoverTransport { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

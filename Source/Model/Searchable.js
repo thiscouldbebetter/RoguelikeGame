@@ -1,7 +1,6 @@
 "use strict";
-class Searchable extends EntityProperty {
+class Searchable {
     constructor(chanceOfDiscoveryPerSearch, isHidden, discover) {
-        super();
         this.chanceOfDiscoveryPerSearch = chanceOfDiscoveryPerSearch;
         this.isHidden = isHidden || false;
         this.discover = discover;
@@ -10,4 +9,8 @@ class Searchable extends EntityProperty {
         return new Searchable(this.chanceOfDiscoveryPerSearch, this.isHidden, this.discover);
     }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

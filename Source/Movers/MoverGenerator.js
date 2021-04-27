@@ -1,13 +1,12 @@
 "use strict";
-class MoverGenerator extends EntityProperty {
+class MoverGenerator {
     constructor(chanceOfSpawnPerZoneInitial, chanceOfSpawnPerTurn, zones) {
-        super();
         this.chanceOfSpawnPerZoneInitial = chanceOfSpawnPerZoneInitial;
         this.chanceOfSpawnPerTurn = chanceOfSpawnPerTurn;
         this.zones = zones;
         this.turnLastMoved = null;
     }
-    activityPerform(universe, worldAsWorld, placeAsPlace, actor, activity) {
+    activityPerform(universe, worldAsWorld, placeAsPlace, actor) {
         var world = worldAsWorld;
         var place = placeAsPlace;
         var randomizer = universe.randomizer;
@@ -65,8 +64,8 @@ class MoverGenerator extends EntityProperty {
         }
         var zoneBounds = zoneToSpawnInto.bounds;
         var ones = Coords.Instances().Ones;
-        var zoneBoundsSizeHalfMinusOnes = zoneBounds.sizeHalf.clone().subtract(ones);
-        var offsetWithinZone = new Coords(0, 0, 0).randomize(randomizer).multiply(zoneBoundsSizeHalfMinusOnes).clearZ();
+        var zoneBoundsSizeHalfMinusOnes = zoneBounds.sizeHalf().clone().subtract(ones);
+        var offsetWithinZone = Coords.create().randomize(randomizer).multiply(zoneBoundsSizeHalfMinusOnes).clearZ();
         var posToSpawnAt = offsetWithinZone.add(zoneBounds.center).floor();
         posToSpawnAt.z = PlaceLevel.ZLayers().Movers;
         var entityName = entityDefnForAgentToSpawn.name + universe.idHelper.idNext();
@@ -78,4 +77,8 @@ class MoverGenerator extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

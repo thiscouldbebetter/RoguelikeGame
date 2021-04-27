@@ -1,7 +1,6 @@
 "use strict";
-class Starvable2 extends EntityProperty {
+class Starvable2 {
     constructor(satietyMax) {
-        super();
         this.satietyMax = satietyMax;
         this.satiety = this.satietyMax;
     }
@@ -17,7 +16,8 @@ class Starvable2 extends EntityProperty {
     }
     // controls
     toControl(world, entity, pos) {
-        if (this.control == null && pos != null) {
+        if (this.control == null && pos != null) // hack
+         {
             this.control = new ControlContainer("containerMover_Vitals", pos, new Coords(160, 32, 0), // size
             [
                 ControlLabel.fromPosAndText(
@@ -37,4 +37,8 @@ class Starvable2 extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

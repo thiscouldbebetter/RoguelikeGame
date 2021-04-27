@@ -1,7 +1,6 @@
 "use strict";
-class Openable extends EntityProperty {
+class Openable {
     constructor(isOpen, isLocked) {
-        super();
         this.isOpen = isOpen;
         this.isLocked = isLocked;
     }
@@ -13,4 +12,8 @@ class Openable extends EntityProperty {
         this.isLocked = other.isLocked;
         return this;
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

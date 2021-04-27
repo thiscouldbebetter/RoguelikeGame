@@ -26,7 +26,7 @@ class DemoData_Main
 	(
 		universe: Universe,
 		visualsByName: Map<string,Visual>,
-		activityDefns: Map<string,ActivityDefn2>,
+		activityDefns: Map<string,ActivityDefn>,
 		itemCategories: ItemCategory[]
 	)
 	{
@@ -72,10 +72,10 @@ class DemoData_Main
 		{
 			var entityUsing = entityUsingAsEntity as Entity2;
 
-			var itemsHeld = entityUsing.itemHolder().itemEntities;
+			var itemsHeld = entityUsing.itemHolder().items;
 			var isItemGoalHeld = itemsHeld.some
 			(
-				(x: any) => x.name == "Amulet of Yendor"
+				(x: any) => x.defnName == "Amulet of Yendor"
 			);
 			var messageLog = entityUsing.player().messageLog;
 			if (isItemGoalHeld == false)
@@ -323,7 +323,7 @@ class DemoData_Main
 					new ItemHolder
 					(
 						[
-							new Entity2("Coins", [ new Item("Coins", 5) ] ),
+							new Item("Coins", 5)
 						], // itemEntities
 						100, // massMax
 						0 // reachRadius

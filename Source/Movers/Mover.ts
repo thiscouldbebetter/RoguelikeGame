@@ -1,5 +1,5 @@
 
-class Mover extends EntityProperty
+class Mover implements EntityProperty
 {
 	movesPerTurn: number;
 
@@ -7,7 +7,6 @@ class Mover extends EntityProperty
 
 	constructor(movesPerTurn: number)
 	{
-		super();
 		this.movesPerTurn = movesPerTurn;
 	}
 
@@ -55,4 +54,8 @@ class Mover extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Mover) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

@@ -1,12 +1,11 @@
 
-class Openable extends EntityProperty
+class Openable implements EntityProperty
 {
 	isOpen: boolean;
 	isLocked: boolean;
 
 	constructor(isOpen: boolean, isLocked: boolean)
 	{
-		super();
 		this.isOpen = isOpen;
 		this.isLocked = isLocked;
 	}
@@ -22,4 +21,9 @@ class Openable extends EntityProperty
 		this.isLocked = other.isLocked;
 		return this;
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 }

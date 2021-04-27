@@ -1,11 +1,10 @@
 
-class ActorDefn extends EntityProperty
+class ActorDefn implements EntityProperty
 {
 	activityDefnNameInitial: string;
 
 	constructor(activityDefnNameInitial: string)
 	{
-		super();
 		this.activityDefnNameInitial = activityDefnNameInitial;
 	}
 
@@ -18,10 +17,9 @@ class ActorDefn extends EntityProperty
 
 		actorData.actions = [];
 
-		var activity = new Activity2
+		var activity = Activity.fromDefnName
 		(
 			entity.actorDefn().activityDefnNameInitial,
-			null
 		);
 
 		actorData.activity_Set(universe, world, place, entity, activity);
@@ -55,4 +53,7 @@ class ActorDefn extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Generatable) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
 }

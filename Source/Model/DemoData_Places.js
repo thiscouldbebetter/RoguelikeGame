@@ -178,9 +178,8 @@ class DemoData_Places {
         var place = this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
         var placeEntities = place.entitiesToSpawn;
         var stairDown = placeEntities.filter((x) => x.name == "StairsDownToChildBranch")[0];
-        var itemDefnsByName = worldDefn.entityDefnsByName();
         var itemDefnGoalName = "Amulet of Yendor";
-        var itemDefnGoal = itemDefnsByName.get(itemDefnGoalName);
+        var itemDefnGoal = worldDefn.entityDefnByName(itemDefnGoalName);
         var entityGoal = Entity2.fromNameDefnAndProperties(itemDefnGoal.name, itemDefnGoal, [
             new Locatable(stairDown.locatable().loc.clone()),
             new Item(itemDefnGoal.name, 1)
@@ -230,10 +229,10 @@ class DemoData_Places {
         while (zoneBoundsSetSoFar.length < numberOfZones) {
             var doesZoneOverlapAnother = true;
             while (doesZoneOverlapAnother) {
-                var zoneSize = new Coords(0, 0, 0).randomize(randomizer).multiply(zoneSizeRange).add(zoneSizeMin).floor();
+                var zoneSize = Coords.create().randomize(randomizer).multiply(zoneSizeRange).add(zoneSizeMin).floor();
                 var zoneSizePlusOnes = zoneSize.clone().add(ones);
                 var zonePosRange = mapSizeInCells.clone().subtract(zoneSize).subtract(twoTwoZero);
-                var zonePos = new Coords(0, 0, 0).randomize(randomizer).multiply(zonePosRange).add(ones).floor();
+                var zonePos = Coords.create().randomize(randomizer).multiply(zonePosRange).add(ones).floor();
                 var zoneBoundsWithWalls = Box.fromMinAndSize(zonePos, zoneSizePlusOnes);
                 doesZoneOverlapAnother = Box.doBoxesInSetsOverlap([zoneBoundsWithWalls], zoneBoundsSetSoFar);
             }
@@ -303,12 +302,12 @@ class DemoData_Places {
         var coordses = Coords.Instances();
         var oneOne = coordses.OneOneZero;
         var twoTwo = coordses.TwoTwoZero;
-        var directionToZoneToConnect = new Coords(0, 0, 0);
-        var fromPos = new Coords(0, 0, 0);
-        var toPos = new Coords(0, 0, 0);
-        var coordsRandom = new Coords(0, 0, 0);
-        var zoneConnectedSizeMinusTwos = new Coords(0, 0, 0);
-        var zoneToConnectSizeMinusTwos = new Coords(0, 0, 0);
+        var directionToZoneToConnect = Coords.create();
+        var fromPos = Coords.create();
+        var toPos = Coords.create();
+        var coordsRandom = Coords.create();
+        var zoneConnectedSizeMinusTwos = Coords.create();
+        var zoneToConnectSizeMinusTwos = Coords.create();
         var terrainFloorCodeChar = terrainsByName.get("Floor").codeChar;
         var nearestZonesSoFar = this.placeGenerateDungeon_4_Doors_Zone_NearestZones(zonesToConnect, zonesConnected);
         var zoneConnected = nearestZonesSoFar[0];
@@ -387,7 +386,7 @@ class DemoData_Places {
         var zeroes = Coords.Instances().Zeroes;
         var cellPos = fromPos.clone();
         var displacementToZoneToConnect = toPos.clone().subtract(fromPos);
-        var directionToZoneToConnect = new Coords(0, 0, 0);
+        var directionToZoneToConnect = Coords.create();
         while (displacementToZoneToConnect.equals(zeroes) == false) {
             var mapCellRowAsString = mapCellsAsStrings[cellPos.y];
             var terrainExistingCodeChar = mapCellRowAsString[cellPos.x];
@@ -406,7 +405,7 @@ class DemoData_Places {
         }
     }
     placeGenerateDungeon_5_Entities(worldDefn, branchName, placeDefn, venueName, randomizer, zones, doorwayPositions, mapCellsAsStrings) {
-        var entityDefnsByName = worldDefn.entityDefnsByName();
+        var entityDefnsByName = worldDefn.entityDefnsByName;
         var entityDefnGroupsByName = worldDefn.entityDefnGroupsByName;
         var entities = new Array();
         this.placeGenerateDungeon_5_Entities_1_Stairs(entityDefnsByName, zones, entities);
@@ -507,7 +506,7 @@ class DemoData_Places {
                         }
                     }
                     var entityDefn = entityDefnsForEmplacements[entityDefnIndex];
-                    var pos = new Coords(0, 0, 0).randomize(randomizer).multiply(zoneSizeMinusTwos).add(zoneMin).add(oneOneZero).floor();
+                    var pos = Coords.create().randomize(randomizer).multiply(zoneSizeMinusTwos).add(zoneMin).add(oneOneZero).floor();
                     var entity = Entity2.fromNameDefnAndProperties(entityDefn.name, entityDefn, [
                         new Locatable(new Disposition(pos, null, null)),
                     ]);
@@ -561,7 +560,7 @@ class DemoData_Places {
                     var entityDefnGroup = entityDefnGroupsForItems[entityDefnGroupIndex];
                     var entityDefns = entityDefnGroup.entityDefns;
                     var entityDefnForItem = ArrayHelper.random(entityDefns, randomizer);
-                    var pos = new Coords(0, 0, 0).randomize(randomizer).multiply(zoneSizeMinusTwos).add(zoneMin).add(oneOneZero).floor();
+                    var pos = Coords.create().randomize(randomizer).multiply(zoneSizeMinusTwos).add(zoneMin).add(oneOneZero).floor();
                     var entityForItem = Entity2.fromNameDefnAndProperties(entityDefnForItem.name, entityDefnForItem, [
                         new Locatable(new Disposition(pos, null, null)),
                         new Item(entityDefnForItem.name, 1)
@@ -593,17 +592,18 @@ class DemoData_Places {
         }
         var map = new MapOfTerrain(venueName + "Map", placeDefn.terrains, new Coords(16, 16, 1), // hack - cellSizeInPixels
         mapCellsAsStrings);
+        var entityDefnStairsDown = worldDefn.entityDefnByName("StairsDown");
         var stairsDownPos = mapSizeInCells.clone().half().round();
-        var entityStairsDown = Entity2.fromNameDefnAndProperties("StairsDownToNextLevel", worldDefn.entityDefnsByName().get("StairsDown"), [
+        var entityStairsDown = Entity2.fromNameDefnAndProperties("StairsDownToNextLevel", entityDefnStairsDown, [
             Locatable.fromPos(stairsDownPos),
             new Portal2(null, "StairsUp")
         ]);
         var altarPos = new Coords(mapSizeInCells.x / 2, 0, 0).floor();
-        var entityAltar = Entity2.fromNameDefnAndProperties("Altar", worldDefn.entityDefnsByName().get("Altar"), [
+        var entityAltar = Entity2.fromNameDefnAndProperties("Altar", worldDefn.entityDefnByName("Altar"), [
             Locatable.fromPos(altarPos),
         ]);
         var mentorPos = altarPos.clone().addDimensions(-1, 0, 0);
-        var entityMentor = Entity2.fromNameDefnAndProperties("Mentor", worldDefn.entityDefnsByName().get("Mentor"), [
+        var entityMentor = Entity2.fromNameDefnAndProperties("Mentor", worldDefn.entityDefnByName("Mentor"), [
             Locatable.fromPos(mentorPos),
             new Namable2("mentor", "mentor")
         ]);

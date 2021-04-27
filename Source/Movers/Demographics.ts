@@ -1,5 +1,5 @@
 
-class Demographics extends EntityProperty
+class Demographics implements EntityProperty
 {
 	speciesName: any;
 	roleName: string;
@@ -12,7 +12,6 @@ class Demographics extends EntityProperty
 
 	constructor(speciesName: string, roleName: string, rank: number, experienceToKill: number)
 	{
-		super();
 		this.speciesName = speciesName;
 		this.roleName = roleName;
 		this.rank = rank;
@@ -70,4 +69,9 @@ class Demographics extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Generatable) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 }

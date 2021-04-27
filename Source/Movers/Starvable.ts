@@ -1,5 +1,5 @@
 
-class Starvable2 extends EntityProperty
+class Starvable2 implements EntityProperty
 {
 	satietyMax: number;
 
@@ -8,7 +8,6 @@ class Starvable2 extends EntityProperty
 
 	constructor(satietyMax: number)
 	{
-		super();
 		this.satietyMax = satietyMax;
 		this.satiety = this.satietyMax;
 	}
@@ -81,5 +80,10 @@ class Starvable2 extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Starvable2) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 
 }

@@ -14,7 +14,7 @@ class DemoData_Movers
 	buildEntityDefnGroups_MoversAndCorpses
 	(
 		visualsByName: Map<string, Visual>,
-		activityDefns: Map<string, ActivityDefn2>,
+		activityDefns: Map<string, ActivityDefn>,
 		itemCategories: ItemCategory[]
 	)
 	{
@@ -174,7 +174,7 @@ class DemoData_Movers
 
 	buildEntityDefnGroups_MoversAndCorpses_Player
 	(
-		visuals: Map<string, Visual>, activityDefns: Map<string, ActivityDefn2>,
+		visuals: Map<string, Visual>, activityDefns: Map<string, ActivityDefn>,
 		itemCategories: ItemCategory[], returnValues: any
 	)
 	{
@@ -246,7 +246,7 @@ class DemoData_Movers
 		var itemHolder = new ItemHolder
 		(
 			[
-				new Entity("Dagger", [ new Item("Dagger", 1) ] ) // todo
+				new Item("Dagger", 1)
 			],
 			100, // weightMax
 			0 // reachRange

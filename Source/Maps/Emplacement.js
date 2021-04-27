@@ -1,7 +1,6 @@
 "use strict";
-class Emplacement extends EntityProperty {
+class Emplacement {
     constructor(appearance, use) {
-        super();
         this.appearance = appearance;
         this._use = use;
     }
@@ -16,4 +15,8 @@ class Emplacement extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

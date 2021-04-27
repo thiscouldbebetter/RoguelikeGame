@@ -62,7 +62,7 @@ class PlaceLevel extends Place
 		this.hasBeenUpdatedSinceDrawn = true;
 
 		// Helper variables.
-		this._drawLoc = new Disposition(new Coords(0, 0, 0), null, null);
+		this._drawLoc = new Disposition(Coords.create(), null, null);
 	}
 
 	static _zLayers: PlaceLevel_ZLayers;
@@ -258,7 +258,7 @@ class PlaceLevel extends Place
 			{
 				var collision = collisions[c];
 
-				var mappables = collision.collidables;
+				var mappables = collision.entitiesColliding;
 
 				for (var i = 0; i < mappables.length; i++)
 				{
@@ -338,7 +338,7 @@ class PlaceLevel extends Place
 		display.childSelectByName(null);
 
 		display.childSelectByName("Map");
-		display.drawBackground("Black", "Black");
+		display.drawBackground(Color.byName("Black"), Color.byName("Black"));
 		this.map.draw(universe, world, this, display);
 
 		display.childSelectByName("Status");
@@ -360,7 +360,7 @@ class PlaceLevel extends Place
 		(
 			Coords.Instances().Zeroes,
 			display.displayToUse().sizeInPixels,
-			null, "Gray", null
+			null, Color.byName("Gray"), null
 		);
 	}
 

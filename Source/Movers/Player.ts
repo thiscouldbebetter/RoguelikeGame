@@ -1,5 +1,5 @@
 
-class Player extends EntityProperty
+class Player implements EntityProperty
 {
 	sightRange: number;
 	messageLog: MessageLog;
@@ -9,7 +9,6 @@ class Player extends EntityProperty
 
 	constructor(sightRange: number)
 	{
-		super();
 		this.sightRange = sightRange;
 
 		this.messageLog = new MessageLog();
@@ -175,7 +174,7 @@ class Player extends EntityProperty
 							(c: any) =>
 							{
 								var loc = entity.locatable().loc;
-								var place = loc.place(world);
+								var place = loc.place(world) as PlaceLevel;
 								var zone = place.displayName;
 								var depth = place.depth;
 								var turn = (world as World2).turnsSoFar;
@@ -191,7 +190,7 @@ class Player extends EntityProperty
 			this.control = new ControlContainer
 			(
 				"containerMover",
-				new Coords(0, 0, 0), // pos
+				Coords.create(), // pos
 				new Coords(180, 272, 0), // size
 				[
 					ControlLabel.fromPosAndText(new Coords(10, 16, 0), "Name: " + entity.name),
@@ -222,4 +221,8 @@ class Player extends EntityProperty
 	{
 		return this; // todo
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

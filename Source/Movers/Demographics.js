@@ -1,7 +1,6 @@
 "use strict";
-class Demographics extends EntityProperty {
+class Demographics {
     constructor(speciesName, roleName, rank, experienceToKill) {
-        super();
         this.speciesName = speciesName;
         this.roleName = roleName;
         this.rank = rank;
@@ -31,4 +30,8 @@ class Demographics extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

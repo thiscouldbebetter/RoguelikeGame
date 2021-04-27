@@ -46,7 +46,7 @@ class MapOfTerrain
 
 		this.cells = [];
 
-		var cellPos = new Coords(0, 0, 0);
+		var cellPos = Coords.create();
 		for (var y = 0; y < this.sizeInCells.y; y++)
 		{
 			cellPos.y = y;
@@ -62,9 +62,9 @@ class MapOfTerrain
 		}
 
 		// Helper variables.
-		this._cellPos = new Coords(0, 0, 0);
-		this._drawPos = new Coords(0, 0, 0);
-		this._drawPosSaved = new Coords(0, 0, 0);
+		this._cellPos = Coords.create();
+		this._drawPos = Coords.create();
+		this._drawPosSaved = Coords.create();
 		this._drawLoc = new Disposition( this._drawPos, null, null );
 		this._drawableEntity = new Entity2
 		(
@@ -92,7 +92,7 @@ class MapOfTerrain
 	{
 		var cellsAsStrings = [];
 
-		var cellPos = new Coords(0, 0, 0);
+		var cellPos = Coords.create();
 		for (var y = 0; y < this.sizeInCells.y; y++)
 		{
 			cellPos.y = y;
@@ -147,7 +147,8 @@ class MapOfTerrain
 		(
 			new Coords(1, 1, 0).multiplyScalar(viewDimensionHalf),
 			null, // focalLength
-			new Disposition(cameraPos, null, null)
+			Disposition.fromPos(cameraPos),
+			null // entitiesInViewSort
 		);
 
 		var cellPos = this._cellPos;

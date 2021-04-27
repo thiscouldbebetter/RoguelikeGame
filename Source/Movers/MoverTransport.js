@@ -1,7 +1,6 @@
 "use strict";
-class MoverTransport extends EntityProperty {
+class MoverTransport {
     constructor(entityMover, locDestination) {
-        super();
         this.entityMover = entityMover;
         this.locDestination = locDestination;
     }
@@ -21,4 +20,7 @@ class MoverTransport extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

@@ -1,7 +1,6 @@
 "use strict";
-class Portal2 extends EntityProperty {
+class Portal2 {
     constructor(destinationPlaceName, destinationEntityName) {
-        super();
         this.destinationPlaceName = destinationPlaceName;
         this.destinationEntityName = destinationEntityName;
     }
@@ -29,4 +28,8 @@ class Portal2 extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

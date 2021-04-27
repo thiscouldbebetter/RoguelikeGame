@@ -1,7 +1,6 @@
 "use strict";
-class MappableDefn extends EntityProperty {
+class MappableDefn {
     constructor(blocksMovement, blocksVision) {
-        super();
         this.blocksMovement = blocksMovement;
         this.blocksVision = blocksVision;
     }
@@ -34,6 +33,8 @@ class MappableDefn extends EntityProperty {
     overwriteWith(other) {
         return this; // todo
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
 }
 class MappableDefn_Instances {
     constructor() {

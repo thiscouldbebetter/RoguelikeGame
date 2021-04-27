@@ -1,5 +1,5 @@
 
-class MoverGenerator extends EntityProperty
+class MoverGenerator implements EntityProperty
 {
 	chanceOfSpawnPerZoneInitial: number;
 	chanceOfSpawnPerTurn: number;
@@ -14,7 +14,6 @@ class MoverGenerator extends EntityProperty
 		zones: Zone2[]
 	)
 	{
-		super();
 		this.chanceOfSpawnPerZoneInitial = chanceOfSpawnPerZoneInitial;
 		this.chanceOfSpawnPerTurn = chanceOfSpawnPerTurn;
 		this.zones = zones;
@@ -23,7 +22,7 @@ class MoverGenerator extends EntityProperty
 
 	activityPerform
 	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actor: Entity, activity: Activity2
+		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actor: Entity
 	)
 	{
 		var world = worldAsWorld as World2;
@@ -112,8 +111,8 @@ class MoverGenerator extends EntityProperty
 
 		var zoneBounds = zoneToSpawnInto.bounds;
 		var ones = Coords.Instances().Ones;
-		var zoneBoundsSizeHalfMinusOnes = zoneBounds.sizeHalf.clone().subtract(ones);
-		var offsetWithinZone = new Coords(0, 0, 0).randomize(randomizer).multiply
+		var zoneBoundsSizeHalfMinusOnes = zoneBounds.sizeHalf().clone().subtract(ones);
+		var offsetWithinZone = Coords.create().randomize(randomizer).multiply
 		(
 			zoneBoundsSizeHalfMinusOnes
 		).clearZ();
@@ -139,4 +138,10 @@ class MoverGenerator extends EntityProperty
 
 	clone() { return this; }
 	overwriteWith(other: MoverGenerator) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

@@ -1,11 +1,10 @@
 
-class Cursable extends EntityProperty
+class Cursable implements EntityProperty
 {
 	blessingLevel: number;
 
 	constructor(blessingLevel: number)
 	{
-		super();
 		this.blessingLevel = blessingLevel;
 	}
 
@@ -47,4 +46,10 @@ class Cursable extends EntityProperty
 		this.blessingLevel = other.blessingLevel;
 		return this;
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

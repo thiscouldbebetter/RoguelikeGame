@@ -11,7 +11,7 @@ class MapOfTerrain {
         this.sizeInCellsMinusOnes = this.sizeInCells.clone().subtract(Coords.Instances().Ones);
         this.sizeInPixels = this.sizeInCells.clone().multiply(this.cellSizeInPixels);
         this.cells = [];
-        var cellPos = new Coords(0, 0, 0);
+        var cellPos = Coords.create();
         for (var y = 0; y < this.sizeInCells.y; y++) {
             cellPos.y = y;
             for (var x = 0; x < this.sizeInCells.x; x++) {
@@ -22,9 +22,9 @@ class MapOfTerrain {
             }
         }
         // Helper variables.
-        this._cellPos = new Coords(0, 0, 0);
-        this._drawPos = new Coords(0, 0, 0);
-        this._drawPosSaved = new Coords(0, 0, 0);
+        this._cellPos = Coords.create();
+        this._drawPos = Coords.create();
+        this._drawPosSaved = Coords.create();
         this._drawLoc = new Disposition(this._drawPos, null, null);
         this._drawableEntity = new Entity2("_drawableEntity", [new Locatable(this._drawLoc)]);
         this._entitiesSortedBottomToTop = new Array();
@@ -40,7 +40,7 @@ class MapOfTerrain {
     }
     cellsAsStrings() {
         var cellsAsStrings = [];
-        var cellPos = new Coords(0, 0, 0);
+        var cellPos = Coords.create();
         for (var y = 0; y < this.sizeInCells.y; y++) {
             cellPos.y = y;
             var cellRowAsString = "";
@@ -70,7 +70,8 @@ class MapOfTerrain {
         var cameraPos = entityCamera.locatable().loc.pos.clone();
         var viewDimensionHalf = 38; // hack
         var camera = new Camera(new Coords(1, 1, 0).multiplyScalar(viewDimensionHalf), null, // focalLength
-        new Disposition(cameraPos, null, null));
+        Disposition.fromPos(cameraPos), null // entitiesInViewSort
+        );
         var cellPos = this._cellPos;
         var boundsVisible = camera.viewCollider;
         var cellPosVisibleMin = boundsVisible.min().trimToRangeMax(this.sizeInCells);

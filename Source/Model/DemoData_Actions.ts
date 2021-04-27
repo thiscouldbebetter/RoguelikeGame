@@ -189,7 +189,7 @@ class DemoData_Actions
 		//projectilePos.add(directionFacing);
 		projectilePos.z++;
 		var visual =
-			world.defn2.entityDefnsByName().get("Dagger").drawable().visual; // todo
+			world.defn2.entityDefnByName("Dagger").drawable().visual; // todo
 		var projectileEntity = new Entity2
 		(
 			"Projectile" + IDHelper.Instance().idNext(),
@@ -331,7 +331,7 @@ class DemoData_Actions
 		var mover = actor.mover();
 
 		var itemHolder = actor.itemHolder();
-		var itemToDrop = itemHolder.itemEntitySelected;
+		var itemToDrop = itemHolder.itemSelected;
 		var costToDrop = mover.movesPerTurn; // hack
 
 		if (itemToDrop != null && mover.movesThisTurn >= costToDrop)
@@ -339,9 +339,9 @@ class DemoData_Actions
 			mover.movesThisTurn -= costToDrop;
 			actor.turnable().hasActedThisTurn = true;
 
-			var removeItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToDrop: Entity) =>
+			var removeItem = (itemHolder: ItemHolder, world: World, actor: Entity, item: Item) =>
 			{
-				var itemsHeld = itemHolder.itemEntities;
+				var itemsHeld = itemHolder.items;
 
 				var actionSelectNext =
 					(world as World2).defn2.actionsByName.get("Item_SelectNext");
@@ -351,19 +351,20 @@ class DemoData_Actions
 
 				if (itemsHeld.length == 0)
 				{
-					itemHolder.itemEntitySelected = null;
+					itemHolder.itemSelected = null;
 				}
 			}
 
-			var dropItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToDrop: Entity) =>
+			var dropItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToDrop: Item) =>
 			{
 				//var itemsHeld = itemHolder.itemEntities;
 
 				removeItem(itemHolder, world, actor, itemToDrop);
 
-				var itemLoc = itemToDrop.locatable().loc;
+				var itemToDropAsEntity = itemToDrop.toEntity();
+				var itemLoc = itemToDropAsEntity.locatable().loc;
 				itemLoc.overwriteWith(actor.locatable().loc);
-				place.entitiesToSpawn.push(itemToDrop);
+				place.entitiesToSpawn.push(itemToDropAsEntity);
 			}
 
 			dropItem(actor.itemHolder(), world, actor, itemToDrop);
@@ -398,18 +399,21 @@ class DemoData_Actions
 					mover.movesThisTurn -= costToPickUp;
 					actor.turnable().hasActedThisTurn = true;
 
-					var pickUpItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToPickUp: Entity) =>
+					var pickUpItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToPickUp: Item) =>
 					{
-						itemHolder.itemEntities.push(itemToPickUp);
-						place.entitiesToRemove.push(itemToPickUp);
+						itemHolder.itemAdd(itemToPickUp);
+						place.entityToRemoveAdd(itemToPickUp.toEntity());
 
-						if (itemHolder.itemEntitySelected == null)
+						if (itemHolder.itemSelected == null)
 						{
-							itemHolder.itemEntitySelected = itemToPickUp;
+							itemHolder.itemSelected = itemToPickUp;
 						}
 					}
 
-					pickUpItem(actor.itemHolder(), world, actor, entityPresent);
+					pickUpItem
+					(
+						actor.itemHolder(), world, actor, entityPresent.item()
+					);
 					var itemToPickUpDefn = itemToPickUp.defn(world);
 					var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
 					actor.player().messageLog.messageAdd(message);
@@ -981,7 +985,7 @@ class DemoData_Actions
 			actionSearch,
 			actionTalk,
 			actionWait,
-			actionInstances.ShowMenu,
+			actionInstances.ShowMenuPlayer,
 		];
 
 		// hack
@@ -1002,33 +1006,26 @@ class DemoData_Actions
 		return returnValues;
 	}
 
-	buildActivityDefns()
+	buildActivityDefns(): ActivityDefn[]
 	{
-		var activityDefnDoNothing = new ActivityDefn2
+		var activityDefnDoNothing = new ActivityDefn
 		(
 			"Do Nothing",
 
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
-			{
-				// Do nothing.
-			},
-
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
+			(universe: Universe, world: World, place: Place, actor: Entity) =>
 			{
 				// Do nothing.
 			}
 		);
 
-		var activityDefnFlyForward = new ActivityDefn2
+		var activityDefnFlyForward = new ActivityDefn
 		(
 			"Fly Forward",
 
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
-			{
-				// Do nothing.
-			},
-
-			(universe: Universe, worldAsWorld: World, place: Place, entityActorAsEntity: Entity, activity: Activity2) =>
+			(
+				universe: Universe, worldAsWorld: World, place: Place,
+				entityActorAsEntity: Entity
+			) =>
 			{
 				var world = worldAsWorld as World2;
 				var entityActor = entityActorAsEntity as Entity2;
@@ -1036,7 +1033,8 @@ class DemoData_Actions
 				var actorLoc = entityActor.locatable().loc;
 				//var map = place.map;
 
-				var directionsToMove = actorLoc.orientation.forward.clone().directions(); // hack
+				var directionsToMove =
+					actorLoc.orientation.forward.clone().directions(); // hack
 				var headingToMove = Heading.fromCoords(directionsToMove);
 
 				// hack
@@ -1050,34 +1048,26 @@ class DemoData_Actions
 			}
 		);
 
-		var activityDefnGenerateMovers = new ActivityDefn2
+		var activityDefnGenerateMovers = new ActivityDefn
 		(
 			"Generate Movers",
 
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
-			{
-				// Do nothing.
-			},
-
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
+			(universe: Universe, world: World, place: Place, actor: Entity) =>
 			{
 				var moverGenerator = (actor as Entity2).moverGenerator();
-				moverGenerator.activityPerform(universe, world, place, actor, activity);
+				moverGenerator.activityPerform
+				(
+					universe, world, place, actor
+				);
 			}
 		);
 
-		var activityDefnMoveRandomly = new ActivityDefn2
+		var activityDefnMoveRandomly = new ActivityDefn
 		(
 			"Move Randomly",
 
-			// initialize
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
-			{
-				// do nothing
-			},
-
 			// perform
-			(universe: Universe, world: World, place: Place, actor: Entity, activity: Activity2) =>
+			(universe: Universe, world: World, place: Place, actor: Entity) =>
 			{
 				// hack
 				var actionsMoves = (world as World2).defn2.actionMovesByHeading;
@@ -1095,21 +1085,30 @@ class DemoData_Actions
 			}
 		);
 
-		var activityDefnMoveTowardPlayer = new ActivityDefn2
+		var activityDefnMoveTowardPlayer = new ActivityDefn
 		(
 			"Move Toward Player",
 
-			(universe: Universe, world: World, place: Place, entityActorAsEntity: Entity, activity: Activity) =>
-			{
-				var entityActor = entityActorAsEntity as Entity2;
-				entityActor.actorData().target = entityActor.locatable().loc.pos.clone();
-			},
-
-			(universe: Universe, worldAsWorld: World, placeAsPlace: Place, entityActorAsEntity: Entity, activity: Activity) =>
+			(
+				universe: Universe, worldAsWorld: World,
+				placeAsPlace: Place, entityActorAsEntity: Entity
+			) => // perform
 			{
 				var world = worldAsWorld as World2;
 				var place = placeAsPlace as PlaceLevel;
 				var entityActor = entityActorAsEntity as Entity2;
+
+				var actorData = entityActor.actorData();
+				var activity = actorData.activity_Get();
+				var isInitialized = activity.targetByName("IsInitialized");
+				if (isInitialized == null)
+				{
+					activity.targetSetByName("IsInitialized", true);
+
+					var entityActor = entityActorAsEntity as Entity2;
+					entityActor.actorData().target =
+						entityActor.locatable().loc.pos.clone();
+				}
 
 				var awaitables = place.awaitables();
 				if (awaitables.length > 0)
@@ -1144,11 +1143,11 @@ class DemoData_Actions
 					*/
 
 					// hack
-					var distance = playerPos.clone().subtract(actorPos).magnitude();
+					var distance =
+						playerPos.clone().subtract(actorPos).magnitude();
 					var canActorSeePlayer = (distance <= 8);
 
-					var actor = entityActor.actorData();
-					var target = actor.target;
+					var target = actorData.target;
 					if (canActorSeePlayer)
 					{
 						target.overwriteWith(playerPos);
@@ -1188,7 +1187,7 @@ class DemoData_Actions
 					var actionsMoves = world.defn2.actionMovesByHeading;
 					var actionMoveInDirection = actionsMoves[headingToMove];
 
-					actor.actions.push
+					actorData.actions.push
 					(
 						actionMoveInDirection
 					);
@@ -1196,59 +1195,66 @@ class DemoData_Actions
 			}
 		);
 
-		var activityDefnUserInputAccept = new ActivityDefn2
+		var activityDefnUserInputAccept = new ActivityDefn
 		(
 			"Accept User Input",
 
-			// initialize
-			(universe: Universe, world: World, place: Place, entityActor: Entity, activity: Activity) =>
-			{
-				var mappings = 
-				[
-					new ActionToInputsMapping("Attack with Melee Weapon", [ "a" ], null),
-					new ActionToInputsMapping("Close Door", [ "c" ], null ),
-					new ActionToInputsMapping("Open Door", [ "d" ], null ),
-					new ActionToInputsMapping("Fire Projectile", [ "f" ], null),
-					new ActionToInputsMapping("Pick Up Item", [ "g" ], null),
-					new ActionToInputsMapping("Drop Selected Item", [ "r" ], null),
-					new ActionToInputsMapping("Search", [ "s" ], null),
-					new ActionToInputsMapping("Talk", [ "t" ], null),
-					new ActionToInputsMapping("Use Emplacement", [ "u" ], null ),
-					new ActionToInputsMapping("Use Selected Item", [ "y" ], null),
-
-					new ActionToInputsMapping("Move Southwest", [ "_1" ], null),
-					new ActionToInputsMapping("Move South", [ "_2" ], null),
-					new ActionToInputsMapping("Move Southeast", [ "_3" ], null),
-					new ActionToInputsMapping("Move West", [ "_4" ], null),
-					new ActionToInputsMapping("Move East", [ "_6" ], null),
-					new ActionToInputsMapping("Move Northwest", [ "_7" ], null),
-					new ActionToInputsMapping("Move North", [ "_8" ], null),
-					new ActionToInputsMapping("Move Northeast", [ "_9" ], null),
-
-					//new ActionToInputsMapping("ShowEquipment", [ "`" ], null),
-					//new ActionToInputsMapping("ShowItems", [ "Tab" ], null),
-					new ActionToInputsMapping("Select Next Item", [ "]" ], null),
-					new ActionToInputsMapping("Select Previous Item", [ "[" ], null),
-
-					new ActionToInputsMapping("Wait", [ "." ], null),
-
-					new ActionToInputsMapping("ShowMenu", [ "Escape" ], null),
-				]
-
-				var mappingsByInputName = ArrayHelper.addLookups
-				(
-					mappings,
-					(element: ActionToInputsMapping) => element.inputNames[0]
-				);
-
-				activity.target = mappingsByInputName;
-			},
-
-			(universe: Universe, worldAsWorld: World, placeAsPlace: Place, entityActor: Entity, activity: Activity) =>
+			(
+				universe: Universe, worldAsWorld: World,
+				placeAsPlace: Place, entityActor: Entity
+			) =>
 			{
 				var world = worldAsWorld as World2;
 				var place = placeAsPlace as PlaceLevel;
-				var actor = entityActor as Entity2;
+				var entityActorAsEntity2 = entityActor as Entity2;
+
+				var actorData = entityActorAsEntity2.actorData();
+				var activity = actorData.activity_Get();
+				var isInitialized = activity.targetByName("IsInitialized");
+				if (isInitialized == null)
+				{
+					activity.targetSetByName("IsInitialized", true);
+
+					var mappings = 
+					[
+						new ActionToInputsMapping("Attack with Melee Weapon", [ "a" ], null),
+						new ActionToInputsMapping("Close Door", [ "c" ], null ),
+						new ActionToInputsMapping("Open Door", [ "d" ], null ),
+						new ActionToInputsMapping("Fire Projectile", [ "f" ], null),
+						new ActionToInputsMapping("Pick Up Item", [ "g" ], null),
+						new ActionToInputsMapping("Drop Selected Item", [ "r" ], null),
+						new ActionToInputsMapping("Search", [ "s" ], null),
+						new ActionToInputsMapping("Talk", [ "t" ], null),
+						new ActionToInputsMapping("Use Emplacement", [ "u" ], null ),
+						new ActionToInputsMapping("Use Selected Item", [ "y" ], null),
+
+						new ActionToInputsMapping("Move Southwest", [ "_1" ], null),
+						new ActionToInputsMapping("Move South", [ "_2" ], null),
+						new ActionToInputsMapping("Move Southeast", [ "_3" ], null),
+						new ActionToInputsMapping("Move West", [ "_4" ], null),
+						new ActionToInputsMapping("Move East", [ "_6" ], null),
+						new ActionToInputsMapping("Move Northwest", [ "_7" ], null),
+						new ActionToInputsMapping("Move North", [ "_8" ], null),
+						new ActionToInputsMapping("Move Northeast", [ "_9" ], null),
+
+						//new ActionToInputsMapping("ShowEquipment", [ "`" ], null),
+						//new ActionToInputsMapping("ShowItems", [ "Tab" ], null),
+						new ActionToInputsMapping("Select Next Item", [ "]" ], null),
+						new ActionToInputsMapping("Select Previous Item", [ "[" ], null),
+
+						new ActionToInputsMapping("Wait", [ "." ], null),
+
+						new ActionToInputsMapping("ShowMenuPlayer", [ "Escape" ], null),
+					]
+
+					var mappingsByInputName = ArrayHelper.addLookups
+					(
+						mappings,
+						(element: ActionToInputsMapping) => element.inputNames[0]
+					);
+
+					activity.targetSet(mappingsByInputName);
+				}
 
 				var awaitables = place.awaitables();
 				if (awaitables.length > 0)
@@ -1257,9 +1263,10 @@ class DemoData_Actions
 				}
 
 				var inputHelper = universe.inputHelper;
-				var inputToActionMappings = activity.target;
+				var activity = actorData.activity_Get();
+				var inputToActionMappings = activity.target();
 				var inputsActive = inputHelper.inputsPressed;
-				var actionsFromActor = actor.actorData().actions;
+				var actionsFromActor = actorData.actions;
 
 				for (var i = 0; i < inputsActive.length; i++)
 				{
@@ -1268,7 +1275,8 @@ class DemoData_Actions
 					if (inputMapping != null)
 					{
 						var actionName = inputMapping.actionName;
-						var action = (world as World2).defn2.actionsByName.get(actionName);
+						var worldDefn = (world as World2).defn2;
+						var action = worldDefn.actionsByName.get(actionName);
 
 						/*
 						var ticksToHold = 1; // hack
@@ -1285,16 +1293,14 @@ class DemoData_Actions
 			}
 		);
 
-		var activityDefnUserInputDemo = new ActivityDefn2
+		var activityDefnUserInputDemo = new ActivityDefn
 		(
 			"Demo User Input",
 
-			(universe: Universe, world: World, place: Place, entityActor: Entity, activity: Activity) =>
-			{
-				// do nothing
-			},
-
-			(universe: Universe, worldAsWorld: World, placeAsPlace: Place, entityActorAsEntity: Entity, activity: Activity) =>
+			(
+				universe: Universe, worldAsWorld: World,
+				placeAsPlace: Place, entityActorAsEntity: Entity
+			) =>
 			{
 				var world = worldAsWorld as World2;
 				var actor = entityActorAsEntity as Entity2;
@@ -1312,10 +1318,10 @@ class DemoData_Actions
 				var target = actor.actorData().target;
 				if (target == null)
 				{
-					var itemsHeld = actor.itemHolder().itemEntities;
+					var itemsHeld = actor.itemHolder().items;
 					var hasItemGoal = itemsHeld.some
 					(
-						(x: Entity) => x.name == "Amulet of Yendor"
+						(x: Item) => x.defnName == "Amulet of Yendor"
 					);
 
 					var itemsOnLevel = place.items();
@@ -1427,8 +1433,6 @@ class DemoData_Actions
 			activityDefnUserInputDemo
 		];
 
-		//var returnValuesByName = ArrayHelper.addLookupsByName(returnValues);
-
-		return returnValues;//ByName;
+		return returnValues;
 	}
 }

@@ -4,7 +4,7 @@ class WorldDefn2 extends WorldDefn
 	name: string;
 	actions: Action[];
 	actionMovesByHeading: Action[];
-	activityDefns: ActivityDefn2[];
+	activityDefns: ActivityDefn[];
 	itemCategories: ItemCategory[];
 	entityDefnGroups: EntityDefnGroup[];
 	spells: Spell[];
@@ -13,8 +13,9 @@ class WorldDefn2 extends WorldDefn
 	buildPlaces: (worldDefn: WorldDefn2) => PlaceLevel[];
 
 	actionsByName: Map<string, Action>;
-	activityDefn2sByName: Map<string, ActivityDefn2>;
+	activityDefnsByName: Map<string, ActivityDefn>;
 	entityDefns: Entity[];
+	entityDefnsByName: Map<string, Entity>;
 	entityDefnGroupsByName: Map<string, EntityDefnGroup>;
 	spellsByName: Map<string, Spell>;
 	itemCategoriesByName: Map<string, ItemCategory>;
@@ -27,7 +28,7 @@ class WorldDefn2 extends WorldDefn
 		name: string,
 		actions: Action[],
 		actionMovesByHeading: Action[],
-		activityDefns: ActivityDefn2[],
+		activityDefns: ActivityDefn[],
 		itemCategories: ItemCategory[],
 		entityDefnGroups: EntityDefnGroup[],
 		spells: Spell[],
@@ -57,20 +58,16 @@ class WorldDefn2 extends WorldDefn
 		);
 
 		this.entityDefns = ArrayHelper.concatenateAll(entityDefnSets);
-		this.entityDefnsByName = () => ArrayHelper.addLookupsByName(this.entityDefns);
+		this.entityDefnsByName = ArrayHelper.addLookupsByName(this.entityDefns);
 
 		this.actionsByName =
 			ArrayHelper.addLookupsByName(this.actions);
-		this.activityDefn2sByName =
+		this.activityDefnsByName =
 			ArrayHelper.addLookupsByName(this.activityDefns);
 		this.placeDefn2sByName =
 			ArrayHelper.addLookupsByName(this.placeDefns);
 		this.entityDefnGroupsByName =
 			ArrayHelper.addLookupsByName(this.entityDefnGroups);
-		/*
-		this.entityDefnsByName =
-			ArrayHelper.addLookupsByName(this.entityDefns);
-		*/
 
 		var entityDefnsForItemDefns = this.entityDefns.filter
 		(
@@ -80,24 +77,32 @@ class WorldDefn2 extends WorldDefn
 		(
 			(x: Entity) => x.itemDefn()
 		);
-		/*
-		var itemDefnNamesAndDefns = this.itemDefns.map
-		(
-			(x: ItemDefn) => [ x.name, x ]
-		);
-		this._itemDefnsByName = new Map<string,ItemDefn>(itemDefnNamesAndDefns);
-		*/
 		this._itemDefnsByName = ArrayHelper.addLookupsByName(this.itemDefns);
 
 		this.spellsByName = ArrayHelper.addLookupsByName(this.spells);
 	}
 
-	itemDefnsByName()
+	activityDefnByName(defnName: string): ActivityDefn
+	{
+		return this.activityDefnsByName.get(defnName);
+	}
+
+	entityDefnByName(defnName: string): Entity
+	{
+		return this.entityDefnsByName.get(defnName);
+	}
+
+	itemDefnByName(itemDefnName: string): ItemDefn
+	{
+		return this._itemDefnsByName.get(itemDefnName);
+	}
+
+	itemDefnsByName(): Map<string, ItemDefn>
 	{
 		return this._itemDefnsByName;
 	}
-	
-	placeDefnsByName()
+
+	placeDefnsByName(): Map<string, PlaceDefn2>
 	{
 		return this.placeDefn2sByName;
 	}

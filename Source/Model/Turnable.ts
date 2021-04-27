@@ -1,5 +1,5 @@
 
-class Turnable extends EntityProperty
+class Turnable implements EntityProperty
 {
 	updateForTurn: any;
 	hasActedThisTurn: boolean;
@@ -8,7 +8,6 @@ class Turnable extends EntityProperty
 
 	constructor(updateForTurn: any)
 	{
-		super();
 		this.updateForTurn = updateForTurn;
 		this.hasActedThisTurn = false;
 	}
@@ -24,4 +23,10 @@ class Turnable extends EntityProperty
 		this.hasActedThisTurn = other.hasActedThisTurn;
 		return this;
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

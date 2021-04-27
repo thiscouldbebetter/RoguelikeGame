@@ -1,12 +1,9 @@
 "use strict";
-class ActorData extends EntityProperty {
-    constructor() {
-        super();
-    }
+class ActorData {
     activity_Get() { return this._activity; }
     activity_Set(universe, world, place, actor, value) {
         this._activity = value;
-        this._activity.initialize(universe, world, place, actor);
+        //this._activity.initialize(universe, world, place, actor);
     }
     entityBeingFaced(u, w, place, actor) {
         var returnValue = null;
@@ -30,4 +27,8 @@ class ActorData extends EntityProperty {
     overwriteWith(other) {
         return this; // todo
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

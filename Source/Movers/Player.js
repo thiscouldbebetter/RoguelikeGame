@@ -1,7 +1,6 @@
 "use strict";
-class Player extends EntityProperty {
+class Player {
     constructor(sightRange) {
-        super();
         this.sightRange = sightRange;
         this.messageLog = new MessageLog();
         this.placeKnownLookup = new Map();
@@ -80,7 +79,7 @@ class Player extends EntityProperty {
                     return returnValue;
                 }, null))
             ], null, null);
-            this.control = new ControlContainer("containerMover", new Coords(0, 0, 0), // pos
+            this.control = new ControlContainer("containerMover", Coords.create(), // pos
             new Coords(180, 272, 0), // size
             [
                 ControlLabel.fromPosAndText(new Coords(10, 16, 0), "Name: " + entity.name),
@@ -101,4 +100,6 @@ class Player extends EntityProperty {
     overwriteWith(other) {
         return this; // todo
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
 }

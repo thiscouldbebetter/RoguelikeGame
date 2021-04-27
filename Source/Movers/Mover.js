@@ -1,7 +1,6 @@
 "use strict";
-class Mover extends EntityProperty {
+class Mover {
     constructor(movesPerTurn) {
-        super();
         this.movesPerTurn = movesPerTurn;
     }
     initialize(universe, world, place, entityAsEntity) {
@@ -30,4 +29,6 @@ class Mover extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
 }

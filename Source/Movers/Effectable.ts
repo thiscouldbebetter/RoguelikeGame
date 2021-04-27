@@ -1,5 +1,5 @@
 
-class Effectable2 extends EntityProperty
+class Effectable2 implements EntityProperty
 {
 	effects: Effect2[];
 
@@ -7,7 +7,6 @@ class Effectable2 extends EntityProperty
 
 	constructor(effects: Effect2[])
 	{
-		super();
 		this.effects = effects || [];
 		this.effectsToRemove = [];
 	}
@@ -47,5 +46,10 @@ class Effectable2 extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Effectable2) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 
 }

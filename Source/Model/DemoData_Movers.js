@@ -141,7 +141,7 @@ class DemoData_Movers {
         ]);
         var equipmentUser = new EquipmentUser(equipmentSocketDefnGroup);
         var itemHolder = new ItemHolder([
-            new Entity("Dagger", [new Item("Dagger", 1)]) // todo
+            new Item("Dagger", 1)
         ], 100, // weightMax
         0 // reachRange
         );

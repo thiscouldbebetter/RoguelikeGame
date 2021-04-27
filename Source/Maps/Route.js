@@ -6,7 +6,7 @@ class Route2 {
         this.goalPos = goalPos;
         this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
         // Helper variables.
-        this._tempPos = new Coords(0, 0, 0);
+        this._tempPos = Coords.create();
     }
     calculate() {
         var map = this.map;
@@ -26,7 +26,8 @@ class Route2 {
             * map.sizeInCells.x
             + startNode.cellPos.x;
         openLookup.set(startIndex, startNode);
-        while (openList.length > 0) {
+        while (openList.length > 0) // && openList.length < this.lengthMax)
+         {
             var current = openList[0];
             if (current.cellPos.equalsXY(goalPos)) {
                 break;

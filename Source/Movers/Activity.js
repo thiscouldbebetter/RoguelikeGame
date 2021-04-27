@@ -1,8 +1,8 @@
 "use strict";
-class Activity2 {
+class Activity2 extends Activity {
     constructor(defnName, target) {
-        this.defnName = defnName;
-        this.target = target;
+        super(defnName, null);
+        this.targetSet(target);
     }
     // instance methods
     defn(world) {

@@ -27,7 +27,7 @@ class PlaceLevel extends Place {
         }
         this.hasBeenUpdatedSinceDrawn = true;
         // Helper variables.
-        this._drawLoc = new Disposition(new Coords(0, 0, 0), null, null);
+        this._drawLoc = new Disposition(Coords.create(), null, null);
     }
     static ZLayers() {
         if (PlaceLevel._zLayers == null) {
@@ -116,7 +116,8 @@ class PlaceLevel extends Place {
                 var entityDefnProperty = entityDefnProperties[c];
                 var entityDefnPropertyName = entityDefnProperty.constructor.name;
                 var entitiesWithProperty = this.entitiesByPropertyName(entityDefnPropertyName);
-                if (entitiesWithProperty != null) {
+                if (entitiesWithProperty != null) // hack
+                 {
                     ArrayHelper.remove(entitiesWithProperty, entityToRemove);
                 }
             }
@@ -144,7 +145,7 @@ class PlaceLevel extends Place {
             var collisions = collisionSets[s];
             for (var c = 0; c < collisions.length; c++) {
                 var collision = collisions[c];
-                var mappables = collision.collidables;
+                var mappables = collision.entitiesColliding;
                 for (var i = 0; i < mappables.length; i++) {
                     var entityThis = mappables[i];
                     for (var j = i + 1; j < mappables.length; j++) {
@@ -196,7 +197,7 @@ class PlaceLevel extends Place {
         var world = worldAsWorld;
         display.childSelectByName(null);
         display.childSelectByName("Map");
-        display.drawBackground("Black", "Black");
+        display.drawBackground(Color.byName("Black"), Color.byName("Black"));
         this.map.draw(universe, world, this, display);
         display.childSelectByName("Status");
         display.clear();
@@ -211,7 +212,7 @@ class PlaceLevel extends Place {
         messageLogAsControl.draw(universe, display, this._drawLoc, null);
         display.flush();
         display.childSelectByName(null);
-        display.drawRectangle(Coords.Instances().Zeroes, display.displayToUse().sizeInPixels, null, "Gray", null);
+        display.drawRectangle(Coords.Instances().Zeroes, display.displayToUse().sizeInPixels, null, Color.byName("Gray"), null);
     }
     // entities
     awaitables() { return this.entitiesByPropertyName(Awaitable.name); }

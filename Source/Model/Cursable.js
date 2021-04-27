@@ -1,7 +1,6 @@
 "use strict";
-class Cursable extends EntityProperty {
+class Cursable {
     constructor(blessingLevel) {
-        super();
         this.blessingLevel = blessingLevel;
     }
     bless() {
@@ -28,4 +27,8 @@ class Cursable extends EntityProperty {
         this.blessingLevel = other.blessingLevel;
         return this;
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

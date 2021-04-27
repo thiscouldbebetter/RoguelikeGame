@@ -38,7 +38,7 @@ class World2 extends World
 			var portal0 = place0.entitiesToSpawn[0]; // hack
 			var portal0Pos = portal0.locatable().loc.pos.clone();
 
-			var entityDefnPlayer = this.defn2.entityDefnsByName().get("Player");
+			var entityDefnPlayer = this.defn2.entityDefnByName("Player") as Entity2;
 			this.entityForPlayer = Entity2.fromNameDefnAndProperties
 			(
 				entityDefnPlayer.name,

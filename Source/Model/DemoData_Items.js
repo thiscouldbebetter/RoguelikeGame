@@ -297,7 +297,7 @@ class DemoData_Items {
             new Ring("Sustain Ability", equipTodo),
             new Ring("Teleport", equipTodo),
             new Ring("Teleport Control", equipTodo),
-            new Ring("Warning", equipTodo),
+            new Ring("Warning", equipTodo), // 27
         ];
         var appearances = [
             "Pearl", "Iron", "Twisted", "Steel",
@@ -323,7 +323,7 @@ class DemoData_Items {
                 ["Ring"], // categoryNames
                 null, //ItemDefn.UseEquip
                 null),
-                new Generatable(1),
+                new Generatable(1), // todo
             ]));
         }
         entityDefnSets.push(entityDefnSetRings);
@@ -461,7 +461,7 @@ class DemoData_Items {
             "Wizard Lock",
             "Dig",
             "Polymorph",
-            "Cancellation",
+            "Cancellation", // 39
         ];
         var appearances = [
             "Parchment", "Vellum", "Ragged", "Dogeared",
@@ -476,7 +476,7 @@ class DemoData_Items {
             "Shining", "Dull", "Thin", "Thick",
         ];
         var entityDefnSetSpellbooks = [];
-        var device = new Device(name, null, null, // init, update
+        var device = new Device("Spellbook", null, null, // init, update
         null, // this.itemEffectorApply
         null);
         var spellLearn = (u, w, p, eUsing, eUsed, spellName) => {
@@ -523,7 +523,7 @@ class DemoData_Items {
             var world = worldAsWorld;
             var loc = targetEntity.locatable().loc;
             var venue = loc.place(world);
-            var entityDefnForProjectile = world.defn2.entityDefnsByName().get("Rock");
+            var entityDefnForProjectile = world.defn2.entityDefnByName("Rock");
             var entityForProjectile = entityDefnForProjectile.clone(); // todo
             venue.entitiesToSpawn.push(entityForProjectile);
             // todo
@@ -534,12 +534,14 @@ class DemoData_Items {
             var loc = targetEntity.locatable().loc;
             var teleportPos = null;
             while (teleportPos == null) {
-                var map = loc.place(world).map;
+                var placeLevel = loc.place(world);
+                var map = placeLevel.map;
                 var randomizer = world.randomizer;
-                teleportPos = new Coords(0, 0, 0).randomize(randomizer).multiply(map.sizeInCells).floor();
+                teleportPos = Coords.create().randomize(randomizer).multiply(map.sizeInCells).floor();
                 var cellToTeleportTo = map.cellAtPos(teleportPos);
                 var cellTerrain = cellToTeleportTo.terrain(map);
-                if (cellTerrain.costToTraverse > 100) {
+                if (cellTerrain.costToTraverse > 100) // hack
+                 {
                     teleportPos = null;
                 }
             }
@@ -571,7 +573,7 @@ class DemoData_Items {
             new Wand("Striking", wandUseProjectileSpawn),
             new Wand("Teleport", wandUseTeleport),
             new Wand("Turn Undead", wandUseNotImplemented),
-            new Wand("Wishing", wandUseNotImplemented),
+            new Wand("Wishing", wandUseNotImplemented), // 23
         ];
         var appearances = [
             "Glass", "Balsa", "Crystal", "Maple",
@@ -856,7 +858,7 @@ class DemoData_Items {
             "Touchstone",
             "Flint",
             // rock
-            "Rock",
+            "Rock", // 35
         ];
         var appearancesOfStones = [
             "White Gem", "White Gem", "Red Gem", "Orange Gem",
@@ -950,9 +952,8 @@ class DemoData_Items {
     }
 }
 // Convenience classes.
-class Food extends EntityProperty {
+class Food {
     constructor(name, satiety, weight) {
-        super();
         this.name = name;
         this.satiety = satiety;
         this.weight = weight;
@@ -960,6 +961,10 @@ class Food extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }
 class Ring {
     constructor(name, use) {

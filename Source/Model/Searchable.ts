@@ -1,5 +1,5 @@
 
-class Searchable extends EntityProperty
+class Searchable implements EntityProperty
 {
 	chanceOfDiscoveryPerSearch: number;
 	isHidden: boolean;
@@ -7,7 +7,6 @@ class Searchable extends EntityProperty
 
 	constructor(chanceOfDiscoveryPerSearch: number, isHidden: boolean, discover: any)
 	{
-		super();
 		this.chanceOfDiscoveryPerSearch = chanceOfDiscoveryPerSearch;
 		this.isHidden = isHidden || false;
 		this.discover = discover;
@@ -22,4 +21,9 @@ class Searchable extends EntityProperty
 	}
 
 	overwriteWith(other: Searchable) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 }

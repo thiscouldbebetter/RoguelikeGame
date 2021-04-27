@@ -7,7 +7,7 @@ class SightHelper {
             * distanceFromEyeMax
             * distanceFromEyeMax;
         for (var i = 0; i < numberOfCellPositionsMax; i++) {
-            this._cellPositionsVisible.push(new Coords(0, 0, 0));
+            this._cellPositionsVisible.push(Coords.create());
         }
         this.numberOfCellsVisible = 0;
         // Helper variables.
@@ -18,15 +18,15 @@ class SightHelper {
             ];
         this.cornerAddendsForSides =
             [
-                new Coords(0, 0, 0), new Coords(0, -1, 0),
+                Coords.create(), new Coords(0, -1, 0),
                 new Coords(1, 0, 0), new Coords(0, 1, 0)
             ];
-        this._cellPos = new Coords(0, 0, 0);
-        this._cellPosRelative = new Coords(0, 0, 0);
-        this._eyePosCentered = new Coords(0, 0, 0);
+        this._cellPos = Coords.create();
+        this._cellPosRelative = Coords.create();
+        this._eyePosCentered = Coords.create();
         this._vertexPositionsRelative =
             [
-                new Coords(0, 0, 0), new Coords(0, 0, 0)
+                Coords.create(), Coords.create()
             ];
     }
     entitiesPerceivedTransientRemoveFromMap(map) {

@@ -4,6 +4,7 @@
 <!-- hack -->
 <!-- These classes currently have to come first. -->
 <script type="text/javascript" src="Framework/Source/Utility/RandomizerLCG.js"></script>
+<script type="text/javascript" src="Framework/Source/Model/Entity.js"></script>
 <script type="text/javascript" src="Framework/Source/Model/EntityProperty.js"></script>
 
 <script type="text/javascript" src="Framework/Source/Helpers/ArrayHelper.js"></script>
@@ -40,7 +41,6 @@
 
 <script type="text/javascript" src="Framework/Source/Display/Visuals/VisualAnchor.js"></script>
 <script type="text/javascript" src="Framework/Source/Display/Visuals/VisualArc.js"></script>
-<script type="text/javascript" src="Framework/Source/Display/Visuals/VisualCameraProjection.js"></script>
 <script type="text/javascript" src="Framework/Source/Display/Visuals/VisualCircle.js"></script>
 <script type="text/javascript" src="Framework/Source/Display/Visuals/VisualDirectional.js"></script>
 <script type="text/javascript" src="Framework/Source/Display/Visuals/VisualDynamic.js"></script>
@@ -61,9 +61,6 @@
 <script type="text/javascript" src="Framework/Source/Display/Visuals/Animation/VisualAnimation.js"></script>
 
 <script type="text/javascript" src="Framework/Source/Geometry/Camera.js"></script>
-<script type="text/javascript" src="Framework/Source/Geometry/Collision.js"></script>
-<script type="text/javascript" src="Framework/Source/Geometry/CollisionHelper.js"></script>
-<script type="text/javascript" src="Framework/Source/Geometry/Constraint.js"></script>
 <script type="text/javascript" src="Framework/Source/Geometry/Coords.js"></script>
 <script type="text/javascript" src="Framework/Source/Geometry/Direction.js"></script>
 <script type="text/javascript" src="Framework/Source/Geometry/Disposition.js"></script>
@@ -72,6 +69,9 @@
 <script type="text/javascript" src="Framework/Source/Geometry/Quaternion.js"></script>
 <script type="text/javascript" src="Framework/Source/Geometry/RangeExtent.js"></script>
 <script type="text/javascript" src="Framework/Source/Geometry/Rotation.js"></script>
+
+<script type="text/javascript" src="Framework/Source/Geometry/Collisions/Collision.js"></script>
+<script type="text/javascript" src="Framework/Source/Geometry/Collisions/CollisionHelper.js"></script>
 
 <script type="text/javascript" src="Framework/Source/Geometry/Shapes/Arc.js"></script>
 <script type="text/javascript" src="Framework/Source/Geometry/Shapes/Box.js"></script>
@@ -117,9 +117,7 @@
 <script type="text/javascript" src="Framework/Source/Media/VideoHelper.js"></script>
 <script type="text/javascript" src="Framework/Source/Media/VisualSound.js"></script>
 
-<script type="text/javascript" src="Framework/Source/Model/Entity.js"></script>
 <script type="text/javascript" src="Framework/Source/Model/EntityBuilder.js"></script>
-<script type="text/javascript" src="Framework/Source/Model/Goal.js"></script>
 <script type="text/javascript" src="Framework/Source/Model/Playable.js"></script>
 <script type="text/javascript" src="Framework/Source/Model/Universe.js"></script>
 <script type="text/javascript" src="Framework/Source/Model/VenueWorld.js"></script>
@@ -127,6 +125,8 @@
 <script type="text/javascript" src="Framework/Source/Model/WorldDefn.js"></script>
 
 <script type="text/javascript" src="Framework/Source/Model/Actors/Action.js"></script>
+<script type="text/javascript" src="Framework/Source/Model/Actors/Activity.js"></script>
+<script type="text/javascript" src="Framework/Source/Model/Actors/ActivityDefn.js"></script>
 <script type="text/javascript" src="Framework/Source/Model/Actors/Actor.js"></script>
 
 <script type="text/javascript" src="Framework/Source/Model/Combat/Damage.js"></script>
@@ -194,6 +194,8 @@
 
 <!-- Imports. -->
 
+<script type="text/javascript" src="Framework/Source/Imports.js"></script>
+
 <script type="text/javascript" src="Imports.js"></script>
 
 <!-- Framework ends. -->
@@ -240,8 +242,6 @@
 <script type="text/javascript" src="Model/PlaceLevel.js"></script>
 <script type="text/javascript" src="Model/PlaceDefn.js"></script>
 
-<script type="text/javascript" src="Movers/Activity.js"></script>
-<script type="text/javascript" src="Movers/ActivityDefn.js"></script>
 <script type="text/javascript" src="Movers/ActorData.js"></script>
 <script type="text/javascript" src="Movers/ActorDefn.js"></script>
 <script type="text/javascript" src="Movers/Attack.js"></script>

@@ -1,7 +1,6 @@
 "use strict";
-class Turnable extends EntityProperty {
+class Turnable {
     constructor(updateForTurn) {
-        super();
         this.updateForTurn = updateForTurn;
         this.hasActedThisTurn = false;
     }
@@ -13,4 +12,8 @@ class Turnable extends EntityProperty {
         this.hasActedThisTurn = other.hasActedThisTurn;
         return this;
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

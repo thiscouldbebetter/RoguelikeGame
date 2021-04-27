@@ -1,12 +1,11 @@
 
-class Emplacement extends EntityProperty
+class Emplacement implements EntityProperty
 {
 	appearance: string;
 	_use: any;
 
 	constructor(appearance: string, use: any)
 	{
-		super();
 		this.appearance = appearance;
 		this._use = use;
 	}
@@ -30,4 +29,10 @@ class Emplacement extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Emplacement) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

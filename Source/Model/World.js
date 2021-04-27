@@ -10,7 +10,7 @@ class World2 extends World {
             var place0 = this.places[0];
             var portal0 = place0.entitiesToSpawn[0]; // hack
             var portal0Pos = portal0.locatable().loc.pos.clone();
-            var entityDefnPlayer = this.defn2.entityDefnsByName().get("Player");
+            var entityDefnPlayer = this.defn2.entityDefnByName("Player");
             this.entityForPlayer = Entity2.fromNameDefnAndProperties(entityDefnPlayer.name, entityDefnPlayer, [
                 new Locatable(new Disposition(portal0Pos, null, place0.name))
             ]);

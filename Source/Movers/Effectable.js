@@ -1,7 +1,6 @@
 "use strict";
-class Effectable2 extends EntityProperty {
+class Effectable2 {
     constructor(effects) {
-        super();
         this.effects = effects || [];
         this.effectsToRemove = [];
     }
@@ -29,4 +28,8 @@ class Effectable2 extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

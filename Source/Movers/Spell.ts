@@ -39,7 +39,7 @@ class Spell_Instances
 	}
 }
 
-class SpellCaster extends EntityProperty
+class SpellCaster implements EntityProperty
 {
 	spellKnowledges: SpellKnowledge[];
 
@@ -47,8 +47,6 @@ class SpellCaster extends EntityProperty
 
 	constructor(spellKnowledges: SpellKnowledge[])
 	{
-		super();
-
 		this.spellKnowledges = spellKnowledges;
 
 		this.spellKnowledgesByName = ArrayHelper.addLookups
@@ -143,6 +141,11 @@ class SpellCaster extends EntityProperty
 
 		return message;
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 }
 
 class SpellKnowledge

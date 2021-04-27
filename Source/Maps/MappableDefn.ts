@@ -1,12 +1,11 @@
 
-class MappableDefn extends EntityProperty
+class MappableDefn implements EntityProperty
 {
 	blocksMovement: (e:Entity2)=>boolean;
 	blocksVision: (e:Entity2)=>boolean;
 
 	constructor(blocksMovement: (e:Entity2)=>boolean, blocksVision: (e:Entity2)=>boolean)
 	{
-		super();
 		this.blocksMovement = blocksMovement;
 		this.blocksVision = blocksVision;
 	}
@@ -62,6 +61,9 @@ class MappableDefn extends EntityProperty
 	{
 		return this; // todo
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
 }
 
 class MappableDefn_Instances

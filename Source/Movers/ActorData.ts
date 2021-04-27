@@ -1,25 +1,20 @@
 
-class ActorData extends EntityProperty
+class ActorData implements EntityProperty
 {
-	_activity: Activity2;
+	_activity: Activity;
 	actions: Action[];
 	target: any;
-
-	constructor()
-	{
-		super();
-	}
 
 	activity_Get() { return this._activity; }
 
 	activity_Set
 	(
 		universe: Universe, world: World, place: Place, actor: Entity,
-		value: Activity2
+		value: Activity
 	)
 	{
 		this._activity = value;
-		this._activity.initialize(universe, world, place, actor);
+		//this._activity.initialize(universe, world, place, actor);
 	}
 
 	entityBeingFaced(u: Universe, w: World, place: Place, actor: Entity)
@@ -50,13 +45,19 @@ class ActorData extends EntityProperty
 
 	// Clonable.
 
-	clone()
+	clone(): ActorData
 	{
 		return this; // todo
 	}
 
-	overwriteWith(other: ActorData)
+	overwriteWith(other: ActorData): ActorData
 	{
 		return this; // todo
 	}
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

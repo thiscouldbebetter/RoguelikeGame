@@ -1,12 +1,11 @@
 
-class Portal2 extends EntityProperty
+class Portal2 implements EntityProperty
 {
 	destinationPlaceName: string;
 	destinationEntityName: string;
 
 	constructor(destinationPlaceName: string, destinationEntityName: string)
 	{
-		super();
 		this.destinationPlaceName = destinationPlaceName;
 		this.destinationEntityName = destinationEntityName;
 	}
@@ -49,5 +48,10 @@ class Portal2 extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Portal2) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 
 }

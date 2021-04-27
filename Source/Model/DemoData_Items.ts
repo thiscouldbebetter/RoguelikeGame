@@ -30,7 +30,8 @@ class DemoData_Items
 			Item.name,
 		];
 
-		var sizeInPixels = (visualsByName.get("Floor") as VisualImage).image(universe).sizeInPixels;
+		var sizeInPixels =
+			(visualsByName.get("Floor") as VisualImage).image(universe).sizeInPixels;
 
 		var itemPropertiesNoStack = new ItemDefn
 		(
@@ -817,7 +818,7 @@ class DemoData_Items
 
 		var device = new Device
 		(
-			name,
+			"Spellbook",
 			null, null, // init, update
 			null, // this.itemEffectorApply
 			null
@@ -914,7 +915,7 @@ class DemoData_Items
 				var loc = targetEntity.locatable().loc;
 				var venue = loc.place(world);
 
-				var entityDefnForProjectile = world.defn2.entityDefnsByName().get("Rock");
+				var entityDefnForProjectile = world.defn2.entityDefnByName("Rock");
 				var entityForProjectile = entityDefnForProjectile.clone(); // todo
 
 				venue.entitiesToSpawn.push(entityForProjectile);
@@ -933,9 +934,10 @@ class DemoData_Items
 			var teleportPos = null;
 			while (teleportPos == null)
 			{
-				var map = loc.place(world).map;
+				var placeLevel = loc.place(world) as PlaceLevel;
+				var map = placeLevel.map;
 				var randomizer = (world as World2).randomizer;
-				teleportPos = new Coords(0, 0, 0).randomize(randomizer).multiply
+				teleportPos = Coords.create().randomize(randomizer).multiply
 				(
 					map.sizeInCells
 				).floor();
@@ -1582,7 +1584,7 @@ class DemoData_Items
 
 // Convenience classes.
 
-class Food extends EntityProperty
+class Food implements EntityProperty
 {
 	name: string;
 	satiety: number;
@@ -1590,7 +1592,6 @@ class Food extends EntityProperty
 
 	constructor(name: string, satiety: number, weight: number)
 	{
-		super();
 		this.name = name;
 		this.satiety = satiety;
 		this.weight = weight;
@@ -1599,6 +1600,11 @@ class Food extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Food) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 }
 
 class Ring

@@ -1,10 +1,14 @@
 "use strict";
-class Mappable extends EntityProperty {
+class Mappable {
     constructor(defn) {
-        super();
         this.defn = defn;
         this.mapCellOccupied = null;
         this.entitiesAlreadyCollidedWith = []; // hack
-        this.collider = new Sphere(new Coords(0, 0, 0), 0);
+        this.collider = new Sphere(Coords.create(), 0);
     }
+    // collider() { return new Sphere(0, 0); }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }

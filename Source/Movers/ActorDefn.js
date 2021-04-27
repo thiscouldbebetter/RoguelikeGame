@@ -1,7 +1,6 @@
 "use strict";
-class ActorDefn extends EntityProperty {
+class ActorDefn {
     constructor(activityDefnNameInitial) {
-        super();
         this.activityDefnNameInitial = activityDefnNameInitial;
     }
     initialize(universe, world, place, entityAsEntity) {
@@ -9,7 +8,7 @@ class ActorDefn extends EntityProperty {
         var actorData = new ActorData();
         entity.propertyAddForPlace(actorData, place);
         actorData.actions = [];
-        var activity = new Activity2(entity.actorDefn().activityDefnNameInitial, null);
+        var activity = Activity.fromDefnName(entity.actorDefn().activityDefnNameInitial);
         actorData.activity_Set(universe, world, place, entity, activity);
     }
     updateForTimerTick(universe, world, place, entityAsEntity) {
@@ -31,4 +30,6 @@ class ActorDefn extends EntityProperty {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
 }

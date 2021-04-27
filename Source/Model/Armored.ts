@@ -1,11 +1,6 @@
 
-class Armored extends EntityProperty
+class Armored implements EntityProperty
 {
-	constructor()
-	{
-		super();
-	}
-
 	armorClassCalculate(u: Universe, w: World, p: Place, e: Entity)
 	{
 		return 10; // todo
@@ -14,4 +9,10 @@ class Armored extends EntityProperty
 	// Clonable.
 	clone() { return this; }
 	overwriteWith(other: Armored) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+
 }

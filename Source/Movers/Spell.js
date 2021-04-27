@@ -20,9 +20,8 @@ class Spell_Instances {
         this._AllByName = ArrayHelper.addLookupsByName(this._All);
     }
 }
-class SpellCaster extends EntityProperty {
+class SpellCaster {
     constructor(spellKnowledges) {
-        super();
         this.spellKnowledges = spellKnowledges;
         this.spellKnowledgesByName = ArrayHelper.addLookups(this.spellKnowledges, x => x.spellName);
     }
@@ -85,6 +84,10 @@ class SpellCaster extends EntityProperty {
         }
         return message;
     }
+    // EntityProperty.
+    finalize(u, w, p, e) { }
+    initialize(u, w, p, e) { }
+    updateForTimerTick(u, w, p, e) { }
 }
 class SpellKnowledge {
     constructor(spellName, turnLearned) {

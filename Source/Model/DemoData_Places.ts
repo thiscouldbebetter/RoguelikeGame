@@ -430,9 +430,8 @@ class DemoData_Places
 			(x: any) => x.name == "StairsDownToChildBranch"
 		)[0];
 
-		var itemDefnsByName = worldDefn.entityDefnsByName();
 		var itemDefnGoalName = "Amulet of Yendor";
-		var itemDefnGoal = itemDefnsByName.get(itemDefnGoalName);
+		var itemDefnGoal = worldDefn.entityDefnByName(itemDefnGoalName) as Entity2;
 		var entityGoal = Entity2.fromNameDefnAndProperties
 		(
 			itemDefnGoal.name,
@@ -555,7 +554,7 @@ class DemoData_Places
 
 			while (doesZoneOverlapAnother)
 			{
-				var zoneSize = new Coords(0, 0, 0).randomize(randomizer).multiply
+				var zoneSize = Coords.create().randomize(randomizer).multiply
 				(
 					zoneSizeRange
 				).add
@@ -576,7 +575,7 @@ class DemoData_Places
 					twoTwoZero
 				);
 
-				var zonePos = new Coords(0, 0, 0).randomize(randomizer).multiply
+				var zonePos = Coords.create().randomize(randomizer).multiply
 				(
 					zonePosRange
 				).add
@@ -709,12 +708,12 @@ class DemoData_Places
 		var coordses = Coords.Instances();
 		var oneOne = coordses.OneOneZero;
 		var twoTwo = coordses.TwoTwoZero;
-		var directionToZoneToConnect = new Coords(0, 0, 0);
-		var fromPos = new Coords(0, 0, 0);
-		var toPos = new Coords(0, 0, 0);
-		var coordsRandom = new Coords(0, 0, 0);
-		var zoneConnectedSizeMinusTwos = new Coords(0, 0, 0);
-		var zoneToConnectSizeMinusTwos = new Coords(0, 0, 0);
+		var directionToZoneToConnect = Coords.create();
+		var fromPos = Coords.create();
+		var toPos = Coords.create();
+		var coordsRandom = Coords.create();
+		var zoneConnectedSizeMinusTwos = Coords.create();
+		var zoneToConnectSizeMinusTwos = Coords.create();
 
 		var terrainFloorCodeChar = terrainsByName.get("Floor").codeChar;
 
@@ -881,7 +880,7 @@ class DemoData_Places
 		var cellPos = fromPos.clone();
 
 		var displacementToZoneToConnect = toPos.clone().subtract(fromPos);
-		var directionToZoneToConnect = new Coords(0, 0, 0);
+		var directionToZoneToConnect = Coords.create();
 
 		while (displacementToZoneToConnect.equals(zeroes) == false)
 		{
@@ -928,7 +927,7 @@ class DemoData_Places
 		doorwayPositions: Coords[], mapCellsAsStrings: string[]
 	)
 	{
-		var entityDefnsByName = worldDefn.entityDefnsByName();
+		var entityDefnsByName = worldDefn.entityDefnsByName;
 		var entityDefnGroupsByName = worldDefn.entityDefnGroupsByName;
 
 		var entities = new Array<Entity>();
@@ -1128,7 +1127,7 @@ class DemoData_Places
 
 					var entityDefn = entityDefnsForEmplacements[entityDefnIndex] as Entity2;
 
-					var pos = new Coords(0, 0, 0).randomize(randomizer).multiply
+					var pos = Coords.create().randomize(randomizer).multiply
 					(
 						zoneSizeMinusTwos
 					).add
@@ -1229,7 +1228,7 @@ class DemoData_Places
 
 					var entityDefnForItem = ArrayHelper.random(entityDefns, randomizer);
 
-					var pos = new Coords(0, 0, 0).randomize(randomizer).multiply
+					var pos = Coords.create().randomize(randomizer).multiply
 					(
 						zoneSizeMinusTwos
 					).add
@@ -1306,11 +1305,13 @@ class DemoData_Places
 			mapCellsAsStrings
 		);
 
+		var entityDefnStairsDown =
+			worldDefn.entityDefnByName("StairsDown") as Entity2;
 		var stairsDownPos = mapSizeInCells.clone().half().round();
 		var entityStairsDown = Entity2.fromNameDefnAndProperties
 		(
 			"StairsDownToNextLevel",
-			worldDefn.entityDefnsByName().get("StairsDown"),
+			entityDefnStairsDown,
 			[
 				Locatable.fromPos(stairsDownPos),
 				new Portal2(null, "StairsUp")
@@ -1321,7 +1322,7 @@ class DemoData_Places
 		var entityAltar = Entity2.fromNameDefnAndProperties
 		(
 			"Altar",
-			worldDefn.entityDefnsByName().get("Altar"),
+			worldDefn.entityDefnByName("Altar") as Entity2,
 			[
 				Locatable.fromPos(altarPos),
 			]
@@ -1331,7 +1332,7 @@ class DemoData_Places
 		var entityMentor = Entity2.fromNameDefnAndProperties
 		(
 			"Mentor",
-			worldDefn.entityDefnsByName().get("Mentor"),
+			worldDefn.entityDefnByName("Mentor") as Entity2,
 			[
 				Locatable.fromPos(mentorPos),
 				new Namable2("mentor", "mentor")

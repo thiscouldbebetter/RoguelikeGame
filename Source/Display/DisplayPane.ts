@@ -4,8 +4,8 @@ class DisplayPane implements Display, Namable
 	name: string;
 	pos: Coords;
 	size: Coords;
-	colorFore: string;
-	colorBack: string;
+	colorFore: Color;
+	colorBack: Color;
 	children: DisplayPane[];
 	childrenByName: Map<string, DisplayPane>;
 
@@ -22,7 +22,7 @@ class DisplayPane implements Display, Namable
 	constructor
 	(
 		name: string, pos: Coords, size: Coords,
-		colorFore: string, colorBack: string, children: DisplayPane[]
+		colorFore: Color, colorBack: Color, children: DisplayPane[]
 	)
 	{
 		this.name = name;
@@ -105,22 +105,22 @@ class DisplayPane implements Display, Namable
 		this.displayToUse().clear();
 	}
 
-	drawBackground(colorBack: string, colorBorder: string)
+	drawBackground(colorBack: Color, colorBorder: Color): void
 	{
 		this.displayToUse().drawBackground(colorBorder, colorBack);
 	}
 
-	drawImage(imageToDraw: Image2, pos: Coords)
+	drawImage(imageToDraw: Image2, pos: Coords): void
 	{
 		this.displayToUse().drawImage(imageToDraw, pos);
 	}
 
-	drawImagePartial(imageToDraw: Image2, pos: Coords, boundsToShow: Box)
+	drawImagePartial(imageToDraw: Image2, pos: Coords, boundsToShow: Box): void
 	{
 		this.displayToUse().drawImagePartial(imageToDraw, pos, boundsToShow);
 	}
 
-	drawImageScaled(imageToDraw: Image2, pos: Coords, size: Coords)
+	drawImageScaled(imageToDraw: Image2, pos: Coords, size: Coords): void
 	{
 		this.displayToUse().drawImageScaled(imageToDraw, pos, size);
 	}
@@ -129,10 +129,10 @@ class DisplayPane implements Display, Namable
 	(
 		pos: Coords,
 		radius: number,
-		colorFill: string,
-		colorBorder: string,
+		colorFill: Color,
+		colorBorder: Color,
 		borderThickness: number
-	)
+	): void
 	{
 		this.displayToUse().drawCircle
 		(
@@ -147,8 +147,8 @@ class DisplayPane implements Display, Namable
 	drawRectangle
 	(
 		pos: Coords, size: Coords,
-		colorFill: string, colorBorder: string, areColorsReversed: boolean
-	)
+		colorFill: Color, colorBorder: Color, areColorsReversed: boolean
+	): void
 	{
 		this.displayToUse().drawRectangle
 		(
@@ -165,12 +165,12 @@ class DisplayPane implements Display, Namable
 		text: string,
 		fontHeightInPixels: number,
 		pos: Coords,
-		colorFill: string,
-		colorOutline: string,
+		colorFill: Color,
+		colorOutline: Color,
 		areColorsReversed: boolean,
 		isCentered: boolean,
 		widthMaxInPixels: number
-	)
+	): void
 	{
 		this.displayToUse().drawText
 		(
@@ -185,12 +185,12 @@ class DisplayPane implements Display, Namable
 		);
 	}
 
-	scaleFactor()
+	scaleFactor(): Coords
 	{
 		return this.displayToUse().scaleFactor();
 	}
 
-	sizeDefault()
+	sizeDefault(): Coords
 	{
 		return this.sizeInPixels;
 	}
@@ -200,36 +200,42 @@ class DisplayPane implements Display, Namable
 	drawArc
 	(
 		center: Coords, radiusInner: number, radiusOuter: number,
-		angleStartInTurns: number, angleStopInTurns: number, colorFill: string,
-		colorBorder: string
-	) {}
-	drawCircleWithGradient(center: Coords, radius: number, gradientFill: ValueBreakGroup, colorBorder: string) {}
-	drawCrosshairs(center: Coords, radius: number, color: string) {}
+		angleStartInTurns: number, angleStopInTurns: number, colorFill: Color,
+		colorBorder: Color
+	): void {}
+	drawCircleWithGradient
+	(
+		center: Coords, radius: number, gradientFill: ValueBreakGroup, colorBorder: Color
+	): void {}
+	drawCrosshairs(center: Coords, radius: number, color: Color): void {}
 	drawEllipse
 	(
 		center: Coords, semimajorAxis: number, semiminorAxis: number,
-		rotationInTurns: number, colorFill: string, colorBorder: string
-	) {}
-	drawImagePartialScaled(imageToDraw: Image2, pos: Coords, regionToDrawAsBox: Box, sizeToDraw: Coords) {}
-	drawLine(fromPos: Coords, toPos: Coords, color: string, lineThickness: number) {}
-	drawMeshWithOrientation(mesh: MeshTextured, meshOrientation: Orientation) {}
-	drawPath(vertices: Coords[], color: string, lineThickness: number, isClosed: boolean) {}
-	drawPixel(pos: Coords, color: string) {}
-	drawPolygon(vertices: Coords[], colorFill: string, colorBorder: string) {}
+		rotationInTurns: number, colorFill: Color, colorBorder: Color
+	): void {}
+	drawImagePartialScaled
+	(
+		imageToDraw: Image2, pos: Coords, regionToDrawAsBox: Box, sizeToDraw: Coords
+	): void {}
+	drawLine(fromPos: Coords, toPos: Coords, color: Color, lineThickness: number): void {}
+	drawMeshWithOrientation(mesh: MeshTextured, meshOrientation: Orientation): void {}
+	drawPath(vertices: Coords[], color: Color, lineThickness: number, isClosed: boolean): void {}
+	drawPixel(pos: Coords, color: Color): void {}
+	drawPolygon(vertices: Coords[], colorFill: Color, colorBorder: Color): void {}
 	drawRectangleCentered
 	(
-		pos: Coords, size: Coords, colorFill: string, colorBorder: string
-	) {}
+		pos: Coords, size: Coords, colorFill: Color, colorBorder: Color
+	): void {}
 	drawWedge
 	(
 		center: Coords, radius: number, angleStartInTurns: number,
-		angleStopInTurns: number, colorFill: string, colorBorder: string
-	) {}
-	eraseModeSet(value: boolean) {}
-	fontSet(fontName: string, fontHeightInPixels: number) {}
-	hide(universe: Universe) {}
-	rotateTurnsAroundCenter(turnsToRotate: number, centerOfRotation: Coords) {}
-	stateRestore() {}
-	stateSave() {}
+		angleStopInTurns: number, colorFill: Color, colorBorder: Color
+	): void {}
+	eraseModeSet(value: boolean): void {}
+	fontSet(fontName: string, fontHeightInPixels: number): void {}
+	hide(universe: Universe): void {}
+	rotateTurnsAroundCenter(turnsToRotate: number, centerOfRotation: Coords): void {}
+	stateRestore(): void {}
+	stateSave(): void {}
 
 }

@@ -18,7 +18,7 @@ class Route2
 		this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
 
 		// Helper variables.
-		this._tempPos = new Coords(0, 0, 0);
+		this._tempPos = Coords.create();
 	}
 
 	calculate()

@@ -30,8 +30,8 @@ class DemoData_Main {
     buildEntityDefnGroups_Emplacements(visuals) {
         var useEmplacementAltar = (universe, world, place, entityUsingAsEntity, entityUsed) => {
             var entityUsing = entityUsingAsEntity;
-            var itemsHeld = entityUsing.itemHolder().itemEntities;
-            var isItemGoalHeld = itemsHeld.some((x) => x.name == "Amulet of Yendor");
+            var itemsHeld = entityUsing.itemHolder().items;
+            var isItemGoalHeld = itemsHeld.some((x) => x.defnName == "Amulet of Yendor");
             var messageLog = entityUsing.player().messageLog;
             if (isItemGoalHeld == false) {
                 var message = "You do not have the Amulet of Yendor!";
@@ -170,7 +170,7 @@ class DemoData_Main {
                 mappableBlocking,
                 new Drawable(visuals.get("Aligned Priest"), isVisibleTrue),
                 new ItemHolder([
-                    new Entity2("Coins", [new Item("Coins", 5)]),
+                    new Item("Coins", 5)
                 ], // itemEntities
                 100, // massMax
                 0 // reachRadius

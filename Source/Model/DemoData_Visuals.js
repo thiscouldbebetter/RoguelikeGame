@@ -442,7 +442,7 @@ class DemoData_Visuals {
             // quest guardians
             "Student", "Chieftan", "Neanderthal", "High-elf", "Attendant", "Page", "Abbot", "Acolyte", "Hunter", "Thug", "Ninja", "Roshi", "Guide", "Warrior", "Apprentice"
         ];
-        createTiles(monsterNamesInTileOrder, "", "", new Coords(0, 0, 0));
+        createTiles(monsterNamesInTileOrder, "", "", Coords.create());
         var emplacementNamesInTileOrder = [
             // 841-846
             "Doorway", "DoorOpenTop", "DoorOpenLeft", "DoorClosed", "DoorClosed2", "Bars",
@@ -476,7 +476,7 @@ class DemoData_Visuals {
             returnValue.set(tileName, visual);
         }
         var agentDatas = this.parent.demoDataMovers.buildAgentDatas();
-        var tilePos = new Coords(0, 0, 0);
+        var tilePos = Coords.create();
         var imageSizeInTiles = new Coords(40, 27, 0);
         for (var i = 0; i < agentDatas.length; i++) {
             var tileName = agentDatas[i].name;
