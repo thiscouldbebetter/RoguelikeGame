@@ -43,7 +43,8 @@ class DemoData_Items
 			1, // stackSizeMax
 			new Array<string>(), // categoryNames
 			null, // use
-			null
+			null, // visual
+			null // toEntity
 		);
 
 		var itemPropertiesStandard = new ItemDefn
@@ -56,7 +57,8 @@ class DemoData_Items
 			999, // stackSizeMax
 			new Array<string>(), // categoryNames
 			null, // use
-			null
+			null, // visual
+			null // toEntity
 		);
 
 		var effectDoNothing = new Effect2(null, null, null);
@@ -165,7 +167,7 @@ class DemoData_Items
 						1, // tradeValue
 						1, // stackSizeMax
 						[ "Amulet" ], // categoryNames
-						null, null
+						null, null, null
 					),
 					new Generatable(relativeFrequency),
 				]
@@ -190,7 +192,7 @@ class DemoData_Items
 					1, // tradeValue
 					1, // stackSizeMax
 					[ "Amulet" ], // categoryNames
-					null, null
+					null, null, null
 				),
 			]
 		);
@@ -316,7 +318,7 @@ class DemoData_Items
 						1, // stackSizeMax,
 						categoryNamesFood,
 						useFood,
-						null
+						null, null
 					),
 					new Generatable(relativeFrequency)
 				]
@@ -451,7 +453,7 @@ class DemoData_Items
 				1, // stackSizeMax,
 				categoryNamesPotion,
 				useItemPotion,
-				null
+				null, null
 			);
 
 			var effector = new Effector([effect]);
@@ -579,7 +581,7 @@ class DemoData_Items
 							1, // stackSizeMax
 							[ "Ring" ], // categoryNames
 							null, //ItemDefn.UseEquip
-							null
+							null, null
 						),
 						new Generatable(1), // todo
 					]
@@ -709,7 +711,7 @@ class DemoData_Items
 						1, // stackSizeMax
 						categoryNamesScroll,
 						scroll.use,
-						null
+						null, null
 					),
 					new Generatable(1) // todo
 				]
@@ -873,7 +875,7 @@ class DemoData_Items
 						1, // stackSizeMax
 						categoryNamesSpellbook,
 						itemUseSpellbook,
-						null
+						null, null
 					),
 					new Generatable(1) // todo
 				]
@@ -1035,7 +1037,7 @@ class DemoData_Items
 						1, // stackSizeMax
 						[ "Wand" ], // categoryNames
 						this.itemUseDevice,
-						null
+						null, null
 					),
 					new Generatable(1) // todo
 				]
@@ -1110,13 +1112,14 @@ class DemoData_Items
 			var nameAndAppearance = namesAndAppearancesOfWeapons[i];
 			var name = nameAndAppearance[0];
 			var appearance = nameAndAppearance[1];
+			var visual = visuals.get(name);
 
 			var entityDefn = new Entity2
 			(
 				name,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(name), true),
+					Drawable.fromVisual(visual),
 					equippable,
 					new Generatable(1), // todo
 					new ItemDefn
@@ -1128,7 +1131,9 @@ class DemoData_Items
 						1, // tradeValue
 						1, // stackSizeMax
 						[ "Weapon" ], // categoryNames
-						null, null
+						null,
+						visual,
+						this.itemDefnToEntity
 					)
 				]
 			);
@@ -1253,7 +1258,7 @@ class DemoData_Items
 						1, // tradeValue
 						1, // stackSizeMax
 						[ "Armor" , category.name ], // categoryNames
-						null, null
+						null, null, null
 					),
 					new Generatable(1) // todo
 				]
@@ -1351,7 +1356,7 @@ class DemoData_Items
 						1, // stackSizeMax
 						[ "Tool" ], // categoryNames
 						null, // use
-						null
+						null, null
 					),
 					new Generatable(1) // todo
 				]
@@ -1466,7 +1471,7 @@ class DemoData_Items
 							1, // stackSizeMax
 							[ "Stone" ], // categoryNames
 							null, // use
-							null
+							null, null
 						)
 					]
 				)
@@ -1515,7 +1520,7 @@ class DemoData_Items
 						10000, // stackSizeMax
 						[ "Vaulables" ], // categoryNames
 						null, // use
-						null
+						null, null
 					)
 				])
 			)
@@ -1556,6 +1561,24 @@ class DemoData_Items
 		//var returnValuesByName = ArrayHelper.addLookupsByName(returnValues);
 
 		return returnValues;
+	}
+
+	itemDefnToEntity(u: Universe, w: World, p: Place, e: Entity, i: Item)
+	{
+		var itemDefn = i.defn(w);
+		var mappableDefn = MappableDefn.Instances().Open;
+		var returnValue = new Entity2
+		(
+			i.defnName,
+			[
+				i,
+				new Mappable(mappableDefn),
+				mappableDefn,
+				Drawable.fromVisual(itemDefn.visual),
+			]
+		);
+
+		return returnValue;
 	}
 
 	itemUseDevice(universe: Universe, world: World, place: Place, userEntityAsEntity: Entity, itemEntity: Entity)

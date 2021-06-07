@@ -37,7 +37,12 @@ class PlaceLevel extends Place {
     }
     // instance methods
     entitiesByPropertyName(propertyName) {
-        return this._entitiesByPropertyName.get(propertyName);
+        var returnValues = this._entitiesByPropertyName.get(propertyName);
+        if (returnValues == null) {
+            returnValues = new Array();
+            this._entitiesByPropertyName.set(propertyName, returnValues);
+        }
+        return returnValues;
     }
     entitiesWithPropertyNamePresentAtCellPos(propertyName, cellPosToCheck) {
         var returnEntities = new Array();

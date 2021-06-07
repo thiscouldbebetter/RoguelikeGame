@@ -28,10 +28,12 @@ function main() {
     var textStringPath = contentPath + "Text/";
     var mediaLibrary = MediaLibrary.fromFilePaths([
         imagePath + "Opening.png",
+        imagePath + "Producer.png",
         imagePath + "Title.png",
         imagePath + "Tiles.png",
         effectsPath + "Sound.wav",
         musicPath + "Music.mp3",
+        musicPath + "Producer.mp3",
         musicPath + "Title.mp3",
         videoPath + "Movie.webm",
         fontPath + "Font.ttf",

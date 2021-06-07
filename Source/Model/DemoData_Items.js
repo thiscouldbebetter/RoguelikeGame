@@ -19,13 +19,17 @@ class DemoData_Items {
         1, // stackSizeMax
         new Array(), // categoryNames
         null, // use
-        null);
+        null, // visual
+        null // toEntity
+        );
         var itemPropertiesStandard = new ItemDefn("[standard]", "[Appearance]", "[description]", 1, // mass
         1, // tradeValue
         999, // stackSizeMax
         new Array(), // categoryNames
         null, // use
-        null);
+        null, // visual
+        null // toEntity
+        );
         var effectDoNothing = new Effect2(null, null, null);
         var entityDefnSets = [];
         var methodsToRun = [
@@ -80,7 +84,7 @@ class DemoData_Items {
                 1, // tradeValue
                 1, // stackSizeMax
                 ["Amulet"], // categoryNames
-                null, null),
+                null, null, null),
                 new Generatable(relativeFrequency),
             ]);
             entityDefnSetAmulets.push(entityDefn);
@@ -93,7 +97,7 @@ class DemoData_Items {
             1, // tradeValue
             1, // stackSizeMax
             ["Amulet"], // categoryNames
-            null, null),
+            null, null, null),
         ]);
         entityDefnSetAmulets.push(entityDefnAmuletOfYendor);
         entityDefnSets.push(entityDefnSetAmulets);
@@ -161,7 +165,7 @@ class DemoData_Items {
                 food.weight, // mass
                 1, // tradeValue
                 1, // stackSizeMax,
-                categoryNamesFood, useFood, null),
+                categoryNamesFood, useFood, null, null),
                 new Generatable(relativeFrequency)
             ]);
             entityDefnSetFoods.push(entityDefn);
@@ -246,7 +250,7 @@ class DemoData_Items {
             1, // mass
             1, // tradeValue
             1, // stackSizeMax,
-            categoryNamesPotion, useItemPotion, null);
+            categoryNamesPotion, useItemPotion, null, null);
             var effector = new Effector([effect]);
             var entityDefn = new Entity2(itemDefnName, [
                 this.mappableDefns.Open,
@@ -322,7 +326,7 @@ class DemoData_Items {
                 1, // stackSizeMax
                 ["Ring"], // categoryNames
                 null, //ItemDefn.UseEquip
-                null),
+                null, null),
                 new Generatable(1), // todo
             ]));
         }
@@ -404,7 +408,7 @@ class DemoData_Items {
                 new ItemDefn(name, appearance, appearance, // description
                 mass, 1, // tradeValue
                 1, // stackSizeMax
-                categoryNamesScroll, scroll.use, null),
+                categoryNamesScroll, scroll.use, null, null),
                 new Generatable(1) // todo
             ]);
             entityDefnSetScrolls.push(entityDefn);
@@ -506,7 +510,7 @@ class DemoData_Items {
                 1, // mass
                 1, // tradeValue
                 1, // stackSizeMax
-                categoryNamesSpellbook, itemUseSpellbook, null),
+                categoryNamesSpellbook, itemUseSpellbook, null, null),
                 new Generatable(1) // todo
             ]);
             entityDefnSetSpellbooks.push(entityDefn);
@@ -605,7 +609,7 @@ class DemoData_Items {
                 1, // tradeValue
                 1, // stackSizeMax
                 ["Wand"], // categoryNames
-                this.itemUseDevice, null),
+                this.itemUseDevice, null, null),
                 new Generatable(1) // todo
             ]);
             entityDefnSetWands.push(entityDefnWand);
@@ -644,16 +648,17 @@ class DemoData_Items {
             var nameAndAppearance = namesAndAppearancesOfWeapons[i];
             var name = nameAndAppearance[0];
             var appearance = nameAndAppearance[1];
+            var visual = visuals.get(name);
             var entityDefn = new Entity2(name, [
                 this.mappableDefns.Open,
-                new Drawable(visuals.get(name), true),
+                Drawable.fromVisual(visual),
                 equippable,
                 new Generatable(1),
                 new ItemDefn(name, appearance, appearance, 1, // mass
                 1, // tradeValue
                 1, // stackSizeMax
                 ["Weapon"], // categoryNames
-                null, null)
+                null, visual, this.itemDefnToEntity)
             ]);
             entityDefnSetWeapons.push(entityDefn);
         }
@@ -740,7 +745,7 @@ class DemoData_Items {
                 1, // tradeValue
                 1, // stackSizeMax
                 ["Armor", category.name], // categoryNames
-                null, null),
+                null, null, null),
                 new Generatable(1) // todo
             ]);
             entityDefnSetArmor.push(entityDefn);
@@ -809,7 +814,7 @@ class DemoData_Items {
                 1, // stackSizeMax
                 ["Tool"], // categoryNames
                 null, // use
-                null),
+                null, null),
                 new Generatable(1) // todo
             ]);
             entityDefnSet.push(entityDefn);
@@ -884,7 +889,7 @@ class DemoData_Items {
                 1, // stackSizeMax
                 ["Stone"], // categoryNames
                 null, // use
-                null)
+                null, null)
             ]));
         }
         entityDefnSets.push(entityDefnSetStones);
@@ -903,7 +908,7 @@ class DemoData_Items {
             10000, // stackSizeMax
             ["Vaulables"], // categoryNames
             null, // use
-            null)
+            null, null)
         ])));
         entityDefnSets.push(entityDefnSetValuables);
         entityDefnSets["Group_Valuables"] = entityDefnSetValuables;
@@ -933,6 +938,17 @@ class DemoData_Items {
         ];
         //var returnValuesByName = ArrayHelper.addLookupsByName(returnValues);
         return returnValues;
+    }
+    itemDefnToEntity(u, w, p, e, i) {
+        var itemDefn = i.defn(w);
+        var mappableDefn = MappableDefn.Instances().Open;
+        var returnValue = new Entity2(i.defnName, [
+            i,
+            new Mappable(mappableDefn),
+            mappableDefn,
+            Drawable.fromVisual(itemDefn.visual),
+        ]);
+        return returnValue;
     }
     itemUseDevice(universe, world, place, userEntityAsEntity, itemEntity) {
         var userEntity = userEntityAsEntity;

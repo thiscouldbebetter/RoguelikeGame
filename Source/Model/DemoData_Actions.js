@@ -115,7 +115,7 @@ class DemoData_Actions {
             new ActorDefn("Fly Forward"),
             new Awaitable(),
             MappableDefn.Instances().Open,
-            new Drawable(visual, true),
+            Drawable.fromVisual(visual),
             new Ephemeral(8, null),
             new Locatable(projectileLoc),
             new Mover(1) // hack
@@ -212,7 +212,7 @@ class DemoData_Actions {
             var dropItem = (itemHolder, world, actor, itemToDrop) => {
                 //var itemsHeld = itemHolder.itemEntities;
                 removeItem(itemHolder, world, actor, itemToDrop);
-                var itemToDropAsEntity = itemToDrop.toEntity();
+                var itemToDropAsEntity = itemToDrop.toEntity(universe, world, place, actor);
                 var itemLoc = itemToDropAsEntity.locatable().loc;
                 itemLoc.overwriteWith(actor.locatable().loc);
                 place.entitiesToSpawn.push(itemToDropAsEntity);
@@ -238,7 +238,8 @@ class DemoData_Actions {
                     actor.turnable().hasActedThisTurn = true;
                     var pickUpItem = (itemHolder, world, actor, itemToPickUp) => {
                         itemHolder.itemAdd(itemToPickUp);
-                        place.entityToRemoveAdd(itemToPickUp.toEntity());
+                        var itemEntityToPickUp = itemToPickUp.toEntity(universe, world, place, actorAsEntity);
+                        place.entityToRemoveAdd(itemEntityToPickUp);
                         if (itemHolder.itemSelected == null) {
                             itemHolder.itemSelected = itemToPickUp;
                         }

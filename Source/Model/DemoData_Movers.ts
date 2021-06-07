@@ -84,7 +84,7 @@ class DemoData_Movers
 				1, // stackSizeMax,
 				[ "Food" ], // categoryNames
 				useCorpse,
-				null
+				null, null
 			);
 			var entityDefnCorpse = new Entity2
 			(

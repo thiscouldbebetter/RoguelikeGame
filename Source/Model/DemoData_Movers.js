@@ -47,7 +47,7 @@ class DemoData_Movers {
             1, // tradeValue
             1, // stackSizeMax,
             ["Food"], // categoryNames
-            useCorpse, null);
+            useCorpse, null, null);
             var entityDefnCorpse = new Entity2(itemDefnCorpse.name, [
                 new Locatable(null),
                 new Item(itemDefnCorpse.name, 1),
