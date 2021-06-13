@@ -2,15 +2,45 @@
 class Mover implements EntityProperty
 {
 	movesPerTurn: number;
+	_costToTraverseTerrain: (terrain: MapTerrain)=>number;
 
 	movesThisTurn: number;
 
-	constructor(movesPerTurn: number)
+	constructor
+	(
+		movesPerTurn: number,
+		costToTraverseTerrain: (terrain: MapTerrain)=>number
+	)
 	{
 		this.movesPerTurn = movesPerTurn;
+		this._costToTraverseTerrain = costToTraverseTerrain;
 	}
 
-	initialize(universe: Universe, world: World, place: Place, entityAsEntity: Entity)
+	static fromMovesPerTurn(movesPerTurn: number): Mover
+	{
+		return new Mover(movesPerTurn, null);
+	}
+
+	costToTraverseTerrain(terrainToTraverse: MapTerrain): number
+	{
+		var returnValue: number;
+
+		if (this._costToTraverseTerrain == null)
+		{
+			returnValue = terrainToTraverse.costToTraverse;
+		}
+		else
+		{
+			returnValue = this._costToTraverseTerrain(terrainToTraverse);
+		}
+
+		return returnValue;
+	}
+
+	initialize
+	(
+		universe: Universe, world: World, place: Place, entityAsEntity: Entity
+	): void
 	{
 		var entity = entityAsEntity as Entity2;
 
@@ -39,7 +69,10 @@ class Mover implements EntityProperty
 		}
 	}
 
-	updateForTimerTick(universe: Universe, world: World, placeAsPlace: Place, entity: Entity)
+	updateForTimerTick
+	(
+		universe: Universe, world: World, placeAsPlace: Place, entity: Entity
+	): void
 	{
 		var place = placeAsPlace as PlaceLevel;
 
@@ -52,10 +85,12 @@ class Mover implements EntityProperty
 	}
 
 	// Clonable.
-	clone() { return this; }
-	overwriteWith(other: Mover) { return this; }
+
+	clone(): Mover { return this; }
+	overwriteWith(other: Mover): Mover { return this; }
 
 	// EntityProperty.
+
 	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
 
 }

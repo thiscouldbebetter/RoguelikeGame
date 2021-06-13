@@ -11,23 +11,23 @@ class DemoData_Movers
 		this.mappableDefns = MappableDefn.Instances();
 	}
 
-	buildEntityDefnGroups_MoversAndCorpses
+	buildEntityDefnGroups_MoverGroupsAndCorpsesGroup
 	(
-		visualsByName: Map<string, Visual>,
-		activityDefns: Map<string, ActivityDefn>,
+		visualGetByName: (visualName:string)=>Visual,
+		activityDefnsByName: Map<string, ActivityDefn>,
 		itemCategories: ItemCategory[]
 	)
 	{
-		var entityDefnsMovers = new Array<Entity>();
-		var entityDefnsMoversByName = new Map<string, Entity>();
-		var entityDefnsCorpses = new Array<Entity>();
-		var entityDefnsCorpsesByName = new Map<string, Entity>();
+		var entityDefnsMovers = new Array<Entity2>();
+		var entityDefnsMoversByName = new Map<string, Entity2>();
+		var entityDefnsCorpses = new Array<Entity2>();
+		var entityDefnsCorpsesByName = new Map<string, Entity2>();
 
 		//var sizeInPixels = visuals.get("Floor").size;
 
 		this.buildEntityDefnGroups_MoversAndCorpses_Player
 		(
-			visualsByName, activityDefns, itemCategories, entityDefnsMovers
+			visualGetByName, activityDefnsByName, itemCategories, entityDefnsMovers
 		);
 
 		var rot = (universe: Universe, world: World, place: Place, entityTurnableAsEntity: Entity) =>
@@ -57,7 +57,7 @@ class DemoData_Movers
 			0 // reachRadius
 		);
 
-		var agentDatas = this.buildAgentDatas();
+		var agentDatas = DemoData_Movers.buildAgentDatas();
 
 		var useCorpse =
 			(universe: Universe, world: World, place: Place, entityItem: Entity, user: Entity) =>
@@ -94,7 +94,7 @@ class DemoData_Movers
 					new Item(itemDefnCorpse.name, 1),
 					itemDefnCorpse,
 					this.mappableDefns.Open,
-					new Drawable(visualsByName.get("Corpse"), true),
+					new Drawable(visualGetByName("Corpse"), true),
 					new Turnable(rot)
 				]
 			);
@@ -108,14 +108,15 @@ class DemoData_Movers
 				agentName,
 				// properties
 				[
-					new ActorDefn(activityDefns.get("Move Toward Player").name),
+					agentData,
+					new ActorDefn(activityDefnsByName.get("Move Toward Player").name),
 					this.mappableDefns.Transparent,
 					itemHolder,
 					new Demographics(null, null, difficulty, experienceToKill),
-					new Drawable(visualsByName.get(agentName), true),
+					new Drawable(visualGetByName(agentName), true),
 					new Generatable(1),
 					new Killable(5, null, null),
-					new Mover(movesPerTurn),
+					Mover.fromMovesPerTurn(movesPerTurn),
 					new Namable2(agentName, agentName),
 				]
 			);
@@ -174,8 +175,10 @@ class DemoData_Movers
 
 	buildEntityDefnGroups_MoversAndCorpses_Player
 	(
-		visuals: Map<string, Visual>, activityDefns: Map<string, ActivityDefn>,
-		itemCategories: ItemCategory[], returnValues: any
+		visualGetByName: (x:string)=>Visual,
+		activityDefnsByName: Map<string, ActivityDefn>,
+		itemCategories: ItemCategory[],
+		returnValues: any
 	)
 	{
 		var entityName = Player.name; // "Player".
@@ -187,25 +190,22 @@ class DemoData_Movers
 			0 // experienceToKill
 		);
 
-		var moverPlayer = new Mover
-		(
-			9, // movesPerTurn
-		);
+		var moverPlayer = Mover.fromMovesPerTurn(9);
 
-		var visualForPlayerBase = visuals.get("Rogue");
+		var visualForPlayerBase = visualGetByName("Rogue");
 
 		var visualReticleDirectional = new VisualDirectional
 		(
 			new VisualNone(), // visualForNoDirection
 			[
-				visuals.get("Reticle0"),
-				visuals.get("Reticle1"),
-				visuals.get("Reticle2"),
-				visuals.get("Reticle3"),
-				visuals.get("Reticle4"),
-				visuals.get("Reticle5"),
-				visuals.get("Reticle6"),
-				visuals.get("Reticle7"),
+				visualGetByName("Reticle0"),
+				visualGetByName("Reticle1"),
+				visualGetByName("Reticle2"),
+				visualGetByName("Reticle3"),
+				visualGetByName("Reticle4"),
+				visualGetByName("Reticle5"),
+				visualGetByName("Reticle6"),
+				visualGetByName("Reticle7"),
 			],
 			null // headingInTurnsGetForEntity
 		);
@@ -219,8 +219,8 @@ class DemoData_Movers
 		var drawableDefnPlayer = new Drawable(visualForPlayer, true);
 
 		var activityDefnName =
-			activityDefns.get("Accept User Input").name;
-			//activityDefns.get("Demo User Input").name;
+			activityDefnsByName.get("Accept User Input").name;
+			//activityDefnsByName.get("Demo User Input").name;
 
 		var equipmentSocketDefnGroup = new EquipmentSocketDefnGroup
 		(
@@ -246,6 +246,7 @@ class DemoData_Movers
 		var itemHolder = new ItemHolder
 		(
 			[
+				new Item("Short Sword", 1),
 				new Item("Dagger", 1)
 			],
 			100, // weightMax
@@ -269,6 +270,7 @@ class DemoData_Movers
 			// properties
 			[
 				new ActorDefn(activityDefnName),
+				AgentData.fromName(Player.name),
 				this.mappableDefns.Transparent,
 				controllable,
 				demographics,
@@ -291,7 +293,7 @@ class DemoData_Movers
 		returnValues[entityName] = entityDefnPlayer;
 	}
 
-	buildAgentDatas()
+	static buildAgentDatas(): AgentData[]
 	{
 		// resistances and effects
 
@@ -928,12 +930,12 @@ class DemoData_Movers
 	}
 }
 
-class AgentData
+class AgentData implements EntityProperty
 {
 	name: string;
 	difficulty: number;
 	numberAppearing: string;
-	attacks: string[];
+	attacks: AttackDefn[];
 	baseLevel: number;
 	baseExperience: number;
 	speed: number;
@@ -952,7 +954,7 @@ class AgentData
 	constructor
 	(
 		name: string, difficulty: number, numberAppearing: string,
-		attacks: string[], baseLevel: number, baseExperience: number,
+		attacksAsStrings: string[], baseLevel: number, baseExperience: number,
 		speed: number, baseArmorClass: number,
 		baseMagicResistance: number, alignment: number,
 		frequency: number, isGenocidable: boolean,
@@ -963,7 +965,7 @@ class AgentData
 		this.name = name;
 		this.difficulty = difficulty;
 		this.numberAppearing = numberAppearing;
-		this.attacks = attacks;
+		this.attacks = attacksAsStrings.map(x => AttackDefn.fromString(x));
 		this.baseLevel = baseLevel;
 		this.baseExperience = baseExperience;
 		this.speed = speed;
@@ -1005,5 +1007,45 @@ class AgentData
 			0, // chanceOfConveyingResistence: number;
 			new Array<any>() // resistancesConveyed: any;
 		);
+	}
+
+	// Clonable.
+	clone(): AgentData { return this; }
+	overwriteWith(other: AgentData): AgentData { return this; }
+
+	// EntityProperty.
+
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+
+	initialize(u: Universe, w: World, p: Place, e: Entity): void
+	{
+		var equipmentUser = e.equipmentUser();
+		if (equipmentUser != null)
+		{
+			equipmentUser.equipAll(u, w, p, e);
+		}
+	}
+
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+}
+
+class AttackDefn
+{
+	name: string;
+	damagePossibleAsDiceRoll: DiceRoll;
+
+	constructor(name: string, damagePossibleAsDiceRoll: DiceRoll)
+	{
+		this.name = name;
+		this.damagePossibleAsDiceRoll = damagePossibleAsDiceRoll;
+	}
+
+	static fromString(stringToParse: string): AttackDefn
+	{
+		var nameAndDiceRollAsStrings = stringToParse.split(":");
+		var name = nameAndDiceRollAsStrings[0];
+		var diceRoll = DiceRoll.fromExpression(nameAndDiceRollAsStrings[1]);
+		var returnValue = new AttackDefn(name, diceRoll);
+		return returnValue;
 	}
 }

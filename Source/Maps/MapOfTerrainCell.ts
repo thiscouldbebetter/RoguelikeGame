@@ -30,9 +30,10 @@ class MapOfTerrainCell
 		return returnValue;
 	}
 
-	costToTraverse(map: MapOfTerrain)
+	costToTraverse(map: MapOfTerrain, mover: Mover)
 	{
-		var returnValue = this.terrain(map).costToTraverse;
+		var terrain = this.terrain(map);
+		var returnValue = mover.costToTraverseTerrain(terrain);
 		for (var i = 0; i < this.entitiesPresent.length; i++)
 		{
 			var entityPresent = this.entitiesPresent[i] as Entity2;

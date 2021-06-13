@@ -18,14 +18,14 @@ class DemoData_Places
 		this.randomizer = this.parent.randomizer;
 	}
 
-	buildMapTerrainsDungeon(visualsForTiles: Map<string, Visual>)
+	buildMapTerrainsDungeon(visualGetByName: (x:string)=>Visual): MapTerrain[]
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualsForTiles.get("Floor"));
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualGetByName("Floor"));
 		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", null, 	true, "Blue", visualsForTiles.get("WallDungeonCornerNorth") );
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", null, 	true, "Blue", visualsForTiles.get("WallDungeonCornerSouth") );
-		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", null, 	true, "Blue", visualsForTiles.get("WallDungeonEastWest") );
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", null, 	true, "Blue", visualsForTiles.get("WallDungeonNorthSouth") );
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", null, 	true, "Blue", visualGetByName("WallDungeonCornerNorth") );
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", null, 	true, "Blue", visualGetByName("WallDungeonCornerSouth") );
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", null, 	true, "Blue", visualGetByName("WallDungeonEastWest") );
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", null, 	true, "Blue", visualGetByName("WallDungeonNorthSouth") );
 
 		var terrains =
 		[
@@ -40,14 +40,14 @@ class DemoData_Places
 		return terrains;
 	}
 
-	buildMapTerrainsHades(visualsForTiles: Map<string,Visual>)
+	buildMapTerrainsHades(visualGetByName: (x:string)=>Visual): MapTerrain[]
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualsForTiles.get("Floor"));
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualGetByName("Floor"));
 		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", null, 	true, "Blue", visualsForTiles.get("WallHadesCornerNorth"));
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", null, 	true, "Blue", visualsForTiles.get("WallHadesCornerSouth"));
-		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", null, 	true, "Blue", visualsForTiles.get("WallHadesEastWest"));
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", null, 	true, "Blue", visualsForTiles.get("WallHadesNorthSouth"));
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", null, 	true, "Blue", visualGetByName("WallHadesCornerNorth"));
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", null, 	true, "Blue", visualGetByName("WallHadesCornerSouth"));
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", null, 	true, "Blue", visualGetByName("WallHadesEastWest"));
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", null, 	true, "Blue", visualGetByName("WallHadesNorthSouth"));
 
 		var terrains =
 		[
@@ -62,14 +62,14 @@ class DemoData_Places
 		return terrains;
 	}
 
-	buildMapTerrainsMines(visualsForTiles: Map<string, Visual>)
+	buildMapTerrainsMines(visualGetByName: (x:string)=>Visual): MapTerrain[]
 	{
-		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualsForTiles.get("Floor") );
+		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualGetByName("Floor") );
 		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone") );
-		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualsForTiles.get("WallCaveCornerNorth") );
-		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualsForTiles.get("WallCaveCornerSouth") );
-		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualsForTiles.get("WallCaveEastWest") );
-		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualsForTiles.get("WallCaveNorthSouth") );
+		this.WallCornerNorth 	= new MapTerrain("WallCornerNorth", "+", 1000000, 	true, "Blue", visualGetByName("WallCaveCornerNorth") );
+		this.WallCornerSouth	= new MapTerrain("WallCornerSouth", "*", 1000000, 	true, "Blue", visualGetByName("WallCaveCornerSouth") );
+		this.WallEastWest 		= new MapTerrain("WallEastWest", 	"-", 1000000, 	true, "Blue", visualGetByName("WallCaveEastWest") );
+		this.WallNorthSouth 	= new MapTerrain("WallNorthSouth", 	"|", 1000000, 	true, "Blue", visualGetByName("WallCaveNorthSouth") );
 
 		var terrains =
 		[
@@ -84,28 +84,28 @@ class DemoData_Places
 		return terrains;
 	}
 
-	buildMapTerrainsLabyrinth(visualsForTiles: Map<string, Visual>)
+	buildMapTerrainsLabyrinth(visualGetByName: (x:string)=>Visual)
 	{
-		return this.buildMapTerrainsDungeon(visualsForTiles);
+		return this.buildMapTerrainsDungeon(visualGetByName);
 	}
 
-	buildMapTerrainsPuzzle(visualsForTiles: Map<string, Visual>)
+	buildMapTerrainsPuzzle(visualGetByName: (x:string)=>Visual)
 	{
-		return this.buildMapTerrainsDungeon(visualsForTiles);
+		return this.buildMapTerrainsDungeon(visualGetByName);
 	}
 
-	buildMapTerrainsThrowback(visualsForTiles: Map<string, Visual>)
+	buildMapTerrainsThrowback(visualGetByName: (x:string)=>Visual)
 	{
-		return this.buildMapTerrainsDungeon(visualsForTiles);
+		return this.buildMapTerrainsDungeon(visualGetByName);
 	}
 
-	buildPlaceDefns(visuals: Map<string, Visual>, actions: Action[])
+	buildPlaceDefns(visualGetByName: (x:string)=>Visual, actions: Action[])
 	{
-		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visuals);
+		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visualGetByName);
 
-		var mapTerrainsHades = this.buildMapTerrainsHades(visuals);
+		var mapTerrainsHades = this.buildMapTerrainsHades(visualGetByName);
 
-		var mapTerrainsMines = this.buildMapTerrainsMines(visuals);
+		var mapTerrainsMines = this.buildMapTerrainsMines(visualGetByName);
 
 		// hack - Build this on the fly?
 		var propertyNamesKnown =
@@ -200,7 +200,7 @@ class DemoData_Places
 			(
 				"Labyrinth",
 				propertyNamesKnown,
-				this.buildMapTerrainsLabyrinth(visuals),
+				this.buildMapTerrainsLabyrinth(visualGetByName),
 				this.placeGenerateLabyrinth
 			),
 
@@ -224,7 +224,7 @@ class DemoData_Places
 			(
 				"Puzzle",
 				propertyNamesKnown,
-				this.buildMapTerrainsPuzzle(visuals),
+				this.buildMapTerrainsPuzzle(visualGetByName),
 				this.placeGeneratePuzzle
 			),
 
@@ -248,7 +248,7 @@ class DemoData_Places
 			(
 				"Throwback",
 				propertyNamesKnown,
-				this.buildMapTerrainsThrowback(visuals),
+				this.buildMapTerrainsThrowback(visualGetByName),
 				this.placeGenerateThrowback
 			)
 		];
@@ -510,7 +510,7 @@ class DemoData_Places
 	placeGenerateDungeon_1_InitMap
 	(
 		worldDefn: WorldDefn2, terrainsByName: Map<string, MapTerrain>, mapSizeInCells: Coords
-	)
+	): string[]
 	{
 		var mapCellsAsStrings = new Array<string>();
 
@@ -535,7 +535,7 @@ class DemoData_Places
 	(
 		terrains: MapTerrain[], randomizer: Randomizer,
 		mapSizeInCells: Coords, numberOfZones: number
-	)
+	): Box[]
 	{
 		var zoneSizeMin = new Coords(4, 4, 1);
 		var zoneSizeMax = new Coords(13, 13, 1);
@@ -605,9 +605,9 @@ class DemoData_Places
 	(
 		numberOfZones: number, zoneBoundsSetSoFar: Box[],
 		mapCellsAsStrings: string[], terrainsByName: Map<string, MapTerrain>
-	)
+	): Zone2[]
 	{
-		var zones = [];
+		var zones = new Array<Zone2>();
 		var terrainCodeChar = "";
 
 		for (var r = 0; r < numberOfZones; r++)
@@ -671,7 +671,7 @@ class DemoData_Places
 	(
 		zones: Zone2[], terrainsByName: Map<string, MapTerrain>, randomizer: Randomizer,
 		mapCellsAsStrings: string[]
-	)
+	): Coords[]
 	{
 		var zonesConnected = [ zones[0] ];
 		var zonesToConnect = [];
@@ -701,7 +701,7 @@ class DemoData_Places
 		randomizer: Randomizer, mapCellsAsStrings: string[],
 		zonesConnected: Zone2[], zonesToConnect: Zone2[],
 		doorwayPositions: Coords[]
-	)
+	): void
 	{
 		// Helper variables.
 		// todo - Move these elsewhere.
@@ -830,7 +830,7 @@ class DemoData_Places
 	placeGenerateDungeon_4_Doors_Zone_NearestZones
 	(
 		zonesToConnect: Zone2[], zonesConnected: Zone2[]
-	)
+	): Zone2[]
 	{
 		var nearestZonesSoFar = null;
 		var distanceBetweenNearestZonesSoFar = null;
@@ -873,7 +873,7 @@ class DemoData_Places
 	(
 		mapCellsAsStrings: string[], terrainFloorCodeChar: string,
 		fromPos: Coords, toPos: Coords
-	)
+	): void
 	{
 		var zeroes = Coords.Instances().Zeroes;
 
@@ -925,12 +925,12 @@ class DemoData_Places
 		worldDefn: WorldDefn2, branchName: string, placeDefn: PlaceDefn2,
 		venueName: string, randomizer: Randomizer, zones: Zone2[],
 		doorwayPositions: Coords[], mapCellsAsStrings: string[]
-	)
+	): Entity2[]
 	{
 		var entityDefnsByName = worldDefn.entityDefnsByName;
 		var entityDefnGroupsByName = worldDefn.entityDefnGroupsByName;
 
-		var entities = new Array<Entity>();
+		var entities = new Array<Entity2>();
 
 		this.placeGenerateDungeon_5_Entities_1_Stairs
 		(
@@ -960,7 +960,7 @@ class DemoData_Places
 	placeGenerateDungeon_5_Entities_1_Stairs
 	(
 		entityDefnsByName: Map<string, Entity>, zones: Zone2[], entities: Entity[]
-	)
+	): void
 	{
 		var zone0Center = zones[0].bounds.center.clone().floor();
 
@@ -1013,7 +1013,7 @@ class DemoData_Places
 		doorwayPositions: Coords[],
 		mapCellsAsStrings: string[],
 		randomizer: Randomizer
-	)
+	): void
 	{
 		var entityDefnDoor = entityDefnsByName.get("Door");
 
@@ -1070,7 +1070,7 @@ class DemoData_Places
 	(
 		entityDefnGroupsByName: Map<string, EntityDefnGroup>, zones: Zone2[],
 		entities: Entity[], randomizer: Randomizer
-	)
+	): void
 	{
 		var chancesForEmplacementPerZone = 2;
 		var probabilityOfEmplacementPerChance = .33;
@@ -1159,7 +1159,7 @@ class DemoData_Places
 	(
 		entityDefnGroups: Map<string, EntityDefnGroup>, zones: Zone2[],
 		entities: Entity[], randomizer: Randomizer
-	)
+	): void
 	{
 		var chancesForItemPerZone = 2;
 		var probabilityOfItemPerChance = 1; //.33;
@@ -1169,6 +1169,7 @@ class DemoData_Places
 			entityDefnGroups.get("Armor"),
 			entityDefnGroups.get("Food"),
 			entityDefnGroups.get("Potions"),
+			entityDefnGroups.get("Rings"),
 			entityDefnGroups.get("Scrolls"),
 			entityDefnGroups.get("Spellbooks"),
 			entityDefnGroups.get("Stones"),
@@ -1257,7 +1258,7 @@ class DemoData_Places
 		} // end for each zone
 	}
 
-	placeGenerateDungeon_5_Entities_5_Movers(zones: Zone2[], entities: Entity[])
+	placeGenerateDungeon_5_Entities_5_Movers(zones: Zone2[], entities: Entity[]): void
 	{
 		var entityMoverGenerator = new Entity2
 		(
@@ -1275,16 +1276,19 @@ class DemoData_Places
 	(
 		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
 		placeIndex: number, depth: number, randomizer: Randomizer
-	)
+	): Place
 	{
-		return this.placeGenerateDungeon(worldDefn, branch, placeDefn, placeIndex, depth, randomizer);
+		return this.placeGenerateDungeon
+		(
+			worldDefn, branch, placeDefn, placeIndex, depth, randomizer
+		);
 	}
 
 	placeGenerateSurface
 	(
 		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
 		placeIndex: number, depth: number, randomizer: Randomizer
-	)
+	): Place
 	{
 		var branchName = branch.name;
 		var venueName = branchName + placeIndex;
@@ -1343,6 +1347,11 @@ class DemoData_Places
 
 		var displayName = branch.displayName;
 
+		var zoneSingle = new Zone2
+		(
+			Box.fromMinAndSize(Coords.zeroes(), mapSizeInCells)
+		);
+
 		var returnValue = new PlaceLevel
 		(
 			venueName,
@@ -1351,7 +1360,9 @@ class DemoData_Places
 			placeDefn,
 			new Coords(480, 480, 1), // sizeInPixels
 			map,
-			[], //zones
+			[
+				zoneSingle
+			], //zones
 			entities
 		);
 

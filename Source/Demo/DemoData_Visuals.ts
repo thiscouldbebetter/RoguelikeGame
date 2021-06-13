@@ -8,7 +8,10 @@ class DemoData_Visuals
 		this.parent = parent;
 	}
 
-	buildVisualLookup(visualsForTiles: Visual[][])
+	static visualArraysToLookup
+	(
+		visualsForTiles: Visual[][], agentDatas: AgentData[]
+	): Map<string, Visual>
 	{
 		var returnValue = new Map<string, Visual>();
 
@@ -228,19 +231,25 @@ class DemoData_Visuals
 			[ "Bow2", Coords.fromXY(20, 11) ],
 			[ "Bow3", Coords.fromXY(21, 11) ],
 			[ "Bow4", Coords.fromXY(22, 11) ],
-			[ "Sling", Coords.fromXY(23, 11) ],
-			[ "Crossbow", Coords.fromXY(24, 11) ],
-			[ "Crossbow Bolt", Coords.fromXY(16, 10) ],
-			[ "Dagger", Coords.fromXY(12, 10) ],
-			[ "Elven Dagger", Coords.fromXY(13, 10) ],
-			[ "Orcish Dagger", Coords.fromXY(11, 10) ],
-			[ "Silver Dagger", Coords.fromXY(14, 10) ],
 			[ "Knife", Coords.fromXY(17, 10) ],
+			[ "Crossbow", Coords.fromXY(24, 11) ],
+			[ "Crossbow Bolt", Coords.fromXY(0, 10) ],
+			[ "Dart", Coords.fromXY(1, 10) ],
+			[ "Dagger", Coords.fromXY(12, 10) ],
+			[ "Dwarvish Short Sword", Coords.fromXY(26, 10) ],
+			[ "Elven Dagger", Coords.fromXY(13, 10) ],
+			[ "Elven Short Sword", Coords.fromXY(24, 10) ],
+			[ "Long Sword", Coords.fromXY(28, 10) ],
+			[ "Orcish Dagger", Coords.fromXY(11, 10) ],
+			[ "Orcish Short Sword", Coords.fromXY(25, 10) ],
+			[ "Silver Dagger", Coords.fromXY(14, 10) ],
 			[ "Polearm1", Coords.fromXY(10, 10) ],
 			[ "Rapier0?", Coords.fromXY(15, 10) ],
 			[ "Rapier1?", Coords.fromXY(18, 10) ],
 			[ "Rapier2?", Coords.fromXY(20, 10) ],
-			[ "Sword", Coords.fromXY(23, 10) ],
+			[ "Scimitar", Coords.fromXY(27, 10) ],
+			[ "Short Sword", Coords.fromXY(23, 10) ],
+			[ "Sling", Coords.fromXY(23, 11) ],
 			[ "WormTooth", Coords.fromXY(19, 10) ],
 		];
 
@@ -353,6 +362,7 @@ class DemoData_Visuals
 			"Red Gem", "Brownish Gem", "Orange Gem", "Yellow Gem",
 			"Black Gem", "Green Gem", "Violet Gem", "Gray Stone",
 			"Gray Stone", "Gray Stone", "Gray Stone", "Rock",
+			"Boulder", "Statue", "Iron Ball", "Iron Chain" // hack
 		];
 
 		var tilePos = Coords.fromXY(27, 19);
@@ -550,8 +560,6 @@ class DemoData_Visuals
 			returnValue.set(tileName, visual);
 		}
 
-		var agentDatas = this.parent.demoDataMovers.buildAgentDatas();
-
 		var tilePos = Coords.create();
 		var imageSizeInTiles = Coords.fromXY(40, 27);
 
@@ -727,16 +735,17 @@ class DemoData_Visuals
 
 		];
 
+		var imageBuilder = ImageBuilder.default();
+
 		for (var i = 0; i < reticlePixelSetsAsStringArrays.length; i++)
 		{
 			var imageName = "Reticle" + i;
 
 			var pixelsAsStrings = reticlePixelSetsAsStringArrays[i];
 
-			var imageForReticle = this.parent.imageBuilder.buildImageFromStrings
+			var imageForReticle = imageBuilder.buildImageFromStrings
 			(
-				imageName,
-				pixelsAsStrings
+				imageName, pixelsAsStrings
 			);
 			var visualForReticle = new VisualImageImmediate(imageForReticle, null);
 

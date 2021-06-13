@@ -1,8 +1,23 @@
 "use strict";
 class Emplacement {
-    constructor(appearance, use) {
+    constructor(appearance, collide, use) {
         this.appearance = appearance;
+        this._collide = collide;
         this._use = use;
+    }
+    static fromAppearance(appearance) {
+        return new Emplacement(appearance, null, null);
+    }
+    static fromAppearanceAndCollide(appearance, collide) {
+        return new Emplacement(appearance, collide, null);
+    }
+    static fromAppearanceAndUse(appearance, use) {
+        return new Emplacement(appearance, null, use);
+    }
+    collide(universe, world, place, entityColliding, entityCollidedWith) {
+        if (this._collide != null) {
+            this._collide(universe, world, place, entityColliding, entityCollidedWith);
+        }
     }
     use(universe, world, place, entityUsing, entityUsed) {
         if (this._use == null) {

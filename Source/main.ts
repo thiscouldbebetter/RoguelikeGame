@@ -73,7 +73,7 @@ function main()
 
 	var timerHelper = new TimerHelper(15);
 
-	var version = "0.0.0-20210427-0000";
+	var version = "0.0.0-20210607-0000";
 
 	var controlBuilder = ControlBuilder.default();
 	var universe = Universe.create

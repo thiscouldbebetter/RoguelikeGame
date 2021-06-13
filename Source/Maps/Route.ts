@@ -5,23 +5,32 @@ class Route2
 	startPos: Coords;
 	goalPos: Coords;
 	lengthMax: number;
+	mover: Mover;
 
 	nodes: Route2Node[];
 
 	_tempPos: Coords;
 
-	constructor(map: MapOfTerrain, startPos: Coords, goalPos: Coords, lengthMax: number)
+	constructor
+	(
+		map: MapOfTerrain,
+		startPos: Coords,
+		goalPos: Coords,
+		lengthMax: number,
+		mover: Mover
+	)
 	{
 		this.map = map;
 		this.startPos = startPos;
 		this.goalPos = goalPos;
 		this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
+		this.mover = mover;
 
 		// Helper variables.
 		this._tempPos = Coords.create();
 	}
 
-	calculate()
+	calculate(): void
 	{
 		var map = this.map;
 		var startPos = this.startPos.clone();
@@ -119,13 +128,16 @@ class Route2
 		}
 	}
 
-	getNeighborsForNode(map: MapOfTerrain, node: Route2Node, goalPos: Coords)
+	getNeighborsForNode
+	(
+		map: MapOfTerrain, node: Route2Node, goalPos: Coords
+	): Route2Node[]
 	{
-		var returnValues = [];
+		var returnValues = new Array<Route2Node>();
 		var originalPos = node.cellPos;
 		var neighborPos = originalPos.clone();
 
-		var neighborPositions = [];
+		var neighborPositions = new Array<Coords>();
 
 		var mapSizeInCellsMinusOnes = map.sizeInCellsMinusOnes;
 		var directions = Direction.Instances()._ByHeading;
@@ -150,7 +162,7 @@ class Route2
 			var costToTraverse = map.cellAtPos
 			(
 				neighborPos
-			).costToTraverse(map);
+			).costToTraverse(map, this.mover);
 
 			costToTraverse *= tempPos.overwriteWith
 			(

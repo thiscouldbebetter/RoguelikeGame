@@ -45,19 +45,19 @@ class MappableDefn implements EntityProperty
 		//entity.collidable = entity.mappable; // hack
 	}
 
-	updateForTimerTick(universe: Universe, world: World, place: Place, entity: Entity)
+	updateForTimerTick(universe: Universe, world: World, place: Place, entity: Entity): void
 	{
 		// todo
 	}
 
 	// Cloneable.
 
-	clone()
+	clone(): MappableDefn
 	{
 		return this; // hack
 	}
 
-	overwriteWith(other: MappableDefn)
+	overwriteWith(other: MappableDefn): MappableDefn
 	{
 		return this; // todo
 	}

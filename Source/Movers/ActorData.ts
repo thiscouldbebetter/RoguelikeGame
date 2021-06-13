@@ -5,19 +5,24 @@ class ActorData implements EntityProperty
 	actions: Action[];
 	target: any;
 
-	activity_Get() { return this._activity; }
+	activity() { return this._activity; }
 
-	activity_Set
+	actionAdd(action: Action): void
+	{
+		this.actions.push(action);
+	}
+
+	activitySet
 	(
 		universe: Universe, world: World, place: Place, actor: Entity,
 		value: Activity
-	)
+	): void
 	{
 		this._activity = value;
 		//this._activity.initialize(universe, world, place, actor);
 	}
 
-	entityBeingFaced(u: Universe, w: World, place: Place, actor: Entity)
+	entityBeingFaced(u: Universe, w: World, place: Place, actor: Entity): Entity2
 	{
 		var returnValue = null;
 

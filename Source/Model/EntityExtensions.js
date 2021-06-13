@@ -36,6 +36,7 @@ class Entity2 extends Entity {
     }
     actorData() { return this.propertyByName(ActorData.name); }
     actorDefn() { return this.propertyByName(ActorDefn.name); }
+    agentData() { return this.propertyByName(AgentData.name); }
     armored() { return this.propertyByName(Armored.name); }
     awaitable() { return this.propertyByName(Awaitable.name); }
     demographics() { return this.propertyByName(Demographics.name); }
@@ -55,5 +56,7 @@ class Entity2 extends Entity {
     searchable() { return this.propertyByName(Searchable.name); }
     spellCaster() { return this.propertyByName(SpellCaster.name); }
     starvable2() { return this.propertyByName(Starvable2.name); }
+    traitable() { return this.propertyByName(Traitable.name); }
     turnable() { return this.propertyByName(Turnable.name); }
+    weapon2() { return this.propertyByName(Weapon2.name); }
 }

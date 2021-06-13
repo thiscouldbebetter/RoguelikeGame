@@ -17,8 +17,9 @@ class MapOfTerrainCell {
         }
         return returnValue;
     }
-    costToTraverse(map) {
-        var returnValue = this.terrain(map).costToTraverse;
+    costToTraverse(map, mover) {
+        var terrain = this.terrain(map);
+        var returnValue = mover.costToTraverseTerrain(terrain);
         for (var i = 0; i < this.entitiesPresent.length; i++) {
             var entityPresent = this.entitiesPresent[i];
             if (entityPresent.mappableDefn().blocksMovement(entityPresent)) {

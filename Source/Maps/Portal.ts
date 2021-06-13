@@ -10,11 +10,16 @@ class Portal2 implements EntityProperty
 		this.destinationEntityName = destinationEntityName;
 	}
 
+	static create(): Portal2
+	{
+		return new Portal2(null, null);
+	}
+
 	use
 	(
 		universe: Universe, world: World, place: Place,
 		entityActorAsEntity: Entity, entityPortalAsEntity: Entity
-	)
+	): void
 	{
 		var entityActor = entityActorAsEntity as Entity2;
 		var entityPortal = entityPortalAsEntity as Entity2;
@@ -46,8 +51,8 @@ class Portal2 implements EntityProperty
 	}
 
 	// Clonable.
-	clone() { return this; }
-	overwriteWith(other: Portal2) { return this; }
+	clone(): Portal2 { return this; }
+	overwriteWith(other: Portal2): Portal2 { return this; }
 
 	// EntityProperty.
 	finalize(u: Universe, w: World, p: Place, e: Entity): void {}

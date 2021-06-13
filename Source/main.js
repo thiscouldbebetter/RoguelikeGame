@@ -40,7 +40,7 @@ function main() {
         textStringPath + "Talk/Mentor.json",
     ]);
     var timerHelper = new TimerHelper(15);
-    var version = "0.0.0-20210427-0000";
+    var version = "0.0.0-20210607-0000";
     var controlBuilder = ControlBuilder.default();
     var universe = Universe.create("RoguelikeGame", version, timerHelper, display, mediaLibrary, controlBuilder, (u) => World2.create(u));
     universe.initialize(() => universe.start());

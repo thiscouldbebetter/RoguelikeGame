@@ -3,21 +3,23 @@ class DemoData_Items
 {
 	parent: DemoData_Main;
 	randomizer: Randomizer;
+
 	mappableDefns: MappableDefn_Instances;
 
-	constructor(parent: DemoData_Main)
+	constructor(parent: DemoData_Main, randomizer: Randomizer)
 	{
 		this.parent = parent;
+		this.randomizer = randomizer;
 
-		this.randomizer = this.parent.randomizer;
 		this.mappableDefns = MappableDefn.Instances();
 	}
 
-	buildEntityDefnGroups_Items
+	buildEntityDefnGroups
 	(
-		universe: Universe, visualsByName: Map<string, Visual>,
+		universe: Universe,
+		visualGetByName: (visualName: string)=>Visual,
 		itemCategories: ItemCategory[]
-	)
+	): EntityDefnGroup[]
 	{
 		var itemCategoriesByName = ArrayHelper.addLookupsByName(itemCategories);
 
@@ -31,7 +33,7 @@ class DemoData_Items
 		];
 
 		var sizeInPixels =
-			(visualsByName.get("Floor") as VisualImage).image(universe).sizeInPixels;
+			(visualGetByName("Floor") as VisualImage).sizeInPixels(universe);
 
 		var itemPropertiesNoStack = new ItemDefn
 		(
@@ -67,19 +69,19 @@ class DemoData_Items
 
 		var methodsToRun =
 		[
-			this.buildEntityDefns_Items_Amulets,
-			this.buildEntityDefns_Items_Armor,
-			this.buildEntityDefns_Items_Containers,
-			this.buildEntityDefns_Items_Food,
-			this.buildEntityDefns_Items_Potions,
-			this.buildEntityDefns_Items_Rings,
-			this.buildEntityDefns_Items_Scrolls,
-			this.buildEntityDefns_Items_Spellbooks,
-			this.buildEntityDefns_Items_Stones,
-			this.buildEntityDefns_Items_Tools,
-			this.buildEntityDefns_Items_Valuables,
-			this.buildEntityDefns_Items_Wands,
-			this.buildEntityDefns_Items_Weapons,
+			this.buildEntityDefns_Amulets,
+			this.buildEntityDefns_Armor,
+			this.buildEntityDefns_Containers,
+			this.buildEntityDefns_Food,
+			this.buildEntityDefns_Potions,
+			this.buildEntityDefns_Rings,
+			this.buildEntityDefns_Scrolls,
+			this.buildEntityDefns_Spellbooks,
+			this.buildEntityDefns_Stones,
+			this.buildEntityDefns_Tools,
+			this.buildEntityDefns_Valuables,
+			this.buildEntityDefns_Wands,
+			this.buildEntityDefns_Weapons,
 		];
 
 		var itemDefnGroups = new Array<EntityDefnGroup>();
@@ -90,7 +92,7 @@ class DemoData_Items
 			var itemDefnGroup = methodToRun.call
 			(
 				this,
-				visualsByName,
+				visualGetByName,
 				itemCategoriesByName,
 				categoriesCommon,
 				sizeInPixels,
@@ -108,9 +110,9 @@ class DemoData_Items
 		return itemDefnGroups;
 	}
 
-	buildEntityDefns_Items_Amulets
+	buildEntityDefns_Amulets
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -118,7 +120,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var namesOfAmulets =
 		[
@@ -140,6 +142,8 @@ class DemoData_Items
 
 		var entityDefnSetAmulets = [];
 
+		var randomizer = this.randomizer;
+
 		for (var i = 0; i < namesOfAmulets.length; i++)
 		{
 			var name = "Amulet of " + namesOfAmulets[i];
@@ -147,17 +151,19 @@ class DemoData_Items
 
 			var appearanceIndex = Math.floor
 			(
-				this.randomizer.getNextRandom() * appearances.length
+				randomizer.getNextRandom() * appearances.length
 			);
 			var appearance = appearances[appearanceIndex] + " Amulet";
 			ArrayHelper.removeAt(appearances, appearanceIndex);
+
+			var visual = visualGetByName(appearance);
 
 			var entityDefn = new Entity2
 			(
 				name,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(appearance), true),
+					Drawable.fromVisual(visual),
 					new ItemDefn
 					(
 						name,
@@ -166,8 +172,10 @@ class DemoData_Items
 						1, // mass
 						1, // tradeValue
 						1, // stackSizeMax
-						[ "Amulet" ], // categoryNames
-						null, null, null
+						[ Amulet.name ], // categoryNames
+						null, // use
+						visual,
+						this.itemDefnToEntity
 					),
 					new Generatable(relativeFrequency),
 				]
@@ -176,13 +184,15 @@ class DemoData_Items
 			entityDefnSetAmulets.push(entityDefn);
 		}
 
+		var visual = visualGetByName(name);
+
 		var name = "Amulet of Yendor";
 		var entityDefnAmuletOfYendor = new Entity2
 		(
 			name,
 			[
 				this.mappableDefns.Open,
-				new Drawable(visuals.get(name), true),
+				Drawable.fromVisual(visual),
 				new ItemDefn
 				(
 					name,
@@ -191,8 +201,10 @@ class DemoData_Items
 					1, // mass
 					1, // tradeValue
 					1, // stackSizeMax
-					[ "Amulet" ], // categoryNames
-					null, null, null
+					[ Amulet.name ], // categoryNames
+					null,
+					visual,
+					this.itemDefnToEntity
 				),
 			]
 		);
@@ -202,11 +214,11 @@ class DemoData_Items
 		entityDefnSets.push(entityDefnSetAmulets);
 
 		return new EntityDefnGroup("Amulets", 1, entityDefnSets[0]);
-	};
+	}
 
-	buildEntityDefns_Items_Containers
+	buildEntityDefns_Containers
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -214,14 +226,16 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
+		var visual = visualGetByName("Chest");
+
 		var entityDefnChest = new Entity2
 		(
 			"Chest",
 			[
 				itemPropertiesNoStack,
-				new Drawable(visuals.get("Chest"), true),
+				Drawable.fromVisual(visual)
 			]
 		);
 
@@ -232,9 +246,9 @@ class DemoData_Items
 		return returnValue;
 	}
 
-	buildEntityDefns_Items_Food
+	buildEntityDefns_Food
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -242,7 +256,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var foods =
 		[
@@ -293,20 +307,29 @@ class DemoData_Items
 			return "You eat the " + itemDefn.appearance;
 		}
 
-		var categoryNamesFood = [ "Food" ];
+		var categoryNamesFood = [ Food.name ];
+
+		var itemDefnToEntity = (u: Universe, w: World, p: Place, e: Entity, i: Item) =>
+		{
+			var returnValue =
+				this.itemDefnToEntity(u, w, p, e, i);
+			returnValue.propertyAdd(food);
+			return returnValue;
+		};
 
 		for (var i = 0; i < foods.length; i++)
 		{
 			var food = foods[i];
 			var name = food.name;
 			var relativeFrequency = 1; // todo
+			var visual = visualGetByName(name);
 
 			var entityDefn = new Entity2
 			(
 				name,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(name), true),
+					Drawable.fromVisual(visual),
 					food,
 					new ItemDefn
 					(
@@ -318,7 +341,8 @@ class DemoData_Items
 						1, // stackSizeMax,
 						categoryNamesFood,
 						useFood,
-						null, null
+						visual,
+						itemDefnToEntity
 					),
 					new Generatable(relativeFrequency)
 				]
@@ -332,9 +356,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Food", 1, entityDefnSets[0]);
 	}
 
-	buildEntityDefns_Items_Potions
+	buildEntityDefns_Potions
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -342,7 +366,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var effectMessageNotImplemented = new Effect2
 		(
@@ -420,7 +444,8 @@ class DemoData_Items
 					message = "You drink the " + itemDefn.appearance + ".";
 					player.messageLog.messageAdd(message);
 					var effectable = entityUsing.effectable2();
-					effectable.effectorApply(entityUsed.effector());
+					var effector = entityUsed.effector();
+					effectable.effectorApply(effector);
 					effectable.updateForTurn(universe, world, place, entityUsing);
 				}
 				return message;
@@ -443,6 +468,18 @@ class DemoData_Items
 			var effect = potionData[1] as Effect2;
 			var relativeFrequency = 1; // todo
 
+			var visual = visualGetByName(appearance);
+
+			var effector = new Effector([effect]);
+
+			var itemDefnToEntity =
+				(u: Universe, w: World, p: Place, e: Entity, i: Item) =>
+				{
+					var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+					returnValue.propertyAdd(effector);
+					return returnValue;
+				};
+
 			var itemDefn = new ItemDefn
 			(
 				itemDefnName,
@@ -453,17 +490,16 @@ class DemoData_Items
 				1, // stackSizeMax,
 				categoryNamesPotion,
 				useItemPotion,
-				null, null
+				visual,
+				itemDefnToEntity
 			);
-
-			var effector = new Effector([effect]);
 
 			var entityDefn = new Entity2
 			(
 				itemDefnName,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(appearance), true),
+					Drawable.fromVisual(visual),
 					effector,
 					itemDefn,
 					new Generatable(relativeFrequency)
@@ -478,9 +514,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Potions", 1, entityDefnSets[0]);
 	}
 
-	buildEntityDefns_Items_Rings
+	buildEntityDefns_Rings
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -488,7 +524,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		// items - magic - rings
 
@@ -562,6 +598,7 @@ class DemoData_Items
 			);
 			var appearance = appearances[appearanceIndex] + " Ring";
 			ArrayHelper.removeAt(appearances, appearanceIndex);
+			var visual = visualGetByName(appearance);
 
 			entityDefnSetRings.push
 			(
@@ -570,7 +607,7 @@ class DemoData_Items
 					name,
 					[
 						this.mappableDefns.Open,
-						new Drawable(visuals.get(appearance), true),
+						Drawable.fromVisual(visual),
 						new ItemDefn
 						(
 							name,
@@ -579,9 +616,10 @@ class DemoData_Items
 							1, // mass
 							1, // tradeValue
 							1, // stackSizeMax
-							[ "Ring" ], // categoryNames
+							[ Ring.name ], // categoryNames
 							null, //ItemDefn.UseEquip
-							null, null
+							visual,
+							this.itemDefnToEntity
 						),
 						new Generatable(1), // todo
 					]
@@ -594,9 +632,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Rings", 1, entityDefnSets[0]);
 	}
 
-	buildEntityDefns_Items_Scrolls
+	buildEntityDefns_Scrolls
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -604,10 +642,31 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
+		var useScrollBlank =
+			(
+				universe: Universe, world: World, place: Place,
+				entityUsingAsEntity: Entity, entityUsedAsEntity: Entity,
+				effect: Effect2
+			) =>
+			{
+				var message = "You can't read a blank scroll!";
+				var player = (entityUsingAsEntity as Entity2).player();
+				if (player != null)
+				{
+					var messageLog = player.messageLog;
+					messageLog.messageAdd(message);
+				}
+				return message;
+			};
+
 		var useScrollEffect =
-			(universe: Universe, world: World, place: Place, entityUsingAsEntity: Entity, entityUsedAsEntity: Entity, effect: Effect2) =>
+			(
+				universe: Universe, world: World, place: Place,
+				entityUsingAsEntity: Entity, entityUsedAsEntity: Entity,
+				effect: Effect2
+			) =>
 			{
 				var entityUsing = entityUsingAsEntity as Entity2;
 				var entityUsed = entityUsedAsEntity as Entity2;
@@ -646,7 +705,7 @@ class DemoData_Items
 		var scrolls =
 		[
 			new Scroll("Amnesia", useScrollNotImplemented ),
-			new Scroll("Blank", useScrollNotImplemented ),
+			new Scroll("Blank", useScrollBlank ),
 			new Scroll("Charging", useScrollNotImplemented ),
 			new Scroll("Confuse Monster", useScrollNotImplemented ),
 			new Scroll("Create Monster", useScrollNotImplemented ),
@@ -682,7 +741,7 @@ class DemoData_Items
 
 		var entityDefnSetScrolls = [];
 
-		var categoryNamesScroll = [ "Scroll" ];
+		var categoryNamesScroll = [ Scroll.name ];
 
 		var mass = 1; // todo
 
@@ -695,12 +754,14 @@ class DemoData_Items
 			ArrayHelper.remove(appearances, appearance);
 			appearance = "Scroll of '" + appearance + "'";
 
+			var visual = visualGetByName(appearance);
+
 			var entityDefn = new Entity2
 			(
 				name,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(appearance), true),
+					Drawable.fromVisual(visual),
 					new ItemDefn
 					(
 						name,
@@ -711,7 +772,8 @@ class DemoData_Items
 						1, // stackSizeMax
 						categoryNamesScroll,
 						scroll.use,
-						null, null
+						visual,
+						this.itemDefnToEntity
 					),
 					new Generatable(1) // todo
 				]
@@ -727,9 +789,9 @@ class DemoData_Items
 		return returnValue;
 	}
 
-	buildEntityDefns_Items_Spellbooks
+	buildEntityDefns_Spellbooks
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -737,7 +799,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var spellNames =
 		[
@@ -858,13 +920,15 @@ class DemoData_Items
 					return message;
 				};
 
+			var visual = visualGetByName(appearance);
+
 			var entityDefn = new Entity2
 			(
 				itemDefnName,
 				[
 					this.mappableDefns.Open,
 					device,
-					new Drawable(visuals.get(appearance), true),
+					Drawable.fromVisual(visual),
 					new ItemDefn
 					(
 						itemDefnName,
@@ -875,7 +939,8 @@ class DemoData_Items
 						1, // stackSizeMax
 						categoryNamesSpellbook,
 						itemUseSpellbook,
-						null, null
+						visual,
+						this.itemDefnToEntity
 					),
 					new Generatable(1) // todo
 				]
@@ -891,9 +956,9 @@ class DemoData_Items
 		return returnValue;
 	}
 
-	buildEntityDefns_Items_Wands
+	buildEntityDefns_Wands
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -901,7 +966,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var wandUseNotImplemented =
 			(universe: Universe, world: World, place: Place, actingEntity: Entity, targetEntity: Entity) =>
@@ -924,6 +989,8 @@ class DemoData_Items
 
 				// todo
 				//targetEntity.controlUpdate(world);
+
+				return "todo";
 			};
 
 		var wandUseTeleport =
@@ -955,34 +1022,38 @@ class DemoData_Items
 
 			//targetEntity.controllable().controlUpdate(world);
 			//targetEntity.player().controlUpdate(world, size, targetEntity);
+
+			return "todo";
 		};
 
-		var wandDatas =
+		var chargesMaxAsDiceRoll = DiceRoll.fromExpression("2d6");
+
+		var wands =
 		[
-			new Wand("Cancelling", 		wandUseNotImplemented), // 0
-			new Wand("Cold", 			wandUseProjectileSpawn),
-			new Wand("Create Monster", 	wandUseNotImplemented),
-			new Wand("Death",			wandUseProjectileSpawn),
-			new Wand("Digging",			wandUseTeleport),
-			new Wand("Enlightenment",	wandUseNotImplemented), // 5
-			new Wand("Fire",			wandUseProjectileSpawn),
-			new Wand("Light", 			wandUseNotImplemented),
-			new Wand("Lightning", 		wandUseProjectileSpawn),
-			new Wand("Locking",			wandUseNotImplemented),
-			new Wand("Make Invisible",	wandUseNotImplemented), // 10
-			new Wand("Magic Missile",	wandUseProjectileSpawn),
-			new Wand("Nothing",			wandUseNotImplemented),
-			new Wand("Opening",			wandUseNotImplemented),
-			new Wand("Polymorph",		wandUseNotImplemented),
-			new Wand("Probing",			wandUseNotImplemented), // 15
-			new Wand("Secret Door Detection", wandUseNotImplemented),
-			new Wand("Sleep",			wandUseNotImplemented),
-			new Wand("Slow Monster",	wandUseNotImplemented),
-			new Wand("Speed Monster", 	wandUseNotImplemented),
-			new Wand("Striking",		wandUseProjectileSpawn), // 20
-			new Wand("Teleport",		wandUseTeleport),
-			new Wand("Turn Undead",		wandUseNotImplemented),
-			new Wand("Wishing",			wandUseNotImplemented), // 23
+			new Wand("Cancelling", 		chargesMaxAsDiceRoll, wandUseNotImplemented), // 0
+			new Wand("Cold", 			chargesMaxAsDiceRoll, wandUseProjectileSpawn),
+			new Wand("Create Monster", 	chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Death",			chargesMaxAsDiceRoll, wandUseProjectileSpawn),
+			new Wand("Digging",			chargesMaxAsDiceRoll, wandUseTeleport),
+			new Wand("Enlightenment",	chargesMaxAsDiceRoll, wandUseNotImplemented), // 5
+			new Wand("Fire",			chargesMaxAsDiceRoll, wandUseProjectileSpawn),
+			new Wand("Light", 			chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Lightning", 		chargesMaxAsDiceRoll, wandUseProjectileSpawn),
+			new Wand("Locking",			chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Make Invisible",	chargesMaxAsDiceRoll, wandUseNotImplemented), // 10
+			new Wand("Magic Missile",	chargesMaxAsDiceRoll, wandUseProjectileSpawn),
+			new Wand("Nothing",			chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Opening",			chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Polymorph",		chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Probing",			chargesMaxAsDiceRoll, wandUseNotImplemented), // 15
+			new Wand("Secret Door Detection", chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Sleep",			chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Slow Monster",	chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Speed Monster", 	chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Striking",		chargesMaxAsDiceRoll, wandUseProjectileSpawn), // 20
+			new Wand("Teleport",		chargesMaxAsDiceRoll, wandUseTeleport),
+			new Wand("Turn Undead",		chargesMaxAsDiceRoll, wandUseNotImplemented),
+			new Wand("Wishing",			chargesMaxAsDiceRoll, wandUseNotImplemented), // 23
 		];
 
 		var appearances =
@@ -998,19 +1069,11 @@ class DemoData_Items
 
 		var entityDefnSetWands = [];
 
-		var device = new Device
-		(
-			name,
-			null, null, // init, update
-			null, //this.itemEffectorApply
-			null
-		);
-
-		for (var i = 0; i < wandDatas.length; i++)
+		for (var i = 0; i < wands.length; i++)
 		{
-			var wandData = wandDatas[i];
-			var name = wandData.name;
-			//var effect = wandData.use;
+			var wand = wands[i];
+			var name = wand.name;
+			var wandName = "Wand of " + name;
 
 			var appearanceIndex = Math.floor
 			(
@@ -1019,27 +1082,39 @@ class DemoData_Items
 			var appearance = appearances[appearanceIndex] + " Wand";
 			ArrayHelper.removeAt(appearances, appearanceIndex);
 
-			var wandName = "Wand of " + name;
+			var visual = visualGetByName(appearance);
+
+			var itemDefnToEntity =
+				(u: Universe, w: World, p: Place, e: Entity, i: Item) =>
+				{
+					var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+					returnValue.propertyAdd(wand);
+					return returnValue;
+				};
+
+			var itemDefn = new ItemDefn
+			(
+				wandName,
+				appearance,
+				appearance, // description
+				1, // mass
+				1, // tradeValue
+				1, // stackSizeMax
+				[ Wand.name ], // categoryNames
+				wand.use, // use
+				visual,
+				itemDefnToEntity
+			);
+
 			var entityDefnWand = new Entity2
 			(
 				wandName,
 				[
 					this.mappableDefns.Open,
-					device,
-					new Drawable(visuals.get(appearance), true),
-					new ItemDefn
-					(
-						wandName,
-						appearance,
-						appearance, // description
-						1, // mass
-						1, // tradeValue
-						1, // stackSizeMax
-						[ "Wand" ], // categoryNames
-						this.itemUseDevice,
-						null, null
-					),
-					new Generatable(1) // todo
+					Drawable.fromVisual(visual),
+					itemDefn,
+					new Generatable(1), // todo
+					wand
 				]
 			);
 
@@ -1051,9 +1126,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Wands", 1, entityDefnSets[0]);
 	}
 
-	buildEntityDefns_Items_MagicTools
+	buildEntityDefns_MagicTools
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -1061,14 +1136,15 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		// todo
+		return null;
 	}
 
-	buildEntityDefns_Items_Weapons
+	buildEntityDefns_Weapons
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -1076,43 +1152,51 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
-		var namesAndAppearancesOfWeapons =
+		var diceRollDefault = DiceRoll.fromExpression("1d6"); // todo
+
+		var weapons =
 		[
-			[ "Arrow", "Arrow" ],
-			[ "Battle Axe", "Battle Axe" ],
-			[ "Bow", "Bow" ],
-			[ "Bow2", "Bow2" ],
-			[ "Bow3", "Bow3" ],
-			[ "Bow4", "Bow4" ],
-			[ "Sling", "Sling" ],
-			[ "Crossbow", "Crossbow" ],
-			[ "Crossbow Bolt", "Crossbow Bolt" ],
-			[ "Dagger", "Dagger" ],
-			[ "Elven Dagger", "Runed Dagger" ],
-			[ "Hand Axe", "Hand Axe" ],
-			[ "Knife", "Knife" ],
-			[ "Orcish Dagger", "Crude Dagger" ],
-			[ "Polearm1", "Polearm1" ],
-			[ "Silver Arrow", "Silver Arrow" ],
-			[ "Sword", "Sword" ],
+			new Weapon2("Arrow", 		"Arrow", 		diceRollDefault),
+			new Weapon2("Battle Axe", 	"Battle Axe", 	diceRollDefault),
+			new Weapon2("Bow", 			"Bow", 			diceRollDefault),
+			new Weapon2("Bow2", 		"Bow2", 		diceRollDefault),
+			new Weapon2("Bow3", 		"Bow3", 		diceRollDefault),
+			new Weapon2("Bow4", 		"Bow4", 		diceRollDefault),
+			new Weapon2("Sling", 		"Sling", 		diceRollDefault),
+			new Weapon2("Crossbow", 	"Crossbow", 	diceRollDefault),
+			new Weapon2("Crossbow Bolt", "Crossbow Bolt", diceRollDefault),
+			new Weapon2("Dagger", 		"Dagger", 		diceRollDefault),
+			new Weapon2("Dart", 		"Dart", 		diceRollDefault),
+			new Weapon2("Elven Dagger", "Runed Dagger", diceRollDefault),
+			new Weapon2("Hand Axe", 	"Hand Axe", 	diceRollDefault),
+			new Weapon2("Knife", 		"Knife", 		diceRollDefault),
+			new Weapon2("Orcish Dagger", "Crude Dagger", diceRollDefault),
+			new Weapon2("Polearm1", 	"Polearm1", 	diceRollDefault),
+			new Weapon2("Short Sword", 	"Short Sword", 	diceRollDefault),
+			new Weapon2("Silver Arrow", "Silver Arrow", diceRollDefault),
 		];
 
 		var entityDefnSetWeapons = [];
 
-		var equippable = new Equippable
-		(
-			null, // equip
-			null // unequip
-		);
+		var equippable = Equippable.default();
 
-		for (var i = 0; i < namesAndAppearancesOfWeapons.length; i++)
+		var itemDefnToEntity =
+			(u: Universe, w: World, p: Place, e: Entity, i: Item) =>
+			{
+				var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+				returnValue.propertyAdd(weapon);
+				returnValue.propertyAdd(weapon.damager);
+				return returnValue;
+			};
+
+		for (var i = 0; i < weapons.length; i++)
 		{
-			var nameAndAppearance = namesAndAppearancesOfWeapons[i];
-			var name = nameAndAppearance[0];
-			var appearance = nameAndAppearance[1];
-			var visual = visuals.get(name);
+			var weapon = weapons[i];
+			var name = weapon.name;
+			var appearance = weapon.appearance;
+			var visual = visualGetByName(name);
 
 			var entityDefn = new Entity2
 			(
@@ -1133,8 +1217,9 @@ class DemoData_Items
 						[ "Weapon" ], // categoryNames
 						null,
 						visual,
-						this.itemDefnToEntity
-					)
+						itemDefnToEntity
+					),
+					weapon
 				]
 			);
 
@@ -1147,9 +1232,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Weapons", 1, entityDefnSets[0]);
 	}
 
-	buildEntityDefns_Items_Armor
+	buildEntityDefns_Armor
 	(
-		visuals : Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categoriesByName: Map<string, ItemCategory>,
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -1157,7 +1242,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var headwear = categoriesByName.get("Headwear");
 		var bodyArmor = categoriesByName.get("BodyArmor");
@@ -1229,11 +1314,7 @@ class DemoData_Items
 
 		var entityDefnSetArmor = [];
 
-		var equippable = new Equippable
-		(
-			null, // equip
-			null // unequip
-		);
+		var equippable = Equippable.default();
 
 		for (var i = 0; i < namesAndCategoriesOfArmor.length; i++)
 		{
@@ -1242,12 +1323,14 @@ class DemoData_Items
 			var appearance = name; // hack
 			var category = nameAndCategory[1] as ItemCategory;
 
+			var visual = visualGetByName(name);
+
 			var entityDefn = new Entity2
 			(
 				name,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(name), true),
+					Drawable.fromVisual(visual),
 					equippable,
 					new ItemDefn
 					(
@@ -1258,7 +1341,9 @@ class DemoData_Items
 						1, // tradeValue
 						1, // stackSizeMax
 						[ "Armor" , category.name ], // categoryNames
-						null, null, null
+						null, // use
+						visual,
+						this.itemDefnToEntity
 					),
 					new Generatable(1) // todo
 				]
@@ -1273,9 +1358,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Armor", 1, entityDefnSets[0]);
 	}
 
-	buildEntityDefns_Items_Tools
+	buildEntityDefns_Tools
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -1283,7 +1368,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var entityDefnSet = [];
 
@@ -1339,13 +1424,14 @@ class DemoData_Items
 			var nameAndAppearance = namesAndAppearances[i];
 			var name = nameAndAppearance[0];
 			var appearance = nameAndAppearance[0]; // hack
+			var visual = visualGetByName(name);
 
 			var entityDefn = new Entity2
 			(
 				name,
 				[
 					this.mappableDefns.Open,
-					new Drawable(visuals.get(name), null),
+					Drawable.fromVisual(visual),
 					new ItemDefn
 					(
 						appearance,
@@ -1354,9 +1440,10 @@ class DemoData_Items
 						1, // mass
 						1, // tradeValue
 						1, // stackSizeMax
-						[ "Tool" ], // categoryNames
+						[ Tool.name ], // categoryNames
 						null, // use
-						null, null
+						visual,
+						this.itemDefnToEntity
 					),
 					new Generatable(1) // todo
 				]
@@ -1368,9 +1455,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Tools", 1, entityDefnSet);
 	}
 
-	buildEntityDefns_Items_Stones
+	buildEntityDefns_Stones
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -1378,7 +1465,7 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var namesOfStones =
 		[
@@ -1428,7 +1515,7 @@ class DemoData_Items
 
 			// rock
 
-			"Rock", // 35
+			"Rock" // 35
 		];
 
 		var appearancesOfStones =
@@ -1438,18 +1525,60 @@ class DemoData_Items
 			"Yellow Gem","Green Gem","Brownish Gem","Brownish Gem",
 			"Black Gem","White Gem","Yellow Gem","Red Gem",
 			"Violet Gem","Red Gem","Violet Gem","Black Gem",
-			"Orange Gem","Green Gem","White Gem", "Blue Gem",
-			"Red Gem","Brownish Gem","Orange Gem", "Yellow Gem",
+			"Orange Gem","Green Gem","White Gem","Blue Gem",
+			"Red Gem","Brownish Gem","Orange Gem","Yellow Gem",
 			"Black Gem","Green Gem","Violet Gem","Gray Stone",
-			"Gray Stone","Gray Stone","Gray Stone","Rock",
+			"Gray Stone","Gray Stone","Gray Stone","Rock"
 		];
 
 		var entityDefnSetStones = [];
+
+		var mappableDefnOpen = this.mappableDefns.Open;
+
+		var damager = new Damager(Damage.fromAmount(1));
+
+		var itemDefnToEntity =
+		(
+			u: Universe, w: World, p: Place, e: Entity, i: Item
+		) =>
+		{
+			var itemDefn = i.defn(w);
+			var returnValue = new Entity2
+			(
+				i.defnName,
+				[
+					i,
+					e.locatable().clone(),
+					new Mappable(mappableDefnOpen),
+					mappableDefnOpen,
+					damager,
+					Drawable.fromVisual(itemDefn.visual),
+				]
+			);
+
+			return returnValue;
+		}
 
 		for (var i = 0; i < namesOfStones.length; i++)
 		{
 			var name = namesOfStones[i];
 			var appearance = appearancesOfStones[i];
+
+			var visual = visualGetByName(appearance);
+
+			var itemDefn = new ItemDefn
+			(
+				name,
+				appearance,
+				appearance,
+				1, // mass
+				1, // tradeValue
+				1, // stackSizeMax
+				[ Stone.name ], // categoryNames
+				null, // use
+				null,
+				itemDefnToEntity
+			);
 
 			entityDefnSetStones.push
 			(
@@ -1457,22 +1586,10 @@ class DemoData_Items
 				(
 					name,
 					[
-						this.mappableDefns.Open,
-
-						new Drawable(visuals.get(appearance), true),
+						mappableDefnOpen,
+						Drawable.fromVisual(visual),
 						new Generatable(1), // todo
-						new ItemDefn
-						(
-							name,
-							appearance,
-							appearance,
-							1, // mass
-							1, // tradeValue
-							1, // stackSizeMax
-							[ "Stone" ], // categoryNames
-							null, // use
-							null, null
-						)
+						itemDefn
 					]
 				)
 			);
@@ -1484,9 +1601,9 @@ class DemoData_Items
 		return new EntityDefnGroup("Stones", 1, entityDefnSetStones);
 	}
 
-	buildEntityDefns_Items_Valuables
+	buildEntityDefns_Valuables
 	(
-		visuals: Map<string, Visual>,
+		visualGetByName: (visualName: string) => Visual,
 		categories: ItemCategory[],
 		categoriesCommon: ItemCategory[],
 		sizeInPixels: Coords,
@@ -1494,11 +1611,13 @@ class DemoData_Items
 		itemPropertiesStandard: any,
 		effectDoNothing: any,
 		entityDefnSets: any
-	)
+	): EntityDefnGroup
 	{
 		var entityDefnSetValuables = [];
 
 		var name = "Coins";
+
+		var visual = visualGetByName("Coins");
 
 		entityDefnSetValuables.push
 		(
@@ -1508,7 +1627,7 @@ class DemoData_Items
 				ArrayHelper.concatenateAll
 				([
 					itemPropertiesStandard,
-					new Drawable(visuals.get("Coins"), null),
+					Drawable.fromVisual(visual),
 					new Generatable(0),
 					new ItemDefn
 					(
@@ -1518,9 +1637,10 @@ class DemoData_Items
 						1, // mass
 						1, // tradeValue
 						10000, // stackSizeMax
-						[ "Vaulables" ], // categoryNames
+						[ "Valuables" ], // categoryNames
 						null, // use
-						null, null
+						visual,
+						this.itemDefnToEntity
 					)
 				])
 			)
@@ -1533,7 +1653,7 @@ class DemoData_Items
 		return returnGroup;
 	}
 
-	buildItemCategories()
+	buildItemCategories(): ItemCategory[]
 	{
 		var returnValues =
 		[
@@ -1563,7 +1683,10 @@ class DemoData_Items
 		return returnValues;
 	}
 
-	itemDefnToEntity(u: Universe, w: World, p: Place, e: Entity, i: Item)
+	itemDefnToEntity
+	(
+		u: Universe, w: World, p: Place, e: Entity, i: Item
+	): Entity2
 	{
 		var itemDefn = i.defn(w);
 		var mappableDefn = MappableDefn.Instances().Open;
@@ -1572,6 +1695,7 @@ class DemoData_Items
 			i.defnName,
 			[
 				i,
+				e.locatable().clone(),
 				new Mappable(mappableDefn),
 				mappableDefn,
 				Drawable.fromVisual(itemDefn.visual),
@@ -1581,7 +1705,11 @@ class DemoData_Items
 		return returnValue;
 	}
 
-	itemUseDevice(universe: Universe, world: World, place: Place, userEntityAsEntity: Entity, itemEntity: Entity)
+	itemUseDevice
+	(
+		universe: Universe, world: World, place: Place,
+		userEntityAsEntity: Entity, itemEntity: Entity
+	): string
 	{
 		var userEntity = userEntityAsEntity as Entity2;
 
@@ -1606,6 +1734,9 @@ class DemoData_Items
 }
 
 // Convenience classes.
+
+class Amulet
+{}
 
 class Food implements EntityProperty
 {
@@ -1654,14 +1785,78 @@ class Scroll
 	}
 }
 
-class Wand
+class Stone {}
+
+class Tool {}
+
+class Wand implements EntityProperty
 {
 	name: string;
-	use: any;
+	chargesMaxAsDiceRoll: DiceRoll
+	use: (u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity) => string;
 
-	constructor(name: string, use: any)
+	charges: number;
+
+	constructor
+	(
+		name: string,
+		chargesMaxAsDiceRoll: DiceRoll,
+		use: (u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity) => string
+	)
 	{
 		this.name = name;
+		this.chargesMaxAsDiceRoll = chargesMaxAsDiceRoll;
 		this.use = use;
 	}
+
+	// Clonable.
+	clone() { return this; }
+	overwriteWith(other: Food) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+
+	initialize(u: Universe, w: World, p: Place, e: Entity): void
+	{
+		if (this.charges == null)
+		{
+			this.charges = this.chargesMaxAsDiceRoll.roll(u.randomizer);
+		}
+	}
+
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+}
+
+class Weapon2 implements EntityProperty
+{
+	name: string;
+	appearance: string;
+	damagePossibleAsDiceRoll: DiceRoll;
+
+	damager: Damager;
+
+	constructor
+	(
+		name: string,
+		appearance: string,
+		damagePossibleAsDiceRoll: DiceRoll
+	)
+	{
+		this.name = name;
+		this.appearance = appearance;
+		this.damagePossibleAsDiceRoll = damagePossibleAsDiceRoll;
+
+		var damagePerHit =
+			Damage.fromAmountAsDiceRoll(damagePossibleAsDiceRoll);
+		this.damager = new Damager(damagePerHit);
+	}
+
+	// Clonable.
+	clone() { return this; }
+	overwriteWith(other: Food) { return this; }
+
+	// EntityProperty.
+	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
 }

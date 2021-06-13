@@ -22,7 +22,7 @@ class ActorDefn implements EntityProperty
 			entity.actorDefn().activityDefnNameInitial,
 		);
 
-		actorData.activity_Set(universe, world, place, entity, activity);
+		actorData.activitySet(universe, world, place, entity, activity);
 	}
 
 	updateForTimerTick(universe: Universe, world: World, place: Place, entityAsEntity: Entity)
@@ -31,7 +31,7 @@ class ActorDefn implements EntityProperty
 		if (entity.killable() == null || entity.killable().isAlive())
 		{
 			var actorData = entity.actorData();
-			actorData.activity_Get().perform(universe, world, place, entity);
+			actorData.activity().perform(universe, world, place, entity);
 
 			var entityActions = actorData.actions;
 

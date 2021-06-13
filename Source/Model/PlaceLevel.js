@@ -84,6 +84,7 @@ class PlaceLevel extends Place {
     initialize(universe, world) {
         this.hasBeenUpdatedSinceDrawn = true;
         // Initialization of entities is handled in entitySpawn().
+        this.update_EntitiesToSpawn(universe, world);
     }
     updateForTimerTick(universe, world) {
         this.update_EntitiesToSpawn(universe, world);

@@ -52,6 +52,7 @@ class Entity2 extends Entity
 
 	actorData(): ActorData { return this.propertyByName(ActorData.name) as ActorData; }
 	actorDefn(): ActorDefn { return this.propertyByName(ActorDefn.name) as ActorDefn; }
+	agentData(): AgentData { return this.propertyByName(AgentData.name) as AgentData; }
 	armored(): Armored { return this.propertyByName(Armored.name) as Armored; }
 	awaitable(): Awaitable { return this.propertyByName(Awaitable.name) as Awaitable; }
 	demographics(): Demographics { return this.propertyByName(Demographics.name) as Demographics; }
@@ -71,5 +72,7 @@ class Entity2 extends Entity
 	searchable(): Searchable { return this.propertyByName(Searchable.name) as Searchable; }
 	spellCaster(): SpellCaster { return this.propertyByName(SpellCaster.name) as SpellCaster; }
 	starvable2(): Starvable2 { return this.propertyByName(Starvable2.name) as Starvable2; }
+	traitable(): Traitable { return this.propertyByName(Traitable.name) as Traitable; }
 	turnable(): Turnable { return this.propertyByName(Turnable.name) as Turnable; }
+	weapon2(): Weapon2 { return this.propertyByName(Weapon2.name) as Weapon2; }
 }

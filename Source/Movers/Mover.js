@@ -1,7 +1,21 @@
 "use strict";
 class Mover {
-    constructor(movesPerTurn) {
+    constructor(movesPerTurn, costToTraverseTerrain) {
         this.movesPerTurn = movesPerTurn;
+        this._costToTraverseTerrain = costToTraverseTerrain;
+    }
+    static fromMovesPerTurn(movesPerTurn) {
+        return new Mover(movesPerTurn, null);
+    }
+    costToTraverseTerrain(terrainToTraverse) {
+        var returnValue;
+        if (this._costToTraverseTerrain == null) {
+            returnValue = terrainToTraverse.costToTraverse;
+        }
+        else {
+            returnValue = this._costToTraverseTerrain(terrainToTraverse);
+        }
+        return returnValue;
     }
     initialize(universe, world, place, entityAsEntity) {
         var entity = entityAsEntity;

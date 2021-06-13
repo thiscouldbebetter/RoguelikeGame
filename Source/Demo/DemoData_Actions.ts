@@ -13,7 +13,7 @@ class DemoData_Actions
 	actionAttack_Melee_Perform
 	(
 		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actorAsEntity: Entity
-	)
+	): void
 	{
 		var world = worldAsWorld as World2;
 		var place = placeAsPlace as PlaceLevel;
@@ -56,29 +56,40 @@ class DemoData_Actions
 				actorMover.movesThisTurn -= costToAttack;
 				actor.turnable().hasActedThisTurn = true;
 
-				// todo - Calculate damage.
-				// hack - Only the player can inflict damage for now.
-
 				var equipmentUser = actor.equipmentUser();
 				var entityWieldableEquipped =
 				(
 					equipmentUser == null
 					? null
 					: equipmentUser.itemEntityInSocketWithName("Wielding")
-				);
+				) as Entity2;
 				var actorHasWieldableEquipped = (entityWieldableEquipped != null);
 
-				var damagePossibleAsDieRoll: string;
+				var damagePossibleAsDiceRoll: DiceRoll;
 				if (actorHasWieldableEquipped)
 				{
-					damagePossibleAsDieRoll = "1d6"
+					var weapon = entityWieldableEquipped.weapon2();
+					if (weapon != null)
+					{
+						damagePossibleAsDiceRoll = weapon.damagePossibleAsDiceRoll;
+					}
 				}
 				else
 				{
-					damagePossibleAsDieRoll = "1d6"; // todo
+					var agentData = actor.agentData();
+					if (agentData != null)
+					{
+						var attack = agentData.attacks[0];
+						damagePossibleAsDiceRoll =
+							attack.damagePossibleAsDiceRoll;
+					}
+					else
+					{
+						throw new Error("Invalid attack!");
+					}
 				}
 
-				var damageAmount = DiceRoll.roll(damagePossibleAsDieRoll, world.randomizer);
+				var damageAmount = damagePossibleAsDiceRoll.roll(world.randomizer);
 				var damageInflicted = ( actorPlayer == null ? 0 : damageAmount);
 
 				if (damageInflicted == 0)
@@ -96,7 +107,7 @@ class DemoData_Actions
 				}
 				else
 				{
-					var damageInflictedAsDamage = new Damage(damageInflicted, null, null);
+					var damageInflictedAsDamage = Damage.fromAmount(damageInflicted);
 					killable.damageApply
 					(
 						universe, world, place, actor, entityInCell, damageInflictedAsDamage
@@ -147,7 +158,7 @@ class DemoData_Actions
 	(
 		universe: Universe, worldAsWorld: World, placeAsPlace: Place,
 		actorAsEntity: Entity
-	)
+	): void
 	{
 		var world = worldAsWorld as World2;
 		var place = placeAsPlace as PlaceLevel;
@@ -176,12 +187,16 @@ class DemoData_Actions
 			return;
 		}
 
-		if (cellInFront.terrain(map).costToTraverse >= MapTerrain.AlmostInfinity)
+		var cellInFrontTerrain = cellInFront.terrain(map);
+		var mover = actor.mover();
+		var costToTraverse = mover.costToTraverseTerrain(cellInFrontTerrain);
+
+		if (costToTraverse >= MapTerrain.AlmostInfinity)
 		{
 			return;
 		}
 
-		actor.mover().movesThisTurn -= costToAttack;
+		mover.movesThisTurn -= costToAttack;
 		actor.turnable().hasActedThisTurn = true;
 
 		var projectileLoc = actor.locatable().loc.clone();
@@ -190,25 +205,27 @@ class DemoData_Actions
 		projectilePos.z++;
 		var visual =
 			world.defn2.entityDefnByName("Dagger").drawable().visual; // todo
+
 		var projectileEntity = new Entity2
 		(
-			"Projectile" + IDHelper.Instance().idNext(),
+			"Projectile",
 			[
 				new ActorDefn("Fly Forward"),
 				new Awaitable(),
 				MappableDefn.Instances().Open,
 				Drawable.fromVisual(visual),
-				new Ephemeral(8, null),
+				//new Ephemeral(8, null),
 				new Locatable(projectileLoc),
-				new Mover(1) // hack
+				Mover.fromMovesPerTurn(3) // hack
 			]
 		);
 
-		place.entitiesToSpawn.push(projectileEntity);
+		place.entityToSpawnAdd(projectileEntity);
 
-		if (actor.player() != null)
+		var player = actor.player();
+		if (player != null)
 		{
-			actor.player().messageLog.messageAdd("You throw a dagger.");
+			player.messageLog.messageAdd("You throw a dagger.");
 		}
 	}
 
@@ -216,7 +233,7 @@ class DemoData_Actions
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
 		shouldOpenNotClose: boolean
-	)
+	): void
 	{
 		var actor = actorAsEntity as Entity2;
 
@@ -226,8 +243,9 @@ class DemoData_Actions
 
 		if (actorMover.movesThisTurn >= costToPerform)
 		{
+			var actorData = actor.actorData();
 			var entityBeingFaced =
-				actor.actorData().entityBeingFaced(universe, world, placeAsPlace, actor);
+				actorData.entityBeingFaced(universe, world, placeAsPlace, actor);
 
 			if (entityBeingFaced != null)
 			{
@@ -277,7 +295,7 @@ class DemoData_Actions
 	actionEmplacement_Use_Perform
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity
-	)
+	): void
 	{
 		var place = placeAsPlace as PlaceLevel
 		var actor = actorAsEntity as Entity2;
@@ -296,7 +314,7 @@ class DemoData_Actions
 
 		var mover = actor.mover();
 
-		var emplacementToUse = emplacementsInCell[0];
+		var emplacementToUse = emplacementsInCell[0] as Entity2;
 		var costToUse = mover.movesPerTurn; // hack
 
 		if (mover.movesThisTurn >= costToUse)
@@ -314,7 +332,7 @@ class DemoData_Actions
 	actionItem_DropSelected_Perform
 	(
 		universe: Universe, worldAsWorld: World, place: Place, actorAsEntity: Entity
-	)
+	): void
 	{
 		var world = worldAsWorld as World2;
 		var actor = actorAsEntity as Entity2;
@@ -374,7 +392,7 @@ class DemoData_Actions
 	actionItem_PickUp_Perform
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity
-	)
+	): void
 	{
 		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
@@ -399,24 +417,25 @@ class DemoData_Actions
 					mover.movesThisTurn -= costToPickUp;
 					actor.turnable().hasActedThisTurn = true;
 
-					var pickUpItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToPickUp: Item) =>
+					var pickUpItem =
+					(
+						itemHolder: ItemHolder, world: World, actor: Entity,
+						itemEntityToPickUp: Entity
+					) =>
 					{
 						itemHolder.itemAdd(itemToPickUp);
-						var itemEntityToPickUp = itemToPickUp.toEntity
-						(
-							universe, world, place, actorAsEntity
-						);
 						place.entityToRemoveAdd(itemEntityToPickUp);
 
 						if (itemHolder.itemSelected == null)
 						{
 							itemHolder.itemSelected = itemToPickUp;
 						}
-					}
+					};
 
+					var actorItemHolder = actor.itemHolder();
 					pickUpItem
 					(
-						actor.itemHolder(), world, actor, entityPresent.item()
+						actorItemHolder, world, actor, entityPresent
 					);
 					var itemToPickUpDefn = itemToPickUp.defn(world);
 					var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
@@ -429,7 +448,7 @@ class DemoData_Actions
 	actionItem_SelectedUse_Perform
 	(
 		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actorAsEntity: Entity
-	)
+	): void
 	{
 		var world = worldAsWorld as World2;
 		var place = placeAsPlace as PlaceLevel;
@@ -495,16 +514,22 @@ class DemoData_Actions
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
 		action: Action, directionToMove: Coords
-	)
+	): void
 	{
 		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
+
+		/*
+
+		// This doesn't make sense, does it?
 
 		var actorMover = actor.mover();
 		if (actorMover.movesThisTurn < actorMover.movesPerTurn)
 		{
 			return;
 		}
+
+		*/
 
 		if (directionToMove.magnitude() == 0)
 		{
@@ -513,7 +538,8 @@ class DemoData_Actions
 
 		var actorLoc = actor.locatable().loc;
 		var actorOrientation = actorLoc.orientation;
-		var isAlreadyFacingInDirection = actorOrientation.forward.clone().directions().equals(directionToMove);
+		var isAlreadyFacingInDirection =
+			actorOrientation.forward.clone().directions().equals(directionToMove);
 		if (isAlreadyFacingInDirection == false)
 		{
 			actorOrientation.forwardSet(directionToMove);
@@ -528,36 +554,35 @@ class DemoData_Actions
 		var map = place.map;
 		var cellDestination = map.cellAtPos(posInCellsDestination);
 
-		if (cellDestination == null)
+		if (cellDestination != null)
 		{
-			return;
+			var isDestinationAccessible =
+				this.actionMove_Perform_1_IsDestinationAccessible_Terrain
+				(
+					universe, world, place, actor, action, directionToMove,
+					cellDestination
+				);
+
+			isDestinationAccessible =
+				this.actionMove_Perform_2_IsDestinationAccessible_Entities
+				(
+					universe, world, place, actor, action, directionToMove,
+					cellDestination, isDestinationAccessible
+				);
+
+			this.actionMove_Perform_3_Move
+			(
+				universe, world, place, actor, action, directionToMove,
+				cellDestination, isDestinationAccessible, posInCellsDestination
+			);
 		}
-
-		var isDestinationAccessible = this.actionMove_Perform_1
-		(
-			universe, world, place, actor, action, directionToMove,
-			cellDestination
-		);
-
-		isDestinationAccessible = this.actionMove_Perform_2
-		(
-			universe, world, place, actor, action, directionToMove,
-			cellDestination, isDestinationAccessible
-		);
-
-		this.actionMove_Perform_3
-		(
-			universe, world, place, actor, action, directionToMove,
-			cellDestination, isDestinationAccessible, posInCellsDestination
-		);
-
 	}
 
-	actionMove_Perform_1
+	actionMove_Perform_1_IsDestinationAccessible_Terrain
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
 		action: Action, directionToMove: Coords, cellDestination: MapOfTerrainCell
-	)
+	): boolean
 	{
 		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
@@ -566,8 +591,8 @@ class DemoData_Actions
 
 		var map = place.map;
 		var cellTerrain = cellDestination.terrain(map);
-		var costToTraverse = cellTerrain.costToTraverse;
 		var mover = actor.mover();
+		var costToTraverse = mover.costToTraverseTerrain(cellTerrain);
 		if (costToTraverse > mover.movesThisTurn)
 		{
 			isDestinationAccessible = false;
@@ -576,12 +601,12 @@ class DemoData_Actions
 		return isDestinationAccessible;
 	}
 
-	actionMove_Perform_2
+	actionMove_Perform_2_IsDestinationAccessible_Entities
 	(
 		universe: Universe, world: World, place: Place, actorAsEntity: Entity,
 		action: Action, directionToMove: Coords, cellDestination: MapOfTerrainCell,
 		isDestinationAccessible: boolean
-	)
+	): boolean
 	{
 		if (isDestinationAccessible)
 		{
@@ -643,24 +668,18 @@ class DemoData_Actions
 		}
 
 		return isDestinationAccessible;
-	};
+	}
 
-	actionMove_Perform_3
+	actionMove_Perform_3_Move
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
 		action: Action, directionToMove: Coords, cellDestination: MapOfTerrainCell,
 		isDestinationAccessible: boolean, posInCellsDestination: Coords
-	)
+	): void
 	{
-		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
-
 		var player = actor.player();
 		var mover = actor.mover();
-		var map = place.map;
-		var cellTerrain = cellDestination.terrain(map);
-		var costToTraverse = cellTerrain.costToTraverse;
-		var entitiesInCellDestination = cellDestination.entitiesPresent;
 
 		if (isDestinationAccessible == false)
 		{
@@ -674,7 +693,15 @@ class DemoData_Actions
 		}
 		else
 		{
+			var place = placeAsPlace as PlaceLevel;
+			var map = place.map;
+
 			var mover = actor.mover();
+
+			var cellTerrain = cellDestination.terrain(map);
+			var costToTraverse = mover.costToTraverseTerrain(cellTerrain);
+			var entitiesInCellDestination = cellDestination.entitiesPresent;
+
 			mover.movesThisTurn -= costToTraverse;
 			actor.turnable().hasActedThisTurn = true;
 
@@ -688,18 +715,19 @@ class DemoData_Actions
 				{
 					var entity = entitiesInCellDestination[i];
 					var entityItem = entity.item();
+					var messageLog = player.messageLog;
 					if (entityItem != null)
 					{
 						var itemDefn = entityItem.defn(world);
 						var message = "There is a " + itemDefn.appearance + " here.";
-						player.messageLog.messageAdd(message);
+						messageLog.messageAdd(message);
 					}
 					else if (entity.emplacement != null)
 					{
 						var emplacement = entity.emplacement();
 						entity.drawable().isVisible = true;
 						var message = "There is a " + emplacement.appearance + " here.";
-						player.messageLog.messageAdd(message);
+						messageLog.messageAdd(message);
 					}
 				}
 			}
@@ -707,13 +735,13 @@ class DemoData_Actions
 			entitiesInCellDestination.push(actor);
 			actor.mappable().mapCellOccupied = cellDestination;
 			actor.locatable().loc.pos.overwriteWith(posInCellsDestination);
-		} // end if (isDestinationAccessible)
+		}
 	}
 
 	actionSearch_Perform
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity
-	)
+	): void
 	{
 		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
@@ -734,9 +762,9 @@ class DemoData_Actions
 		var map = place.map;
 		var offsetsToNeighboringCells =
 		[
-			new Coords(1, 0, 0), new Coords(1, 1, 0), new Coords(0, 1, 0),
-			new Coords(-1, 1, 0), new Coords(-1, 0, 0), new Coords(-1, -1, 0),
-			new Coords(0, -1, 0), new Coords(1, -1, 0)
+			Coords.fromXY(1, 0), Coords.fromXY(1, 1), Coords.fromXY(0, 1),
+			Coords.fromXY(-1, 1), Coords.fromXY(-1, 0), Coords.fromXY(-1, -1),
+			Coords.fromXY(0, -1), Coords.fromXY(1, -1)
 		]; // hack
 
 		for (var n = 0; n < offsetsToNeighboringCells.length; n++)
@@ -781,7 +809,7 @@ class DemoData_Actions
 	actionTalk_Perform
 	(
 		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
-	)
+	): void
 	{
 		var place = placeAsPlace as PlaceLevel;
 		var actor = actorAsEntity as Entity2;
@@ -792,8 +820,9 @@ class DemoData_Actions
 
 		if (actorMover.movesThisTurn >= costToPerform)
 		{
+			var actorData = actor.actorData()
 			var entityBeingFaced =
-				actor.actorData().entityBeingFaced(universe, world, place, actor);
+				actorData.entityBeingFaced(universe, world, place, actor);
 
 			if (entityBeingFaced != null)
 			{
@@ -1006,436 +1035,6 @@ class DemoData_Actions
 		];
 
 		var returnValues = [ actions, actionMovesByHeading ];
-
-		return returnValues;
-	}
-
-	buildActivityDefns(): ActivityDefn[]
-	{
-		var activityDefnDoNothing = new ActivityDefn
-		(
-			"Do Nothing",
-
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
-			{
-				// Do nothing.
-			}
-		);
-
-		var activityDefnFlyForward = new ActivityDefn
-		(
-			"Fly Forward",
-
-			(
-				universe: Universe, worldAsWorld: World, place: Place,
-				entityActorAsEntity: Entity
-			) =>
-			{
-				var world = worldAsWorld as World2;
-				var entityActor = entityActorAsEntity as Entity2;
-
-				var actorLoc = entityActor.locatable().loc;
-				//var map = place.map;
-
-				var directionsToMove =
-					actorLoc.orientation.forward.clone().directions(); // hack
-				var headingToMove = Heading.fromCoords(directionsToMove);
-
-				// hack
-				var actionsMoves = world.defn2.actionMovesByHeading;
-				var actionMoveInDirection = actionsMoves[headingToMove];
-
-				entityActor.actorData().actions.push
-				(
-					actionMoveInDirection
-				);
-			}
-		);
-
-		var activityDefnGenerateMovers = new ActivityDefn
-		(
-			"Generate Movers",
-
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
-			{
-				var moverGenerator = (actor as Entity2).moverGenerator();
-				moverGenerator.activityPerform
-				(
-					universe, world, place, actor
-				);
-			}
-		);
-
-		var activityDefnMoveRandomly = new ActivityDefn
-		(
-			"Move Randomly",
-
-			// perform
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
-			{
-				// hack
-				var actionsMoves = (world as World2).defn2.actionMovesByHeading;
-
-				var numberOfDirectionsAvailable = actionsMoves.length;
-				var directionIndexRandom = Math.floor
-				(
-					numberOfDirectionsAvailable
-					* this.randomizer.getNextRandom()
-				);
-
-				var actionMoveInRandomDirection = actionsMoves[directionIndexRandom];
-
-				(actor as Entity2).actorData().actions.push(actionMoveInRandomDirection);
-			}
-		);
-
-		var activityDefnMoveTowardPlayer = new ActivityDefn
-		(
-			"Move Toward Player",
-
-			(
-				universe: Universe, worldAsWorld: World,
-				placeAsPlace: Place, entityActorAsEntity: Entity
-			) => // perform
-			{
-				var world = worldAsWorld as World2;
-				var place = placeAsPlace as PlaceLevel;
-				var entityActor = entityActorAsEntity as Entity2;
-
-				var actorData = entityActor.actorData();
-				var activity = actorData.activity_Get();
-				var isInitialized = activity.targetByName("IsInitialized");
-				if (isInitialized == null)
-				{
-					activity.targetSetByName("IsInitialized", true);
-
-					var entityActor = entityActorAsEntity as Entity2;
-					entityActor.actorData().target =
-						entityActor.locatable().loc.pos.clone();
-				}
-
-				var awaitables = place.awaitables();
-				if (awaitables.length > 0)
-				{
-					return;
-				}
-
-				var mover = entityActor.mover();
-				var costToTraverse = mover.movesPerTurn; // hack
-				if (mover.movesThisTurn < costToTraverse)
-				{
-					return;
-				}
-
-				// mover.movesThisTurn -= costToTraverse;
-
-				var players = place.players();
-
-				if (players != null && players.length > 0)
-				{
-					var player = players[0];
-
-					var actorPos = entityActor.locatable().loc.pos;
-					var playerPos = player.locatable().loc.pos;
-					var map = place.map;
-					/*
-					var sightHelper = world.sightHelper;
-					var canActorSeePlayer = sightHelper.lineOfSightBetweenPointsOnMap
-					(
-						actorPos, playerPos, map
-					);
-					*/
-
-					// hack
-					var distance =
-						playerPos.clone().subtract(actorPos).magnitude();
-					var canActorSeePlayer = (distance <= 8);
-
-					var target = actorData.target;
-					if (canActorSeePlayer)
-					{
-						target.overwriteWith(playerPos);
-					}
-					else if (target.equals(actorPos))
-					{
-						var zone = ArrayHelper.random(place.zones, universe.randomizer);
-						target.overwriteWith(zone.bounds.center).floor();
-					}
-
-					var path = new Route2
-					(
-						map,
-						actorPos,
-						playerPos,
-						256 // hack - lengthMax
-					);
-
-					path.calculate();
-
-					var pathNodes = path.nodes;
-					if (pathNodes.length < 2)
-					{
-						return;
-					}
-
-					var pathNode1 = pathNodes[1];
-
-					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
-					(
-						actorPos
-					).directions();
-
-					var headingToMove = Heading.fromCoords(directionsToPathNode1);
-
-					// hack
-					var actionsMoves = world.defn2.actionMovesByHeading;
-					var actionMoveInDirection = actionsMoves[headingToMove];
-
-					actorData.actions.push
-					(
-						actionMoveInDirection
-					);
-				}
-			}
-		);
-
-		var activityDefnUserInputAccept = new ActivityDefn
-		(
-			"Accept User Input",
-
-			(
-				universe: Universe, worldAsWorld: World,
-				placeAsPlace: Place, entityActor: Entity
-			) =>
-			{
-				var world = worldAsWorld as World2;
-				var place = placeAsPlace as PlaceLevel;
-				var entityActorAsEntity2 = entityActor as Entity2;
-
-				var actorData = entityActorAsEntity2.actorData();
-				var activity = actorData.activity_Get();
-				var isInitialized = activity.targetByName("IsInitialized");
-				if (isInitialized == null)
-				{
-					activity.targetSetByName("IsInitialized", true);
-
-					var mappings = 
-					[
-						new ActionToInputsMapping("Attack with Melee Weapon", [ "a" ], null),
-						new ActionToInputsMapping("Close Door", [ "c" ], null ),
-						new ActionToInputsMapping("Open Door", [ "d" ], null ),
-						new ActionToInputsMapping("Fire Projectile", [ "f" ], null),
-						new ActionToInputsMapping("Pick Up Item", [ "g" ], null),
-						new ActionToInputsMapping("Drop Selected Item", [ "r" ], null),
-						new ActionToInputsMapping("Search", [ "s" ], null),
-						new ActionToInputsMapping("Talk", [ "t" ], null),
-						new ActionToInputsMapping("Use Emplacement", [ "u" ], null ),
-						new ActionToInputsMapping("Use Selected Item", [ "y" ], null),
-
-						new ActionToInputsMapping("Move Southwest", [ "_1" ], null),
-						new ActionToInputsMapping("Move South", [ "_2" ], null),
-						new ActionToInputsMapping("Move Southeast", [ "_3" ], null),
-						new ActionToInputsMapping("Move West", [ "_4" ], null),
-						new ActionToInputsMapping("Move East", [ "_6" ], null),
-						new ActionToInputsMapping("Move Northwest", [ "_7" ], null),
-						new ActionToInputsMapping("Move North", [ "_8" ], null),
-						new ActionToInputsMapping("Move Northeast", [ "_9" ], null),
-
-						//new ActionToInputsMapping("ShowEquipment", [ "`" ], null),
-						//new ActionToInputsMapping("ShowItems", [ "Tab" ], null),
-						new ActionToInputsMapping("Select Next Item", [ "]" ], null),
-						new ActionToInputsMapping("Select Previous Item", [ "[" ], null),
-
-						new ActionToInputsMapping("Wait", [ "." ], null),
-
-						new ActionToInputsMapping("ShowMenuPlayer", [ "Escape" ], null),
-					]
-
-					var mappingsByInputName = ArrayHelper.addLookups
-					(
-						mappings,
-						(element: ActionToInputsMapping) => element.inputNames[0]
-					);
-
-					activity.targetSet(mappingsByInputName);
-				}
-
-				var awaitables = place.awaitables();
-				if (awaitables.length > 0)
-				{
-					return;
-				}
-
-				var inputHelper = universe.inputHelper;
-				var activity = actorData.activity_Get();
-				var inputToActionMappings = activity.target();
-				var inputsActive = inputHelper.inputsPressed;
-				var actionsFromActor = actorData.actions;
-
-				for (var i = 0; i < inputsActive.length; i++)
-				{
-					var input = inputsActive[i];
-					var inputMapping = inputToActionMappings.get(input.name);
-					if (inputMapping != null)
-					{
-						var actionName = inputMapping.actionName;
-						var worldDefn = (world as World2).defn2;
-						var action = worldDefn.actionsByName.get(actionName);
-
-						/*
-						var ticksToHold = 1; // hack
-
-						if (action.ticksSoFar <= ticksToHold)
-						{
-							actionsFromActor.push(action);
-						}
-						*/ // todo
-
-						actionsFromActor.push(action);
-					}
-				}
-			}
-		);
-
-		var activityDefnUserInputDemo = new ActivityDefn
-		(
-			"Demo User Input",
-
-			(
-				universe: Universe, worldAsWorld: World,
-				placeAsPlace: Place, entityActorAsEntity: Entity
-			) =>
-			{
-				var world = worldAsWorld as World2;
-				var actor = entityActorAsEntity as Entity2;
-				var place = placeAsPlace as PlaceLevel;
-
-				var actorMover = actor.mover();
-				if (actorMover.movesThisTurn <= actorMover.movesPerTurn)
-				{
-					return;
-				}
-
-				var actorLoc = actor.locatable().loc;
-				var actorPos = actorLoc.pos;
-
-				var target = actor.actorData().target;
-				if (target == null)
-				{
-					var itemsHeld = actor.itemHolder().items;
-					var hasItemGoal = itemsHeld.some
-					(
-						(x: Item) => x.defnName == "Amulet of Yendor"
-					);
-
-					var itemsOnLevel = place.items();
-					var itemsNearby = itemsOnLevel.filter
-					(
-						(x: Entity) =>
-							x.locatable().loc.pos.clone().subtract(actorPos).magnitude() < 4
-					);
-
-					var target = null;
-					if (hasItemGoal)
-					{
-						var emplacements = place.emplacements();
-						var stairsUp = emplacements.filter
-						(
-							(x: Entity) => x.name == "StairsUp"
-						);
-
-						if (stairsUp.length > 0)
-						{
-							target = stairsUp[0];
-						}
-						else
-						{
-							var altar = emplacements.filter(x => x.name == "Altar")[0];
-							target = altar;
-						}
-					}
-					else if (itemsNearby.length > 0)
-					{
-						target = itemsNearby[0];
-						actor.actorData().target = target;
-					}
-					else
-					{
-						var emplacements = place.emplacements();
-						var stairsDown = emplacements.filter
-						(
-							(x: Entity) => x.name == "StairsDownToNextLevel"
-						);
-
-						if (stairsDown.length == 0)
-						{
-							target = itemsOnLevel.filter(x => x.name == "Amulet of Yendor")[0];
-						}
-						else
-						{
-							var stairDown = stairsDown[0];
-							target = stairDown;
-						}
-					}
-				}
-
-				var targetPos = target.locatable().loc.pos;
-				var pathToTarget = new Route2
-				(
-					place.map, actorPos, targetPos, null
-				);
-				pathToTarget.calculate();
-				var pathNodes = pathToTarget.nodes;
-
-				var actionNext = null;
-				var actionsAllByName = world.defn2.actionsByName;
-				var pathToTargetLength = pathNodes.length;
-				if (pathToTargetLength <= 1)
-				{
-					actor.actorData().target = null;
-					if (target.item() != null)
-					{
-						actionNext = actionsAllByName.get("Pick Up Item");
-					}
-					else
-					{
-						actionNext = actionsAllByName.get("Use Emplacement");
-					}
-				}
-				else
-				{
-					var pathNode1 = pathNodes[1];
-
-					var directionsToPathNode1 = pathNode1.cellPos.clone().subtract
-					(
-						actor.locatable().loc.pos
-					).directions();
-
-					var heading = Heading.fromCoords(directionsToPathNode1);
-
-					// hack
-					var actionsMoves = world.defn2.actionMovesByHeading;
-					var actionMoveInDirection = actionsMoves[heading];
-					actionNext = actionMoveInDirection;
-				}
-
-				if (actionNext != null)
-				{
-					actor.actorData().actions.push(actionNext);
-				}
-			}
-		);
-
-		var returnValues =
-		[
-			activityDefnDoNothing,
-			activityDefnFlyForward,
-			activityDefnGenerateMovers,
-			activityDefnMoveRandomly,
-			activityDefnMoveTowardPlayer,
-			activityDefnUserInputAccept,
-			activityDefnUserInputDemo
-		];
 
 		return returnValues;
 	}

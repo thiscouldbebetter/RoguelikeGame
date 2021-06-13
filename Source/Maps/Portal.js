@@ -4,6 +4,9 @@ class Portal2 {
         this.destinationPlaceName = destinationPlaceName;
         this.destinationEntityName = destinationEntityName;
     }
+    static create() {
+        return new Portal2(null, null);
+    }
     use(universe, world, place, entityActorAsEntity, entityPortalAsEntity) {
         var entityActor = entityActorAsEntity;
         var entityPortal = entityPortalAsEntity;

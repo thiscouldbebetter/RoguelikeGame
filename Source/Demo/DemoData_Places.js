@@ -4,13 +4,13 @@ class DemoData_Places {
         this.parent = parent;
         this.randomizer = this.parent.randomizer;
     }
-    buildMapTerrainsDungeon(visualsForTiles) {
-        this.Floor = new MapTerrain("Floor", ".", 9, false, "Green", visualsForTiles.get("Floor"));
+    buildMapTerrainsDungeon(visualGetByName) {
+        this.Floor = new MapTerrain("Floor", ".", 9, false, "Green", visualGetByName("Floor"));
         this.Stone = new MapTerrain("Stone", "x", null, true, "Black", new VisualNone()); //visualsForTiles["Stone"]);
-        this.WallCornerNorth = new MapTerrain("WallCornerNorth", "+", null, true, "Blue", visualsForTiles.get("WallDungeonCornerNorth"));
-        this.WallCornerSouth = new MapTerrain("WallCornerSouth", "*", null, true, "Blue", visualsForTiles.get("WallDungeonCornerSouth"));
-        this.WallEastWest = new MapTerrain("WallEastWest", "-", null, true, "Blue", visualsForTiles.get("WallDungeonEastWest"));
-        this.WallNorthSouth = new MapTerrain("WallNorthSouth", "|", null, true, "Blue", visualsForTiles.get("WallDungeonNorthSouth"));
+        this.WallCornerNorth = new MapTerrain("WallCornerNorth", "+", null, true, "Blue", visualGetByName("WallDungeonCornerNorth"));
+        this.WallCornerSouth = new MapTerrain("WallCornerSouth", "*", null, true, "Blue", visualGetByName("WallDungeonCornerSouth"));
+        this.WallEastWest = new MapTerrain("WallEastWest", "-", null, true, "Blue", visualGetByName("WallDungeonEastWest"));
+        this.WallNorthSouth = new MapTerrain("WallNorthSouth", "|", null, true, "Blue", visualGetByName("WallDungeonNorthSouth"));
         var terrains = [
             this.Stone,
             this.Floor,
@@ -21,13 +21,13 @@ class DemoData_Places {
         ];
         return terrains;
     }
-    buildMapTerrainsHades(visualsForTiles) {
-        this.Floor = new MapTerrain("Floor", ".", 9, false, "Green", visualsForTiles.get("Floor"));
+    buildMapTerrainsHades(visualGetByName) {
+        this.Floor = new MapTerrain("Floor", ".", 9, false, "Green", visualGetByName("Floor"));
         this.Stone = new MapTerrain("Stone", "x", null, true, "Black", new VisualNone()); //visualsForTiles["Stone"]);
-        this.WallCornerNorth = new MapTerrain("WallCornerNorth", "+", null, true, "Blue", visualsForTiles.get("WallHadesCornerNorth"));
-        this.WallCornerSouth = new MapTerrain("WallCornerSouth", "*", null, true, "Blue", visualsForTiles.get("WallHadesCornerSouth"));
-        this.WallEastWest = new MapTerrain("WallEastWest", "-", null, true, "Blue", visualsForTiles.get("WallHadesEastWest"));
-        this.WallNorthSouth = new MapTerrain("WallNorthSouth", "|", null, true, "Blue", visualsForTiles.get("WallHadesNorthSouth"));
+        this.WallCornerNorth = new MapTerrain("WallCornerNorth", "+", null, true, "Blue", visualGetByName("WallHadesCornerNorth"));
+        this.WallCornerSouth = new MapTerrain("WallCornerSouth", "*", null, true, "Blue", visualGetByName("WallHadesCornerSouth"));
+        this.WallEastWest = new MapTerrain("WallEastWest", "-", null, true, "Blue", visualGetByName("WallHadesEastWest"));
+        this.WallNorthSouth = new MapTerrain("WallNorthSouth", "|", null, true, "Blue", visualGetByName("WallHadesNorthSouth"));
         var terrains = [
             this.Stone,
             this.Floor,
@@ -38,13 +38,13 @@ class DemoData_Places {
         ];
         return terrains;
     }
-    buildMapTerrainsMines(visualsForTiles) {
-        this.Floor = new MapTerrain("Floor", ".", 9, false, "Green", visualsForTiles.get("Floor"));
+    buildMapTerrainsMines(visualGetByName) {
+        this.Floor = new MapTerrain("Floor", ".", 9, false, "Green", visualGetByName("Floor"));
         this.Stone = new MapTerrain("Stone", "x", 1000000, true, "Black", new VisualNone()); //visualsForTiles["Stone") );
-        this.WallCornerNorth = new MapTerrain("WallCornerNorth", "+", 1000000, true, "Blue", visualsForTiles.get("WallCaveCornerNorth"));
-        this.WallCornerSouth = new MapTerrain("WallCornerSouth", "*", 1000000, true, "Blue", visualsForTiles.get("WallCaveCornerSouth"));
-        this.WallEastWest = new MapTerrain("WallEastWest", "-", 1000000, true, "Blue", visualsForTiles.get("WallCaveEastWest"));
-        this.WallNorthSouth = new MapTerrain("WallNorthSouth", "|", 1000000, true, "Blue", visualsForTiles.get("WallCaveNorthSouth"));
+        this.WallCornerNorth = new MapTerrain("WallCornerNorth", "+", 1000000, true, "Blue", visualGetByName("WallCaveCornerNorth"));
+        this.WallCornerSouth = new MapTerrain("WallCornerSouth", "*", 1000000, true, "Blue", visualGetByName("WallCaveCornerSouth"));
+        this.WallEastWest = new MapTerrain("WallEastWest", "-", 1000000, true, "Blue", visualGetByName("WallCaveEastWest"));
+        this.WallNorthSouth = new MapTerrain("WallNorthSouth", "|", 1000000, true, "Blue", visualGetByName("WallCaveNorthSouth"));
         var terrains = [
             this.Stone,
             this.Floor,
@@ -55,19 +55,19 @@ class DemoData_Places {
         ];
         return terrains;
     }
-    buildMapTerrainsLabyrinth(visualsForTiles) {
-        return this.buildMapTerrainsDungeon(visualsForTiles);
+    buildMapTerrainsLabyrinth(visualGetByName) {
+        return this.buildMapTerrainsDungeon(visualGetByName);
     }
-    buildMapTerrainsPuzzle(visualsForTiles) {
-        return this.buildMapTerrainsDungeon(visualsForTiles);
+    buildMapTerrainsPuzzle(visualGetByName) {
+        return this.buildMapTerrainsDungeon(visualGetByName);
     }
-    buildMapTerrainsThrowback(visualsForTiles) {
-        return this.buildMapTerrainsDungeon(visualsForTiles);
+    buildMapTerrainsThrowback(visualGetByName) {
+        return this.buildMapTerrainsDungeon(visualGetByName);
     }
-    buildPlaceDefns(visuals, actions) {
-        var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visuals);
-        var mapTerrainsHades = this.buildMapTerrainsHades(visuals);
-        var mapTerrainsMines = this.buildMapTerrainsMines(visuals);
+    buildPlaceDefns(visualGetByName, actions) {
+        var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visualGetByName);
+        var mapTerrainsHades = this.buildMapTerrainsHades(visualGetByName);
+        var mapTerrainsMines = this.buildMapTerrainsMines(visualGetByName);
         // hack - Build this on the fly?
         var propertyNamesKnown = [
             ActorData.name,
@@ -98,13 +98,13 @@ class DemoData_Places {
             new PlaceDefn2("MinesTown", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
             new PlaceDefn2("MinesBottom", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
             new PlaceDefn2("Island", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateIsland),
-            new PlaceDefn2("Labyrinth", propertyNamesKnown, this.buildMapTerrainsLabyrinth(visuals), this.placeGenerateLabyrinth),
+            new PlaceDefn2("Labyrinth", propertyNamesKnown, this.buildMapTerrainsLabyrinth(visualGetByName), this.placeGenerateLabyrinth),
             new PlaceDefn2("Limbo", propertyNamesKnown, mapTerrainsHades, this.placeGenerateLimbo),
             new PlaceDefn2("Oracle", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateOracle),
-            new PlaceDefn2("Puzzle", propertyNamesKnown, this.buildMapTerrainsPuzzle(visuals), this.placeGeneratePuzzle),
+            new PlaceDefn2("Puzzle", propertyNamesKnown, this.buildMapTerrainsPuzzle(visualGetByName), this.placeGeneratePuzzle),
             new PlaceDefn2("SingleChamber", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateSingleChamber),
             new PlaceDefn2("Surface", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateSurface),
-            new PlaceDefn2("Throwback", propertyNamesKnown, this.buildMapTerrainsThrowback(visuals), this.placeGenerateThrowback)
+            new PlaceDefn2("Throwback", propertyNamesKnown, this.buildMapTerrainsThrowback(visualGetByName), this.placeGenerateThrowback)
         ];
         return returnValues;
     }
@@ -242,7 +242,7 @@ class DemoData_Places {
         return zoneBoundsSetSoFar;
     }
     placeGenerateDungeon_3_Zones(numberOfZones, zoneBoundsSetSoFar, mapCellsAsStrings, terrainsByName) {
-        var zones = [];
+        var zones = new Array();
         var terrainCodeChar = "";
         for (var r = 0; r < numberOfZones; r++) {
             var zoneBounds = zoneBoundsSetSoFar[r];
@@ -522,6 +522,7 @@ class DemoData_Places {
             entityDefnGroups.get("Armor"),
             entityDefnGroups.get("Food"),
             entityDefnGroups.get("Potions"),
+            entityDefnGroups.get("Rings"),
             entityDefnGroups.get("Scrolls"),
             entityDefnGroups.get("Spellbooks"),
             entityDefnGroups.get("Stones"),
@@ -609,9 +610,12 @@ class DemoData_Places {
         ]);
         var entities = [entityStairsDown, entityAltar, entityMentor];
         var displayName = branch.displayName;
+        var zoneSingle = new Zone2(Box.fromMinAndSize(Coords.zeroes(), mapSizeInCells));
         var returnValue = new PlaceLevel(venueName, displayName, 0, // venueDepth,
         placeDefn, new Coords(480, 480, 1), // sizeInPixels
-        map, [], //zones
+        map, [
+            zoneSingle
+        ], //zones
         entities);
         return returnValue;
     }

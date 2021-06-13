@@ -22,25 +22,51 @@ class World2 extends World {
         this.idHelper = IDHelper.Instance();
         this.sightHelper = new SightHelper(8);
         this.timerTicksSoFar = 0;
-        var itemDefns = this.defn2.entityDefns.filter((x) => x.itemDefn() != null).map((x) => x.itemDefn());
+        /*
+        var itemDefns = this.defn2.entityDefns.filter
+        (
+            (x: Entity) => x.itemDefn() != null
+        ).map
+        (
+            (x: Entity) => x.itemDefn()
+        );
+
         var itemDefnsByName = ArrayHelper.addLookupsByName(itemDefns);
-        this.defns =
-            {
-                "itemDefns": itemDefnsByName
-            };
+
+        this.defns = new Map<string, Map<string, Entity> >
+        ([
+            [ "itemDefns", itemDefnsByName ]
+        ]);
+        */
     }
     static create(universe) {
+        var visualsForTiles = World2.visualsForTiles(universe);
+        var agentDatas = DemoData_Movers.buildAgentDatas();
+        var visualsByName = DemoData_Visuals.visualArraysToLookup(visualsForTiles, agentDatas);
+        var visualGetByName = (visualName) => visualsByName.get(visualName);
+        var returnValue = World2.createForUniverseAndVisualGetByName(universe, visualGetByName);
+        return returnValue;
+    }
+    static createForUniverseAndVisualGetByName(universe, visualGetByName) {
         var randomizer = RandomizerLCG.default();
+        var worldDefn = new DemoData_Main(randomizer).buildWorldDefn(universe, visualGetByName);
+        var places = worldDefn.buildPlaces(worldDefn);
+        var world = new World2("WorldGame", worldDefn, places, null, // entityForPlayer
+        randomizer);
+        return world;
+    }
+    static visualsForTiles(universe) {
         var visualsForTiles = new Array();
         var imageTileset = universe.mediaLibrary.imageGetByName("Tiles");
         //var visualImageTileset = new VisualImageFromLibrary(imageTileset.name);
-        var imageTilesetSizeInTiles = new Coords(40, 27, 0);
+        // var tileSize = Coords.fromXY(16, 16);
+        var imageTilesetSizeInTiles = Coords.fromXY(40, 27);
         var tileSizeInPixels = imageTileset.sizeInPixels.clone().divide(imageTilesetSizeInTiles);
-        var imageBuilder = new ImageBuilder(Color.Instances()._All);
+        var imageBuilder = ImageBuilder.default();
         for (var y = 0; y < imageTilesetSizeInTiles.y; y++) {
             var visualsForTilesRow = new Array();
             for (var x = 0; x < imageTilesetSizeInTiles.x; x++) {
-                var tilePosInTiles = new Coords(x, y, 0);
+                var tilePosInTiles = Coords.fromXY(x, y);
                 var tilePosInPixels = tilePosInTiles.clone().multiply(tileSizeInPixels);
                 var imageTile = imageBuilder.copyRegionFromImage(imageTileset, tilePosInPixels, tileSizeInPixels);
                 var visualTile = new VisualImageImmediate(imageTile, null);
@@ -48,11 +74,7 @@ class World2 extends World {
             }
             visualsForTiles.push(visualsForTilesRow);
         }
-        var worldDefn = new DemoData_Main(randomizer).buildWorldDefn(universe, visualsForTiles);
-        var places = worldDefn.buildPlaces(worldDefn);
-        var world = new World2("World0", worldDefn, places, null, // entityForPlayer
-        randomizer);
-        return world;
+        return visualsForTiles;
     }
     draw() {
         // todo

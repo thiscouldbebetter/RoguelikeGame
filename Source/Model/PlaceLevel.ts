@@ -66,7 +66,7 @@ class PlaceLevel extends Place
 	}
 
 	static _zLayers: PlaceLevel_ZLayers;
-	static ZLayers()
+	static ZLayers(): PlaceLevel_ZLayers
 	{
 		if (PlaceLevel._zLayers == null)
 		{
@@ -77,7 +77,7 @@ class PlaceLevel extends Place
 
 	// instance methods
 
-	entitiesByPropertyName(propertyName: string)
+	entitiesByPropertyName(propertyName: string): Entity[]
 	{
 		var returnValues = this._entitiesByPropertyName.get(propertyName);
 		if (returnValues == null)
@@ -88,9 +88,12 @@ class PlaceLevel extends Place
 		return returnValues;
 	}
 
-	entitiesWithPropertyNamePresentAtCellPos(propertyName: string, cellPosToCheck: Coords)
+	entitiesWithPropertyNamePresentAtCellPos
+	(
+		propertyName: string, cellPosToCheck: Coords
+	): Entity[]
 	{
-		var returnEntities = new Array<Entity2>();
+		var returnEntities = new Array<Entity>();
 
 		var entitiesWithPropertyName = this.entitiesByPropertyName(propertyName);
 
@@ -109,7 +112,10 @@ class PlaceLevel extends Place
 		return returnEntities;
 	}
 
-	entitySpawn(universe: Universe, world: World, entityToSpawn: Entity)
+	entitySpawn
+	(
+		universe: Universe, world: World, entityToSpawn: Entity
+	): void
 	{
 		this.entities.push(entityToSpawn);
 		this.entitiesByName.set(entityToSpawn.name, entityToSpawn);
@@ -153,13 +159,14 @@ class PlaceLevel extends Place
 		}
 	}
 
-	initialize(universe: Universe, world: World)
+	initialize(universe: Universe, world: World): void
 	{
 		this.hasBeenUpdatedSinceDrawn = true;
 		// Initialization of entities is handled in entitySpawn().
+		this.update_EntitiesToSpawn(universe, world);
 	}
 
-	updateForTimerTick(universe: Universe, world: World)
+	updateForTimerTick(universe: Universe, world: World): void
 	{
 		this.update_EntitiesToSpawn(universe, world);
 
@@ -189,7 +196,7 @@ class PlaceLevel extends Place
 		this.draw(universe, world);
 	}
 
-	update_EntitiesToRemove(universe: Universe, world: World)
+	update_EntitiesToRemove(universe: Universe, world: World): void
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -223,7 +230,7 @@ class PlaceLevel extends Place
 		this.entitiesToRemove.length = 0;
 	}
 
-	update_EntitiesToSpawn(universe: Universe, world: World)
+	update_EntitiesToSpawn(universe: Universe, world: World): void
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
@@ -234,7 +241,7 @@ class PlaceLevel extends Place
 		this.entitiesToSpawn.length = 0;
 	}
 
-	update_Mappables(universe: Universe, world: World)
+	update_Mappables(universe: Universe, world: World): void
 	{
 		var emplacements = this.emplacements();
 		var enemies = this.enemies();
@@ -295,7 +302,7 @@ class PlaceLevel extends Place
 
 	// controls
 
-	toControl(universe: Universe, world: World)
+	toControl(universe: Universe, world: World): ControlBase
 	{
 		if (this.control == null)
 		{
@@ -319,7 +326,7 @@ class PlaceLevel extends Place
 
 	// drawable
 
-	draw(universe: Universe, world: World)
+	draw(universe: Universe, world: World): void
 	{
 		if (this.hasBeenUpdatedSinceDrawn)
 		{
@@ -336,7 +343,7 @@ class PlaceLevel extends Place
 		}
 	}
 
-	drawAsKnown(universe: Universe, worldAsWorld: World)
+	drawAsKnown(universe: Universe, worldAsWorld: World): void
 	{
 		var display = universe.display as DisplayPane;
 		var world = worldAsWorld as World2;
@@ -372,17 +379,17 @@ class PlaceLevel extends Place
 
 	// entities
 
-	awaitables() { return this.entitiesByPropertyName(Awaitable.name); }
-	emplacements() { return this.entitiesByPropertyName(Emplacement.name); }
-	enemies() { return this.entitiesByPropertyName("Enemy"); }
-	ephemerals() { return this.entitiesByPropertyName(Ephemeral.name); }
-	items() { return this.entitiesByPropertyName(Item.name); }
-	mappables() { return this.entitiesByPropertyName(Mappable.name); }
-	movers() { return this.entitiesByPropertyName(Mover.name); }
-	player() { return this.players()[0]; }
-	players() { return this.entitiesByPropertyName(Player.name); }
-	portals() { return this.entitiesByPropertyName(Portal2.name); }
-	projectiles() { return this.entitiesByPropertyName("Projectile"); }
+	awaitables(): Entity[] { return this.entitiesByPropertyName(Awaitable.name); }
+	emplacements(): Entity[] { return this.entitiesByPropertyName(Emplacement.name); }
+	enemies(): Entity[] { return this.entitiesByPropertyName("Enemy"); }
+	ephemerals(): Entity[] { return this.entitiesByPropertyName(Ephemeral.name); }
+	items(): Entity[] { return this.entitiesByPropertyName(Item.name); }
+	mappables(): Entity[] { return this.entitiesByPropertyName(Mappable.name); }
+	movers(): Entity[] { return this.entitiesByPropertyName(Mover.name); }
+	player(): Entity { return this.players()[0]; }
+	players(): Entity[] { return this.entitiesByPropertyName(Player.name); }
+	portals(): Entity[] { return this.entitiesByPropertyName(Portal2.name); }
+	projectiles(): Entity[] { return this.entitiesByPropertyName("Projectile"); }
 
 }
 

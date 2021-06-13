@@ -1,10 +1,11 @@
 "use strict";
 class Route2 {
-    constructor(map, startPos, goalPos, lengthMax) {
+    constructor(map, startPos, goalPos, lengthMax, mover) {
         this.map = map;
         this.startPos = startPos;
         this.goalPos = goalPos;
         this.lengthMax = lengthMax || Number.POSITIVE_INFINITY;
+        this.mover = mover;
         // Helper variables.
         this._tempPos = Coords.create();
     }
@@ -69,10 +70,10 @@ class Route2 {
         }
     }
     getNeighborsForNode(map, node, goalPos) {
-        var returnValues = [];
+        var returnValues = new Array();
         var originalPos = node.cellPos;
         var neighborPos = originalPos.clone();
-        var neighborPositions = [];
+        var neighborPositions = new Array();
         var mapSizeInCellsMinusOnes = map.sizeInCellsMinusOnes;
         var directions = Direction.Instances()._ByHeading;
         for (var i = 0; i < directions.length; i++) {
@@ -85,7 +86,7 @@ class Route2 {
         var tempPos = this._tempPos;
         for (var i = 0; i < neighborPositions.length; i++) {
             var neighborPos = neighborPositions[i];
-            var costToTraverse = map.cellAtPos(neighborPos).costToTraverse(map);
+            var costToTraverse = map.cellAtPos(neighborPos).costToTraverse(map, this.mover);
             costToTraverse *= tempPos.overwriteWith(neighborPos).subtract(originalPos).magnitude();
             var neighborNode = new Route2Node(neighborPos, node.costFromStart + costToTraverse, costToTraverse + tempPos.overwriteWith(goalPos).subtract(neighborPos).absolute().clearZ().sumOfDimensions(), node);
             returnValues.push(neighborNode);
