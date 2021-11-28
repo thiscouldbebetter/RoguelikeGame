@@ -1,5 +1,5 @@
 
-class Mappable implements EntityProperty
+class Mappable implements EntityProperty<Mappable>
 {
 	defn: MappableDefn;
 
@@ -16,10 +16,11 @@ class Mappable implements EntityProperty
 		this.collider = new Sphere(Coords.create(), 0);
 	}
 
-	// collider() { return new Sphere(0, 0); }
+	// Equatable.
+	equals(other: Mappable) { return false; }
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 }

@@ -4,10 +4,10 @@ class DemoData_Actions {
         this.parent = parent;
         this.randomizer = this.parent.randomizer;
     }
-    actionAttack_Melee_Perform(universe, worldAsWorld, placeAsPlace, actorAsEntity) {
-        var world = worldAsWorld;
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionAttack_Melee_Perform(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var actorMover = actor.mover();
         var costToAttack = actorMover.movesPerTurn; // todo
         if (actorMover.movesThisTurn < costToAttack) {
@@ -25,6 +25,7 @@ class DemoData_Actions {
         var entitiesInCellDestination = cellDestination.entitiesPresent;
         for (var i = 0; i < entitiesInCellDestination.length; i++) {
             var entityInCell = entitiesInCellDestination[i];
+            uwpe.entity2 = entityInCell;
             var killable = entityInCell.killable();
             if (killable != null) {
                 actorMover.movesThisTurn -= costToAttack;
@@ -66,7 +67,7 @@ class DemoData_Actions {
                 }
                 else {
                     var damageInflictedAsDamage = Damage.fromAmount(damageInflicted);
-                    killable.damageApply(universe, world, place, actor, entityInCell, damageInflictedAsDamage);
+                    killable.damageApply(uwpe, damageInflictedAsDamage);
                     if (actorPlayer != null) {
                         var message = "You hit the " + entityInCell.namable().name + ".";
                         actorPlayer.messageLog.messageAdd(message);
@@ -77,7 +78,7 @@ class DemoData_Actions {
                         entityInCell.player().messageLog.messageAdd(message);
                     }
                     if (killable.isAlive() == false) {
-                        killable.die(universe, world, place, entityInCell);
+                        killable.die(uwpe);
                         if (actorPlayer != null) {
                             var message = "You kill the " + entityInCell.namable().name + "!";
                             actorPlayer.messageLog.messageAdd(message);
@@ -93,10 +94,10 @@ class DemoData_Actions {
             } // end if (mover != null)
         } // end for entitiesInCellDestination
     }
-    actionAttack_Projectile_Perform(universe, worldAsWorld, placeAsPlace, actorAsEntity) {
-        var world = worldAsWorld;
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionAttack_Projectile_Perform(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var actorMover = actor.mover();
         var costToAttack = actorMover.movesPerTurn; // todo
         if (actorMover.movesThisTurn < costToAttack) {
@@ -138,13 +139,13 @@ class DemoData_Actions {
             player.messageLog.messageAdd("You throw a dagger.");
         }
     }
-    actionDoorOpenOrClose_Perform(universe, world, placeAsPlace, actorAsEntity, shouldOpenNotClose) {
-        var actor = actorAsEntity;
+    actionDoorOpenOrClose_Perform(uwpe, shouldOpenNotClose) {
+        var actor = uwpe.entity;
         var actorMover = actor.mover();
         var costToPerform = actorMover.movesPerTurn; // todo
         if (actorMover.movesThisTurn >= costToPerform) {
             var actorData = actor.actorData();
-            var entityBeingFaced = actorData.entityBeingFaced(universe, world, placeAsPlace, actor);
+            var entityBeingFaced = actorData.entityBeingFaced(uwpe);
             if (entityBeingFaced != null) {
                 var searchable = entityBeingFaced.searchable();
                 var openable = entityBeingFaced.openable();
@@ -177,9 +178,9 @@ class DemoData_Actions {
             } // end if cellDestination != null
         } // end if enough moves
     }
-    actionEmplacement_Use_Perform(universe, world, placeAsPlace, actorAsEntity) {
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionEmplacement_Use_Perform(uwpe) {
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var loc = actor.locatable().loc;
         var posInCells = loc.pos;
         var emplacementsInCell = place.entitiesWithPropertyNamePresentAtCellPos(Emplacement.name, posInCells // hack
@@ -189,16 +190,17 @@ class DemoData_Actions {
         }
         var mover = actor.mover();
         var emplacementToUse = emplacementsInCell[0];
+        uwpe.entity2 = emplacementToUse;
         var costToUse = mover.movesPerTurn; // hack
         if (mover.movesThisTurn >= costToUse) {
             mover.movesThisTurn -= costToUse;
             actor.turnable().hasActedThisTurn = true;
-            emplacementToUse.emplacement().use(universe, world, place, actor, emplacementToUse);
+            emplacementToUse.emplacement().use(uwpe);
         }
     }
-    actionItem_DropSelected_Perform(universe, worldAsWorld, place, actorAsEntity) {
-        var world = worldAsWorld;
-        var actor = actorAsEntity;
+    actionItem_DropSelected_Perform(uwpe) {
+        var world = uwpe.world;
+        var actor = uwpe.entity;
         /*
         var loc = actor.locatable().loc;
         var posInCells = loc.pos;
@@ -210,33 +212,34 @@ class DemoData_Actions {
         var mover = actor.mover();
         var itemHolder = actor.itemHolder();
         var itemToDrop = itemHolder.itemSelected;
+        uwpe.entity2 = itemToDrop.toEntity(uwpe);
         var costToDrop = mover.movesPerTurn; // hack
         if (itemToDrop != null && mover.movesThisTurn >= costToDrop) {
             mover.movesThisTurn -= costToDrop;
             actor.turnable().hasActedThisTurn = true;
-            var removeItem = (itemHolder, world, actor, item) => {
+            var removeItem = (uwpeRemove) => {
                 var itemsHeld = itemHolder.items;
                 var actionSelectNext = world.defn2.actionsByName.get("Item_SelectNext");
-                actionSelectNext.perform(null, world, place, actor);
+                actionSelectNext.perform(uwpe);
                 ArrayHelper.remove(itemsHeld, itemToDrop);
                 if (itemsHeld.length == 0) {
                     itemHolder.itemSelected = null;
                 }
             };
-            var dropItem = (itemHolder, world, actor, itemToDrop) => {
+            var dropItem = (uwpeDrop) => {
                 //var itemsHeld = itemHolder.itemEntities;
-                removeItem(itemHolder, world, actor, itemToDrop);
-                var itemToDropAsEntity = itemToDrop.toEntity(universe, world, place, actor);
+                removeItem(uwpeDrop);
+                var itemToDropAsEntity = itemToDrop.toEntity(uwpe);
                 var itemLoc = itemToDropAsEntity.locatable().loc;
                 itemLoc.overwriteWith(actor.locatable().loc);
-                place.entitiesToSpawn.push(itemToDropAsEntity);
+                uwpe.place.entitiesToSpawn.push(itemToDropAsEntity);
             };
-            dropItem(actor.itemHolder(), world, actor, itemToDrop);
+            dropItem(uwpe);
         }
     }
-    actionItem_PickUp_Perform(universe, world, placeAsPlace, actorAsEntity) {
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionItem_PickUp_Perform(uwpe) {
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var loc = actor.locatable().loc;
         var posInCells = loc.pos;
         var cell = place.map.cellAtPos(posInCells);
@@ -245,31 +248,37 @@ class DemoData_Actions {
         var costToPickUp = mover.movesPerTurn; // hack
         for (var i = 0; i < entitiesPresentAtCellPos.length; i++) {
             var entityPresent = entitiesPresentAtCellPos[i];
-            var itemToPickUp = entityPresent.item();
-            if (itemToPickUp != null) {
-                if (mover.movesThisTurn >= costToPickUp) {
-                    mover.movesThisTurn -= costToPickUp;
-                    actor.turnable().hasActedThisTurn = true;
-                    var pickUpItem = (itemHolder, world, actor, itemEntityToPickUp) => {
-                        itemHolder.itemAdd(itemToPickUp);
-                        place.entityToRemoveAdd(itemEntityToPickUp);
-                        if (itemHolder.itemSelected == null) {
-                            itemHolder.itemSelected = itemToPickUp;
-                        }
-                    };
-                    var actorItemHolder = actor.itemHolder();
-                    pickUpItem(actorItemHolder, world, actor, entityPresent);
-                    var itemToPickUpDefn = itemToPickUp.defn(world);
-                    var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
-                    actor.player().messageLog.messageAdd(message);
+            if (entityPresent != actor) {
+                var itemEntityToPickUp = entityPresent;
+                if (itemEntityToPickUp != null) {
+                    uwpe.entity2 = itemEntityToPickUp;
+                    var itemToPickUp = itemEntityToPickUp.item();
+                    if (mover.movesThisTurn >= costToPickUp) {
+                        mover.movesThisTurn -= costToPickUp;
+                        actor.turnable().hasActedThisTurn = true;
+                        var pickUpItem = (uwpePickUp) => {
+                            var itemHolder = uwpePickUp.entity.itemHolder();
+                            var itemEntityToPickUp = uwpePickUp.entity2;
+                            var itemToPickUp = itemEntityToPickUp.item();
+                            itemHolder.itemAdd(itemToPickUp);
+                            place.entityToRemoveAdd(itemEntityToPickUp);
+                            if (itemHolder.itemSelected == null) {
+                                itemHolder.itemSelected = itemToPickUp;
+                            }
+                        };
+                        pickUpItem(uwpe);
+                        var itemToPickUpDefn = itemToPickUp.defn(uwpe.world);
+                        var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
+                        actor.player().messageLog.messageAdd(message);
+                    }
                 }
             }
         }
     }
-    actionItem_SelectedUse_Perform(universe, worldAsWorld, placeAsPlace, actorAsEntity) {
-        var world = worldAsWorld;
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionItem_SelectedUse_Perform(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var actorMover = actor.mover();
         var costToUse = actorMover.movesPerTurn; // todo
         if (actorMover.movesThisTurn < costToUse) {
@@ -305,9 +314,9 @@ class DemoData_Actions {
             } // end for entitiesInCellDestination
         }
     }
-    actionMove_Perform(universe, world, placeAsPlace, actorAsEntity, action, directionToMove) {
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionMove_Perform(uwpe, directionToMove) {
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         /*
 
         // This doesn't make sense, does it?
@@ -333,15 +342,15 @@ class DemoData_Actions {
         var map = place.map;
         var cellDestination = map.cellAtPos(posInCellsDestination);
         if (cellDestination != null) {
-            var isDestinationAccessible = this.actionMove_Perform_1_IsDestinationAccessible_Terrain(universe, world, place, actor, action, directionToMove, cellDestination);
+            var isDestinationAccessible = this.actionMove_Perform_1_IsDestinationAccessible_Terrain(uwpe, directionToMove, cellDestination);
             isDestinationAccessible =
-                this.actionMove_Perform_2_IsDestinationAccessible_Entities(universe, world, place, actor, action, directionToMove, cellDestination, isDestinationAccessible);
-            this.actionMove_Perform_3_Move(universe, world, place, actor, action, directionToMove, cellDestination, isDestinationAccessible, posInCellsDestination);
+                this.actionMove_Perform_2_IsDestinationAccessible_Entities(uwpe, directionToMove, cellDestination, isDestinationAccessible);
+            this.actionMove_Perform_3_Move(uwpe, directionToMove, cellDestination, isDestinationAccessible, posInCellsDestination);
         }
     }
-    actionMove_Perform_1_IsDestinationAccessible_Terrain(universe, world, placeAsPlace, actorAsEntity, action, directionToMove, cellDestination) {
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionMove_Perform_1_IsDestinationAccessible_Terrain(uwpe, directionToMove, cellDestination) {
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var isDestinationAccessible = true;
         var map = place.map;
         var cellTerrain = cellDestination.terrain(map);
@@ -352,9 +361,9 @@ class DemoData_Actions {
         }
         return isDestinationAccessible;
     }
-    actionMove_Perform_2_IsDestinationAccessible_Entities(universe, world, place, actorAsEntity, action, directionToMove, cellDestination, isDestinationAccessible) {
+    actionMove_Perform_2_IsDestinationAccessible_Entities(uwpe, directionToMove, cellDestination, isDestinationAccessible) {
         if (isDestinationAccessible) {
-            var actor = actorAsEntity;
+            var actor = uwpe.entity;
             var player = actor.player();
             var entitiesInCellDestination = cellDestination.entitiesPresent;
             for (var b = 0; b < entitiesInCellDestination.length; b++) {
@@ -376,7 +385,7 @@ class DemoData_Actions {
                                 entityDefnName = entityInCell.namable().name;
                             }
                             else {
-                                this.actionAttack_Melee_Perform(universe, world, place, actor);
+                                this.actionAttack_Melee_Perform(uwpe);
                             }
                         }
                         else if (entityInCell.namable() != null) {
@@ -395,8 +404,8 @@ class DemoData_Actions {
         }
         return isDestinationAccessible;
     }
-    actionMove_Perform_3_Move(universe, world, placeAsPlace, actorAsEntity, action, directionToMove, cellDestination, isDestinationAccessible, posInCellsDestination) {
-        var actor = actorAsEntity;
+    actionMove_Perform_3_Move(uwpe, directionToMove, cellDestination, isDestinationAccessible, posInCellsDestination) {
+        var actor = uwpe.entity;
         var player = actor.player();
         var mover = actor.mover();
         if (isDestinationAccessible == false) {
@@ -408,7 +417,8 @@ class DemoData_Actions {
             }
         }
         else {
-            var place = placeAsPlace;
+            var world = uwpe.world;
+            var place = uwpe.place;
             var map = place.map;
             var mover = actor.mover();
             var cellTerrain = cellDestination.terrain(map);
@@ -442,9 +452,10 @@ class DemoData_Actions {
             actor.locatable().loc.pos.overwriteWith(posInCellsDestination);
         }
     }
-    actionSearch_Perform(universe, world, placeAsPlace, actorAsEntity) {
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionSearch_Perform(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var mover = actor.mover();
         var costToSearch = mover.movesPerTurn; // todo
         if (mover.movesThisTurn < costToSearch) {
@@ -468,16 +479,18 @@ class DemoData_Actions {
                 var entitiesInCellToSearch = cellToSearch.entitiesPresent;
                 for (var i = 0; i < entitiesInCellToSearch.length; i++) {
                     var entityInCell = entitiesInCellToSearch[i];
+                    uwpe.entity2 = entityInCell;
                     var searchable = entityInCell.searchable();
                     if (searchable != null && searchable.isHidden) {
                         var randomNumber = world.randomizer.getNextRandom();
                         if (randomNumber <= searchable.chanceOfDiscoveryPerSearch) {
                             searchable.isHidden = false;
                             entityInCell.drawable().isVisible = true;
-                            var message = "You find a " + entityInCell.emplacement().appearance + ".";
+                            var message = "You find a "
+                                + entityInCell.emplacement().appearance + ".";
                             player.messageLog.messageAdd(message);
                             if (searchable.discover != null) {
-                                searchable.discover(universe, world, place, actor, entityInCell);
+                                searchable.discover(uwpe);
                             }
                         }
                     }
@@ -485,24 +498,24 @@ class DemoData_Actions {
             } // end if cell at offset exists
         } // end for each neighboring cell
     }
-    actionTalk_Perform(universe, world, placeAsPlace, actorAsEntity) {
-        var place = placeAsPlace;
-        var actor = actorAsEntity;
+    actionTalk_Perform(uwpe) {
+        var actor = uwpe.entity;
         var actorMover = actor.mover();
         var costToPerform = actorMover.movesPerTurn; // todo
         if (actorMover.movesThisTurn >= costToPerform) {
             var actorData = actor.actorData();
-            var entityBeingFaced = actorData.entityBeingFaced(universe, world, place, actor);
+            var entityBeingFaced = actorData.entityBeingFaced(uwpe);
             if (entityBeingFaced != null) {
+                uwpe.entity2 = entityBeingFaced;
                 var talker = entityBeingFaced.talker();
                 if (talker != null) {
-                    talker.talk(universe, world, place, entityBeingFaced, actor);
+                    talker.talk(uwpe);
                 }
             } // end if entityBeingFaced != null
         } // end if enough moves
     }
-    actionWait_Perform(universe, world, place, actorAsEntity) {
-        var actor = actorAsEntity;
+    actionWait_Perform(uwpe) {
+        var actor = uwpe.entity;
         actor.mover().movesThisTurn = 0;
         actor.turnable().hasActedThisTurn = true;
     }
@@ -512,13 +525,13 @@ class DemoData_Actions {
         var demoActions = this;
         var actionAttack_Melee = new Action("Attack with Melee Weapon", demoActions.actionAttack_Melee_Perform);
         var actionAttack_Projectile = new Action("Fire Projectile", demoActions.actionAttack_Projectile_Perform);
-        var actionDoorClose = new Action("Close Door", (universe, world, place, actor) => {
+        var actionDoorClose = new Action("Close Door", (uwpe) => {
             var shouldOpenNotClose = false;
-            demoActions.actionDoorOpenOrClose_Perform(universe, world, place, actor, shouldOpenNotClose);
+            demoActions.actionDoorOpenOrClose_Perform(uwpe, shouldOpenNotClose);
         });
-        var actionDoorOpen = new Action("Open Door", (universe, world, place, actor) => {
+        var actionDoorOpen = new Action("Open Door", (uwpe) => {
             var shouldOpenNotClose = true;
-            demoActions.actionDoorOpenOrClose_Perform(universe, world, place, actor, shouldOpenNotClose);
+            demoActions.actionDoorOpenOrClose_Perform(uwpe, shouldOpenNotClose);
         });
         var actionEmplacement_Use = new Action("Use Emplacement", demoActions.actionEmplacement_Use_Perform);
         /*
@@ -530,29 +543,29 @@ class DemoData_Actions {
         */
         var actionItem_PickUp = new Action("Pick Up Item", demoActions.actionItem_PickUp_Perform);
         var actionItem_SelectedUse = new Action("Use Selected Item", demoActions.actionItem_SelectedUse_Perform);
-        var actionMoveE = new Action("Move East", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[0]);
+        var actionMoveE = new Action("Move East", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[0]);
         });
-        var actionMoveSE = new Action("Move Southeast", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[1]);
+        var actionMoveSE = new Action("Move Southeast", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[1]);
         });
-        var actionMoveS = new Action("Move South", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[2]);
+        var actionMoveS = new Action("Move South", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[2]);
         });
-        var actionMoveSW = new Action("Move Southwest", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[3]);
+        var actionMoveSW = new Action("Move Southwest", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[3]);
         });
-        var actionMoveW = new Action("Move West", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[4]);
+        var actionMoveW = new Action("Move West", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[4]);
         });
-        var actionMoveNW = new Action("Move Northwest", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[5]);
+        var actionMoveNW = new Action("Move Northwest", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[5]);
         });
-        var actionMoveN = new Action("Move North", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[6]);
+        var actionMoveN = new Action("Move North", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[6]);
         });
-        var actionMoveNE = new Action("Move Northeast", (universe, world, place, actor) => {
-            demoActions.actionMove_Perform(universe, world, place, actor, null, directions[7]);
+        var actionMoveNE = new Action("Move Northeast", (uwpe) => {
+            demoActions.actionMove_Perform(uwpe, directions[7]);
         });
         var actionSearch = new Action("Search", demoActions.actionSearch_Perform);
         var actionTalk = new Action("Talk", demoActions.actionTalk_Perform);

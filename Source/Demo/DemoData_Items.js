@@ -144,9 +144,10 @@ class DemoData_Items {
             new Food("Wolfsbane Sprig", 40, 1)
         ];
         var entityDefnSetFoods = new Array();
-        var useFood = (universe, world, place, entityUserAsEntity, entityUsedAsEntity) => {
-            var entityUser = entityUserAsEntity;
-            var entityUsed = entityUsedAsEntity;
+        var useFood = (uwpe) => {
+            var world = uwpe.world;
+            var entityUser = uwpe.entity;
+            var entityUsed = uwpe.entity2;
             var item = entityUsed.item();
             var itemHolder = entityUser.itemHolder();
             itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
@@ -156,8 +157,8 @@ class DemoData_Items {
             return "You eat the " + itemDefn.appearance;
         };
         var categoryNamesFood = [Food.name];
-        var itemDefnToEntity = (u, w, p, e, i) => {
-            var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+        var itemDefnToEntity = (uwpe, i) => {
+            var returnValue = this.itemDefnToEntity(uwpe, i);
             returnValue.propertyAdd(food);
             return returnValue;
         };
@@ -184,25 +185,73 @@ class DemoData_Items {
         return new EntityDefnGroup("Food", 1, entityDefnSets[0]);
     }
     buildEntityDefns_Potions(visualGetByName, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
-        var effectMessageNotImplemented = new Effect2((universe, world, place, entityEffectable) => {
+        var effectMessageNotImplemented = new Effect2((uwpe) => {
+            var entityEffectable = uwpe.entity;
             var player = entityEffectable.player();
             if (player != null) {
                 player.messageLog.messageAdd("Potion effect not yet implemented!");
             }
         }, null, null);
         var namesAndEffectDefnsOfPotions = [
-            ["Acid", new Effect2((u, w, p, e) => { e.killable().integrityAdd(-30); e.player().controlUpdate(w, e); }, null, null)],
+            [
+                "Acid",
+                new Effect2((uwpe) => {
+                    var e = uwpe.entity;
+                    e.killable().integrityAdd(-30);
+                    e.player().controlUpdate(uwpe.world, e);
+                }, null, null)
+            ],
             ["Blindness", effectMessageNotImplemented],
             ["Booze", effectMessageNotImplemented],
             ["Enlightenment", effectMessageNotImplemented],
             ["Confusion", effectMessageNotImplemented],
-            ["Fruit Juice", new Effect2((u, w, p, e) => { e.starvable2().satietyAdd(w, 100, e); e.player().controlUpdate(w, e); }, null, null)],
+            [
+                "Fruit Juice",
+                new Effect2((uwpe) => {
+                    var w = uwpe.world;
+                    var e = uwpe.entity;
+                    e.starvable2().satietyAdd(w, 100, e);
+                    e.player().controlUpdate(w, e);
+                }, null, null)
+            ],
             ["Gain Ability", effectMessageNotImplemented],
             ["Gain Energy", effectMessageNotImplemented],
-            ["Gain Level", new Effect2((u, w, p, e) => { e.demographics().rank += 1; e.player().controlUpdate(w, e); }, null, null)],
-            ["Healing", new Effect2((u, w, p, e) => { e.killable().integrityAdd(10); e.player().controlUpdate(w, e); }, null, null)],
-            ["Healing Extra", new Effect2((u, w, p, e) => { e.killable().integrityAdd(30); e.player().controlUpdate(w, e); }, null, null)],
-            ["Healing Full", new Effect2((u, w, p, e) => { e.killable().integrityAdd(1000); e.player().controlUpdate(w, e); }, null, null)],
+            [
+                "Gain Level",
+                new Effect2((uwpe) => {
+                    var w = uwpe.world;
+                    var e = uwpe.entity;
+                    e.demographics().rank += 1;
+                    e.player().controlUpdate(w, e);
+                }, null, null)
+            ],
+            [
+                "Healing",
+                new Effect2((uwpe) => {
+                    var w = uwpe.world;
+                    var e = uwpe.entity;
+                    e.killable().integrityAdd(10);
+                    e.player().controlUpdate(w, e);
+                }, null, null)
+            ],
+            [
+                "Healing Extra",
+                new Effect2((uwpe) => {
+                    var w = uwpe.world;
+                    var e = uwpe.entity;
+                    e.killable().integrityAdd(30);
+                    e.player().controlUpdate(w, e);
+                }, null, null)
+            ],
+            [
+                "Healing Full",
+                new Effect2((uwpe) => {
+                    var w = uwpe.world;
+                    var e = uwpe.entity;
+                    e.killable().integrityAdd(1000);
+                    e.player().controlUpdate(w, e);
+                }, null, null)
+            ],
             ["Invisibility", effectMessageNotImplemented],
             ["Levitation", effectMessageNotImplemented],
             ["Monster Detection", effectMessageNotImplemented],
@@ -212,7 +261,15 @@ class DemoData_Items {
             ["Polymorph", effectMessageNotImplemented],
             ["Restore Ability", effectMessageNotImplemented],
             ["See Invisible", effectMessageNotImplemented],
-            ["Sickness", new Effect2((u, w, p, e) => { e.killable().integrityAdd(-20); e.player().controlUpdate(w, e); }, null, null)],
+            [
+                "Sickness",
+                new Effect2((uwpe) => {
+                    var w = uwpe.world;
+                    var e = uwpe.entity;
+                    e.killable().integrityAdd(-20);
+                    e.player().controlUpdate(w, e);
+                }, null, null)
+            ],
             ["Sleeping", effectMessageNotImplemented],
             ["Speed", effectMessageNotImplemented],
             ["Water", effectMessageNotImplemented],
@@ -228,9 +285,10 @@ class DemoData_Items {
         ];
         var entityDefnSetPotions = [];
         var categoryNamesPotion = ["Potion"];
-        var useItemPotion = (universe, world, place, entityUsingAsEntity, entityUsedAsEntity) => {
-            var entityUsing = entityUsingAsEntity;
-            var entityUsed = entityUsedAsEntity;
+        var useItemPotion = (uwpe) => {
+            var world = uwpe.world;
+            var entityUsing = uwpe.entity;
+            var entityUsed = uwpe.entity2;
             var item = entityUsed.item();
             var itemHolder = entityUsing.itemHolder();
             itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
@@ -243,7 +301,7 @@ class DemoData_Items {
                 var effectable = entityUsing.effectable2();
                 var effector = entityUsed.effector();
                 effectable.effectorApply(effector);
-                effectable.updateForTurn(universe, world, place, entityUsing);
+                effectable.updateForTurn(uwpe);
             }
             return message;
         };
@@ -259,8 +317,8 @@ class DemoData_Items {
             var relativeFrequency = 1; // todo
             var visual = visualGetByName(appearance);
             var effector = new Effector([effect]);
-            var itemDefnToEntity = (u, w, p, e, i) => {
-                var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+            var itemDefnToEntity = (uwpe, i) => {
+                var returnValue = this.itemDefnToEntity(uwpe, i);
                 returnValue.propertyAdd(effector);
                 return returnValue;
             };
@@ -283,11 +341,15 @@ class DemoData_Items {
     }
     buildEntityDefns_Rings(visualGetByName, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
         // items - magic - rings
-        var effectPreventHunger = new Effect2("Prevent Hunger", (universe, world, place, entityToApplyTo) => {
-            entityToApplyTo.starvable().satietyAdd(1);
-        }, null // ?
+        var effectPreventHunger = new Effect2(null, // start
+        (uwpe) => // update
+         {
+            var entityToApplyTo = uwpe.entity;
+            entityToApplyTo.starvable2().satietyAdd(uwpe.world, 1, uwpe.entity);
+        }, null // finish
         );
-        var equipTodo = (universe, world, place, entityEquippable) => {
+        var equipTodo = (uwpe) => {
+            var entityEquippable = uwpe.entity;
             entityEquippable.effectable2().effects.push(effectPreventHunger);
         };
         var namesOfRings = [
@@ -352,18 +414,19 @@ class DemoData_Items {
         return new EntityDefnGroup("Rings", 1, entityDefnSets[0]);
     }
     buildEntityDefns_Scrolls(visualGetByName, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
-        var useScrollBlank = (universe, world, place, entityUsingAsEntity, entityUsedAsEntity, effect) => {
+        var useScrollBlank = (uwpe) => {
             var message = "You can't read a blank scroll!";
-            var player = entityUsingAsEntity.player();
+            var player = uwpe.entity.player();
             if (player != null) {
                 var messageLog = player.messageLog;
                 messageLog.messageAdd(message);
             }
             return message;
         };
-        var useScrollEffect = (universe, world, place, entityUsingAsEntity, entityUsedAsEntity, effect) => {
-            var entityUsing = entityUsingAsEntity;
-            var entityUsed = entityUsedAsEntity;
+        var useScrollEffect = (uwpe, effect) => {
+            var world = uwpe.world;
+            var entityUsing = uwpe.entity;
+            var entityUsed = uwpe.entity2;
             var item = entityUsed.item();
             var itemHolder = entityUsing.itemHolder();
             itemHolder.itemSubtractDefnNameAndQuantity(item.defnName, 1);
@@ -371,7 +434,10 @@ class DemoData_Items {
             var player = entityUsing.player();
             if (player != null) {
                 var itemDefn = item.defn(world);
-                message = "The " + itemDefn.appearance + " disappears as you read it.";
+                message =
+                    "The "
+                        + itemDefn.appearance
+                        + " disappears as you read it.";
                 var messageLog = player.messageLog;
                 if (effect == null) {
                     // todo
@@ -379,14 +445,16 @@ class DemoData_Items {
                 else {
                     var effectable = entityUsing.effectable2();
                     effectable.effectApply(effect);
-                    effectable.updateForTurn(universe, world, place, entityUsing);
+                    effectable.updateForTurn(uwpe);
                     // message = "Something happens."
                 }
                 messageLog.messageAdd(message);
             }
             return message;
         };
-        var useScrollNotImplemented = useScrollEffect;
+        var useScrollNotImplemented = (uwpe) => {
+            useScrollEffect(uwpe, null);
+        };
         var scrolls = [
             new Scroll("Amnesia", useScrollNotImplemented),
             new Scroll("Blank", useScrollBlank),
@@ -511,12 +579,13 @@ class DemoData_Items {
         var device = new Device("Spellbook", null, null, // init, update
         null, // this.itemEffectorApply
         null);
-        var spellLearn = (u, w, p, eUsing, eUsed, spellName) => {
-            var entityUsing = eUsing;
+        var spellLearn = (uwpe, spellName) => {
+            var entityUsing = uwpe.entity;
             var spellCaster = entityUsing.spellCaster();
-            var message = spellCaster.spellLearnByName(u, w, p, eUsing, spellName);
+            var message = spellCaster.spellLearnByName(uwpe, spellName);
+            console.log("todo - " + message);
             // todo - Degrade the spellbook?
-            return message;
+            // return message;
         };
         var categoryNamesSpellbook = ["Spellbook"];
         for (var i = 0; i < spellNames.length; i++) {
@@ -526,9 +595,10 @@ class DemoData_Items {
                 * appearances.length);
             var appearance = appearances[appearanceIndex] + " Spellbook";
             ArrayHelper.removeAt(appearances, appearanceIndex);
-            var itemUseSpellbook = (u, w, p, eUsing, eUsed) => {
-                var message = spellLearn(u, w, p, eUsing, eUsed, nameOfSpell);
-                return message;
+            var itemUseSpellbook = (uwpe) => {
+                var message = spellLearn(uwpe, nameOfSpell);
+                console.log("todo - " + message);
+                // return message;
             };
             var visual = visualGetByName(appearance);
             var entityDefn = new Entity2(itemDefnName, [
@@ -549,11 +619,12 @@ class DemoData_Items {
         return returnValue;
     }
     buildEntityDefns_Wands(visualGetByName, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
-        var wandUseNotImplemented = (universe, world, place, actingEntity, targetEntity) => {
+        var wandUseNotImplemented = (uwpe) => {
             return "Wand effect not implemented!";
         };
-        var wandUseProjectileSpawn = (universe, worldAsWorld, place, actingEntity, targetEntity) => {
-            var world = worldAsWorld;
+        var wandUseProjectileSpawn = (uwpe) => {
+            var world = uwpe.world;
+            var targetEntity = uwpe.entity2;
             var loc = targetEntity.locatable().loc;
             var venue = loc.place(world);
             var entityDefnForProjectile = world.defn2.entityDefnByName("Rock");
@@ -563,8 +634,9 @@ class DemoData_Items {
             //targetEntity.controlUpdate(world);
             return "todo";
         };
-        var wandUseTeleport = (universe, world, place, actingEntity, targetEntityAsEntity) => {
-            var targetEntity = targetEntityAsEntity;
+        var wandUseTeleport = (uwpe) => {
+            var world = uwpe.world;
+            var targetEntity = uwpe.entity2;
             var loc = targetEntity.locatable().loc;
             var teleportPos = null;
             while (teleportPos == null) {
@@ -629,8 +701,8 @@ class DemoData_Items {
             var appearance = appearances[appearanceIndex] + " Wand";
             ArrayHelper.removeAt(appearances, appearanceIndex);
             var visual = visualGetByName(appearance);
-            var itemDefnToEntity = (u, w, p, e, i) => {
-                var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+            var itemDefnToEntity = (uwpe, item) => {
+                var returnValue = this.itemDefnToEntity(uwpe, item);
                 returnValue.propertyAdd(wand);
                 return returnValue;
             };
@@ -681,8 +753,8 @@ class DemoData_Items {
         ];
         var entityDefnSetWeapons = [];
         var equippable = Equippable.default();
-        var itemDefnToEntity = (u, w, p, e, i) => {
-            var returnValue = this.itemDefnToEntity(u, w, p, e, i);
+        var itemDefnToEntity = (uwpe, i) => {
+            var returnValue = this.itemDefnToEntity(uwpe, i);
             returnValue.propertyAdd(weapon);
             returnValue.propertyAdd(weapon.damager);
             return returnValue;
@@ -707,7 +779,7 @@ class DemoData_Items {
             entityDefnSetWeapons.push(entityDefn);
         }
         ;
-        entityDefnSets["Group_Weapons"] = entityDefnSetWeapons;
+        //entityDefnSets["Group_Weapons"] = (entityDefnSetWeapons as any);
         entityDefnSets.push(entityDefnSetWeapons);
         return new EntityDefnGroup("Weapons", 1, entityDefnSets[0]);
     }
@@ -796,7 +868,7 @@ class DemoData_Items {
         }
         ;
         entityDefnSets.push(entityDefnSetArmor);
-        entityDefnSets["Group_Armor"] = entityDefnSetArmor;
+        //entityDefnSets["Group_Armor"] = (entityDefnSetArmor as any);
         return new EntityDefnGroup("Armor", 1, entityDefnSets[0]);
     }
     buildEntityDefns_Tools(visualGetByName, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
@@ -924,11 +996,11 @@ class DemoData_Items {
         var entityDefnSetStones = [];
         var mappableDefnOpen = this.mappableDefns.Open;
         var damager = new Damager(Damage.fromAmount(1));
-        var itemDefnToEntity = (u, w, p, e, i) => {
-            var itemDefn = i.defn(w);
-            var returnValue = new Entity2(i.defnName, [
-                i,
-                e.locatable().clone(),
+        var itemDefnToEntity = (uwpe, item) => {
+            var itemDefn = item.defn(uwpe.world);
+            var returnValue = new Entity2(item.defnName, [
+                item,
+                uwpe.entity.locatable().clone(),
                 new Mappable(mappableDefnOpen),
                 mappableDefnOpen,
                 damager,
@@ -954,14 +1026,14 @@ class DemoData_Items {
             ]));
         }
         entityDefnSets.push(entityDefnSetStones);
-        entityDefnSets["Group_Stones"] = entityDefnSetStones;
+        // entityDefnSets["Group_Stones"] = (entityDefnSetStones as any);
         return new EntityDefnGroup("Stones", 1, entityDefnSetStones);
     }
     buildEntityDefns_Valuables(visualGetByName, categories, categoriesCommon, sizeInPixels, itemPropertiesNoStack, itemPropertiesStandard, effectDoNothing, entityDefnSets) {
         var entityDefnSetValuables = [];
         var name = "Coins";
         var visual = visualGetByName("Coins");
-        entityDefnSetValuables.push(new Entity2(name, ArrayHelper.concatenateAll([
+        entityDefnSetValuables.push(new Entity2(name, [
             itemPropertiesStandard,
             Drawable.fromVisual(visual),
             new Generatable(0),
@@ -971,9 +1043,9 @@ class DemoData_Items {
             ["Valuables"], // categoryNames
             null, // use
             visual, this.itemDefnToEntity)
-        ])));
+        ]));
         entityDefnSets.push(entityDefnSetValuables);
-        entityDefnSets["Group_Valuables"] = entityDefnSetValuables;
+        // entityDefnSets["Group_Valuables"] = (entityDefnSetValuables as any);
         var returnGroup = new EntityDefnGroup("Valuables", 0, entityDefnSetValuables);
         return returnGroup;
     }
@@ -1001,26 +1073,28 @@ class DemoData_Items {
         //var returnValuesByName = ArrayHelper.addLookupsByName(returnValues);
         return returnValues;
     }
-    itemDefnToEntity(u, w, p, e, i) {
-        var itemDefn = i.defn(w);
+    itemDefnToEntity(uwpe, item) {
+        var itemDefn = item.defn(uwpe.world);
         var mappableDefn = MappableDefn.Instances().Open;
-        var returnValue = new Entity2(i.defnName, [
-            i,
-            e.locatable().clone(),
+        var returnValue = new Entity2(item.defnName, [
+            item,
+            uwpe.entity.locatable().clone(),
             new Mappable(mappableDefn),
             mappableDefn,
             Drawable.fromVisual(itemDefn.visual),
         ]);
         return returnValue;
     }
-    itemUseDevice(universe, world, place, userEntityAsEntity, itemEntity) {
-        var userEntity = userEntityAsEntity;
+    itemUseDevice(uwpe) {
+        var world = uwpe.world;
+        var userEntity = uwpe.entity;
+        var itemEntity = uwpe.entity2;
         var itemAppearance = itemEntity.item().defn(world).appearance;
         var itemMessage = "You use the " + itemAppearance + ".";
         var device = itemEntity.device();
         var deviceMessage = "todo";
         // todo
-        device.use(universe, world, place, userEntity, itemEntity);
+        device.use(uwpe);
         var player = userEntity.player();
         if (player != null) {
             player.messageLog.messageAdd(itemMessage);
@@ -1042,10 +1116,12 @@ class Food {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }
 class Ring {
     constructor(name, use) {
@@ -1072,14 +1148,17 @@ class Wand {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) {
+    finalize(uwpe) { }
+    initialize(uwpe) {
         if (this.charges == null) {
-            this.charges = this.chargesMaxAsDiceRoll.roll(u.randomizer);
+            var randomizer = uwpe.universe.randomizer;
+            this.charges = this.chargesMaxAsDiceRoll.roll(randomizer);
         }
     }
-    updateForTimerTick(u, w, p, e) { }
+    updateForTimerTick(uwpe) { }
 }
 class Weapon2 {
     constructor(name, appearance, damagePossibleAsDiceRoll) {
@@ -1092,8 +1171,10 @@ class Weapon2 {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

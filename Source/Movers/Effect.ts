@@ -1,26 +1,27 @@
 
 class Effect2
 {
-	start: any;
-	update: any;
-	finish: any;
+	start: (uwpe: UniverseWorldPlaceEntities) => void;
+	update: (uwpe: UniverseWorldPlaceEntities) => void;
+	finish: (uwpe: UniverseWorldPlaceEntities) => void;
 
 	cyclesSoFar: number;
 	durationInCycles: number;
 	isDone: boolean;
 
-	constructor(start: any, update: any, finish: any)
+	constructor
+	(
+		start: (uwpe: UniverseWorldPlaceEntities) => void,
+		update: (uwpe: UniverseWorldPlaceEntities) => void,
+		finish: (uwpe: UniverseWorldPlaceEntities) => void
+	)
 	{
 		this.start = start;
 		this.update = update;
 		this.finish = finish;
 	}
 
-	updateForCycle
-	(
-		universe: Universe, world: World, place: Place,
-		entityEffectable: Entity
-	)
+	updateForCycle(uwpe: UniverseWorldPlaceEntities): void
 	{
 		// A "cycle" could be either a tick or a turn.
 
@@ -31,7 +32,7 @@ class Effect2
 
 			if (this.start != null)
 			{
-				this.start(universe, world, place, entityEffectable);
+				this.start(uwpe);
 			}
 		}
 
@@ -44,7 +45,7 @@ class Effect2
 		{
 			if (this.update != null)
 			{
-				this.update(universe, world, place, entityEffectable);
+				this.update(uwpe);
 			}
 
 			if (this.cyclesSoFar >= this.durationInCycles)
@@ -52,7 +53,7 @@ class Effect2
 				this.isDone = true;
 				if (this.finish != null)
 				{
-					this.finish(universe, world, place, entityEffectable);
+					this.finish(uwpe);
 				}
 			}
 
@@ -62,7 +63,7 @@ class Effect2
 
 	// Cloneable.
 
-	clone()
+	clone(): Effect2
 	{
 		return new Effect2(this.start, this.update, this.finish);
 	}

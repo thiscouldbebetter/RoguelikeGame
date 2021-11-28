@@ -4,7 +4,10 @@ class MoverTransport {
         this.entityMover = entityMover;
         this.locDestination = locDestination;
     }
-    initialize(universe, world, place, entityTransport) {
+    initialize(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var entityTransport = uwpe.entity;
         var moverLoc = this.entityMover.locatable().loc;
         var placeToDepart = moverLoc.place(world);
         placeToDepart.entitiesToRemove.push(this.entityMover);
@@ -20,7 +23,9 @@ class MoverTransport {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

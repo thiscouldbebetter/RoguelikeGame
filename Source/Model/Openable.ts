@@ -1,5 +1,5 @@
 
-class Openable implements EntityProperty
+class Openable implements EntityProperty<Openable>
 {
 	isOpen: boolean;
 	isLocked: boolean;
@@ -9,6 +9,8 @@ class Openable implements EntityProperty
 		this.isOpen = isOpen;
 		this.isLocked = isLocked;
 	}
+
+	// Clonable.
 
 	clone()
 	{
@@ -22,8 +24,11 @@ class Openable implements EntityProperty
 		return this;
 	}
 
+	// Equatable.
+	equals(other: Openable) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 }

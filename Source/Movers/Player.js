@@ -5,10 +5,10 @@ class Player {
         this.messageLog = new MessageLog();
         this.placeKnownLookup = new Map();
     }
-    initialize(universe, worldAsWorld, placeAsPlace, entityAsEntity) {
-        var world = worldAsWorld;
-        var place = placeAsPlace;
-        var entity = entityAsEntity;
+    initialize(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var entity = uwpe.entity;
         entity.locatable().loc.pos.z = PlaceLevel.ZLayers().Movers;
         entity.mover().movesThisTurn = 0;
         entity.turnable().hasActedThisTurn = true;
@@ -36,17 +36,17 @@ class Player {
         var returnValue = new MapOfTerrain(name, terrains, cellSizeInPixels, cellsAsStrings);
         return returnValue;
     }
-    updateForTimerTick(universe, worldAsWorld, placeAsPlace, entityPlayerAsEntity) {
-        var world = worldAsWorld;
-        var place = placeAsPlace;
-        var entityPlayer = entityPlayerAsEntity;
+    updateForTimerTick(uwpe) {
+        var world = uwpe.world;
+        var place = uwpe.place;
+        var entityPlayer = uwpe.entity;
         if (entityPlayer.turnable().hasActedThisTurn) {
             entityPlayer.starvable2().satietyAdd(world, -1, entityPlayer);
             var turnables = place.entities.filter((x) => x.turnable() != null); // hack
             for (var i = 0; i < turnables.length; i++) {
                 var entityTurnable = turnables[i];
                 var turnable = entityTurnable.turnable();
-                turnable.updateForTurn(universe, world, place, entityTurnable);
+                turnable.updateForTurn(uwpe);
             }
             world.turnsSoFar++;
         }
@@ -82,7 +82,7 @@ class Player {
             this.control = new ControlContainer("containerMover", Coords.create(), // pos
             new Coords(180, 272, 0), // size
             [
-                ControlLabel.fromPosAndText(new Coords(10, 16, 0), "Name: " + entity.name),
+                ControlLabel.fromPosAndText(new Coords(10, 16, 0), DataBinding.fromContext("Name: " + entity.name)),
                 entity2.demographics().toControl(world, entity, new Coords(10, 32, 0)),
                 entity2.starvable2().toControl(world, entity, new Coords(10, 64, 0)),
                 controlLocus,
@@ -101,5 +101,7 @@ class Player {
         return this; // todo
     }
     // EntityProperty.
-    finalize(u, w, p, e) { }
+    finalize(uwpe) { }
+    // Equatable.
+    equals(other) { return false; }
 }

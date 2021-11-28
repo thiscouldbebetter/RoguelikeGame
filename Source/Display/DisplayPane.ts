@@ -147,7 +147,7 @@ class DisplayPane implements Display, Namable
 	drawRectangle
 	(
 		pos: Coords, size: Coords,
-		colorFill: Color, colorBorder: Color, areColorsReversed: boolean
+		colorFill: Color, colorBorder: Color
 	): void
 	{
 		this.displayToUse().drawRectangle
@@ -155,8 +155,20 @@ class DisplayPane implements Display, Namable
 			pos,
 			size,
 			colorFill,
-			colorBorder,
-			areColorsReversed
+			colorBorder
+		);
+	}
+
+	drawRectangleWithRoundedCorners
+	(
+		pos: Coords, size: Coords,
+		colorFill: Color, colorBorder: Color,
+		cornerRadius: number
+	): void
+	{
+		this.displayToUse().drawRectangleWithRoundedCorners
+		(
+			pos, size, colorFill, colorBorder, cornerRadius
 		);
 	}
 
@@ -167,7 +179,6 @@ class DisplayPane implements Display, Namable
 		pos: Coords,
 		colorFill: Color,
 		colorOutline: Color,
-		areColorsReversed: boolean,
 		isCentered: boolean,
 		widthMaxInPixels: number
 	): void
@@ -179,7 +190,6 @@ class DisplayPane implements Display, Namable
 			pos,
 			colorFill,
 			colorOutline,
-			areColorsReversed,
 			isCentered,
 			widthMaxInPixels
 		);
@@ -205,9 +215,14 @@ class DisplayPane implements Display, Namable
 	): void {}
 	drawCircleWithGradient
 	(
-		center: Coords, radius: number, gradientFill: ValueBreakGroup, colorBorder: Color
+		center: Coords, radius: number, gradientFill: ValueBreakGroup<Color>, colorBorder: Color
 	): void {}
-	drawCrosshairs(center: Coords, radius: number, color: Color): void {}
+	drawCrosshairs
+	(
+		center: Coords, numberOfLines: number,
+		radiusOuter: number, radiusInner: number,
+		color: Color, lineThickness: number
+	): void {}
 	drawEllipse
 	(
 		center: Coords, semimajorAxis: number, semiminorAxis: number,

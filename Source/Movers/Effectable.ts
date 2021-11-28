@@ -1,5 +1,5 @@
 
-class Effectable2 implements EntityProperty
+class Effectable2 implements EntityProperty<Effectable2>
 {
 	effects: Effect2[];
 
@@ -11,17 +11,17 @@ class Effectable2 implements EntityProperty
 		this.effectsToRemove = [];
 	}
 
-	effectApply(effectToApply: Effect2)
+	effectApply(effectToApply: Effect2): void
 	{
 		this.effects.push(effectToApply);
 	}
 
-	effectorApply(effector: Effector)
+	effectorApply(effector: Effector): void
 	{
 		effector.effects.forEach(x => this.effectApply(x));
 	}
 
-	updateForTurn(universe: Universe, world: World, place: Place, entityEffectable: Entity)
+	updateForTurn(uwpe: UniverseWorldPlaceEntities): void
 	{
 		this.effectsToRemove.length = 0;
 
@@ -29,7 +29,7 @@ class Effectable2 implements EntityProperty
 		for (var i = 0; i < effects.length; i++)
 		{
 			var effect = effects[i];
-			effect.updateForCycle(universe, world, place, entityEffectable);
+			effect.updateForCycle(uwpe);
 			if (effect.isDone)
 			{
 				this.effectsToRemove.push(effect);
@@ -47,9 +47,12 @@ class Effectable2 implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Effectable2) { return this; }
 
+	// Equatable.
+	equals(other: Effectable2) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

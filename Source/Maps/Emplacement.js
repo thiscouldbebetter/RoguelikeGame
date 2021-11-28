@@ -14,24 +14,26 @@ class Emplacement {
     static fromAppearanceAndUse(appearance, use) {
         return new Emplacement(appearance, null, use);
     }
-    collide(universe, world, place, entityColliding, entityCollidedWith) {
+    collide(uwpe) {
         if (this._collide != null) {
-            this._collide(universe, world, place, entityColliding, entityCollidedWith);
+            this._collide(uwpe);
         }
     }
-    use(universe, world, place, entityUsing, entityUsed) {
+    use(uwpe) {
         if (this._use == null) {
-            entityUsing.player().messageLog.messageAdd("Nothing happens.");
+            uwpe.entity.player().messageLog.messageAdd("Nothing happens.");
         }
         else {
-            this._use(universe, world, place, entityUsing, entityUsed);
+            this._use(uwpe);
         }
     }
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

@@ -107,7 +107,7 @@ class World2 extends World
 
 	static createForUniverseAndVisualGetByName
 	(
-		universe: Universe, visualGetByName: (x:string)=>Visual
+		universe: Universe, visualGetByName: (x:string)=>VisualBase
 	): World2
 	{
 		var randomizer = RandomizerLCG.default();
@@ -134,9 +134,9 @@ class World2 extends World
 		return world;
 	}
 
-	static visualsForTiles(universe: Universe): Visual[][]
+	static visualsForTiles(universe: Universe): VisualBase[][]
 	{
-		var visualsForTiles = new Array<Array<Visual>>();
+		var visualsForTiles = new Array<Array<VisualBase>>();
 		var imageTileset = universe.mediaLibrary.imageGetByName("Tiles");
 		//var visualImageTileset = new VisualImageFromLibrary(imageTileset.name);
 		// var tileSize = Coords.fromXY(16, 16);
@@ -146,7 +146,7 @@ class World2 extends World
 		var imageBuilder = ImageBuilder.default();
 		for (var y = 0; y < imageTilesetSizeInTiles.y; y++)
 		{
-			var visualsForTilesRow = new Array<Visual>();
+			var visualsForTilesRow = new Array<VisualBase>();
 
 			for (var x = 0; x < imageTilesetSizeInTiles.x; x++)
 			{
@@ -167,38 +167,41 @@ class World2 extends World
 		return visualsForTiles;
 	}
 
-	draw()
+	draw(): void
 	{
 		// todo
 	}
 
-	initialize(universe: Universe)
+	initialize(uwpe: UniverseWorldPlaceEntities): void
 	{
 		if (this.placeCurrent != null)
 		{
-			this.placeCurrent.initialize(universe, this);
+			uwpe.world = this;
+			this.placeCurrent.initialize(uwpe);
 		}
 	}
 
-	updateForTimerTick(universe: Universe)
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void
 	{
+		uwpe.world = this;
+
 		if (this.placeNext != null)
 		{
-			this.placeNext.initialize(universe, this);
+			this.placeNext.initialize(uwpe);
 
 			this.placeCurrent = this.placeNext;
 
 			this.placeNext = null;
 		}
 
-		this.placeCurrent.updateForTimerTick(universe, this);
+		this.placeCurrent.updateForTimerTick(uwpe);
 
 		this.timerTicksSoFar++;
 	}
 
 	// debugging
 
-	logTicksPerSecond()
+	logTicksPerSecond(): void
 	{
 		var reportingWindowInTicks = 10;
 		if (this.timerTicksSoFar % reportingWindowInTicks == 0)
@@ -223,7 +226,7 @@ class World2 extends World
 		}
 	}
 
-	toControl()
+	toControl(): ControlBase
 	{
 		return new ControlNone();
 	}

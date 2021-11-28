@@ -1,5 +1,5 @@
 
-class MoverTransport implements EntityProperty
+class MoverTransport implements EntityProperty<MoverTransport>
 {
 	entityMover: Entity2;
 	locDestination: Disposition;
@@ -10,8 +10,12 @@ class MoverTransport implements EntityProperty
 		this.locDestination = locDestination;
 	}
 
-	initialize(universe: Universe, world: World, place: Place, entityTransport: Entity): void
+	initialize(uwpe: UniverseWorldPlaceEntities): void
 	{
+		var world = uwpe.world;
+		var place = uwpe.place;
+		var entityTransport = uwpe.entity;
+
 		var moverLoc = this.entityMover.locatable().loc;
 
 		var placeToDepart = moverLoc.place(world);
@@ -36,8 +40,11 @@ class MoverTransport implements EntityProperty
 	clone(): MoverTransport { return this; }
 	overwriteWith(other: MoverTransport): MoverTransport { return this; }
 
+	// Equatable.
+	equals(other: MoverTransport) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

@@ -64,9 +64,9 @@ class MapOfTerrain {
         return new MapOfTerrain(this.name, this.terrains, this.cellSizeInPixels, cellsAsStrings);
     }
     // drawable
-    draw(universe, world, place, display) {
+    draw(uwpe, display) {
         // hack - Build camera from player.
-        var entityCamera = world.entityForPlayer;
+        var entityCamera = uwpe.world.entityForPlayer;
         var cameraPos = entityCamera.locatable().loc.pos.clone();
         var viewDimensionHalf = 38; // hack
         var camera = new Camera(new Coords(1, 1, 0).multiplyScalar(viewDimensionHalf), null, // focalLength
@@ -80,12 +80,12 @@ class MapOfTerrain {
             cellPos.y = y;
             for (var x = cellPosVisibleMin.x; x < cellPosVisibleMax.x; x++) {
                 cellPos.x = x;
-                this.drawCellAtPos(universe, world, place, display, cameraPos, cellPos);
+                this.drawCellAtPos(uwpe, display, cameraPos, cellPos);
             } // end for x
         } // end for y
         display.flush();
     }
-    drawCellAtPos(universe, world, place, display, cameraPos, cellPos) {
+    drawCellAtPos(uwpe, display, cameraPos, cellPos) {
         var map = this;
         var cell = map.cellAtPos(cellPos);
         var cellTerrain = cell.terrain(this);
@@ -93,11 +93,12 @@ class MapOfTerrain {
         var drawableEntity = this._drawableEntity;
         var drawPos = this._drawPos;
         drawPos.overwriteWith(cellPos).subtract(cameraPos).multiply(map.cellSizeInPixels).add(display.displayToUse().sizeInPixelsHalf);
-        terrainVisual.draw(universe, world, place, drawableEntity, display);
+        terrainVisual.draw(uwpe.entitySet(drawableEntity), display);
         var entitiesInCell = cell.entitiesPresent;
         var entitiesSortedBottomToTop = entitiesInCell.sort((a, b) => a.locatable().loc.pos.z - b.locatable().loc.pos.z);
         for (var i = 0; i < entitiesSortedBottomToTop.length; i++) {
             var entity = entitiesSortedBottomToTop[i];
+            uwpe.entitySet(entity);
             var drawable = entity.drawable();
             if (drawable.isVisible) {
                 var entityLoc = entity.locatable().loc;
@@ -105,7 +106,7 @@ class MapOfTerrain {
                 this._drawPosSaved.overwriteWith(entityPos);
                 entityPos.overwriteWith(drawPos);
                 var visual = drawable.visual;
-                visual.draw(universe, world, place, entity, display);
+                visual.draw(uwpe, display);
                 entityPos.overwriteWith(this._drawPosSaved);
             }
         } // end for entitiesSortedBottomToTop

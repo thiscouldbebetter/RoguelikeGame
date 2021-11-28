@@ -6,12 +6,12 @@ class MapTerrain
 	costToTraverse: number;
 	blocksVision: boolean;
 	color: string;
-	visual: Visual;
+	visual: VisualBase;
 
 	constructor
 	(
 		name: string, codeChar: string, costToTraverse: number,
-		blocksVision: boolean, color: string, visual: Visual
+		blocksVision: boolean, color: string, visual: VisualBase
 	)
 	{
 		this.name = name;

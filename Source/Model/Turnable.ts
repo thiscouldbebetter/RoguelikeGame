@@ -1,32 +1,37 @@
 
-class Turnable implements EntityProperty
+class Turnable implements EntityProperty<Turnable>
 {
-	updateForTurn: any;
+	updateForTurn: (uwpe: UniverseWorldPlaceEntities) => void;
 	hasActedThisTurn: boolean;
 
 	turnsToLive: number;
 
-	constructor(updateForTurn: any)
+	constructor(updateForTurn: (uwpe: UniverseWorldPlaceEntities) => void)
 	{
 		this.updateForTurn = updateForTurn;
 		this.hasActedThisTurn = false;
 	}
 
-	clone()
+	// Clonable.
+
+	clone(): Turnable
 	{
 		return new Turnable(this.updateForTurn);
 	}
 
-	overwriteWith(other: Turnable)
+	overwriteWith(other: Turnable): Turnable
 	{
 		this.updateForTurn = other.updateForTurn;
 		this.hasActedThisTurn = other.hasActedThisTurn;
 		return this;
 	}
 
+	// Equatable.
+	equals(other: Turnable): boolean { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

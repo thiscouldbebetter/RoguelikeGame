@@ -17,32 +17,36 @@ class Mover {
         }
         return returnValue;
     }
-    initialize(universe, world, place, entityAsEntity) {
-        var entity = entityAsEntity;
+    initialize(uwpe) {
+        var place = uwpe.place;
+        var entity = uwpe.entity;
         var mover = entity.mover();
         mover.movesThisTurn = mover.movesPerTurn;
         if (entity.turnable() == null) {
-            var turnable = new Turnable((universe, world, place, entityAsEntity) => {
-                var entity = entityAsEntity;
+            var turnable = new Turnable((uwpe) => {
+                var entity = uwpe.entity;
                 var mover = entity.mover();
                 mover.movesThisTurn += mover.movesPerTurn;
                 var effectable = entity.effectable2();
                 if (effectable != null) {
-                    effectable.updateForTurn(universe, world, place, entity);
+                    effectable.updateForTurn(uwpe);
                 }
                 entity.turnable().hasActedThisTurn = false;
             });
             entity.propertyAddForPlace(turnable, place);
         }
     }
-    updateForTimerTick(universe, world, placeAsPlace, entity) {
-        var place = placeAsPlace;
+    updateForTimerTick(uwpe) {
+        var place = uwpe.place;
+        var entity = uwpe.entity;
         var entityLoc = entity.locatable().loc;
         entityLoc.pos.trimToRangeMax(place.map.sizeInCellsMinusOnes);
     }
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
+    finalize(uwpe) { }
 }

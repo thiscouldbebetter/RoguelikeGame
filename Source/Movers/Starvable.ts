@@ -1,5 +1,5 @@
 
-class Starvable2 implements EntityProperty
+class Starvable2 implements EntityProperty<Starvable2>
 {
 	satietyMax: number;
 
@@ -82,8 +82,10 @@ class Starvable2 implements EntityProperty
 	overwriteWith(other: Starvable2) { return this; }
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
+	// Equatable.
+	equals(other: Starvable2) { return false; }
 }

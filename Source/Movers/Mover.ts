@@ -1,5 +1,5 @@
 
-class Mover implements EntityProperty
+class Mover implements EntityProperty<Mover>
 {
 	movesPerTurn: number;
 	_costToTraverseTerrain: (terrain: MapTerrain)=>number;
@@ -37,12 +37,10 @@ class Mover implements EntityProperty
 		return returnValue;
 	}
 
-	initialize
-	(
-		universe: Universe, world: World, place: Place, entityAsEntity: Entity
-	): void
+	initialize(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var entity = entityAsEntity as Entity2;
+		var place = uwpe.place;
+		var entity = uwpe.entity as Entity2;
 
 		var mover = entity.mover();
 		mover.movesThisTurn = mover.movesPerTurn;
@@ -51,16 +49,16 @@ class Mover implements EntityProperty
 		{
 			var turnable = new Turnable
 			(
-				(universe: Universe, world: World, place: Place, entityAsEntity: Entity) =>
+				(uwpe: UniverseWorldPlaceEntities) =>
 				{
-					var entity = entityAsEntity as Entity2;
+					var entity = uwpe.entity as Entity2;
 
 					var mover = entity.mover();
 					mover.movesThisTurn += mover.movesPerTurn;
 					var effectable = entity.effectable2();
 					if (effectable != null)
 					{
-						effectable.updateForTurn(universe, world, place, entity);
+						effectable.updateForTurn(uwpe);
 					}
 					entity.turnable().hasActedThisTurn = false;
 				}
@@ -69,12 +67,10 @@ class Mover implements EntityProperty
 		}
 	}
 
-	updateForTimerTick
-	(
-		universe: Universe, world: World, placeAsPlace: Place, entity: Entity
-	): void
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var place = placeAsPlace as PlaceLevel;
+		var place = uwpe.place as PlaceLevel;
+		var entity = uwpe.entity;
 
 		var entityLoc = entity.locatable().loc;
 
@@ -89,8 +85,11 @@ class Mover implements EntityProperty
 	clone(): Mover { return this; }
 	overwriteWith(other: Mover): Mover { return this; }
 
+	// Equatable.
+	equals(other: Mover) { return false; }
+
 	// EntityProperty.
 
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

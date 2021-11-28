@@ -10,10 +10,10 @@ class DemoData_Visuals
 
 	static visualArraysToLookup
 	(
-		visualsForTiles: Visual[][], agentDatas: AgentData[]
-	): Map<string, Visual>
+		visualsForTiles: VisualBase[][], agentDatas: AgentData[]
+	): Map<string, VisualBase>
 	{
-		var returnValue = new Map<string, Visual>();
+		var returnValue = new Map<string, VisualBase>();
 
 		var tileNamesAndPositions =
 		[

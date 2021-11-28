@@ -18,7 +18,10 @@ class DemoData_Places
 		this.randomizer = this.parent.randomizer;
 	}
 
-	buildMapTerrainsDungeon(visualGetByName: (x:string)=>Visual): MapTerrain[]
+	buildMapTerrainsDungeon
+	(
+		visualGetByName: (x: string) => VisualBase
+	): MapTerrain[]
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualGetByName("Floor"));
 		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
@@ -40,7 +43,7 @@ class DemoData_Places
 		return terrains;
 	}
 
-	buildMapTerrainsHades(visualGetByName: (x:string)=>Visual): MapTerrain[]
+	buildMapTerrainsHades(visualGetByName: (x: string) => VisualBase): MapTerrain[]
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 9, 	false, "Green", visualGetByName("Floor"));
 		this.Stone 				= new MapTerrain("Stone", 			"x", null, 	true, "Black", new VisualNone());//visualsForTiles["Stone"]);
@@ -62,7 +65,7 @@ class DemoData_Places
 		return terrains;
 	}
 
-	buildMapTerrainsMines(visualGetByName: (x:string)=>Visual): MapTerrain[]
+	buildMapTerrainsMines(visualGetByName: (x:string) => VisualBase): MapTerrain[]
 	{
 		this.Floor 				= new MapTerrain("Floor", 			".", 9, 		false, "Green", visualGetByName("Floor") );
 		this.Stone 				= new MapTerrain("Stone", 			"x", 1000000, 	true, "Black", new VisualNone());//visualsForTiles["Stone") );
@@ -84,22 +87,34 @@ class DemoData_Places
 		return terrains;
 	}
 
-	buildMapTerrainsLabyrinth(visualGetByName: (x:string)=>Visual)
+	buildMapTerrainsLabyrinth
+	(
+		visualGetByName: (x: string) => VisualBase
+	): MapTerrain[]
 	{
 		return this.buildMapTerrainsDungeon(visualGetByName);
 	}
 
-	buildMapTerrainsPuzzle(visualGetByName: (x:string)=>Visual)
+	buildMapTerrainsPuzzle
+	(
+		visualGetByName: (x: string) => VisualBase
+	): MapTerrain[]
 	{
 		return this.buildMapTerrainsDungeon(visualGetByName);
 	}
 
-	buildMapTerrainsThrowback(visualGetByName: (x:string)=>Visual)
+	buildMapTerrainsThrowback
+	(
+		visualGetByName: (x: string) => VisualBase
+	): MapTerrain[]
 	{
 		return this.buildMapTerrainsDungeon(visualGetByName);
 	}
 
-	buildPlaceDefns(visualGetByName: (x:string)=>Visual, actions: Action[])
+	buildPlaceDefns
+	(
+		visualGetByName: (x: string) => VisualBase, actions: Action[]
+	): PlaceDefnLevel[]
 	{
 		var mapTerrainsDungeon = this.buildMapTerrainsDungeon(visualGetByName);
 
@@ -132,7 +147,7 @@ class DemoData_Places
 
 		var returnValues =
 		[
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Depths",
 				propertyNamesKnown,
@@ -140,7 +155,7 @@ class DemoData_Places
 				this.placeGenerateDepths
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Dungeon",
 				propertyNamesKnown,
@@ -148,7 +163,7 @@ class DemoData_Places
 				this.placeGenerateDungeon
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Fortress",
 				propertyNamesKnown,
@@ -156,7 +171,7 @@ class DemoData_Places
 				this.placeGenerateFortress
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Hades",
 				propertyNamesKnown,
@@ -164,7 +179,7 @@ class DemoData_Places
 				this.placeGenerateHades
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Mines",
 				propertyNamesKnown,
@@ -172,7 +187,7 @@ class DemoData_Places
 				this.placeGenerateMines
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"MinesTown",
 				propertyNamesKnown,
@@ -180,7 +195,7 @@ class DemoData_Places
 				this.placeGenerateMines
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"MinesBottom",
 				propertyNamesKnown,
@@ -188,7 +203,7 @@ class DemoData_Places
 				this.placeGenerateMines
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Island",
 				propertyNamesKnown,
@@ -196,7 +211,7 @@ class DemoData_Places
 				this.placeGenerateIsland
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Labyrinth",
 				propertyNamesKnown,
@@ -204,7 +219,7 @@ class DemoData_Places
 				this.placeGenerateLabyrinth
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Limbo",
 				propertyNamesKnown,
@@ -212,7 +227,7 @@ class DemoData_Places
 				this.placeGenerateLimbo
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Oracle",
 				propertyNamesKnown,
@@ -220,7 +235,7 @@ class DemoData_Places
 				this.placeGenerateOracle
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Puzzle",
 				propertyNamesKnown,
@@ -228,7 +243,7 @@ class DemoData_Places
 				this.placeGeneratePuzzle
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"SingleChamber",
 				propertyNamesKnown,
@@ -236,7 +251,7 @@ class DemoData_Places
 				this.placeGenerateSingleChamber
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Surface",
 				propertyNamesKnown,
@@ -244,7 +259,7 @@ class DemoData_Places
 				this.placeGenerateSurface
 			),
 
-			new PlaceDefn2
+			new PlaceDefnLevel
 			(
 				"Throwback",
 				propertyNamesKnown,
@@ -256,7 +271,7 @@ class DemoData_Places
 		return returnValues;
 	}
 
-	buildPlaceTree()
+	buildPlaceTree(): PlaceBranch
 	{
 		var branchesMain =
 		[
@@ -415,9 +430,9 @@ class DemoData_Places
 
 	placeGenerateDepths
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
-	)
+	): PlaceLevel
 	{
 		//var branchName = branch.name;
 		var place = this.placeGenerateDungeon
@@ -448,9 +463,9 @@ class DemoData_Places
 
 	placeGenerateDungeon
 	(
-		worldDefn: WorldDefn2, branch: any, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: any, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
-	)
+	): PlaceLevel
 	{
 		var branchName = branch.name;
 		var venueName = branchName + placeIndex;
@@ -922,7 +937,7 @@ class DemoData_Places
 
 	placeGenerateDungeon_5_Entities
 	(
-		worldDefn: WorldDefn2, branchName: string, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branchName: string, placeDefn: PlaceDefnLevel,
 		venueName: string, randomizer: Randomizer, zones: Zone2[],
 		doorwayPositions: Coords[], mapCellsAsStrings: string[]
 	): Entity2[]
@@ -1274,9 +1289,9 @@ class DemoData_Places
 
 	placeGenerateFortress
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
-	): Place
+	): PlaceLevel
 	{
 		return this.placeGenerateDungeon
 		(
@@ -1286,9 +1301,9 @@ class DemoData_Places
 
 	placeGenerateSurface
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
-	): Place
+	): PlaceLevel
 	{
 		var branchName = branch.name;
 		var venueName = branchName + placeIndex;
@@ -1371,7 +1386,7 @@ class DemoData_Places
 
 	placeGenerateHades
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1380,7 +1395,7 @@ class DemoData_Places
 
 	placeGenerateIsland
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1389,7 +1404,7 @@ class DemoData_Places
 
 	placeGenerateMines
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1398,7 +1413,7 @@ class DemoData_Places
 
 	placeGenerateOracle
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1407,7 +1422,7 @@ class DemoData_Places
 
 	placeGenerateLabyrinth
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1416,7 +1431,7 @@ class DemoData_Places
 
 	placeGenerateLimbo
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1425,7 +1440,7 @@ class DemoData_Places
 
 	placeGeneratePuzzle
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1434,7 +1449,7 @@ class DemoData_Places
 
 	placeGenerateSingleChamber
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{
@@ -1443,7 +1458,7 @@ class DemoData_Places
 
 	placeGenerateThrowback
 	(
-		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefn2,
+		worldDefn: WorldDefn2, branch: PlaceBranch, placeDefn: PlaceDefnLevel,
 		placeIndex: number, depth: number, randomizer: Randomizer
 	)
 	{

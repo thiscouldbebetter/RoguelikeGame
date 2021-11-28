@@ -22,7 +22,7 @@ class DemoData_Main {
         var corpseGroup = moverAndCorpseGroups[1];
         //var moverEntities = moverGroups[0].entityDefns;
         itemGroups.push(corpseGroup);
-        var returnValues = ArrayHelper.concatenateAll([
+        var returnValues = ArrayHelper.flattenArrayOfArrays([
             [boulders],
             [emplacements],
             [talkers],
@@ -36,11 +36,11 @@ class DemoData_Main {
         var mappableDefns = MappableDefn.Instances();
         var mappableDefn = mappableDefns.Blocking;
         var damager = new Damager(Damage.fromAmount(10)); // todo
-        var itemDefnToEntity = (u, w, p, e, i) => {
-            var itemDefn = i.defn(w);
-            var returnValue = new Entity2(i.defnName, [
-                i,
-                e.locatable().clone(),
+        var itemDefnToEntity = (uwpe, item) => {
+            var itemDefn = item.defn(uwpe.world);
+            var returnValue = new Entity2(item.defnName, [
+                item,
+                uwpe.entity.locatable().clone(),
                 new Mappable(mappableDefn),
                 mappableDefn,
                 damager,

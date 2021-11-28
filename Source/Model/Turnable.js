@@ -4,6 +4,7 @@ class Turnable {
         this.updateForTurn = updateForTurn;
         this.hasActedThisTurn = false;
     }
+    // Clonable.
     clone() {
         return new Turnable(this.updateForTurn);
     }
@@ -12,8 +13,10 @@ class Turnable {
         this.hasActedThisTurn = other.hasActedThisTurn;
         return this;
     }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

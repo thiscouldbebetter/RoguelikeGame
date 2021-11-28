@@ -1,5 +1,5 @@
 
-class Generatable implements EntityProperty
+class Generatable implements EntityProperty<Generatable>
 {
 	relativeFrequency: number;
 
@@ -12,9 +12,12 @@ class Generatable implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Generatable) { return this; }
 
+	// Equatable.
+	equals(other: Generatable) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

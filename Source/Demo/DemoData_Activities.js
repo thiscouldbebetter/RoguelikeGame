@@ -5,14 +5,13 @@ class DemoData_Activities {
         this.randomizer = randomizer;
     }
     buildActivityDefns() {
-        var activityDefnDoNothing = new ActivityDefn("Do Nothing", (universe, world, place, actor) => {
+        var activityDefnDoNothing = new ActivityDefn("Do Nothing", (uwpe) => {
             // Do nothing.
         });
-        var activityDefnFlyForward = new ActivityDefn("Fly Forward", 
-        // perform
-        (universe, worldAsWorld, place, entityActorAsEntity) => {
-            var world = worldAsWorld;
-            var entityActor = entityActorAsEntity;
+        var activityDefnFlyForward = new ActivityDefn("Fly Forward", (uwpe) => // perform
+         {
+            var world = uwpe.world;
+            var entityActor = uwpe.entity;
             var actorLoc = entityActor.locatable().loc;
             //var map = place.map;
             var directionsToMove = actorLoc.orientation.forward.clone().directions(); // hack
@@ -23,32 +22,32 @@ class DemoData_Activities {
             var actorData = entityActor.actorData();
             actorData.actionAdd(actionMoveInDirection);
         });
-        var activityDefnGenerateMovers = new ActivityDefn("Generate Movers", (universe, world, place, actor) => {
-            var moverGenerator = actor.moverGenerator();
-            moverGenerator.activityPerform(universe, world, place, actor);
+        var activityDefnGenerateMovers = new ActivityDefn("Generate Movers", (uwpe) => {
+            var moverGenerator = uwpe.entity.moverGenerator();
+            moverGenerator.activityPerform(uwpe);
         });
         var activityDefnMoveRandomly = new ActivityDefn("Move Randomly", 
         // perform
-        (universe, world, place, actor) => {
+        (uwpe) => {
             // hack
-            var actionsMoves = world.defn2.actionMovesByHeading;
+            var actionsMoves = uwpe.world.defn2.actionMovesByHeading;
             var numberOfDirectionsAvailable = actionsMoves.length;
             var directionIndexRandom = Math.floor(numberOfDirectionsAvailable
                 * this.randomizer.getNextRandom());
             var actionMoveInRandomDirection = actionsMoves[directionIndexRandom];
-            actor.actorData().actions.push(actionMoveInRandomDirection);
+            uwpe.entity.actorData().actionAdd(actionMoveInRandomDirection);
         });
-        var activityDefnMoveTowardPlayer = new ActivityDefn("Move Toward Player", (universe, worldAsWorld, placeAsPlace, entityActorAsEntity) => // perform
+        var activityDefnMoveTowardPlayer = new ActivityDefn("Move Toward Player", (uwpe) => // perform
          {
-            var world = worldAsWorld;
-            var place = placeAsPlace;
-            var entityActor = entityActorAsEntity;
+            var world = uwpe.world;
+            var place = uwpe.place;
+            var entityActor = uwpe.entity;
             var actorData = entityActor.actorData();
             var activity = actorData.activity();
-            var isInitialized = activity.targetByName("IsInitialized");
+            var isInitialized = activity.targetEntityByName("IsInitialized");
             if (isInitialized == null) {
-                activity.targetSetByName("IsInitialized", true);
-                var entityActor = entityActorAsEntity;
+                activity.targetEntitySetByName("IsInitialized", EntityPropertyFromValue.entityFromValue(true));
+                var entityActor = uwpe.entity;
                 entityActor.actorData().target =
                     entityActor.locatable().loc.pos.clone();
             }
@@ -83,7 +82,7 @@ class DemoData_Activities {
                     target.overwriteWith(playerPos);
                 }
                 else if (target.equals(actorPos)) {
-                    var zone = ArrayHelper.random(place.zones, universe.randomizer);
+                    var zone = ArrayHelper.random(place.zones, uwpe.universe.randomizer);
                     target.overwriteWith(zone.bounds.center).floor();
                 }
                 var path = new Route2(map, actorPos, playerPos, 256, // hack - lengthMax
@@ -99,54 +98,58 @@ class DemoData_Activities {
                 // hack
                 var actionsMoves = world.defn2.actionMovesByHeading;
                 var actionMoveInDirection = actionsMoves[headingToMove];
-                actorData.actions.push(actionMoveInDirection);
+                actorData.actionAdd(actionMoveInDirection);
             }
         });
-        var activityDefnUserInputAccept = new ActivityDefn("Accept User Input", (universe, worldAsWorld, placeAsPlace, entityActor) => {
-            var world = worldAsWorld;
-            var place = placeAsPlace;
-            var entityActorAsEntity2 = entityActor;
+        var activityDefnUserInputAccept = new ActivityDefn("Accept User Input", (uwpe) => {
+            var world = uwpe.world;
+            var place = uwpe.place;
+            var entityActorAsEntity2 = uwpe.entity;
             var actorData = entityActorAsEntity2.actorData();
             var activity = actorData.activity();
-            var isInitialized = activity.targetByName("IsInitialized");
+            var isInitialized = activity.targetEntityByName("IsInitialized");
             if (isInitialized == null) {
-                activity.targetSetByName("IsInitialized", true);
+                activity.targetEntitySetByName("IsInitialized", EntityPropertyFromValue.entityFromValue(true));
+                var inactivate = true;
                 var mappings = [
-                    new ActionToInputsMapping("Attack with Melee Weapon", ["a"], null),
-                    new ActionToInputsMapping("Close Door", ["c"], null),
-                    new ActionToInputsMapping("Open Door", ["d"], null),
-                    new ActionToInputsMapping("Fire Projectile", ["f"], null),
-                    new ActionToInputsMapping("Pick Up Item", ["g"], null),
-                    new ActionToInputsMapping("Drop Selected Item", ["r"], null),
-                    new ActionToInputsMapping("Search", ["s"], null),
-                    new ActionToInputsMapping("Talk", ["t"], null),
-                    new ActionToInputsMapping("Use Emplacement", ["u"], null),
-                    new ActionToInputsMapping("Use Selected Item", ["y"], null),
-                    new ActionToInputsMapping("Move Southwest", ["_1"], null),
-                    new ActionToInputsMapping("Move South", ["_2"], null),
-                    new ActionToInputsMapping("Move Southeast", ["_3"], null),
-                    new ActionToInputsMapping("Move West", ["_4"], null),
-                    new ActionToInputsMapping("Move East", ["_6"], null),
-                    new ActionToInputsMapping("Move Northwest", ["_7"], null),
-                    new ActionToInputsMapping("Move North", ["_8"], null),
-                    new ActionToInputsMapping("Move Northeast", ["_9"], null),
+                    new ActionToInputsMapping("Attack with Melee Weapon", ["Enter"], inactivate),
+                    new ActionToInputsMapping("Close Door", ["l"], inactivate),
+                    new ActionToInputsMapping("Open Door", ["o"], inactivate),
+                    new ActionToInputsMapping("Fire Projectile", ["'"], inactivate),
+                    new ActionToInputsMapping("Pick Up Item", ["g"], inactivate),
+                    new ActionToInputsMapping("Drop Selected Item", ["r"], inactivate),
+                    new ActionToInputsMapping("Search", ["h"], inactivate),
+                    new ActionToInputsMapping("Talk", ["t"], inactivate),
+                    new ActionToInputsMapping("Use Emplacement", ["u"], inactivate),
+                    new ActionToInputsMapping("Use Selected Item", ["y"], inactivate),
+                    new ActionToInputsMapping("Move Southwest", ["z", "1"], false),
+                    new ActionToInputsMapping("Move South", ["x", "2"], false),
+                    new ActionToInputsMapping("Move Southeast", ["c", "3"], false),
+                    new ActionToInputsMapping("Move West", ["a", "4"], false),
+                    new ActionToInputsMapping("Move East", ["d", "6"], false),
+                    new ActionToInputsMapping("Move Northwest", ["q", "7"], false),
+                    new ActionToInputsMapping("Move North", ["w", "8"], false),
+                    new ActionToInputsMapping("Move Northeast", ["e", "9"], false),
                     //new ActionToInputsMapping("ShowEquipment", [ "`" ], null),
                     //new ActionToInputsMapping("ShowItems", [ "Tab" ], null),
-                    new ActionToInputsMapping("Select Next Item", ["]"], null),
-                    new ActionToInputsMapping("Select Previous Item", ["["], null),
-                    new ActionToInputsMapping("Wait", ["."], null),
-                    new ActionToInputsMapping("ShowMenuPlayer", ["Escape"], null),
+                    new ActionToInputsMapping("Select Next Item", ["]"], inactivate),
+                    new ActionToInputsMapping("Select Previous Item", ["["], inactivate),
+                    new ActionToInputsMapping("Wait", ["."], inactivate),
+                    new ActionToInputsMapping("ShowMenuPlayer", ["Escape"], inactivate),
                 ];
-                var mappingsByInputName = ArrayHelper.addLookups(mappings, (element) => element.inputNames[0]);
-                activity.targetSet(mappingsByInputName);
+                var mappingsByInputName = ArrayHelper.addLookupsMultiple(mappings, (element) => element.inputNames);
+                var propertyAsEntity = EntityPropertyFromValue.entityFromValue(mappingsByInputName);
+                activity.targetEntitySet(propertyAsEntity);
             }
             var awaitables = place.awaitables();
             if (awaitables.length > 0) {
                 return;
             }
+            var universe = uwpe.universe;
             var inputHelper = universe.inputHelper;
             var activity = actorData.activity();
-            var inputToActionMappings = activity.target();
+            var propertyMappings = activity.targetEntity().properties[0];
+            var inputToActionMappings = propertyMappings.value;
             var inputsActive = inputHelper.inputsPressed;
             var actionsFromActor = actorData.actions;
             for (var i = 0; i < inputsActive.length; i++) {
@@ -168,10 +171,10 @@ class DemoData_Activities {
                 }
             }
         });
-        var activityDefnUserInputDemo = new ActivityDefn("Demo User Input", (universe, worldAsWorld, placeAsPlace, entityActorAsEntity) => {
-            var world = worldAsWorld;
-            var actor = entityActorAsEntity;
-            var place = placeAsPlace;
+        var activityDefnUserInputDemo = new ActivityDefn("Demo User Input", (uwpe) => {
+            var world = uwpe.world;
+            var actor = uwpe.entity;
+            var place = uwpe.place;
             var actorMover = actor.mover();
             if (actorMover.movesThisTurn <= actorMover.movesPerTurn) {
                 return;
@@ -238,7 +241,7 @@ class DemoData_Activities {
                 actionNext = actionMoveInDirection;
             }
             if (actionNext != null) {
-                actor.actorData().actions.push(actionNext);
+                actor.actorData().actionAdd(actionNext);
             }
         });
         var returnValues = [

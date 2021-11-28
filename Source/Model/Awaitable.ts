@@ -1,5 +1,5 @@
 
-class Awaitable implements EntityProperty
+class Awaitable implements EntityProperty<Awaitable>
 {
 	isDone: boolean;
 
@@ -12,9 +12,12 @@ class Awaitable implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Awaitable) { return this; }
 
+	// Equatable.
+	equals(other: Awaitable) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

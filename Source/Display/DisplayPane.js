@@ -68,11 +68,14 @@ class DisplayPane {
     drawCircle(pos, radius, colorFill, colorBorder, borderThickness) {
         this.displayToUse().drawCircle(pos, radius, colorFill, colorBorder, borderThickness);
     }
-    drawRectangle(pos, size, colorFill, colorBorder, areColorsReversed) {
-        this.displayToUse().drawRectangle(pos, size, colorFill, colorBorder, areColorsReversed);
+    drawRectangle(pos, size, colorFill, colorBorder) {
+        this.displayToUse().drawRectangle(pos, size, colorFill, colorBorder);
     }
-    drawText(text, fontHeightInPixels, pos, colorFill, colorOutline, areColorsReversed, isCentered, widthMaxInPixels) {
-        this.displayToUse().drawText(text, fontHeightInPixels, pos, colorFill, colorOutline, areColorsReversed, isCentered, widthMaxInPixels);
+    drawRectangleWithRoundedCorners(pos, size, colorFill, colorBorder, cornerRadius) {
+        this.displayToUse().drawRectangleWithRoundedCorners(pos, size, colorFill, colorBorder, cornerRadius);
+    }
+    drawText(text, fontHeightInPixels, pos, colorFill, colorOutline, isCentered, widthMaxInPixels) {
+        this.displayToUse().drawText(text, fontHeightInPixels, pos, colorFill, colorOutline, isCentered, widthMaxInPixels);
     }
     scaleFactor() {
         return this.displayToUse().scaleFactor();
@@ -83,7 +86,7 @@ class DisplayPane {
     // DisplayPane implementation defaults.
     drawArc(center, radiusInner, radiusOuter, angleStartInTurns, angleStopInTurns, colorFill, colorBorder) { }
     drawCircleWithGradient(center, radius, gradientFill, colorBorder) { }
-    drawCrosshairs(center, radius, color) { }
+    drawCrosshairs(center, numberOfLines, radiusOuter, radiusInner, color, lineThickness) { }
     drawEllipse(center, semimajorAxis, semiminorAxis, rotationInTurns, colorFill, colorBorder) { }
     drawImagePartialScaled(imageToDraw, pos, regionToDrawAsBox, sizeToDraw) { }
     drawLine(fromPos, toPos, color, lineThickness) { }

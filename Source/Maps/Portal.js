@@ -7,15 +7,16 @@ class Portal2 {
     static create() {
         return new Portal2(null, null);
     }
-    use(universe, world, place, entityActorAsEntity, entityPortalAsEntity) {
-        var entityActor = entityActorAsEntity;
-        var entityPortal = entityPortalAsEntity;
+    use(uwpe) {
+        var world = uwpe.world;
+        var entityActor = uwpe.entity;
+        var entityPortal = uwpe.entity2;
         var portal = entityPortal.portal2();
         var destinationPlaceName = portal.destinationPlaceName;
         var destinationEntityName = portal.destinationEntityName;
         var destinationPlace = world.placesByName.get(destinationPlaceName);
         if (destinationPlace != null) {
-            destinationPlace.updateForTimerTick(universe, world);
+            destinationPlace.updateForTimerTick(uwpe.clone().placeSet(destinationPlace));
             var entitiesByName = destinationPlace.entitiesByName;
             var destinationEntity = entitiesByName.get(destinationEntityName);
             if (destinationEntity != null) {
@@ -31,8 +32,10 @@ class Portal2 {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

@@ -5,12 +5,15 @@ class Searchable {
         this.isHidden = isHidden || false;
         this.discover = discover;
     }
+    // Clonable.
     clone() {
         return new Searchable(this.chanceOfDiscoveryPerSearch, this.isHidden, this.discover);
     }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

@@ -11,8 +11,8 @@ class DemoData_Movers {
         var entityDefnsCorpsesByName = new Map();
         //var sizeInPixels = visuals.get("Floor").size;
         this.buildEntityDefnGroups_MoversAndCorpses_Player(visualGetByName, activityDefnsByName, itemCategories, entityDefnsMovers);
-        var rot = (universe, world, place, entityTurnableAsEntity) => {
-            var entityTurnable = entityTurnableAsEntity;
+        var rot = (uwpe) => {
+            var entityTurnable = uwpe.entity;
             var turnable = entityTurnable.turnable();
             if (turnable.turnsToLive == null) {
                 turnable.turnsToLive = 30;
@@ -20,7 +20,7 @@ class DemoData_Movers {
             else {
                 turnable.turnsToLive--;
                 if (turnable.turnsToLive <= 0) {
-                    place.entitiesToRemove.push(entityTurnable);
+                    uwpe.place.entityToRemoveAdd(entityTurnable);
                 }
             }
         };
@@ -30,7 +30,7 @@ class DemoData_Movers {
         0 // reachRadius
         );
         var agentDatas = DemoData_Movers.buildAgentDatas();
-        var useCorpse = (universe, world, place, entityItem, user) => {
+        var useCorpse = (uwpe) => {
             return "todo";
         };
         for (var i = 0; i < agentDatas.length; i++) {
@@ -147,9 +147,15 @@ class DemoData_Movers {
         ], 100, // weightMax
         0 // reachRange
         );
-        var toControl = (u, size, e, isMenu) => {
-            var toControlMethod = (isMenu ? Playable.toControlMenu : e.player().toControlOverlay);
-            var returnValue = toControlMethod(u, size, e, u.venueCurrent);
+        var toControl = (uwpe) => {
+            var u = uwpe.universe;
+            var entityForPlayer = uwpe.entity;
+            var isMenu = entityForPlayer.actorData().actions.some(x => x.name == "ShowMenuPlayer");
+            var toControlMethod = (isMenu
+                ? Playable.toControlMenu
+                : entityForPlayer.player().toControlOverlay);
+            var size = u.display.sizeInPixels; // hack
+            var returnValue = toControlMethod(u, size, entityForPlayer, u.venueCurrent);
             return returnValue;
         };
         var controllable = new Controllable(toControl);
@@ -174,7 +180,7 @@ class DemoData_Movers {
             new Starvable2(1000)
         ]);
         returnValues.push(entityDefnPlayer);
-        returnValues[entityName] = entityDefnPlayer;
+        // returnValues[entityName] = (entityDefnPlayer as any);
     }
     static buildAgentDatas() {
         // resistances and effects
@@ -729,15 +735,17 @@ class AgentData {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) {
-        var equipmentUser = e.equipmentUser();
+    finalize(uwpe) { }
+    initialize(uwpe) {
+        var equipmentUser = uwpe.entity.equipmentUser();
         if (equipmentUser != null) {
-            equipmentUser.equipAll(u, w, p, e);
+            equipmentUser.equipAll(uwpe);
         }
     }
-    updateForTimerTick(u, w, p, e) { }
+    updateForTimerTick(uwpe) { }
 }
 class AttackDefn {
     constructor(name, damagePossibleAsDiceRoll) {

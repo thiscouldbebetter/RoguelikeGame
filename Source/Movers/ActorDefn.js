@@ -3,26 +3,26 @@ class ActorDefn {
     constructor(activityDefnNameInitial) {
         this.activityDefnNameInitial = activityDefnNameInitial;
     }
-    initialize(universe, world, place, entityAsEntity) {
-        var entity = entityAsEntity;
+    initialize(uwpe) {
+        var entity = uwpe.entity;
         var actorData = new ActorData();
-        entity.propertyAddForPlace(actorData, place);
+        entity.propertyAddForPlace(actorData, uwpe.place);
         actorData.actions = [];
         var activity = Activity.fromDefnName(entity.actorDefn().activityDefnNameInitial);
-        actorData.activitySet(universe, world, place, entity, activity);
+        actorData.activitySet(uwpe, activity);
     }
-    updateForTimerTick(universe, world, place, entityAsEntity) {
-        var entity = entityAsEntity;
+    updateForTimerTick(uwpe) {
+        var entity = uwpe.entity;
         if (entity.killable() == null || entity.killable().isAlive()) {
             var actorData = entity.actorData();
-            actorData.activity().perform(universe, world, place, entity);
+            actorData.activity().perform(uwpe);
             var entityActions = actorData.actions;
             for (var a = 0; a < entityActions.length; a++) {
                 var action = entityActions[a];
-                action.perform(universe, world, place, entity);
+                action.perform(uwpe);
             }
             if (entityActions.length > 0) {
-                place.hasBeenUpdatedSinceDrawn = true;
+                uwpe.place.hasBeenUpdatedSinceDrawn = true;
             }
             entityActions.length = 0;
         }
@@ -30,6 +30,8 @@ class ActorDefn {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
+    finalize(uwpe) { }
 }

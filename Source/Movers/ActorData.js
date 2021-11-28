@@ -4,11 +4,13 @@ class ActorData {
     actionAdd(action) {
         this.actions.push(action);
     }
-    activitySet(universe, world, place, actor, value) {
+    activitySet(uwpe, value) {
         this._activity = value;
         //this._activity.initialize(universe, world, place, actor);
     }
-    entityBeingFaced(u, w, place, actor) {
+    entityBeingFaced(uwpe) {
+        var place = uwpe.place;
+        var actor = uwpe.entity;
         var returnValue = null;
         var actorLoc = actor.locatable().loc;
         var directionFacing = actorLoc.orientation.forward.clone().directions();
@@ -30,8 +32,10 @@ class ActorData {
     overwriteWith(other) {
         return this; // todo
     }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

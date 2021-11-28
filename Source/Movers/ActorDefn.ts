@@ -1,5 +1,5 @@
 
-class ActorDefn implements EntityProperty
+class ActorDefn implements EntityProperty<ActorDefn>
 {
 	activityDefnNameInitial: string;
 
@@ -8,12 +8,12 @@ class ActorDefn implements EntityProperty
 		this.activityDefnNameInitial = activityDefnNameInitial;
 	}
 
-	initialize(universe: Universe, world: World, place: Place, entityAsEntity: Entity)
+	initialize(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var entity = entityAsEntity as Entity2;
+		var entity = uwpe.entity as Entity2;
 
 		var actorData = new ActorData();
-		entity.propertyAddForPlace(actorData, place);
+		entity.propertyAddForPlace(actorData, uwpe.place);
 
 		actorData.actions = [];
 
@@ -22,28 +22,29 @@ class ActorDefn implements EntityProperty
 			entity.actorDefn().activityDefnNameInitial,
 		);
 
-		actorData.activitySet(universe, world, place, entity, activity);
+		actorData.activitySet(uwpe, activity);
 	}
 
-	updateForTimerTick(universe: Universe, world: World, place: Place, entityAsEntity: Entity)
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var entity = entityAsEntity as Entity2;
+		var entity = uwpe.entity as Entity2;
+
 		if (entity.killable() == null || entity.killable().isAlive())
 		{
 			var actorData = entity.actorData();
-			actorData.activity().perform(universe, world, place, entity);
+			actorData.activity().perform(uwpe);
 
 			var entityActions = actorData.actions;
 
 			for (var a = 0; a < entityActions.length; a++)
 			{
 				var action = entityActions[a];
-				action.perform(universe, world, place, entity);
+				action.perform(uwpe);
 			}
 
 			if (entityActions.length > 0)
 			{
-				(place as PlaceLevel).hasBeenUpdatedSinceDrawn = true;
+				(uwpe.place as PlaceLevel).hasBeenUpdatedSinceDrawn = true;
 			}
 
 			entityActions.length = 0;
@@ -54,6 +55,9 @@ class ActorDefn implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Generatable) { return this; }
 
+	// Equatable.
+	equals(other: ActorDefn) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
 }

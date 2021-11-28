@@ -1,5 +1,5 @@
 
-class Searchable implements EntityProperty
+class Searchable implements EntityProperty<Searchable>
 {
 	chanceOfDiscoveryPerSearch: number;
 	isHidden: boolean;
@@ -12,6 +12,8 @@ class Searchable implements EntityProperty
 		this.discover = discover;
 	}
 
+	// Clonable.
+
 	clone()
 	{
 		return new Searchable
@@ -22,8 +24,11 @@ class Searchable implements EntityProperty
 
 	overwriteWith(other: Searchable) { return this; }
 
+	// Equatable.
+	equals(other: Searchable) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 }

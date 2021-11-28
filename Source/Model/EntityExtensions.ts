@@ -1,12 +1,15 @@
 
 class Entity2 extends Entity
 {
-	constructor(name: string, properties: EntityProperty[])
+	constructor(name: string, properties: EntityPropertyBase[])
 	{
 		super(name, properties);
 	}
 
-	static fromNameDefnAndProperties(name: string, defn: Entity2, properties: EntityProperty[])
+	static fromNameDefnAndProperties
+	(
+		name: string, defn: Entity2, properties: EntityPropertyBase[]
+	): Entity2
 	{
 		var returnValue = defn.cloneAsEntity2();
 		returnValue.name = name;
@@ -21,7 +24,7 @@ class Entity2 extends Entity
 		return returnValue;
 	}
 
-	cloneAsEntity2()
+	cloneAsEntity2(): Entity2
 	{
 		var nameCloned = this.name; // + IDHelper.Instance().idNext();
 		var propertiesCloned = [];
@@ -29,7 +32,12 @@ class Entity2 extends Entity
 		{
 			var property = this.properties[i];
 			var propertyAsAny = property as any;
-			var propertyCloned = (propertyAsAny.clone == null ? propertyAsAny : propertyAsAny.clone()) as EntityProperty;
+			var propertyCloned =
+			(
+				propertyAsAny.clone == null
+				? propertyAsAny
+				: propertyAsAny.clone()
+			) as EntityPropertyBase;
 			propertiesCloned.push(propertyCloned);
 		}
 		var returnValue = new Entity2
@@ -39,7 +47,7 @@ class Entity2 extends Entity
 		return returnValue;
 	}
 
-	collidable()
+	collidable(): Collidable
 	{
 		if (this._collidable == null)
 		{

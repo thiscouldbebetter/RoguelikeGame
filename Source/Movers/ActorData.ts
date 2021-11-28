@@ -1,5 +1,5 @@
 
-class ActorData implements EntityProperty
+class ActorData implements EntityProperty<ActorData>
 {
 	_activity: Activity;
 	actions: Action[];
@@ -14,16 +14,18 @@ class ActorData implements EntityProperty
 
 	activitySet
 	(
-		universe: Universe, world: World, place: Place, actor: Entity,
-		value: Activity
+		uwpe: UniverseWorldPlaceEntities, value: Activity
 	): void
 	{
 		this._activity = value;
 		//this._activity.initialize(universe, world, place, actor);
 	}
 
-	entityBeingFaced(u: Universe, w: World, place: Place, actor: Entity): Entity2
+	entityBeingFaced(uwpe: UniverseWorldPlaceEntities): Entity2
 	{
+		var place = uwpe.place;
+		var actor = uwpe.entity;
+
 		var returnValue = null;
 
 		var actorLoc = actor.locatable().loc;
@@ -60,9 +62,12 @@ class ActorData implements EntityProperty
 		return this; // todo
 	}
 
+	// Equatable.
+	equals(other: ActorData) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

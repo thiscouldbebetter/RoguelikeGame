@@ -112,7 +112,7 @@ class SightHelper
 		for (var i = 0; i < entitiesActual.length; i++)
 		{
 			var entityActual = entitiesActual[i];
-			var entityPerceivedProperties = new Array<EntityProperty>();
+			var entityPerceivedProperties = new Array<EntityPropertyBase>();
 			entityPerceivedProperties.push
 			(
 				entityActual.drawable().clone(),

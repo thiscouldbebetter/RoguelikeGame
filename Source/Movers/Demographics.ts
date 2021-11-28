@@ -1,5 +1,5 @@
 
-class Demographics implements EntityProperty
+class Demographics implements EntityProperty<Demographics>
 {
 	speciesName: any;
 	roleName: string;
@@ -70,8 +70,11 @@ class Demographics implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Generatable) { return this; }
 
+	// Equatable.
+	equals(other: Demographics) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 }

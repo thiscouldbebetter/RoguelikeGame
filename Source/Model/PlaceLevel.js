@@ -57,7 +57,8 @@ class PlaceLevel extends Place {
         }
         return returnEntities;
     }
-    entitySpawn(universe, world, entityToSpawn) {
+    entitySpawn(uwpe) {
+        var entityToSpawn = uwpe.entity;
         this.entities.push(entityToSpawn);
         this.entitiesByName.set(entityToSpawn.name, entityToSpawn);
         var entityDefn = entityToSpawn;
@@ -76,18 +77,20 @@ class PlaceLevel extends Place {
                     }
                 }
                 else {
-                    entityDefnProperty.initialize(universe, world, this, entityToSpawn);
+                    entityDefnProperty.initialize(uwpe);
                 }
             }
         }
     }
-    initialize(universe, world) {
+    initialize(uwpe) {
+        uwpe.place = this;
         this.hasBeenUpdatedSinceDrawn = true;
         // Initialization of entities is handled in entitySpawn().
-        this.update_EntitiesToSpawn(universe, world);
+        this.update_EntitiesToSpawn(uwpe);
     }
-    updateForTimerTick(universe, world) {
-        this.update_EntitiesToSpawn(universe, world);
+    updateForTimerTick(uwpe) {
+        uwpe.place = this;
+        this.update_EntitiesToSpawn(uwpe);
         var propertyNamesKnown = this.defn2.propertyNamesToProcess;
         for (var i = 0; i < propertyNamesKnown.length; i++) {
             var propertyName = propertyNamesKnown[i];
@@ -97,16 +100,17 @@ class PlaceLevel extends Place {
                 var entity = entitiesWithProperty[b];
                 var entityDefn = entity;
                 var entityDefnProperty = entityDefn.propertyByName(propertyName);
+                uwpe.entity = entity;
                 if (entityDefnProperty.updateForTimerTick != null) {
-                    entityDefnProperty.updateForTimerTick(universe, world, this, entity);
+                    entityDefnProperty.updateForTimerTick(uwpe);
                 }
             }
         }
-        this.update_Mappables(universe, world);
-        this.update_EntitiesToRemove(universe, world);
-        this.draw(universe, world);
+        this.update_Mappables(uwpe);
+        this.update_EntitiesToRemove(uwpe);
+        this.draw(uwpe.universe, uwpe.world, uwpe.universe.display);
     }
-    update_EntitiesToRemove(universe, world) {
+    update_EntitiesToRemove(uwpe) {
         for (var i = 0; i < this.entitiesToRemove.length; i++) {
             var entityToRemove = this.entitiesToRemove[i];
             // hack
@@ -130,18 +134,20 @@ class PlaceLevel extends Place {
         }
         this.entitiesToRemove.length = 0;
     }
-    update_EntitiesToSpawn(universe, world) {
+    update_EntitiesToSpawn(uwpe) {
         for (var i = 0; i < this.entitiesToSpawn.length; i++) {
             var entityToSpawn = this.entitiesToSpawn[i];
-            this.entitySpawn(universe, world, entityToSpawn);
+            uwpe.entity = entityToSpawn;
+            this.entitySpawn(uwpe);
         }
         this.entitiesToSpawn.length = 0;
     }
-    update_Mappables(universe, world) {
+    update_Mappables(uwpe) {
         var emplacements = this.emplacements();
         var enemies = this.enemies();
         var players = this.players();
         var projectiles = this.projectiles();
+        var universe = uwpe.universe;
         var collisionHelper = universe.collisionHelper;
         var collisionSets = [
             collisionHelper.collisionsOfEntitiesCollidableInSets(players, emplacements),
@@ -188,23 +194,24 @@ class PlaceLevel extends Place {
         return this.control;
     }
     // drawable
-    draw(universe, world) {
+    draw(universe, world, display) {
         if (this.hasBeenUpdatedSinceDrawn) {
             this.hasBeenUpdatedSinceDrawn = false;
             var player = world.entityForPlayer;
             var placeKnown = player.player().placeKnownLookup.get(this.name);
             if (placeKnown != null) {
-                placeKnown.drawAsKnown(universe, world);
+                placeKnown.drawAsKnown(universe, world, display);
             }
         }
     }
-    drawAsKnown(universe, worldAsWorld) {
-        var display = universe.display;
+    drawAsKnown(universe, worldAsWorld, displayAsDisplay) {
         var world = worldAsWorld;
+        var display = displayAsDisplay;
         display.childSelectByName(null);
         display.childSelectByName("Map");
         display.drawBackground(Color.byName("Black"), Color.byName("Black"));
-        this.map.draw(universe, world, this, display);
+        var uwpe = new UniverseWorldPlaceEntities(universe, world, this, null, null);
+        this.map.draw(uwpe.placeSet(this), display);
         display.childSelectByName("Status");
         display.clear();
         var venueAsControl = this.toControl(universe, world);
@@ -218,7 +225,7 @@ class PlaceLevel extends Place {
         messageLogAsControl.draw(universe, display, this._drawLoc, null);
         display.flush();
         display.childSelectByName(null);
-        display.drawRectangle(Coords.Instances().Zeroes, display.displayToUse().sizeInPixels, null, Color.byName("Gray"), null);
+        display.drawRectangle(Coords.Instances().Zeroes, display.displayToUse().sizeInPixels, null, Color.byName("Gray"));
     }
     // entities
     awaitables() { return this.entitiesByPropertyName(Awaitable.name); }

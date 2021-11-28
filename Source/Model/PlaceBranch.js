@@ -28,8 +28,7 @@ class PlaceBranch {
         return returnValues;
     }
     buildPlaces_1_Generate(worldDefn, randomizer, depthFirst) {
-        var placeDefnsByName = worldDefn.placeDefn2sByName;
-        var placeDefn = placeDefnsByName.get(this.placeDefnName);
+        var placeDefn = worldDefn.placeDefnByName(this.placeDefnName);
         var numberOfVenuesInBranch = Math.floor(this.depthRangeInVenues.random(randomizer));
         var demoDataPlaces = new DemoData_Main(randomizer).demoDataPlaces;
         for (var i = 0; i < numberOfVenuesInBranch; i++) {

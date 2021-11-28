@@ -6,16 +6,17 @@ class MoverGenerator {
         this.zones = zones;
         this.turnLastMoved = null;
     }
-    activityPerform(universe, worldAsWorld, placeAsPlace, actor) {
-        var world = worldAsWorld;
-        var place = placeAsPlace;
+    activityPerform(uwpe) {
+        var universe = uwpe.universe;
+        var world = uwpe.world;
+        var place = uwpe.place;
         var randomizer = universe.randomizer;
         if (this.turnLastMoved == null) {
             for (var i = 0; i < this.zones.length; i++) {
                 var zone = this.zones[i];
                 var randomNumber = randomizer.getNextRandom();
                 if (randomNumber < this.chanceOfSpawnPerZoneInitial) {
-                    this.moverSpawn(universe, world, place, zone);
+                    this.moverSpawn(uwpe, zone);
                 }
             }
             this.turnLastMoved = world.turnsSoFar;
@@ -28,13 +29,15 @@ class MoverGenerator {
                 var randomNumber = randomizer.getNextRandom();
                 if (randomNumber <= this.chanceOfSpawnPerTurn) {
                     var zoneToSpawnInto = ArrayHelper.random(this.zones, randomizer);
-                    this.moverSpawn(universe, world, place, zoneToSpawnInto);
+                    this.moverSpawn(uwpe, zoneToSpawnInto);
                 }
             }
         }
     }
-    moverSpawn(universe, worldAsWorld, place, zoneToSpawnInto) {
-        var world = worldAsWorld;
+    moverSpawn(uwpe, zoneToSpawnInto) {
+        var universe = uwpe.universe;
+        var world = uwpe.world;
+        var place = uwpe.place;
         var randomizer = universe.randomizer;
         var playerRank = world.entityForPlayer.demographics().rank;
         var difficultyMin = 1; // todo
@@ -77,8 +80,10 @@ class MoverGenerator {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

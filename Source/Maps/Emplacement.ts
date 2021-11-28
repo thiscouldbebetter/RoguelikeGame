@@ -1,15 +1,15 @@
 
-class Emplacement implements EntityProperty
+class Emplacement implements EntityProperty<Emplacement>
 {
 	appearance: string;
-	_collide: (u: Universe, w: World, p: Place, eColliding: Entity, eCollidedWith: Entity) => void
-	_use: (u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity) => void;
+	_collide: (uwpe: UniverseWorldPlaceEntities) => void;
+	_use: (uwpe: UniverseWorldPlaceEntities) => void;
 
 	constructor
 	(
 		appearance: string,
-		collide: (u: Universe, w: World, p: Place, eColliding: Entity, eCollidedWith: Entity) => void,
-		use: (u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity) => void
+		collide: (uwpe: UniverseWorldPlaceEntities) => void,
+		use: (uwpe: UniverseWorldPlaceEntities) => void
 	)
 	{
 		this.appearance = appearance;
@@ -25,7 +25,7 @@ class Emplacement implements EntityProperty
 	static fromAppearanceAndCollide
 	(
 		appearance: string,
-		collide: (u: Universe, w: World, p: Place, eColliding: Entity, eCollidedWith: Entity) => void
+		collide: (uwpe: UniverseWorldPlaceEntities) => void
 	): Emplacement
 	{
 		return new Emplacement(appearance, collide, null);
@@ -34,37 +34,29 @@ class Emplacement implements EntityProperty
 	static fromAppearanceAndUse
 	(
 		appearance: string,
-		use: (u: Universe, w: World, p: Place, eUsing: Entity, eUsed: Entity) => void
+		use: (uwpe: UniverseWorldPlaceEntities) => void
 	): Emplacement
 	{
 		return new Emplacement(appearance, null, use);
 	}
 
-	collide
-	(
-		universe: Universe, world: World, place: Place,
-		entityColliding: Entity, entityCollidedWith: Entity
-	): void
+	collide(uwpe: UniverseWorldPlaceEntities): void
 	{
 		if (this._collide != null)
 		{
-			this._collide(universe, world, place, entityColliding, entityCollidedWith);
+			this._collide(uwpe);
 		}
 	}
 
-	use
-	(
-		universe: Universe, world: World, place: Place,
-		entityUsing: Entity, entityUsed: Entity
-	): void
+	use(uwpe: UniverseWorldPlaceEntities): void
 	{
 		if (this._use == null)
 		{
-			(entityUsing as Entity2).player().messageLog.messageAdd("Nothing happens.");
+			(uwpe.entity as Entity2).player().messageLog.messageAdd("Nothing happens.");
 		}
 		else
 		{
-			this._use(universe, world, place, entityUsing, entityUsed);
+			this._use(uwpe);
 		}
 	}
 
@@ -72,9 +64,12 @@ class Emplacement implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Emplacement) { return this; }
 
+	// Equatable.
+	equals(other: Emplacement) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

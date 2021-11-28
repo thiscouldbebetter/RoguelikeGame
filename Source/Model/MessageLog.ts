@@ -27,34 +27,43 @@ class MessageLog
 
 	// controls
 
-	controlUpdate(world: World)
+	controlUpdate(world: World): ControlBase
 	{
 		if (this.control == null)
 		{
-			var controlForMessages = ControlList.fromPosSizeAndItems
+			var controlForMessages = ControlList.fromPosSizeItemsAndBindingForItemText
 			(
-				new Coords(10, 15, 0), // pos
-				new Coords(160, 260, 0), // size
-				DataBinding.fromContext(this.messages)
+				Coords.fromXY(10, 15), // pos
+				Coords.fromXY(160, 260), // size
+				DataBinding.fromContextAndGet
+				(
+					this,
+					(c: MessageLog) => c.messages
+				), // items
+				DataBinding.fromGet
+				(
+					(c: string) => c
+				) // bindingForItemText
 			);
 			controlForMessages.name = "listMessages";
 
 			this.control = new ControlContainer
 			(
 				"containerMessageLog",
-				new Coords(10, 10, 0),
-				new Coords(180, 280, 0), // size
+				Coords.fromXY(10, 10),
+				Coords.fromXY(180, 280), // size
 				[
 					ControlLabel.fromPosAndText
 					(
-						new Coords(10, 5, 0),
-						"Message Log:"
+						Coords.fromXY(10, 5),
+						DataBinding.fromContext("Message Log:")
 					),
 					controlForMessages
 				],
 				null, null
 			);
 		}
+
 
 		return this.control;
 	}

@@ -4,6 +4,7 @@ class Openable {
         this.isOpen = isOpen;
         this.isLocked = isLocked;
     }
+    // Clonable.
     clone() {
         return new Openable(this.isOpen, this.isLocked);
     }
@@ -12,8 +13,10 @@ class Openable {
         this.isLocked = other.isLocked;
         return this;
     }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

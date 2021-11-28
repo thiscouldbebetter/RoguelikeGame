@@ -1,5 +1,5 @@
 
-class Namable2 implements EntityProperty
+class Namable2 implements EntityProperty<Namable2>
 {
 	name: string;
 	appearance: string;
@@ -14,9 +14,12 @@ class Namable2 implements EntityProperty
 	clone() { return this; }
 	overwriteWith(other: Namable2) { return this; }
 
+	// Equatable.
+	equals(other: Namable2) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

@@ -56,11 +56,15 @@ class PlaceBranch
 		return returnValues;
 	}
 
-	buildPlaces_1_Generate(worldDefn: WorldDefn2, randomizer: Randomizer, depthFirst: number)
+	buildPlaces_1_Generate
+	(
+		worldDefn: WorldDefn2,
+		randomizer: Randomizer,
+		depthFirst: number
+	)
 	{
-		var placeDefnsByName = worldDefn.placeDefn2sByName;
-
-		var placeDefn = placeDefnsByName.get(this.placeDefnName);
+		var placeDefn =
+			worldDefn.placeDefnByName(this.placeDefnName) as PlaceDefnLevel;
 
 		var numberOfVenuesInBranch =
 			Math.floor(this.depthRangeInVenues.random(randomizer));

@@ -5,13 +5,13 @@ class Effect2 {
         this.update = update;
         this.finish = finish;
     }
-    updateForCycle(universe, world, place, entityEffectable) {
+    updateForCycle(uwpe) {
         // A "cycle" could be either a tick or a turn.
         if (this.cyclesSoFar == null) {
             this.cyclesSoFar = 0;
             this.isDone = false;
             if (this.start != null) {
-                this.start(universe, world, place, entityEffectable);
+                this.start(uwpe);
             }
         }
         if (this.durationInCycles == null) {
@@ -20,12 +20,12 @@ class Effect2 {
         }
         else {
             if (this.update != null) {
-                this.update(universe, world, place, entityEffectable);
+                this.update(uwpe);
             }
             if (this.cyclesSoFar >= this.durationInCycles) {
                 this.isDone = true;
                 if (this.finish != null) {
-                    this.finish(universe, world, place, entityEffectable);
+                    this.finish(uwpe);
                 }
             }
             this.cyclesSoFar++;

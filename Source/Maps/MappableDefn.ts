@@ -1,17 +1,21 @@
 
-class MappableDefn implements EntityProperty
+class MappableDefn implements EntityProperty<MappableDefn>
 {
 	blocksMovement: (e:Entity2)=>boolean;
 	blocksVision: (e:Entity2)=>boolean;
 
-	constructor(blocksMovement: (e:Entity2)=>boolean, blocksVision: (e:Entity2)=>boolean)
+	constructor
+	(
+		blocksMovement: (e:Entity2) => boolean,
+		blocksVision: (e:Entity2) => boolean
+	)
 	{
 		this.blocksMovement = blocksMovement;
 		this.blocksVision = blocksVision;
 	}
 
 	static _instances: MappableDefn_Instances;
-	static Instances()
+	static Instances(): MappableDefn_Instances
 	{
 		if (MappableDefn._instances == null)
 		{
@@ -24,11 +28,11 @@ class MappableDefn implements EntityProperty
 
 	initialize
 	(
-		universe: Universe, world: World, placeAsPlace: Place, entityAsEntity: Entity
+		uwpe: UniverseWorldPlaceEntities
 	)
 	{
-		var place = placeAsPlace as PlaceLevel;
-		var entity = entityAsEntity as Entity2;
+		var place = uwpe.place as PlaceLevel;
+		var entity = uwpe.entity as Entity2;
 
 		var mappable = new Mappable
 		(
@@ -45,7 +49,7 @@ class MappableDefn implements EntityProperty
 		//entity.collidable = entity.mappable; // hack
 	}
 
-	updateForTimerTick(universe: Universe, world: World, place: Place, entity: Entity): void
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void
 	{
 		// todo
 	}
@@ -62,8 +66,11 @@ class MappableDefn implements EntityProperty
 		return this; // todo
 	}
 
+	// Equatable.
+	equals(other: MappableDefn) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
 }
 
 class MappableDefn_Instances

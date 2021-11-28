@@ -11,9 +11,9 @@ class MappableDefn {
         return MappableDefn._instances;
     }
     // entity
-    initialize(universe, world, placeAsPlace, entityAsEntity) {
-        var place = placeAsPlace;
-        var entity = entityAsEntity;
+    initialize(uwpe) {
+        var place = uwpe.place;
+        var entity = uwpe.entity;
         var mappable = new Mappable(entity.mappableDefn());
         var map = place.map;
         var entityPosInCells = entity.locatable().loc.pos;
@@ -23,7 +23,7 @@ class MappableDefn {
         entity.propertyAddForPlace(mappable, place);
         //entity.collidable = entity.mappable; // hack
     }
-    updateForTimerTick(universe, world, place, entity) {
+    updateForTimerTick(uwpe) {
         // todo
     }
     // Cloneable.
@@ -33,8 +33,10 @@ class MappableDefn {
     overwriteWith(other) {
         return this; // todo
     }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
+    finalize(uwpe) { }
 }
 class MappableDefn_Instances {
     constructor() {

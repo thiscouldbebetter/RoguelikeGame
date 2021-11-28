@@ -4,8 +4,9 @@ class DemoData_Emplacements {
         this.parent = parent;
     }
     buildEntityDefnGroup(visualGetByName) {
-        var useEmplacementAltar = (universe, world, place, entityUsingAsEntity, entityUsed) => {
-            var entityUsing = entityUsingAsEntity;
+        var useEmplacementAltar = (uwpe) => {
+            var universe = uwpe.universe;
+            var entityUsing = uwpe.entity;
             var itemsHeld = entityUsing.itemHolder().items;
             var isItemGoalHeld = itemsHeld.some((x) => x.defnName == "Amulet of Yendor");
             var messageLog = entityUsing.player().messageLog;
@@ -14,7 +15,7 @@ class DemoData_Emplacements {
                 messageLog.messageAdd(message);
                 var message = "You are punished with death.";
                 messageLog.messageAdd(message);
-                var venueMessage = new VenueMessage(DataBinding.fromContext("You lose!"), (universe) => // acknowledge
+                var venueMessage = new VenueMessage(DataBinding.fromContext("You lose!"), () => // acknowledge
                  {
                     universe.venueNext = new VenueFader(new VenueControls(universe.controlBuilder.title(universe, null), null // ignoreInputs
                     ), null, null, null);
@@ -28,7 +29,7 @@ class DemoData_Emplacements {
                 messageLog.messageAdd(message);
                 message = "and are rewarded with eternal life.";
                 messageLog.messageAdd(message);
-                var venueMessage = new VenueMessage(DataBinding.fromContext("You win!"), (universe) => // acknowledge
+                var venueMessage = new VenueMessage(DataBinding.fromContext("You win!"), () => // acknowledge
                  {
                     universe.venueNext = new VenueFader(new VenueControls(universe.controlBuilder.title(universe, null), null // ignoreInputs
                     ), null, null, null);
@@ -38,13 +39,13 @@ class DemoData_Emplacements {
                 universe.venueNext = venueMessage;
             }
         };
-        var useEmplacementPortal = (universe, world, place, entityUsingAsEntity, entityUsedAsEntity) => {
-            var entityUsing = entityUsingAsEntity;
-            var entityUsed = entityUsedAsEntity;
+        var useEmplacementPortal = (uwpe) => {
+            var entityUsing = uwpe.entity;
+            var entityUsed = uwpe.entity2;
             var message = "You use the " + entityUsed.emplacement().appearance + ".";
             entityUsing.player().messageLog.messageAdd(message);
             var portal = entityUsed.portal2();
-            portal.use(universe, world, place, entityUsing, entityUsed);
+            portal.use(uwpe);
         };
         var mappableDefns = MappableDefn.Instances();
         var mappableOpen = mappableDefns.Open;
@@ -53,19 +54,22 @@ class DemoData_Emplacements {
         var searchableTrap = new Searchable(.25, null, null);
         var drawableFromVisualName = (visualName) => Drawable.fromVisual(visualGetByName(visualName));
         var drawableInvisibleFromVisualName = (visualName) => new Drawable(visualGetByName(visualName), false);
-        var trapProjectileCollide = (u, w, p, eColliding, eCollidedWith, itemProjectileDefnName) => {
-            var placeLevel = p;
+        var trapProjectileCollide = (uwpe, itemProjectileDefnName) => {
+            var universe = uwpe.universe;
+            var placeLevel = uwpe.place;
+            var entityColliding = uwpe.entity;
+            var entityCollidedWith = uwpe.entity2;
             var itemProjectile = new Item(itemProjectileDefnName, 1);
-            var entityProjectile = itemProjectile.toEntity(u, w, p, eColliding);
-            placeLevel.entitySpawn(u, w, entityProjectile);
+            var entityProjectile = itemProjectile.toEntity(uwpe);
+            placeLevel.entitySpawn(uwpe.clone().entitySet(entityProjectile));
             var chanceOfHitAsDiceRoll = DiceRoll.fromExpression("1d2");
-            var randomizer = u.randomizer;
+            var randomizer = universe.randomizer;
             var doesProjectileHit = (chanceOfHitAsDiceRoll.roll(randomizer) >= 2);
             var message = "";
             if (doesProjectileHit) {
-                var killable = eColliding.killable();
+                var killable = entityColliding.killable();
                 var damager = entityProjectile.damager();
-                killable.damageApply(u, w, p, eCollidedWith, eColliding, damager.damagePerHit);
+                killable.damageApply(uwpe, damager.damagePerHit);
                 if (player != null) {
                     message = "and hits";
                 }
@@ -75,7 +79,7 @@ class DemoData_Emplacements {
                     message = "but misses";
                 }
             }
-            var player = eColliding.player();
+            var player = entityCollidedWith.player();
             if (player != null) {
                 var messageLog = player.messageLog;
                 message =
@@ -105,9 +109,14 @@ class DemoData_Emplacements {
                     ],
                     ["Closed", visualGetByName("DoorClosed")],
                     ["Open", visualGetByName("DoorOpenLeft")]
-                ]), (u, w, p, entityAsEntity, display) => {
-                    var entity = entityAsEntity;
-                    return [(entity.searchable().isHidden ? "Hidden" : (entity.openable().isOpen ? "Open" : "Closed"))];
+                ]), (uwpe, display) => {
+                    var entity = uwpe.entity;
+                    var returnValue = [
+                        (entity.searchable().isHidden
+                            ? "Hidden"
+                            : (entity.openable().isOpen ? "Open" : "Closed"))
+                    ];
+                    return returnValue;
                 }), true // isVisible
                 ),
                 Emplacement.fromAppearance("door"),
@@ -184,44 +193,51 @@ class DemoData_Emplacements {
                 mappableOpen, generatable1,
                 drawableInvisibleFromVisualName("TeleporterShort"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("short-range teleporter", (u, w, p, eColliding, eCollidedWith) => {
-                    var placeLevel = p;
+                Emplacement.fromAppearanceAndCollide("short-range teleporter", (uwpe) => {
+                    var universe = uwpe.universe;
+                    var placeLevel = uwpe.place;
+                    var entityColliding = uwpe.entity;
                     var zones = placeLevel.zones;
-                    var randomizer = u.randomizer;
+                    var randomizer = universe.randomizer;
                     var zoneToTeleportTo = ArrayHelper.random(zones, randomizer);
-                    var posToTeleportTo = zoneToTeleportTo.bounds.posRandom(randomizer).floor();
-                    eColliding.locatable().loc.pos.overwriteWith(posToTeleportTo);
+                    var posToTeleportTo = zoneToTeleportTo.bounds.pointRandom(randomizer).floor();
+                    entityColliding.locatable().loc.pos.overwriteWith(posToTeleportTo);
                 })
             ]),
             new Entity2("TeleporterLong", [
                 mappableOpen, generatable1,
                 drawableInvisibleFromVisualName("TeleporterLong"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("long-range teleporter", (u, w, p, eColliding, eCollidedWith) => {
-                    var placeCurrent = p;
-                    var placeCurrentIndex = w.places.indexOf(placeCurrent);
-                    var randomizer = u.randomizer;
+                Emplacement.fromAppearanceAndCollide("long-range teleporter", // appearance
+                (uwpe) => {
+                    var universe = uwpe.universe;
+                    var world = uwpe.world;
+                    var placeCurrent = uwpe.place;
+                    var entityColliding = uwpe.entity;
+                    var placeCurrentIndex = world.places.indexOf(placeCurrent);
+                    var randomizer = universe.randomizer;
                     var placeIndexOffsetMax = 2;
                     var placeIndexOffset = Math.floor(randomizer.getNextRandom()) * placeIndexOffsetMax;
                     var plusOrMinus = ((randomizer.getNextRandom() > .5) ? 1 : -1);
                     placeIndexOffset *= plusOrMinus;
                     var placeToTeleportToIndex = placeCurrentIndex + placeIndexOffset;
-                    var places = w.places;
+                    var places = world.places;
                     var placeToTeleportTo = places[placeToTeleportToIndex];
                     var zones = placeCurrent.zones;
                     var zoneToTeleportTo = ArrayHelper.random(zones, randomizer);
-                    var posToTeleportTo = zoneToTeleportTo.bounds.posRandom(randomizer).floor();
-                    var eCollidingLoc = eColliding.locatable().loc;
-                    eCollidingLoc.placeName = placeToTeleportTo.name;
-                    eCollidingLoc.pos.overwriteWith(posToTeleportTo);
+                    var posToTeleportTo = zoneToTeleportTo.bounds.pointRandom(randomizer).floor();
+                    var entityCollidingLoc = entityColliding.locatable().loc;
+                    entityCollidingLoc.placeName = placeToTeleportTo.name;
+                    entityCollidingLoc.pos.overwriteWith(posToTeleportTo);
                 })
             ]),
             new Entity2("TrapAlarm", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapAlarm"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("alarm trap", (u, w, p, eColliding, eCollidedWith) => {
-                    var placeLevel = p;
+                Emplacement.fromAppearanceAndCollide("alarm trap", (uwpe) => {
+                    var placeLevel = uwpe.place;
                     var movers = placeLevel.movers();
                     movers.forEach(mover => {
                         // todo - Target the trap.
@@ -229,53 +245,61 @@ class DemoData_Emplacements {
                 })
             ]),
             new Entity2("TrapArrow", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapArrow"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("arrow trap", (u, w, p, eColliding, eCollidedWith) => {
-                    trapProjectileCollide(u, w, p, eColliding, eCollidedWith, "Arrow");
+                Emplacement.fromAppearanceAndCollide("arrow trap", (uwpe) => {
+                    trapProjectileCollide(uwpe, "Arrow");
                 })
             ]),
             new Entity2("TrapBoulder", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapBoulder"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("boulder trap", (u, w, p, eColliding, eCollidedWith) => {
-                    trapProjectileCollide(u, w, p, eColliding, eCollidedWith, "Boulder");
+                Emplacement.fromAppearanceAndCollide("boulder trap", (uwpe) => {
+                    trapProjectileCollide(uwpe, "Boulder");
                 })
             ]),
             new Entity2("TrapDart", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapDart"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("dart trap", (u, w, p, eColliding, eCollidedWith) => {
-                    trapProjectileCollide(u, w, p, eColliding, eCollidedWith, "Dart");
+                Emplacement.fromAppearanceAndCollide("dart trap", (uwpe) => {
+                    trapProjectileCollide(uwpe, "Dart");
                 })
             ]),
             new Entity2("TrapDeadfall", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapDeadfall"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("deadfall", (u, w, p, eColliding, eCollidedWith) => {
-                    trapProjectileCollide(u, w, p, eColliding, eCollidedWith, "Rock");
+                Emplacement.fromAppearanceAndCollide("deadfall", (uwpe) => {
+                    trapProjectileCollide(uwpe, "Rock");
                 })
             ]),
             new Entity2("TrapDoor", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapDoor"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("trap door", (u, w, p, eColliding, eCollidedWith) => {
-                    var placeCurrent = p;
-                    var placeCurrentIndex = w.places.indexOf(placeCurrent);
-                    var randomizer = u.randomizer;
+                Emplacement.fromAppearanceAndCollide("trap door", (uwpe) => {
+                    var universe = uwpe.universe;
+                    var world = uwpe.world;
+                    var placeCurrent = uwpe.place;
+                    var eColliding = uwpe.entity;
+                    var placeCurrentIndex = world.places.indexOf(placeCurrent);
+                    var randomizer = universe.randomizer;
                     var placeIndexOffsetMax = 3;
                     var placeIndexOffset = 1 + Math.floor(randomizer.getNextRandom() * placeIndexOffsetMax);
                     var placeToDropToIndex = placeCurrentIndex + placeIndexOffset;
-                    var places = w.places;
+                    var places = world.places;
                     var placeToDropTo = places[placeToDropToIndex];
                     var zones = placeToDropTo.zones;
                     var zoneToDropTo = ArrayHelper.random(zones, randomizer);
-                    var posToDropTo = zoneToDropTo.bounds.posRandom(randomizer).floor();
+                    var posToDropTo = zoneToDropTo.bounds.pointRandom(randomizer).floor();
                     eColliding.locatable().loc.pos.overwriteWith(posToDropTo);
                 })
             ]),
@@ -287,31 +311,36 @@ class DemoData_Emplacements {
                 Emplacement.fromAppearance("drain trap")
             ]),
             new Entity2("TrapHex", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapHex"),
                 searchableTrap,
                 Emplacement.fromAppearance("hex trap")
             ]),
             new Entity2("TrapJaws", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapJaws"),
                 searchableTrap,
                 Emplacement.fromAppearance("bear trap")
             ]),
             new Entity2("TrapMine", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapMine"),
                 searchableTrap,
                 Emplacement.fromAppearance("landmine")
             ]),
             new Entity2("TrapPolymorph", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapPolymorph"),
                 searchableTrap,
                 Emplacement.fromAppearance("polymorph trap")
             ]),
             new Entity2("TrapSleep", [
-                mappableOpen, generatable1,
+                mappableOpen,
+                generatable1,
                 drawableInvisibleFromVisualName("TrapSleep"),
                 searchableTrap,
                 Emplacement.fromAppearance("sleeping gas trap")
@@ -321,7 +350,9 @@ class DemoData_Emplacements {
                 generatable1,
                 drawableInvisibleFromVisualName("TrapWater"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("flood trap", (u, w, p, eColliding, eCollidedWith) => {
+                Emplacement.fromAppearanceAndCollide("flood trap", (uwpe) => {
+                    var u = uwpe.universe;
+                    var eColliding = uwpe.entity;
                     var equipmentUser = eColliding.equipmentUser();
                     var sockets = equipmentUser.socketGroup.sockets;
                     var randomizer = u.randomizer;
@@ -339,7 +370,8 @@ class DemoData_Emplacements {
                 mappableOpen, generatable1,
                 drawableInvisibleFromVisualName("TrapFire"),
                 searchableTrap,
-                Emplacement.fromAppearanceAndCollide("fire trap", (u, w, p, eColliding, eCollidedWith) => {
+                Emplacement.fromAppearanceAndCollide("fire trap", (uwpe) => {
+                    var eColliding = uwpe.entity;
                     var equipmentUser = eColliding.equipmentUser();
                     var sockets = equipmentUser.socketGroup.sockets;
                     var socketToAttack = sockets.filter(x => x.defnName == "Feet")[0];

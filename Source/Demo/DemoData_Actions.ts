@@ -10,14 +10,11 @@ class DemoData_Actions
 		this.randomizer = this.parent.randomizer;
 	}
 
-	actionAttack_Melee_Perform
-	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actorAsEntity: Entity
-	): void
+	actionAttack_Melee_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var world = worldAsWorld as World2;
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var actorMover = actor.mover();
 		var costToAttack = actorMover.movesPerTurn; // todo
@@ -48,6 +45,7 @@ class DemoData_Actions
 		for (var i = 0; i < entitiesInCellDestination.length; i++)
 		{
 			var entityInCell = entitiesInCellDestination[i];
+			uwpe.entity2 = entityInCell;
 
 			var killable = entityInCell.killable();
 
@@ -110,7 +108,7 @@ class DemoData_Actions
 					var damageInflictedAsDamage = Damage.fromAmount(damageInflicted);
 					killable.damageApply
 					(
-						universe, world, place, actor, entityInCell, damageInflictedAsDamage
+						uwpe, damageInflictedAsDamage
 					);
 
 					if (actorPlayer != null)
@@ -127,7 +125,7 @@ class DemoData_Actions
 
 					if (killable.isAlive() == false)
 					{
-						killable.die(universe, world, place, entityInCell);
+						killable.die(uwpe);
 
 						if (actorPlayer != null)
 						{
@@ -154,15 +152,11 @@ class DemoData_Actions
 		} // end for entitiesInCellDestination
 	}
 
-	actionAttack_Projectile_Perform
-	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place,
-		actorAsEntity: Entity
-	): void
+	actionAttack_Projectile_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var world = worldAsWorld as World2;
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var actorMover = actor.mover();
 		var costToAttack = actorMover.movesPerTurn; // todo
@@ -231,11 +225,10 @@ class DemoData_Actions
 
 	actionDoorOpenOrClose_Perform
 	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
-		shouldOpenNotClose: boolean
+		uwpe: UniverseWorldPlaceEntities, shouldOpenNotClose: boolean
 	): void
 	{
-		var actor = actorAsEntity as Entity2;
+		var actor = uwpe.entity as Entity2;
 
 		var actorMover = actor.mover();
 
@@ -245,7 +238,7 @@ class DemoData_Actions
 		{
 			var actorData = actor.actorData();
 			var entityBeingFaced =
-				actorData.entityBeingFaced(universe, world, placeAsPlace, actor);
+				actorData.entityBeingFaced(uwpe);
 
 			if (entityBeingFaced != null)
 			{
@@ -292,13 +285,10 @@ class DemoData_Actions
 		} // end if enough moves
 	}
 
-	actionEmplacement_Use_Perform
-	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity
-	): void
+	actionEmplacement_Use_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var place = placeAsPlace as PlaceLevel
-		var actor = actorAsEntity as Entity2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var loc = actor.locatable().loc;
 		var posInCells = loc.pos;
@@ -315,6 +305,7 @@ class DemoData_Actions
 		var mover = actor.mover();
 
 		var emplacementToUse = emplacementsInCell[0] as Entity2;
+		uwpe.entity2 = emplacementToUse;
 		var costToUse = mover.movesPerTurn; // hack
 
 		if (mover.movesThisTurn >= costToUse)
@@ -322,20 +313,14 @@ class DemoData_Actions
 			mover.movesThisTurn -= costToUse;
 			actor.turnable().hasActedThisTurn = true;
 
-			emplacementToUse.emplacement().use
-			(
-				universe, world, place, actor, emplacementToUse
-			);
+			emplacementToUse.emplacement().use(uwpe);
 		}
 	}
 
-	actionItem_DropSelected_Perform
-	(
-		universe: Universe, worldAsWorld: World, place: Place, actorAsEntity: Entity
-	): void
+	actionItem_DropSelected_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var world = worldAsWorld as World2;
-		var actor = actorAsEntity as Entity2;
+		var world = uwpe.world as World2;
+		var actor = uwpe.entity as Entity2;
 
 		/*
 		var loc = actor.locatable().loc;
@@ -350,6 +335,7 @@ class DemoData_Actions
 
 		var itemHolder = actor.itemHolder();
 		var itemToDrop = itemHolder.itemSelected;
+		uwpe.entity2 = itemToDrop.toEntity(uwpe);
 		var costToDrop = mover.movesPerTurn; // hack
 
 		if (itemToDrop != null && mover.movesThisTurn >= costToDrop)
@@ -357,13 +343,13 @@ class DemoData_Actions
 			mover.movesThisTurn -= costToDrop;
 			actor.turnable().hasActedThisTurn = true;
 
-			var removeItem = (itemHolder: ItemHolder, world: World, actor: Entity, item: Item) =>
+			var removeItem = (uwpeRemove: UniverseWorldPlaceEntities) =>
 			{
 				var itemsHeld = itemHolder.items;
 
 				var actionSelectNext =
 					(world as World2).defn2.actionsByName.get("Item_SelectNext");
-				actionSelectNext.perform(null, world, place, actor);
+				actionSelectNext.perform(uwpe);
 
 				ArrayHelper.remove(itemsHeld, itemToDrop);
 
@@ -373,29 +359,26 @@ class DemoData_Actions
 				}
 			}
 
-			var dropItem = (itemHolder: ItemHolder, world: World, actor: Entity, itemToDrop: Item) =>
+			var dropItem = (uwpeDrop: UniverseWorldPlaceEntities) =>
 			{
 				//var itemsHeld = itemHolder.itemEntities;
 
-				removeItem(itemHolder, world, actor, itemToDrop);
+				removeItem(uwpeDrop);
 
-				var itemToDropAsEntity = itemToDrop.toEntity(universe, world, place, actor);
+				var itemToDropAsEntity = itemToDrop.toEntity(uwpe);
 				var itemLoc = itemToDropAsEntity.locatable().loc;
 				itemLoc.overwriteWith(actor.locatable().loc);
-				place.entitiesToSpawn.push(itemToDropAsEntity);
+				uwpe.place.entitiesToSpawn.push(itemToDropAsEntity);
 			}
 
-			dropItem(actor.itemHolder(), world, actor, itemToDrop);
+			dropItem(uwpe);
 		}
 	}
 
-	actionItem_PickUp_Perform
-	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity
-	): void
+	actionItem_PickUp_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var loc = actor.locatable().loc;
 		var posInCells = loc.pos;
@@ -409,50 +392,49 @@ class DemoData_Actions
 		for (var i = 0; i < entitiesPresentAtCellPos.length; i++)
 		{
 			var entityPresent = entitiesPresentAtCellPos[i];
-			var itemToPickUp = entityPresent.item();
-			if (itemToPickUp != null)
+
+			if (entityPresent != actor)
 			{
-				if (mover.movesThisTurn >= costToPickUp)
+				var itemEntityToPickUp = entityPresent;
+				if (itemEntityToPickUp != null)
 				{
-					mover.movesThisTurn -= costToPickUp;
-					actor.turnable().hasActedThisTurn = true;
+					uwpe.entity2 = itemEntityToPickUp;
+					var itemToPickUp = itemEntityToPickUp.item();
 
-					var pickUpItem =
-					(
-						itemHolder: ItemHolder, world: World, actor: Entity,
-						itemEntityToPickUp: Entity
-					) =>
+					if (mover.movesThisTurn >= costToPickUp)
 					{
-						itemHolder.itemAdd(itemToPickUp);
-						place.entityToRemoveAdd(itemEntityToPickUp);
+						mover.movesThisTurn -= costToPickUp;
+						actor.turnable().hasActedThisTurn = true;
 
-						if (itemHolder.itemSelected == null)
+						var pickUpItem = (uwpePickUp: UniverseWorldPlaceEntities) =>
 						{
-							itemHolder.itemSelected = itemToPickUp;
-						}
-					};
+							var itemHolder = uwpePickUp.entity.itemHolder();
+							var itemEntityToPickUp = uwpePickUp.entity2;
+							var itemToPickUp = itemEntityToPickUp.item();
+							itemHolder.itemAdd(itemToPickUp);
+							place.entityToRemoveAdd(itemEntityToPickUp);
 
-					var actorItemHolder = actor.itemHolder();
-					pickUpItem
-					(
-						actorItemHolder, world, actor, entityPresent
-					);
-					var itemToPickUpDefn = itemToPickUp.defn(world);
-					var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
-					actor.player().messageLog.messageAdd(message);
+							if (itemHolder.itemSelected == null)
+							{
+								itemHolder.itemSelected = itemToPickUp;
+							}
+						};
+
+						pickUpItem(uwpe);
+						var itemToPickUpDefn = itemToPickUp.defn(uwpe.world);
+						var message = "You pick up the " + itemToPickUpDefn.appearance + ".";
+						actor.player().messageLog.messageAdd(message);
+					}
 				}
 			}
 		}
 	}
 
-	actionItem_SelectedUse_Perform
-	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actorAsEntity: Entity
-	): void
+	actionItem_SelectedUse_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var world = worldAsWorld as World2;
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var actorMover = actor.mover();
 		var costToUse = actorMover.movesPerTurn; // todo
@@ -512,12 +494,11 @@ class DemoData_Actions
 
 	actionMove_Perform
 	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
-		action: Action, directionToMove: Coords
+		uwpe: UniverseWorldPlaceEntities, directionToMove: Coords
 	): void
 	{
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		/*
 
@@ -559,20 +540,19 @@ class DemoData_Actions
 			var isDestinationAccessible =
 				this.actionMove_Perform_1_IsDestinationAccessible_Terrain
 				(
-					universe, world, place, actor, action, directionToMove,
-					cellDestination
+					uwpe, directionToMove, cellDestination
 				);
 
 			isDestinationAccessible =
 				this.actionMove_Perform_2_IsDestinationAccessible_Entities
 				(
-					universe, world, place, actor, action, directionToMove,
+					uwpe, directionToMove,
 					cellDestination, isDestinationAccessible
 				);
 
 			this.actionMove_Perform_3_Move
 			(
-				universe, world, place, actor, action, directionToMove,
+				uwpe, directionToMove,
 				cellDestination, isDestinationAccessible, posInCellsDestination
 			);
 		}
@@ -580,12 +560,13 @@ class DemoData_Actions
 
 	actionMove_Perform_1_IsDestinationAccessible_Terrain
 	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
-		action: Action, directionToMove: Coords, cellDestination: MapOfTerrainCell
+		uwpe: UniverseWorldPlaceEntities,
+		directionToMove: Coords,
+		cellDestination: MapOfTerrainCell
 	): boolean
 	{
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var isDestinationAccessible = true;
 
@@ -603,14 +584,15 @@ class DemoData_Actions
 
 	actionMove_Perform_2_IsDestinationAccessible_Entities
 	(
-		universe: Universe, world: World, place: Place, actorAsEntity: Entity,
-		action: Action, directionToMove: Coords, cellDestination: MapOfTerrainCell,
+		uwpe: UniverseWorldPlaceEntities,
+		directionToMove: Coords,
+		cellDestination: MapOfTerrainCell,
 		isDestinationAccessible: boolean
 	): boolean
 	{
 		if (isDestinationAccessible)
 		{
-			var actor = actorAsEntity as Entity2;
+			var actor = uwpe.entity as Entity2;
 			var player = actor.player();
 
 			var entitiesInCellDestination = cellDestination.entitiesPresent;
@@ -645,7 +627,7 @@ class DemoData_Actions
 							}
 							else
 							{
-								this.actionAttack_Melee_Perform(universe, world, place, actor);
+								this.actionAttack_Melee_Perform(uwpe);
 							}
 						}
 						else if (entityInCell.namable() != null)
@@ -672,12 +654,14 @@ class DemoData_Actions
 
 	actionMove_Perform_3_Move
 	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
-		action: Action, directionToMove: Coords, cellDestination: MapOfTerrainCell,
-		isDestinationAccessible: boolean, posInCellsDestination: Coords
+		uwpe: UniverseWorldPlaceEntities,
+		directionToMove: Coords,
+		cellDestination: MapOfTerrainCell,
+		isDestinationAccessible: boolean,
+		posInCellsDestination: Coords
 	): void
 	{
-		var actor = actorAsEntity as Entity2;
+		var actor = uwpe.entity as Entity2;
 		var player = actor.player();
 		var mover = actor.mover();
 
@@ -693,7 +677,8 @@ class DemoData_Actions
 		}
 		else
 		{
-			var place = placeAsPlace as PlaceLevel;
+			var world = uwpe.world as World2;
+			var place = uwpe.place as PlaceLevel;
 			var map = place.map;
 
 			var mover = actor.mover();
@@ -738,13 +723,11 @@ class DemoData_Actions
 		}
 	}
 
-	actionSearch_Perform
-	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity
-	): void
+	actionSearch_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
+		var actor = uwpe.entity as Entity2;
 
 		var mover = actor.mover();
 		var costToSearch = mover.movesPerTurn; // todo
@@ -781,20 +764,23 @@ class DemoData_Actions
 				for (var i = 0; i < entitiesInCellToSearch.length; i++)
 				{
 					var entityInCell = entitiesInCellToSearch[i];
+					uwpe.entity2 = entityInCell;
 
 					var searchable = entityInCell.searchable();
 					if (searchable != null && searchable.isHidden)
 					{
-						var randomNumber = (world as World2).randomizer.getNextRandom();
+						var randomNumber = world.randomizer.getNextRandom();
 						if (randomNumber <= searchable.chanceOfDiscoveryPerSearch)
 						{
 							searchable.isHidden = false;
 							entityInCell.drawable().isVisible = true;
-							var message = "You find a " + entityInCell.emplacement().appearance + ".";
+							var message =
+								"You find a "
+								+ entityInCell.emplacement().appearance + ".";
 							player.messageLog.messageAdd(message);
 							if (searchable.discover != null)
 							{
-								searchable.discover(universe, world, place, actor, entityInCell);
+								searchable.discover(uwpe);
 							}
 						}
 					}
@@ -806,13 +792,9 @@ class DemoData_Actions
 		} // end for each neighboring cell
 	}
 
-	actionTalk_Perform
-	(
-		universe: Universe, world: World, placeAsPlace: Place, actorAsEntity: Entity,
-	): void
+	actionTalk_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var place = placeAsPlace as PlaceLevel;
-		var actor = actorAsEntity as Entity2;
+		var actor = uwpe.entity as Entity2;
 
 		var actorMover = actor.mover();
 
@@ -820,16 +802,17 @@ class DemoData_Actions
 
 		if (actorMover.movesThisTurn >= costToPerform)
 		{
-			var actorData = actor.actorData()
+			var actorData = actor.actorData();
 			var entityBeingFaced =
-				actorData.entityBeingFaced(universe, world, place, actor);
+				actorData.entityBeingFaced(uwpe);
 
 			if (entityBeingFaced != null)
 			{
+				uwpe.entity2 = entityBeingFaced;
 				var talker = entityBeingFaced.talker();
 				if (talker != null)
 				{
-					talker.talk(universe, world, place, entityBeingFaced, actor);
+					talker.talk(uwpe);
 				}
 
 			} // end if entityBeingFaced != null
@@ -837,17 +820,14 @@ class DemoData_Actions
 		} // end if enough moves
 	}
 
-	actionWait_Perform
-	(
-		universe: Universe, world: World, place: Place, actorAsEntity: Entity
-	)
+	actionWait_Perform(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var actor = actorAsEntity as Entity2;
+		var actor = uwpe.entity as Entity2;
 		actor.mover().movesThisTurn = 0;
 		actor.turnable().hasActedThisTurn = true;
 	}
 
-	actionsBuild()
+	actionsBuild(): Action[][]
 	{
 		// directions
 
@@ -870,12 +850,12 @@ class DemoData_Actions
 		var actionDoorClose = new Action
 		(
 			"Close Door",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
 				var shouldOpenNotClose = false;
 				demoActions.actionDoorOpenOrClose_Perform
 				(
-					universe, world, place, actor, shouldOpenNotClose
+					uwpe, shouldOpenNotClose
 				);
 			}
 		);
@@ -883,12 +863,12 @@ class DemoData_Actions
 		var actionDoorOpen = new Action
 		(
 			"Open Door",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
 				var shouldOpenNotClose = true;
 				demoActions.actionDoorOpenOrClose_Perform
 				(
-					universe, world, place, actor, shouldOpenNotClose
+					uwpe, shouldOpenNotClose
 				);
 			}
 		);
@@ -922,72 +902,72 @@ class DemoData_Actions
 		var actionMoveE = new Action
 		(
 			"Move East",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[0]);
+				demoActions.actionMove_Perform(uwpe, directions[0]);
 			}
 		);
 
 		var actionMoveSE = new Action
 		(
 			"Move Southeast",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[1]);
+				demoActions.actionMove_Perform(uwpe, directions[1]);
 			}
 		);
 
 		var actionMoveS = new Action
 		(
 			"Move South",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[2]);
+				demoActions.actionMove_Perform(uwpe, directions[2]);
 			}
 		);
 
 		var actionMoveSW = new Action
 		(
 			"Move Southwest",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[3]);
+				demoActions.actionMove_Perform(uwpe, directions[3]);
 			}
 		);
 
 		var actionMoveW = new Action
 		(
 			"Move West",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[4]);
+				demoActions.actionMove_Perform(uwpe, directions[4]);
 			}
 		);
 
 		var actionMoveNW = new Action
 		(
 			"Move Northwest",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[5]);
+				demoActions.actionMove_Perform(uwpe, directions[5]);
 			}
 		);
 
 		var actionMoveN = new Action
 		(
 			"Move North",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[6]);
+				demoActions.actionMove_Perform(uwpe, directions[6]);
 			}
 		);
 
 		var actionMoveNE = new Action
 		(
 			"Move Northeast",
-			(universe: Universe, world: World, place: Place, actor: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
-				demoActions.actionMove_Perform(universe, world, place, actor, null, directions[7]);
+				demoActions.actionMove_Perform(uwpe, directions[7]);
 			}
 		);
 

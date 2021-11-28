@@ -49,30 +49,32 @@ class SpellCaster {
         this.spellKnowledges.push(spellKnowledge);
         this.spellKnowledgesByName.set(spellKnowledge.spellName, spellKnowledge);
     }
-    spellLearnByName(u, w, p, e, spellName) {
+    spellLearnByName(uwpe, spellName) {
+        var world = uwpe.world;
+        var entity = uwpe.entity;
         var spellKnowledge = this.spellKnowledgesByName.get(spellName);
         var message;
         if (spellKnowledge == null) {
-            message = this.spellLearnByName_Try(u, w, p, e, spellName);
+            message = this.spellLearnByName_Try(uwpe, spellName);
         }
-        else if (spellKnowledge.isExpired(w)) {
+        else if (spellKnowledge.isExpired(world)) {
             message = "You re-learn the spell.";
-            var world = w;
             spellKnowledge.turnLearned = world.turnsSoFar;
         }
         else {
             message = "You already know this spell.";
         }
-        var player = e.player();
+        var player = entity.player();
         var messageLog = player.messageLog;
         messageLog.messageAdd(message);
-        return message;
+        //return message;
     }
-    spellLearnByName_Try(u, w, p, e, spellName) {
-        var world = w;
+    spellLearnByName_Try(uwpe, spellName) {
+        var universe = uwpe.universe;
+        var world = uwpe.world;
         var message;
         var chanceOfLearningSpell = 1;
-        var randomNumber = u.randomizer.getNextRandom();
+        var randomNumber = universe.randomizer.getNextRandom();
         if (randomNumber >= chanceOfLearningSpell) {
             message = "You fail to learn the spell.";
             // todo - Consequences.
@@ -85,9 +87,11 @@ class SpellCaster {
         return message;
     }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
+    // Equatable.
+    equals(other) { return false; }
 }
 class SpellKnowledge {
     constructor(spellName, turnLearned) {

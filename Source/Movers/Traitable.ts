@@ -1,5 +1,5 @@
 
-class Traitable implements EntityProperty
+class Traitable implements EntityProperty<Traitable>
 {
 	traitsBase: Trait[];
 	traitsBaseByName: Map<string, Trait>;
@@ -55,7 +55,7 @@ class Traitable implements EntityProperty
 		}
 		return this._traitsAdjusted;
 	}
-	
+
 	traitsAdjustedRecalculate(): Trait[]
 	{
 		this._traitsAdjusted = null;
@@ -113,12 +113,10 @@ class Traitable implements EntityProperty
 						(
 							this,
 							(c: Traitable) =>
-							{
 								c.traitsAdjusted().map
 								(
 									(x: Trait) => x.toString()
-								).join(" ");
-							}
+								).join(" ")
 						)
 					),
 				]
@@ -129,16 +127,19 @@ class Traitable implements EntityProperty
 	}
 
 	// Clonable.
-	clone() { return this; }
-	overwriteWith(other: Generatable) { return this; }
+	clone(): Traitable { return this; }
+	overwriteWith(other: Traitable): Traitable { return this; }
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
+
+	// Equatable.
+	equals(other: Traitable) { return false; }
 }
 
-class Trait
+class Trait implements Clonable<Trait>
 {
 	name: string;
 	value: number;
@@ -159,5 +160,19 @@ class Trait
 	toString(): string
 	{
 		return this.name.substr(0, 3) + ": " + this.value;
+	}
+
+	// Clonable.
+
+	clone(): Trait
+	{
+		return new Trait(this.name, this.value);
+	}
+
+	overwriteWith(other: Trait): Trait
+	{
+		this.name = other.name;
+		this.value = other.value;
+		return this;
 	}
 }

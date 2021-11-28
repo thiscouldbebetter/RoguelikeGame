@@ -10,12 +10,12 @@ class Effectable2 {
     effectorApply(effector) {
         effector.effects.forEach(x => this.effectApply(x));
     }
-    updateForTurn(universe, world, place, entityEffectable) {
+    updateForTurn(uwpe) {
         this.effectsToRemove.length = 0;
         var effects = this.effects;
         for (var i = 0; i < effects.length; i++) {
             var effect = effects[i];
-            effect.updateForCycle(universe, world, place, entityEffectable);
+            effect.updateForCycle(uwpe);
             if (effect.isDone) {
                 this.effectsToRemove.push(effect);
             }
@@ -28,8 +28,10 @@ class Effectable2 {
     // Clonable.
     clone() { return this; }
     overwriteWith(other) { return this; }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

@@ -79,18 +79,20 @@ class World2 extends World {
     draw() {
         // todo
     }
-    initialize(universe) {
+    initialize(uwpe) {
         if (this.placeCurrent != null) {
-            this.placeCurrent.initialize(universe, this);
+            uwpe.world = this;
+            this.placeCurrent.initialize(uwpe);
         }
     }
-    updateForTimerTick(universe) {
+    updateForTimerTick(uwpe) {
+        uwpe.world = this;
         if (this.placeNext != null) {
-            this.placeNext.initialize(universe, this);
+            this.placeNext.initialize(uwpe);
             this.placeCurrent = this.placeNext;
             this.placeNext = null;
         }
-        this.placeCurrent.updateForTimerTick(universe, this);
+        this.placeCurrent.updateForTimerTick(uwpe);
         this.timerTicksSoFar++;
     }
     // debugging

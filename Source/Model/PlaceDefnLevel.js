@@ -1,8 +1,7 @@
 "use strict";
-class PlaceDefn2 {
+class PlaceDefnLevel extends PlaceDefn {
     constructor(name, propertyNamesToProcess, terrains, placeGenerate) {
-        this.name = name;
-        this.propertyNamesToProcess = propertyNamesToProcess;
+        super(name, null, null, propertyNamesToProcess, null, null);
         this.terrains = terrains;
         this.placeGenerate = placeGenerate;
         this.terrainsByCode = ArrayHelper.addLookups(this.terrains, (element) => element.codeChar);

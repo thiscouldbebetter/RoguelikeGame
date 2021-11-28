@@ -6,9 +6,10 @@ class Mappable {
         this.entitiesAlreadyCollidedWith = []; // hack
         this.collider = new Sphere(Coords.create(), 0);
     }
-    // collider() { return new Sphere(0, 0); }
+    // Equatable.
+    equals(other) { return false; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
 }

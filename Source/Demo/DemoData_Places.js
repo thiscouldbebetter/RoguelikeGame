@@ -90,21 +90,21 @@ class DemoData_Places {
             Turnable.name
         ];
         var returnValues = [
-            new PlaceDefn2("Depths", propertyNamesKnown, mapTerrainsHades, this.placeGenerateDepths),
-            new PlaceDefn2("Dungeon", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateDungeon),
-            new PlaceDefn2("Fortress", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateFortress),
-            new PlaceDefn2("Hades", propertyNamesKnown, mapTerrainsHades, this.placeGenerateHades),
-            new PlaceDefn2("Mines", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
-            new PlaceDefn2("MinesTown", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
-            new PlaceDefn2("MinesBottom", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
-            new PlaceDefn2("Island", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateIsland),
-            new PlaceDefn2("Labyrinth", propertyNamesKnown, this.buildMapTerrainsLabyrinth(visualGetByName), this.placeGenerateLabyrinth),
-            new PlaceDefn2("Limbo", propertyNamesKnown, mapTerrainsHades, this.placeGenerateLimbo),
-            new PlaceDefn2("Oracle", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateOracle),
-            new PlaceDefn2("Puzzle", propertyNamesKnown, this.buildMapTerrainsPuzzle(visualGetByName), this.placeGeneratePuzzle),
-            new PlaceDefn2("SingleChamber", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateSingleChamber),
-            new PlaceDefn2("Surface", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateSurface),
-            new PlaceDefn2("Throwback", propertyNamesKnown, this.buildMapTerrainsThrowback(visualGetByName), this.placeGenerateThrowback)
+            new PlaceDefnLevel("Depths", propertyNamesKnown, mapTerrainsHades, this.placeGenerateDepths),
+            new PlaceDefnLevel("Dungeon", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateDungeon),
+            new PlaceDefnLevel("Fortress", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateFortress),
+            new PlaceDefnLevel("Hades", propertyNamesKnown, mapTerrainsHades, this.placeGenerateHades),
+            new PlaceDefnLevel("Mines", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
+            new PlaceDefnLevel("MinesTown", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
+            new PlaceDefnLevel("MinesBottom", propertyNamesKnown, mapTerrainsMines, this.placeGenerateMines),
+            new PlaceDefnLevel("Island", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateIsland),
+            new PlaceDefnLevel("Labyrinth", propertyNamesKnown, this.buildMapTerrainsLabyrinth(visualGetByName), this.placeGenerateLabyrinth),
+            new PlaceDefnLevel("Limbo", propertyNamesKnown, mapTerrainsHades, this.placeGenerateLimbo),
+            new PlaceDefnLevel("Oracle", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateOracle),
+            new PlaceDefnLevel("Puzzle", propertyNamesKnown, this.buildMapTerrainsPuzzle(visualGetByName), this.placeGeneratePuzzle),
+            new PlaceDefnLevel("SingleChamber", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateSingleChamber),
+            new PlaceDefnLevel("Surface", propertyNamesKnown, mapTerrainsDungeon, this.placeGenerateSurface),
+            new PlaceDefnLevel("Throwback", propertyNamesKnown, this.buildMapTerrainsThrowback(visualGetByName), this.placeGenerateThrowback)
         ];
         return returnValues;
     }

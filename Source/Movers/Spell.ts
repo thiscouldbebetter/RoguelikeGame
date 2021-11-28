@@ -39,7 +39,7 @@ class Spell_Instances
 	}
 }
 
-class SpellCaster implements EntityProperty
+class SpellCaster implements EntityProperty<SpellCaster>
 {
 	spellKnowledges: SpellKnowledge[];
 
@@ -91,20 +91,22 @@ class SpellCaster implements EntityProperty
 		this.spellKnowledgesByName.set(spellKnowledge.spellName, spellKnowledge);
 	}
 
-	spellLearnByName(u: Universe, w: World, p: Place, e: Entity, spellName: string)
+	spellLearnByName(uwpe: UniverseWorldPlaceEntities, spellName: string): void
 	{
+		var world = uwpe.world as World2;
+		var entity = uwpe.entity as Entity2;
+
 		var spellKnowledge = this.spellKnowledgesByName.get(spellName);
 
 		var message;
 
 		if (spellKnowledge == null)
 		{
-			message = this.spellLearnByName_Try(u, w, p, e, spellName);
+			message = this.spellLearnByName_Try(uwpe, spellName);
 		}
-		else if (spellKnowledge.isExpired(w) )
+		else if (spellKnowledge.isExpired(world) )
 		{
 			message = "You re-learn the spell."
-			var world = w as World2;
 			spellKnowledge.turnLearned = world.turnsSoFar;
 		}
 		else
@@ -112,21 +114,25 @@ class SpellCaster implements EntityProperty
 			message = "You already know this spell."
 		}
 
-		var player = (e as Entity2).player();
+		var player = entity.player();
 		var messageLog = player.messageLog;
 		messageLog.messageAdd(message);
 
-		return message;
+		//return message;
 	}
 
-	spellLearnByName_Try(u: Universe, w: World, p: Place, e: Entity, spellName: string): string
+	spellLearnByName_Try
+	(
+		uwpe: UniverseWorldPlaceEntities, spellName: string
+	): string
 	{
-		var world = w as World2;
+		var universe = uwpe.universe;
+		var world = uwpe.world as World2;
 
 		var message;
 
 		var chanceOfLearningSpell = 1;
-		var randomNumber = u.randomizer.getNextRandom();
+		var randomNumber = universe.randomizer.getNextRandom();
 		if (randomNumber >= chanceOfLearningSpell)
 		{
 			message = "You fail to learn the spell."
@@ -143,9 +149,12 @@ class SpellCaster implements EntityProperty
 	}
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
+
+	// Equatable.
+	equals(other: SpellCaster) { return false; }
 }
 
 class SpellKnowledge

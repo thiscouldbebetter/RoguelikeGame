@@ -1,5 +1,5 @@
 
-class Portal2 implements EntityProperty
+class Portal2 implements EntityProperty<Portal2>
 {
 	destinationPlaceName: string;
 	destinationEntityName: string;
@@ -15,14 +15,11 @@ class Portal2 implements EntityProperty
 		return new Portal2(null, null);
 	}
 
-	use
-	(
-		universe: Universe, world: World, place: Place,
-		entityActorAsEntity: Entity, entityPortalAsEntity: Entity
-	): void
+	use(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var entityActor = entityActorAsEntity as Entity2;
-		var entityPortal = entityPortalAsEntity as Entity2;
+		var world = uwpe.world;
+		var entityActor = uwpe.entity as Entity2;
+		var entityPortal = uwpe.entity2 as Entity2;
 
 		var portal = entityPortal.portal2();
 		var destinationPlaceName = portal.destinationPlaceName;
@@ -31,7 +28,10 @@ class Portal2 implements EntityProperty
 		var destinationPlace = world.placesByName.get(destinationPlaceName);
 		if (destinationPlace != null)
 		{
-			destinationPlace.updateForTimerTick(universe, world);
+			destinationPlace.updateForTimerTick
+			(
+				uwpe.clone().placeSet(destinationPlace)
+			);
 
 			var entitiesByName = destinationPlace.entitiesByName;
 			var destinationEntity = entitiesByName.get(destinationEntityName);
@@ -54,9 +54,12 @@ class Portal2 implements EntityProperty
 	clone(): Portal2 { return this; }
 	overwriteWith(other: Portal2): Portal2 { return this; }
 
+	// Equatable.
+	equals(other: Portal2) { return false; }
+
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

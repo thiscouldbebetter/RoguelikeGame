@@ -13,10 +13,10 @@ class DemoData_Movers
 
 	buildEntityDefnGroups_MoverGroupsAndCorpsesGroup
 	(
-		visualGetByName: (visualName:string)=>Visual,
+		visualGetByName: (visualName: string) => VisualBase,
 		activityDefnsByName: Map<string, ActivityDefn>,
 		itemCategories: ItemCategory[]
-	)
+	): [ EntityDefnGroup[], EntityDefnGroup ]
 	{
 		var entityDefnsMovers = new Array<Entity2>();
 		var entityDefnsMoversByName = new Map<string, Entity2>();
@@ -30,9 +30,9 @@ class DemoData_Movers
 			visualGetByName, activityDefnsByName, itemCategories, entityDefnsMovers
 		);
 
-		var rot = (universe: Universe, world: World, place: Place, entityTurnableAsEntity: Entity) =>
+		var rot = (uwpe: UniverseWorldPlaceEntities) =>
 		{
-			var entityTurnable = entityTurnableAsEntity as Entity2;
+			var entityTurnable = uwpe.entity as Entity2;
 			var turnable = entityTurnable.turnable();
 			if (turnable.turnsToLive == null)
 			{
@@ -43,7 +43,7 @@ class DemoData_Movers
 				turnable.turnsToLive--;
 				if (turnable.turnsToLive <= 0)
 				{
-					place.entitiesToRemove.push(entityTurnable);
+					uwpe.place.entityToRemoveAdd(entityTurnable);
 				}
 			}
 		};
@@ -60,7 +60,7 @@ class DemoData_Movers
 		var agentDatas = DemoData_Movers.buildAgentDatas();
 
 		var useCorpse =
-			(universe: Universe, world: World, place: Place, entityItem: Entity, user: Entity) =>
+			(uwpe: UniverseWorldPlaceEntities) =>
 			{
 				return "todo";
 			};
@@ -168,18 +168,19 @@ class DemoData_Movers
 			}
 		}
 
-		var returnValues = [ agentGroups, entityGroupCorpses ];
+		var returnValues: [EntityDefnGroup[], EntityDefnGroup] =
+			[ agentGroups, entityGroupCorpses ];
 
 		return returnValues;
 	}
 
 	buildEntityDefnGroups_MoversAndCorpses_Player
 	(
-		visualGetByName: (x:string)=>Visual,
+		visualGetByName: (x:string) => VisualBase,
 		activityDefnsByName: Map<string, ActivityDefn>,
 		itemCategories: ItemCategory[],
-		returnValues: any
-	)
+		returnValues: Entity2[]
+	): void
 	{
 		var entityName = Player.name; // "Player".
 
@@ -253,10 +254,24 @@ class DemoData_Movers
 			0 // reachRange
 		);
 
-		var toControl = (u: Universe, size: Coords, e: Entity, isMenu: boolean) =>
+		var toControl = (uwpe: UniverseWorldPlaceEntities) =>
 		{
-			var toControlMethod = (isMenu ? Playable.toControlMenu : (e as Entity2).player().toControlOverlay);
-			var returnValue = toControlMethod(u, size, e, u.venueCurrent);
+			var u = uwpe.universe;
+			var entityForPlayer = uwpe.entity as Entity2;
+			var isMenu = entityForPlayer.actorData().actions.some
+			(
+				x => x.name == "ShowMenuPlayer"
+			);
+
+			var toControlMethod =
+			(
+				isMenu
+				? Playable.toControlMenu
+				: entityForPlayer.player().toControlOverlay
+			);
+			var size = u.display.sizeInPixels; // hack
+			var returnValue =
+				toControlMethod(u, size, entityForPlayer, u.venueCurrent);
 			return returnValue;
 		};
 
@@ -290,7 +305,7 @@ class DemoData_Movers
 		);
 
 		returnValues.push(entityDefnPlayer);
-		returnValues[entityName] = entityDefnPlayer;
+		// returnValues[entityName] = (entityDefnPlayer as any);
 	}
 
 	static buildAgentDatas(): AgentData[]
@@ -930,7 +945,7 @@ class DemoData_Movers
 	}
 }
 
-class AgentData implements EntityProperty
+class AgentData implements EntityProperty<AgentData>
 {
 	name: string;
 	difficulty: number;
@@ -1013,20 +1028,23 @@ class AgentData implements EntityProperty
 	clone(): AgentData { return this; }
 	overwriteWith(other: AgentData): AgentData { return this; }
 
+	// Equatable.
+	equals(other: AgentData) { return false; }
+
 	// EntityProperty.
 
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
 
-	initialize(u: Universe, w: World, p: Place, e: Entity): void
+	initialize(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var equipmentUser = e.equipmentUser();
+		var equipmentUser = uwpe.entity.equipmentUser();
 		if (equipmentUser != null)
 		{
-			equipmentUser.equipAll(u, w, p, e);
+			equipmentUser.equipAll(uwpe);
 		}
 	}
 
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 }
 
 class AttackDefn

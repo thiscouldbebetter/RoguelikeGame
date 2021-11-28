@@ -4,7 +4,7 @@ class PlaceLevel extends Place
 	name: string;
 	displayName: string;
 	depth: number;
-	defn2: PlaceDefn2;
+	defn2: PlaceDefnLevel;
 	sizeInPixels: Coords;
 	map: MapOfTerrain;
 	zones: Zone2[];
@@ -21,7 +21,7 @@ class PlaceLevel extends Place
 
 	constructor
 	(
-		name: string, displayName: string, depth: number, defn2: PlaceDefn2,
+		name: string, displayName: string, depth: number, defn2: PlaceDefnLevel,
 		sizeInPixels: Coords, map: MapOfTerrain, zones: Zone2[],
 		entities: Entity[]
 	)
@@ -114,9 +114,11 @@ class PlaceLevel extends Place
 
 	entitySpawn
 	(
-		universe: Universe, world: World, entityToSpawn: Entity
+		uwpe: UniverseWorldPlaceEntities
 	): void
 	{
+		var entityToSpawn = uwpe.entity;
+
 		this.entities.push(entityToSpawn);
 		this.entitiesByName.set(entityToSpawn.name, entityToSpawn);
 
@@ -150,25 +152,25 @@ class PlaceLevel extends Place
 				}
 				else
 				{
-					entityDefnProperty.initialize
-					(
-						universe, world, this, entityToSpawn
-					);
+					entityDefnProperty.initialize(uwpe);
 				}
 			}
 		}
 	}
 
-	initialize(universe: Universe, world: World): void
+	initialize(uwpe: UniverseWorldPlaceEntities): void
 	{
+		uwpe.place = this;
 		this.hasBeenUpdatedSinceDrawn = true;
 		// Initialization of entities is handled in entitySpawn().
-		this.update_EntitiesToSpawn(universe, world);
+		this.update_EntitiesToSpawn(uwpe);
 	}
 
-	updateForTimerTick(universe: Universe, world: World): void
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void
 	{
-		this.update_EntitiesToSpawn(universe, world);
+		uwpe.place = this;
+
+		this.update_EntitiesToSpawn(uwpe);
 
 		var propertyNamesKnown = this.defn2.propertyNamesToProcess;
 		for (var i = 0; i < propertyNamesKnown.length; i++)
@@ -182,21 +184,22 @@ class PlaceLevel extends Place
 				var entity = entitiesWithProperty[b];
 				var entityDefn = entity;
 				var entityDefnProperty = entityDefn.propertyByName(propertyName);
+				uwpe.entity = entity;
 				if (entityDefnProperty.updateForTimerTick != null)
 				{
-					entityDefnProperty.updateForTimerTick(universe, world, this, entity);
+					entityDefnProperty.updateForTimerTick(uwpe);
 				}
 			}
 		}
 
-		this.update_Mappables(universe, world);
+		this.update_Mappables(uwpe);
 
-		this.update_EntitiesToRemove(universe, world);
+		this.update_EntitiesToRemove(uwpe);
 
-		this.draw(universe, world);
+		this.draw(uwpe.universe, uwpe.world, uwpe.universe.display);
 	}
 
-	update_EntitiesToRemove(universe: Universe, world: World): void
+	update_EntitiesToRemove(uwpe: UniverseWorldPlaceEntities): void
 	{
 		for (var i = 0; i < this.entitiesToRemove.length; i++)
 		{
@@ -230,24 +233,26 @@ class PlaceLevel extends Place
 		this.entitiesToRemove.length = 0;
 	}
 
-	update_EntitiesToSpawn(universe: Universe, world: World): void
+	update_EntitiesToSpawn(uwpe: UniverseWorldPlaceEntities): void
 	{
 		for (var i = 0; i < this.entitiesToSpawn.length; i++)
 		{
 			var entityToSpawn = this.entitiesToSpawn[i];
-			this.entitySpawn(universe, world, entityToSpawn);
+			uwpe.entity = entityToSpawn;
+			this.entitySpawn(uwpe);
 		}
 
 		this.entitiesToSpawn.length = 0;
 	}
 
-	update_Mappables(universe: Universe, world: World): void
+	update_Mappables(uwpe: UniverseWorldPlaceEntities): void
 	{
 		var emplacements = this.emplacements();
 		var enemies = this.enemies();
 		var players = this.players();
 		var projectiles = this.projectiles();
 
+		var universe = uwpe.universe;
 		var collisionHelper = universe.collisionHelper;
 
 		var collisionSets =
@@ -326,7 +331,7 @@ class PlaceLevel extends Place
 
 	// drawable
 
-	draw(universe: Universe, world: World): void
+	draw(universe: Universe, world: World, display: Display): void
 	{
 		if (this.hasBeenUpdatedSinceDrawn)
 		{
@@ -338,21 +343,25 @@ class PlaceLevel extends Place
 
 			if (placeKnown != null)
 			{
-				placeKnown.drawAsKnown(universe, world);
+				placeKnown.drawAsKnown(universe, world, display);
 			}
 		}
 	}
 
-	drawAsKnown(universe: Universe, worldAsWorld: World): void
+	drawAsKnown
+	(
+		universe: Universe, worldAsWorld: World, displayAsDisplay: Display
+	): void
 	{
-		var display = universe.display as DisplayPane;
 		var world = worldAsWorld as World2;
 
+		var display = displayAsDisplay as DisplayPane;
 		display.childSelectByName(null);
 
 		display.childSelectByName("Map");
 		display.drawBackground(Color.byName("Black"), Color.byName("Black"));
-		this.map.draw(universe, world, this, display);
+		var uwpe = new UniverseWorldPlaceEntities(universe, world, this, null, null);
+		this.map.draw(uwpe.placeSet(this), display);
 
 		display.childSelectByName("Status");
 		display.clear();
@@ -363,7 +372,8 @@ class PlaceLevel extends Place
 
 		display.childSelectByName("Messages");
 		display.clear();
-		var messageLogAsControl = world.entityForPlayer.player().messageLog.controlUpdate(world);
+		var messageLogAsControl =
+			world.entityForPlayer.player().messageLog.controlUpdate(world);
 		this._drawLoc.pos.clear();
 		messageLogAsControl.draw(universe, display, this._drawLoc, null);
 		display.flush();
@@ -373,7 +383,7 @@ class PlaceLevel extends Place
 		(
 			Coords.Instances().Zeroes,
 			display.displayToUse().sizeInPixels,
-			null, Color.byName("Gray"), null
+			null, Color.byName("Gray")
 		);
 	}
 

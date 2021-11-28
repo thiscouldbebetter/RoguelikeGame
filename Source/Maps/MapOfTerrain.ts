@@ -75,7 +75,7 @@ class MapOfTerrain
 
 	// Instance methods.
 
-	cellAtPos(cellPos: Coords)
+	cellAtPos(cellPos: Coords): MapOfTerrainCell
 	{
 		var returnValue;
 
@@ -88,7 +88,7 @@ class MapOfTerrain
 		return returnValue;
 	}
 
-	cellsAsStrings()
+	cellsAsStrings(): string[]
 	{
 		var cellsAsStrings = [];
 
@@ -114,14 +114,14 @@ class MapOfTerrain
 		return cellsAsStrings;
 	}
 
-	toString()
+	toString(): string
 	{
 		return this.cellsAsStrings().join("\n");
 	}
 
 	// Clonable.
 
-	clone()
+	clone(): MapOfTerrain
 	{
 		var cellsAsStrings = this.cellsAsStrings();
 
@@ -136,10 +136,10 @@ class MapOfTerrain
 
 	// drawable
 
-	draw(universe: Universe, world: World, place: Place, display: Display)
+	draw(uwpe: UniverseWorldPlaceEntities, display: Display)
 	{
 		// hack - Build camera from player.
-		var entityCamera = (world as World2).entityForPlayer;
+		var entityCamera = (uwpe.world as World2).entityForPlayer;
 		var cameraPos = entityCamera.locatable().loc.pos.clone();
 
 		var viewDimensionHalf = 38; // hack
@@ -167,9 +167,7 @@ class MapOfTerrain
 
 				this.drawCellAtPos
 				(
-					universe,
-					world,
-					place,
+					uwpe,
 					display,
 					cameraPos,
 					cellPos
@@ -184,7 +182,7 @@ class MapOfTerrain
 
 	drawCellAtPos
 	(
-		universe: Universe, world: World, place: Place,
+		uwpe: UniverseWorldPlaceEntities,
 		display: Display, cameraPos: Coords, cellPos: Coords)
 	{
 		var map = this;
@@ -209,7 +207,7 @@ class MapOfTerrain
 			display.displayToUse().sizeInPixelsHalf
 		);
 
-		terrainVisual.draw(universe, world, place, drawableEntity, display);
+		terrainVisual.draw(uwpe.entitySet(drawableEntity), display);
 
 		var entitiesInCell = cell.entitiesPresent;
 
@@ -222,6 +220,7 @@ class MapOfTerrain
 		for (var i = 0; i < entitiesSortedBottomToTop.length; i++)
 		{
 			var entity = entitiesSortedBottomToTop[i];
+			uwpe.entitySet(entity);
 			var drawable = entity.drawable();
 			if (drawable.isVisible)
 			{
@@ -233,7 +232,7 @@ class MapOfTerrain
 				entityPos.overwriteWith(drawPos);
 
 				var visual = drawable.visual;
-				visual.draw(universe, world, place, entity, display);
+				visual.draw(uwpe, display);
 
 				entityPos.overwriteWith(this._drawPosSaved);
 			}

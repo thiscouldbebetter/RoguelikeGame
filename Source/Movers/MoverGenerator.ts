@@ -1,5 +1,5 @@
 
-class MoverGenerator implements EntityProperty
+class MoverGenerator implements EntityProperty<MoverGenerator>
 {
 	chanceOfSpawnPerZoneInitial: number;
 	chanceOfSpawnPerTurn: number;
@@ -22,11 +22,12 @@ class MoverGenerator implements EntityProperty
 
 	activityPerform
 	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place, actor: Entity
-	)
+		uwpe: UniverseWorldPlaceEntities
+	): void
 	{
-		var world = worldAsWorld as World2;
-		var place = placeAsPlace as PlaceLevel;
+		var universe = uwpe.universe;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
 
 		var randomizer = universe.randomizer;
 		if (this.turnLastMoved == null)
@@ -37,7 +38,7 @@ class MoverGenerator implements EntityProperty
 				var randomNumber = randomizer.getNextRandom();
 				if (randomNumber < this.chanceOfSpawnPerZoneInitial)
 				{
-					this.moverSpawn(universe, world, place, zone);
+					this.moverSpawn(uwpe, zone);
 				}
 			}
 			this.turnLastMoved = world.turnsSoFar;
@@ -56,16 +57,23 @@ class MoverGenerator implements EntityProperty
 
 				if (randomNumber <= this.chanceOfSpawnPerTurn)
 				{
-					var zoneToSpawnInto = ArrayHelper.random(this.zones, randomizer);
-					this.moverSpawn(universe, world, place, zoneToSpawnInto);
+					var zoneToSpawnInto =
+						ArrayHelper.random(this.zones, randomizer);
+					this.moverSpawn
+					(
+						uwpe, zoneToSpawnInto
+					);
 				}
 			}
 		}
 	}
 
-	moverSpawn(universe: Universe, worldAsWorld: World, place: Place, zoneToSpawnInto: Zone2)
+	moverSpawn(uwpe: UniverseWorldPlaceEntities, zoneToSpawnInto: Zone2): void
 	{
-		var world = worldAsWorld as World2;
+		var universe = uwpe.universe;
+		var world = uwpe.world as World2;
+		var place = uwpe.place;
+
 		var randomizer = universe.randomizer;
 
 		var playerRank = world.entityForPlayer.demographics().rank;
@@ -136,12 +144,15 @@ class MoverGenerator implements EntityProperty
 
 	// Clonable.
 
-	clone() { return this; }
-	overwriteWith(other: MoverGenerator) { return this; }
+	clone(): MoverGenerator { return this; }
+	overwriteWith(other: MoverGenerator): MoverGenerator { return this; }
+
+	// Equatable.
+	equals(other: MoverGenerator): boolean { return false; }
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
-	initialize(u: Universe, w: World, p: Place, e: Entity): void {}
-	updateForTimerTick(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
+	initialize(uwpe: UniverseWorldPlaceEntities): void {}
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void {}
 
 }

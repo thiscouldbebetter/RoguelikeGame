@@ -1,5 +1,5 @@
 
-class Player implements EntityProperty
+class Player implements EntityProperty<Player>
 {
 	sightRange: number;
 	messageLog: MessageLog;
@@ -17,13 +17,12 @@ class Player implements EntityProperty
 
 	initialize
 	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place,
-		entityAsEntity: Entity
+		uwpe: UniverseWorldPlaceEntities
 	)
 	{
-		var world = worldAsWorld as World2;
-		var place = placeAsPlace as PlaceLevel;
-		var entity = entityAsEntity as Entity2;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
+		var entity = uwpe.entity as Entity2;
 
 		entity.locatable().loc.pos.z = PlaceLevel.ZLayers().Movers;
 
@@ -101,15 +100,12 @@ class Player implements EntityProperty
 		return returnValue;
 	}
 
-	updateForTimerTick
-	(
-		universe: Universe, worldAsWorld: World, placeAsPlace: Place, entityPlayerAsEntity: Entity
-	)
+	updateForTimerTick(uwpe: UniverseWorldPlaceEntities): void
 	{
-		var world = worldAsWorld as World2;
-		var place = placeAsPlace as PlaceLevel;
+		var world = uwpe.world as World2;
+		var place = uwpe.place as PlaceLevel;
 
-		var entityPlayer = entityPlayerAsEntity as Entity2;
+		var entityPlayer = uwpe.entity as Entity2;
 		if (entityPlayer.turnable().hasActedThisTurn)
 		{
 			entityPlayer.starvable2().satietyAdd(world, -1, entityPlayer);
@@ -122,7 +118,7 @@ class Player implements EntityProperty
 			{
 				var entityTurnable = turnables[i] as Entity2;
 				var turnable = entityTurnable.turnable();
-				turnable.updateForTurn(universe, world, place, entityTurnable);
+				turnable.updateForTurn(uwpe);
 			}
 
 			world.turnsSoFar++;
@@ -193,7 +189,11 @@ class Player implements EntityProperty
 				Coords.create(), // pos
 				new Coords(180, 272, 0), // size
 				[
-					ControlLabel.fromPosAndText(new Coords(10, 16, 0), "Name: " + entity.name),
+					ControlLabel.fromPosAndText
+					(
+						new Coords(10, 16, 0),
+						DataBinding.fromContext("Name: " + entity.name)
+					),
 					entity2.demographics().toControl(world, entity, new Coords(10, 32, 0)),
 					entity2.starvable2().toControl(world, entity, new Coords(10, 64, 0)),
 					controlLocus,
@@ -223,6 +223,8 @@ class Player implements EntityProperty
 	}
 
 	// EntityProperty.
-	finalize(u: Universe, w: World, p: Place, e: Entity): void {}
+	finalize(uwpe: UniverseWorldPlaceEntities): void {}
 
+	// Equatable.
+	equals(other: Player) { return false; }
 }

@@ -29,7 +29,7 @@ class DemoData_Main
 	buildEntityDefnGroups
 	(
 		universe: Universe,
-		visualGetByName: (visualName: string)=>Visual,
+		visualGetByName: (visualName: string) => VisualBase,
 		activityDefns: Map<string,ActivityDefn>,
 		itemCategories: ItemCategory[]
 	)
@@ -61,7 +61,7 @@ class DemoData_Main
 		//var moverEntities = moverGroups[0].entityDefns;
 		itemGroups.push(corpseGroup);
 
-		var returnValues = ArrayHelper.concatenateAll
+		var returnValues = ArrayHelper.flattenArrayOfArrays
 		([
 			[ boulders ],
 			[ emplacements ],
@@ -75,7 +75,7 @@ class DemoData_Main
 
 	buildEntityDefnGroup_Boulders
 	(
-		visualGetByName: (visualName:string)=>Visual
+		visualGetByName: (visualName: string) => VisualBase
 	): EntityDefnGroup
 	{
 		var name = "Boulder";
@@ -85,18 +85,15 @@ class DemoData_Main
 
 		var damager = new Damager(Damage.fromAmount(10)); // todo
 
-		var itemDefnToEntity =
-		(
-			u: Universe, w: World, p: Place, e: Entity, i: Item
-		) =>
+		var itemDefnToEntity = (uwpe: UniverseWorldPlaceEntities, item: Item) =>
 		{
-			var itemDefn = i.defn(w);
+			var itemDefn = item.defn(uwpe.world);
 			var returnValue = new Entity2
 			(
-				i.defnName,
+				item.defnName,
 				[
-					i,
-					e.locatable().clone(),
+					item,
+					uwpe.entity.locatable().clone(),
 					new Mappable(mappableDefn),
 					mappableDefn,
 					damager,
@@ -150,7 +147,7 @@ class DemoData_Main
 
 	buildEntityDefnGroup_Talkers
 	(
-		visualGetByName: (visualName:string)=>Visual
+		visualGetByName: (visualName: string) => VisualBase
 	): EntityDefnGroup
 	{
 		var mappableDefns = MappableDefn.Instances();
@@ -190,7 +187,7 @@ class DemoData_Main
 
 	buildWorldDefn
 	(
-		universe: Universe, visualGetByName: (x:string)=>Visual
+		universe: Universe, visualGetByName: (x: string) => VisualBase
 	): WorldDefn2
 	{
 		var actionsAndActionMovesByHeading = this.demoDataActions.actionsBuild();

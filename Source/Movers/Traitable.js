@@ -59,9 +59,7 @@ class Traitable {
         if (this._control == null) {
             this._control = ControlContainer.from4("containerTraits", pos, Coords.fromXY(160, 16), // size
             [
-                ControlLabel.fromPosAndText(new Coords(10, 5, 0), DataBinding.fromContextAndGet(this, (c) => {
-                    c.traitsAdjusted().map((x) => x.toString()).join(" ");
-                })),
+                ControlLabel.fromPosAndText(new Coords(10, 5, 0), DataBinding.fromContextAndGet(this, (c) => c.traitsAdjusted().map((x) => x.toString()).join(" "))),
             ]);
         }
         return this._control;
@@ -70,9 +68,11 @@ class Traitable {
     clone() { return this; }
     overwriteWith(other) { return this; }
     // EntityProperty.
-    finalize(u, w, p, e) { }
-    initialize(u, w, p, e) { }
-    updateForTimerTick(u, w, p, e) { }
+    finalize(uwpe) { }
+    initialize(uwpe) { }
+    updateForTimerTick(uwpe) { }
+    // Equatable.
+    equals(other) { return false; }
 }
 class Trait {
     constructor(name, value) {
@@ -81,6 +81,15 @@ class Trait {
     }
     toString() {
         return this.name.substr(0, 3) + ": " + this.value;
+    }
+    // Clonable.
+    clone() {
+        return new Trait(this.name, this.value);
+    }
+    overwriteWith(other) {
+        this.name = other.name;
+        this.value = other.value;
+        return this;
     }
 }
 Trait.Strength = "Strength";
